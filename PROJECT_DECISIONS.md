@@ -1063,45 +1063,9 @@ Szczegółową procedurę pracy opisuje `AGENTS.md`.
 
 ---
 
-# Otwarte tematy
+# Powiązane tematy otwarte
 
-Poniższe kwestie były omawiane, ale nie zostały jeszcze zamknięte ostateczną decyzją.
-
-Nie należy ich traktować jako obowiązujących wymagań, dopóki nie zostaną uzgodnione.
-
-## O1. Dokładny format CSV z KDX
-
-Trzeba sprawdzić rzeczywisty plik używany w pracy i ustalić dokładne mapowanie kolumn.
-
-## O2. Czas załadunku
-
-Obecna wartość domyślna to 10 minut.
-
-Do ustalenia pozostaje, czy czas będzie zawsze stały, czy będzie zależał od ilości ładowanego betonu.
-
-## O3. Finalny zestaw kolumn harmonogramu
-
-Nie został jeszcze ostatecznie zamknięty zestaw wszystkich informacji widocznych na głównym ekranie operatora.
-
-## O4. Finalny wygląd interfejsu
-
-Najpierw priorytetem jest poprawny silnik i czytelny przepływ pracy.
-
-Wygląd będzie dopracowywany iteracyjnie.
-
-## O5. Priorytety kolidujących budów
-
-Do ustalenia pozostaje dokładna reguła wyboru, którą budowę przesuwać w sytuacji konfliktu zasobów, jeżeli kilka rozwiązań jest możliwych.
-
-## O6. Jednoczesny niedobór pomp i gruszek
-
-Silnik ma umieć przeliczyć rzeczywistość przy ograniczonych zasobach, ale dokładna funkcja celu i kolejność optymalizacji będą dopracowane podczas implementacji oraz testów na realnych danych.
-
-## O7. Dokładna usługa geokodowania i routingu
-
-OpenStreetMap jest preferowanym źródłem danych mapowych, ale konkretny dostawca usług online nie jest jeszcze trwale wybrany.
-
-Moduł ma być przygotowany tak, aby można było zmienić usługę bez przebudowy silnika harmonogramu.
+Pomysły, warianty i pytania, które nie są jeszcze obowiązującymi decyzjami, są prowadzone w `POMYSLY_I_BACKLOG.md`. Dzięki temu ten dokument pozostaje jednoznacznym źródłem zatwierdzonych ustaleń.
 
 ---
 
