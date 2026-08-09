@@ -284,6 +284,11 @@ h3 {
   background: #f0faf5;
 }
 
+.informacja-o-imporcie[data-rodzaj="ostrzezenie"] {
+  border-color: #f0cf9a;
+  background: #fff8ec;
+}
+
 .informacja-o-imporcie[data-rodzaj="blad"] {
   border-color: #edc8c8;
   background: #fff5f5;
@@ -473,6 +478,16 @@ h3 {
 .status-aplikacji[data-rodzaj="sukces"] .status-aplikacji__ikona {
   background: var(--kolor-zielony);
   box-shadow: 0 0 0 5px rgba(37, 130, 92, 0.12);
+}
+
+.status-aplikacji[data-rodzaj="ostrzezenie"] {
+  border-color: #f0cf9a;
+  background: #fff8ec;
+}
+
+.status-aplikacji[data-rodzaj="ostrzezenie"] .status-aplikacji__ikona {
+  background: var(--kolor-pomaranczowy);
+  box-shadow: 0 0 0 5px rgba(242, 139, 53, 0.14);
 }
 
 .status-aplikacji[data-rodzaj="blad"] {
