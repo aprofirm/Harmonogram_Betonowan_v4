@@ -20,7 +20,6 @@
   });
 
   const wymaganeKolumny = Object.freeze([
-    { pole: "idBudowy", nazwa: "ID_Budowy" },
     { pole: "firma", nazwa: "Firma" },
     { pole: "budowa", nazwa: "Budowa" },
     { pole: "startPlanowany", nazwa: "StartPlanowany" }
@@ -170,6 +169,10 @@
       indeksyKolumn[opisKolumny.pole] = indeksKolumny;
     });
 
+    indeksyKolumn.idBudowy = znajdzIndeksKolumny(
+      naglowkiZnormalizowane,
+      "idBudowy"
+    );
     indeksyKolumn.rodzajBetonu = znajdzIndeksKolumny(
       naglowkiZnormalizowane,
       "rodzajBetonu"
@@ -196,6 +199,67 @@
     return daneZrodlowe;
   }
 
+  function pobierzIdZrodlowe(wiersz, indeksKolumnyId) {
+    if (indeksKolumnyId === -1) {
+      return "";
+    }
+
+    return String(wiersz[indeksKolumnyId] || "").trim();
+  }
+
+  function zbierzIdZrodlowe(wierszeDanych, indeksKolumnyId) {
+    const idZrodlowe = new Set();
+
+    wierszeDanych.forEach(function (wiersz) {
+      const idBudowy = pobierzIdZrodlowe(wiersz, indeksKolumnyId);
+
+      if (!idBudowy) {
+        return;
+      }
+
+      if (idZrodlowe.has(idBudowy)) {
+        throw new Error(
+          "ID_Budowy „" + idBudowy + "” występuje w pliku więcej niż raz."
+        );
+      }
+
+      idZrodlowe.add(idBudowy);
+    });
+
+    return idZrodlowe;
+  }
+
+  function utworzAutomatyczneId(uzyteId, numerPoczatkowy) {
+    let numer = numerPoczatkowy;
+    let idBudowy = "CSV-" + String(numer).padStart(3, "0");
+
+    while (uzyteId.has(idBudowy)) {
+      numer += 1;
+      idBudowy = "CSV-" + String(numer).padStart(3, "0");
+    }
+
+    return {
+      idBudowy: idBudowy,
+      nastepnyNumer: numer + 1
+    };
+  }
+
+  function utworzOstrzezeniaId(indeksKolumnyId, liczbaAutomatycznychId) {
+    if (!liczbaAutomatycznychId) {
+      return [];
+    }
+
+    const poczatekKomunikatu = indeksKolumnyId === -1
+      ? "Nie znaleziono kolumny ID budowy."
+      : "Niektóre pozycje nie miały ID budowy.";
+
+    return [
+      poczatekKomunikatu +
+        " Program automatycznie nadał brakujące identyfikatory (liczba: " +
+        liczbaAutomatycznychId + ")."
+    ];
+  }
+
   function przetworzCsv(trescPliku, nazwaPliku) {
     const trescBezBom = String(trescPliku || "").replace(/^\uFEFF/, "");
 
@@ -214,11 +278,13 @@
       return String(naglowek).trim();
     });
     const indeksyKolumn = znajdzKolumny(naglowki);
+    const wierszeDanych = wiersze.slice(1);
     const budowy = [];
     const wierszeZrodlowe = [];
-    const uzyteId = new Set();
+    let liczbaAutomatycznychId = 0;
+    let kolejnyNumerAutomatyczny = 1;
 
-    wiersze.slice(1).forEach(function (wiersz, indeksWiersza) {
+    wierszeDanych.forEach(function (wiersz, indeksWiersza) {
       const numerWiersza = indeksWiersza + 2;
 
       if (wiersz.length > naglowki.length) {
@@ -226,11 +292,32 @@
           "Wiersz " + numerWiersza + " ma więcej pól niż nagłówek pliku CSV."
         );
       }
+    });
+
+    const uzyteId = zbierzIdZrodlowe(
+      wierszeDanych,
+      indeksyKolumn.idBudowy
+    );
+
+    wierszeDanych.forEach(function (wiersz, indeksWiersza) {
+      const numerWiersza = indeksWiersza + 2;
+      let idBudowy = pobierzIdZrodlowe(wiersz, indeksyKolumn.idBudowy);
+
+      if (!idBudowy) {
+        const automatyczneId = utworzAutomatyczneId(
+          uzyteId,
+          kolejnyNumerAutomatyczny
+        );
+        idBudowy = automatyczneId.idBudowy;
+        kolejnyNumerAutomatyczny = automatyczneId.nastepnyNumer;
+        liczbaAutomatycznychId += 1;
+        uzyteId.add(idBudowy);
+      }
 
       const daneZrodlowe = utworzDaneZrodlowe(naglowki, wiersz);
       const budowa = aplikacja.budowy.utworzBudoweZImportu(
         {
-          idBudowy: wiersz[indeksyKolumn.idBudowy],
+          idBudowy: idBudowy,
           firma: wiersz[indeksyKolumn.firma],
           budowa: wiersz[indeksyKolumn.budowa],
           startPlanowany: wiersz[indeksyKolumn.startPlanowany],
@@ -246,14 +333,6 @@
         },
         numerWiersza
       );
-
-      if (uzyteId.has(budowa.idBudowy)) {
-        throw new Error(
-          "ID_Budowy „" + budowa.idBudowy + "” występuje w pliku więcej niż raz."
-        );
-      }
-
-      uzyteId.add(budowa.idBudowy);
       wierszeZrodlowe.push(daneZrodlowe);
       budowy.push(budowa);
     });
@@ -263,7 +342,10 @@
       separator: separator,
       wierszeZrodlowe: wierszeZrodlowe,
       budowy: budowy,
-      ostrzezenia: []
+      ostrzezenia: utworzOstrzezeniaId(
+        indeksyKolumn.idBudowy,
+        liczbaAutomatycznychId
+      )
     };
   }
 
