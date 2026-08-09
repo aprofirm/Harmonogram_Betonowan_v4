@@ -34,8 +34,65 @@
               <p class="etykieta-sekcji">USTAWIENIA</p>
               <h2 id="tytul-parametrow">Parametry planu</h2>
             </div>
-            <span class="znacznik-etapu">Etap 1</span>
+            <span class="znacznik-etapu">Etap 2</span>
           </div>
+
+          <section class="sekcja-danych" aria-labelledby="tytul-importu">
+            <div class="naglowek-podsekcji">
+              <div>
+                <p class="etykieta-sekcji">DANE Z KDX</p>
+                <h3 id="tytul-importu">Import CSV</h3>
+              </div>
+              <button id="przycisk-wybierz-csv" class="przycisk-drugoplanowy" type="button">
+                Wybierz plik
+              </button>
+            </div>
+
+            <input id="pole-pliku-csv" class="pole-pliku" type="file" accept=".csv,text/csv">
+
+            <div
+              id="pole-upuszczania-csv"
+              class="pole-upuszczania"
+              tabindex="0"
+              role="button"
+              aria-label="Przeciągnij plik CSV albo wybierz go z komputera"
+            >
+              <span class="pole-upuszczania__ikona" aria-hidden="true">⇩</span>
+              <strong>Przeciągnij tutaj plik CSV</strong>
+              <span>albo kliknij, aby wybrać plik</span>
+            </div>
+
+            <div id="informacja-o-imporcie" class="informacja-o-imporcie" data-rodzaj="brak">
+              <strong id="nazwa-pliku-csv">Nie wczytano pliku</strong>
+              <span id="szczegoly-pliku-csv">Lista budów jest pusta.</span>
+            </div>
+          </section>
+
+          <details class="budowa-reczna">
+            <summary>Dodaj budowę ręcznie</summary>
+            <form id="formularz-budowy-recznej" class="formularz-budowy-recznej" novalidate>
+              <label class="pole-formularza" for="reczna-firma">
+                <span>Firma</span>
+                <input id="reczna-firma" name="firma" type="text" autocomplete="off" required>
+              </label>
+
+              <label class="pole-formularza" for="reczna-budowa">
+                <span>Budowa</span>
+                <input id="reczna-budowa" name="budowa" type="text" autocomplete="off" required>
+              </label>
+
+              <label class="pole-formularza" for="reczny-start">
+                <span>Start planowany</span>
+                <input id="reczny-start" name="startPlanowany" type="time" required>
+              </label>
+
+              <button class="przycisk-drugoplanowy przycisk-dodaj-budowe" type="submit">
+                Dodaj do listy
+              </button>
+            </form>
+          </details>
+
+          <div class="separator" aria-hidden="true"></div>
 
           <form id="panel-parametrow" class="formularz-parametrow" novalidate>
             <label class="pole-formularza" for="poczatek-dnia">
@@ -74,7 +131,7 @@
           </button>
 
           <p class="informacja-etapu">
-            W tym etapie przycisk sprawdza pełny przepływ aplikacji. Obliczenia kursów i zasobów dojdą w kolejnych etapach.
+            Etap 2 porządkuje dane budów. Obliczenia kursów, gruszek i pomp dojdą w kolejnych etapach.
           </p>
         </aside>
 
@@ -117,8 +174,8 @@
                     <th>Firma</th>
                     <th>Budowa</th>
                     <th>Beton</th>
-                    <th>Pompa</th>
-                    <th>Gruszki</th>
+                    <th>ID budowy</th>
+                    <th>Źródło</th>
                     <th>Status</th>
                   </tr>
                 </thead>
@@ -127,7 +184,7 @@
                     <td colspan="7">
                       <span class="pusty-wiersz__ikona" aria-hidden="true">▦</span>
                       <strong>Brak danych do wyświetlenia</strong>
-                      <span>Import CSV zostanie dodany w etapie 2.</span>
+                      <span>Wczytaj CSV albo dodaj budowę ręcznie.</span>
                     </td>
                   </tr>
                 </tbody>
@@ -139,7 +196,7 @@
 
       <footer class="stopka">
         <span>Harmonogram Betonowań v4</span>
-        <span>Etap 1 · szkielet aplikacji offline</span>
+        <span>Etap 2 · import CSV i model Budowy</span>
       </footer>
     </div>
 

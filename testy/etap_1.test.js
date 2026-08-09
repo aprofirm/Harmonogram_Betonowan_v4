@@ -26,12 +26,29 @@ function utworzElementTestowy() {
   return {
     value: "",
     textContent: "",
+    className: "",
+    children: [],
+    files: [],
     disabled: false,
     dataset: {},
     zdarzenia: {},
+    classList: {
+      add: function () {},
+      remove: function () {}
+    },
     addEventListener: function (nazwaZdarzenia, obsluga) {
       this.zdarzenia[nazwaZdarzenia] = obsluga;
-    }
+    },
+    appendChild: function (element) {
+      this.children.push(element);
+      return element;
+    },
+    replaceChildren: function () {
+      this.children = Array.from(arguments);
+    },
+    setAttribute: function () {},
+    click: function () {},
+    reset: function () {}
   };
 }
 
@@ -47,7 +64,18 @@ function utworzDokumentTestowy() {
     "tresc-statusu",
     "liczba-budow",
     "liczba-kursow",
-    "liczba-konfliktow"
+    "liczba-konfliktow",
+    "wiersze-harmonogramu",
+    "pole-pliku-csv",
+    "przycisk-wybierz-csv",
+    "pole-upuszczania-csv",
+    "informacja-o-imporcie",
+    "nazwa-pliku-csv",
+    "szczegoly-pliku-csv",
+    "formularz-budowy-recznej",
+    "reczna-firma",
+    "reczna-budowa",
+    "reczny-start"
   ];
   const elementy = {};
 
@@ -60,6 +88,12 @@ function utworzDokumentTestowy() {
     elementy: elementy,
     getElementById: function (identyfikator) {
       return elementy[identyfikator] || null;
+    },
+    createElement: function () {
+      return utworzElementTestowy();
+    },
+    createDocumentFragment: function () {
+      return utworzElementTestowy();
     },
     addEventListener: function () {}
   };
@@ -117,7 +151,7 @@ function sprawdzPrzeliczenie() {
   const wynik = aplikacja.harmonogram.przeliczCalyHarmonogram({ parametry: parametry });
 
   assert.equal(wynik.status, "gotowy");
-  assert.equal(wynik.etap, 1);
+  assert.equal(wynik.etap, aplikacja.konfiguracja.numerEtapu);
   assert.equal(wynik.parametry.pojemnoscGruszkiM3, 7);
   assert.deepEqual(Array.from(wynik.budowy), []);
   assert.deepEqual(Array.from(wynik.kursy), []);

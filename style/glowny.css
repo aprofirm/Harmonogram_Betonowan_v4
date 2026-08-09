@@ -73,6 +73,7 @@ button {
 
 h1,
 h2,
+h3,
 p {
   margin-top: 0;
 }
@@ -89,6 +90,12 @@ h2 {
   margin-bottom: 0;
   color: var(--kolor-granatowy-ciemny);
   font-size: 1.2rem;
+}
+
+h3 {
+  margin-bottom: 0;
+  color: var(--kolor-granatowy-ciemny);
+  font-size: 1rem;
 }
 
 .podtytul {
@@ -147,6 +154,8 @@ h2 {
 .panel-parametrow {
   position: sticky;
   top: 20px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
   padding: 24px;
 }
 
@@ -161,6 +170,155 @@ h2 {
 .formularz-parametrow {
   display: grid;
   gap: 18px;
+}
+
+.sekcja-danych {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.naglowek-podsekcji {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.naglowek-podsekcji .etykieta-sekcji {
+  margin-bottom: 4px;
+}
+
+.pole-pliku {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.przycisk-drugoplanowy {
+  min-height: 36px;
+  padding: 0 13px;
+  border: 1px solid #bfd2de;
+  border-radius: 9px;
+  color: var(--kolor-granatowy);
+  background: #f4f9fc;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
+}
+
+.przycisk-drugoplanowy:hover {
+  border-color: #91b6cb;
+  background: #eaf5fa;
+  transform: translateY(-1px);
+}
+
+.przycisk-drugoplanowy:focus-visible,
+.pole-upuszczania:focus-visible,
+.budowa-reczna summary:focus-visible {
+  outline: 3px solid rgba(242, 139, 53, 0.4);
+  outline-offset: 2px;
+}
+
+.pole-upuszczania {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 17px 12px;
+  border: 2px dashed #b8ccd8;
+  border-radius: 11px;
+  color: var(--kolor-tekstu-pomocniczego);
+  background: #f8fbfc;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
+}
+
+.pole-upuszczania:hover,
+.pole-upuszczania--aktywne {
+  border-color: var(--kolor-niebieski);
+  background: #edf7fc;
+  transform: translateY(-1px);
+}
+
+.pole-upuszczania strong {
+  color: #354958;
+  font-size: 0.82rem;
+}
+
+.pole-upuszczania span:not(.pole-upuszczania__ikona) {
+  font-size: 0.72rem;
+}
+
+.pole-upuszczania__ikona {
+  color: var(--kolor-niebieski);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.informacja-o-imporcie {
+  display: grid;
+  gap: 2px;
+  padding: 10px 11px;
+  border: 1px solid #d7e2e8;
+  border-radius: 9px;
+  color: var(--kolor-tekstu-pomocniczego);
+  background: #fafcfd;
+  font-size: 0.74rem;
+}
+
+.informacja-o-imporcie strong {
+  overflow: hidden;
+  color: #425463;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.informacja-o-imporcie[data-rodzaj="sukces"] {
+  border-color: #b9dfcf;
+  background: #f0faf5;
+}
+
+.informacja-o-imporcie[data-rodzaj="blad"] {
+  border-color: #edc8c8;
+  background: #fff5f5;
+}
+
+.budowa-reczna {
+  margin-bottom: 18px;
+  border: 1px solid var(--kolor-obramowania);
+  border-radius: 10px;
+  background: #fbfcfd;
+}
+
+.budowa-reczna summary {
+  padding: 11px 13px;
+  color: var(--kolor-granatowy);
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.formularz-budowy-recznej {
+  display: grid;
+  gap: 12px;
+  padding: 4px 13px 13px;
+}
+
+.przycisk-dodaj-budowe {
+  width: 100%;
+  min-height: 40px;
+}
+
+.separator {
+  height: 1px;
+  margin: 0 0 18px;
+  background: var(--kolor-obramowania);
 }
 
 .pole-formularza {
@@ -394,6 +552,22 @@ td {
   font-size: 0.88rem;
 }
 
+.wartosc-wazna {
+  color: var(--kolor-granatowy-ciemny);
+  font-weight: 800;
+}
+
+.identyfikator-budowy {
+  color: #526875;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.8rem;
+}
+
+.status-danych {
+  color: var(--kolor-zielony);
+  font-weight: 800;
+}
+
 .pusty-wiersz td {
   height: 310px;
   color: var(--kolor-tekstu-pomocniczego);
@@ -432,6 +606,8 @@ td {
 
   .panel-parametrow {
     position: static;
+    max-height: none;
+    overflow: visible;
   }
 
   .formularz-parametrow {

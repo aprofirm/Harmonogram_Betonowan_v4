@@ -32,7 +32,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 # Status projektu
 
 - [x] Etap 1 — Szkielet aplikacji
-- [ ] Etap 2 — Import CSV i model Budowy
+- [x] Etap 2 — Import CSV i model Budowy
 - [ ] Etap 3 — Podstawowy silnik gruszek
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
@@ -111,22 +111,22 @@ Doprowadzić dane z KDX/CSV do uporządkowanego modelu `Budowy`, który będzie 
 
 ## Kryteria zakończenia
 
-- [ ] poprawny CSV tworzy listę budów,
-- [ ] `ID_Budowy` nie traci zer ani innych cech tekstowych,
-- [ ] `Firma` i `Budowa` są oddzielnymi polami,
-- [ ] `StartPlanowany` zachowuje dokładną wartość źródłową,
-- [ ] błędny lub pusty plik daje czytelny komunikat,
-- [ ] brak wymaganej kolumny daje czytelny komunikat,
-- [ ] można przeciągnąć CSV na stronę,
-- [ ] można wczytać drugi CSV bez mieszania danych ze starego pliku,
-- [ ] można dodać budowę ręcznie,
-- [ ] import nie zawiera logiki przydziału gruszek ani pomp.
+- [x] poprawny CSV tworzy listę budów,
+- [x] `ID_Budowy` nie traci zer ani innych cech tekstowych,
+- [x] `Firma` i `Budowa` są oddzielnymi polami,
+- [x] `StartPlanowany` zachowuje dokładną wartość źródłową,
+- [x] błędny lub pusty plik daje czytelny komunikat,
+- [x] brak wymaganej kolumny daje czytelny komunikat,
+- [x] można przeciągnąć CSV na stronę,
+- [x] można wczytać drugi CSV bez mieszania danych ze starego pliku,
+- [x] można dodać budowę ręcznie,
+- [x] import nie zawiera logiki przydziału gruszek ani pomp.
 
 ## Test regresji
 
-- [ ] aplikacja nadal uruchamia się lokalnie,
-- [ ] podstawowy interfejs z etapu 1 działa,
-- [ ] brak nowych zależności wymagających internetu.
+- [x] aplikacja nadal uruchamia się lokalnie,
+- [x] podstawowy interfejs z etapu 1 działa,
+- [x] brak nowych zależności wymagających internetu.
 
 ---
 
@@ -446,4 +446,4 @@ Repozytorium powinno po każdym zakończonym etapie zawierać możliwą do uruch
 
 # Kolejny krok
 
-Wykonać test ręczny Etapu 1 na komputerze operatora. Po jego potwierdzeniu rozpocząć **Etap 2 — Import CSV i model Budowy**.
+Wykonać test ręczny Etapu 2 na komputerze operatora, najlepiej również na prawdziwym eksporcie CSV z KDX. Po jego potwierdzeniu rozpocząć **Etap 3 — Podstawowy silnik gruszek**.
