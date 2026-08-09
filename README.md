@@ -2,6 +2,8 @@
 
 „Webowy harmonogram dostaw betonu – planowanie gruszek, pomp i wizualizacja pracy betoniarni.”
 
+Najpierw przejrzyj aktualny stan repozytorium, wszystkie pliki z zasadami i ustaleniami oraz aktualny etap prac. Następnie kontynuuj pracę zgodnie z dokumentacją projektu.
+
 ## Dokumentacja projektu
 
 - [`ZASADY_KODU.md`](ZASADY_KODU.md) — jak piszemy i modyfikujemy kod.
