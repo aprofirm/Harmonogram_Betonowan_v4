@@ -1029,16 +1029,37 @@ Najpierw tworzymy prostą i stabilną wersję, a dopiero później dokładamy do
 
 ## 63. Dokumentacja jako część projektu
 
-`PROJECT_DECISIONS.md` i `ZASADY_KODU.md` są częścią projektu, a nie dokumentami pomocniczymi przeznaczonymi do jednorazowego użycia.
+Dokumentacja prowadząca projekt jest częścią produktu, a nie materiałem pomocniczym przeznaczonym do jednorazowego użycia.
 
-Przed większą zmianą należy sprawdzić:
+Obowiązują następujące pliki:
 
-1. `ZASADY_KODU.md`,
-2. `PROJECT_DECISIONS.md`,
-3. aktualny kod repozytorium,
-4. zależności zmienianego mechanizmu.
+- `AGENTS.md` — sposób pracy z repozytorium,
+- `README.md` — skrót projektu i mapa dokumentacji,
+- `ZASADY_KODU.md` — stałe zasady tworzenia i zmieniania kodu,
+- `PROJECT_DECISIONS.md` — zatwierdzone decyzje,
+- `POMYSLY_I_BACKLOG.md` — pomysły i tematy otwarte,
+- `ETAPY_ROZWOJU.md` — kolejność prac i aktualny postęp.
 
-Dopiero potem należy wprowadzać zmiany.
+Przed zmianą należy przeczytać `AGENTS.md`, wszystkie powyższe dokumenty, aktualny kod, testy, przykłady i zależności zmienianego mechanizmu. Dopiero potem należy wprowadzać zmiany.
+
+---
+
+## 64. Trwała pamięć projektu po rozmowie
+
+Repozytorium jest trwałym źródłem pamięci projektu. Po każdej rozmowie projektowej należy sprawdzić, czy pojawiły się nowe informacje wymagające zapisu.
+
+Obowiązują zasady:
+
+- zatwierdzone decyzje trafiają do `PROJECT_DECISIONS.md`,
+- pomysły, warianty i pytania do doprecyzowania trafiają do `POMYSLY_I_BACKLOG.md`,
+- zmiana postępu lub następnego kroku trafia do `ETAPY_ROZWOJU.md`,
+- nowa stała reguła pracy z kodem trafia do `ZASADY_KODU.md`,
+- dokumentację aktualizujemy razem z powiązaną zmianą kodu albo najpóźniej przed końcowym podsumowaniem zadania,
+- nie tworzymy pustego wpisu, jeżeli rozmowa nie wniosła nowego ustalenia,
+- nie przedstawiamy luźnego pomysłu jako zatwierdzonej decyzji,
+- nie powielamy wpisów już istniejących w dokumentacji.
+
+Szczegółową procedurę pracy opisuje `AGENTS.md`.
 
 ---
 
