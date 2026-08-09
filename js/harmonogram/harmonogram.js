@@ -14,9 +14,10 @@
 
   function przeliczCalyHarmonogram(daneWejsciowe) {
     const aktualneDane = daneWejsciowe || {};
-    const stanImportu = aplikacja.importCsv.utworzPustyStanImportu();
+    const stanImportu = aktualneDane.stanImportu ||
+      aplikacja.importCsv.utworzPustyStanImportu();
     const listaBudow = aplikacja.budowy.utworzListeRobocza(
-      stanImportu.wierszeZrodlowe,
+      stanImportu.budowy,
       aktualneDane.budowyReczne
     );
 

@@ -13,9 +13,9 @@
 
   aplikacja.konfiguracja = Object.freeze({
     nazwaAplikacji: "Harmonogram Betonowań v4",
-    numerEtapu: 1,
+    numerEtapu: 2,
     parametryDomyslne: parametryDomyslne,
     komunikatPoPrzeliczeniu:
-      "Szkielet aplikacji działa poprawnie. Obliczenia kursów i zasobów zostaną dodane w kolejnych etapach."
+      "Dane budów są gotowe. Obliczenia kursów i zasobów zostaną dodane w kolejnych etapach."
   });
 })(window);
