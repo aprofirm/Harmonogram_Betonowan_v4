@@ -6,7 +6,7 @@ Potwierdzić, że aplikacja wczytuje dane budów z CSV, pozwala dodać budowę r
 
 ## Przygotowanie
 
-Do pierwszej próby można użyć pliku `przyklady/przykladowe_budowy.csv` dołączonego do repozytorium.
+Do pierwszej próby można użyć pliku `przyklady/przykladowe_budowy.csv` dołączonego do repozytorium. Testowy układ eksportu KDX można sprawdzić plikiem `przyklady/przykladowy_eksport_kdx.csv`.
 
 ## Kroki
 
@@ -20,9 +20,10 @@ Do pierwszej próby można użyć pliku `przyklady/przykladowe_budowy.csv` doł�
 8. Sprawdź, czy budowy z pierwszego CSV zniknęły, a budowa ręczna pozostała na osobnej liście.
 9. Wczytaj CSV bez kolumny `ID_Budowy` i sprawdź, czy plik zostaje przyjęty, a pozycje otrzymują ID `CSV-001`, `CSV-002` itd.
 10. Sprawdź, czy aplikacja pokazuje pomarańczowe ostrzeżenie o automatycznie nadanych identyfikatorach zamiast czerwonego błędu.
-11. Spróbuj wczytać pusty plik albo CSV bez kolumny `Budowa`.
-12. Sprawdź, czy aplikacja pokazuje zrozumiały komunikat po polsku i nie usuwa ostatniego poprawnego importu.
-13. Wybierz „Przelicz harmonogram” i sprawdź, czy aplikacja nadal działa bez internetu.
+11. Wczytaj `przykladowy_eksport_kdx.csv` i sprawdź, czy Firma, Budowa, Start planowany oraz ilość betonu pojawiają się w tabeli.
+12. Spróbuj wczytać pusty plik albo CSV bez kolumny `Budowa`.
+13. Sprawdź, czy aplikacja pokazuje zrozumiały komunikat po polsku i nie usuwa ostatniego poprawnego importu.
+14. Wybierz „Przelicz harmonogram” i sprawdź, czy aplikacja nadal działa bez internetu.
 
 ## Oczekiwany wynik
 
@@ -37,6 +38,8 @@ Wymagane informacje to:
 - `StartPlanowany`.
 
 `ID_Budowy` jest opcjonalne. Importer zachowuje istniejące ID jako tekst, a brakujące uzupełnia serią `CSV-001`, `CSV-002` itd. Rozpoznaje też typowe warianty, np. `ID obiektu`, `Klient`, `Nazwa budowy` i `Godzina`. Dokładne mapowanie eksportu KDX będzie można rozszerzyć po sprawdzeniu prawdziwego pliku bez zmiany modelu Budowy.
+
+Testowy układ KDX rozpoznaje ponadto nagłówki `Nazwa`, `Tytuł`, `Data`, `Czas rozładunku`, `Zamówiono (m3)` oraz `Rodzaj rozładunku`. To mapowanie należy potwierdzić na niezmienionym eksporcie używanym w pracy.
 
 ## Test automatyczny dla programisty
 
