@@ -18,24 +18,25 @@ Do pierwszej próby można użyć pliku `przyklady/przykladowe_budowy.csv` doł�
 6. Sprawdź, czy nowa pozycja otrzymała ID `RECZNE-001` i źródło „Ręczna”.
 7. Wczytaj drugi plik CSV zawierający inną pojedynczą budowę.
 8. Sprawdź, czy budowy z pierwszego CSV zniknęły, a budowa ręczna pozostała na osobnej liście.
-9. Spróbuj wczytać pusty plik albo CSV bez kolumny `Budowa`.
-10. Sprawdź, czy aplikacja pokazuje zrozumiały komunikat po polsku i nie usuwa ostatniego poprawnego importu.
-11. Wybierz „Przelicz harmonogram” i sprawdź, czy aplikacja nadal działa bez internetu.
+9. Wczytaj CSV bez kolumny `ID_Budowy` i sprawdź, czy plik zostaje przyjęty, a pozycje otrzymują ID `CSV-001`, `CSV-002` itd.
+10. Sprawdź, czy aplikacja pokazuje pomarańczowe ostrzeżenie o automatycznie nadanych identyfikatorach zamiast czerwonego błędu.
+11. Spróbuj wczytać pusty plik albo CSV bez kolumny `Budowa`.
+12. Sprawdź, czy aplikacja pokazuje zrozumiały komunikat po polsku i nie usuwa ostatniego poprawnego importu.
+13. Wybierz „Przelicz harmonogram” i sprawdź, czy aplikacja nadal działa bez internetu.
 
 ## Oczekiwany wynik
 
-CSV tworzy uporządkowaną listę Budów, dane źródłowe nie są nadpisywane, kolejny poprawny CSV zastępuje poprzedni import, budowy ręczne pozostają oddzielone, a błędny plik nie powoduje awarii strony.
+CSV tworzy uporządkowaną listę Budów, brak ID nie blokuje importu, dane źródłowe nie są nadpisywane, kolejny poprawny CSV zastępuje poprzedni import, budowy ręczne pozostają oddzielone, a błędny plik nie powoduje awarii strony.
 
 ## Obsługiwane nagłówki
 
 Wymagane informacje to:
 
-- `ID_Budowy`,
 - `Firma`,
 - `Budowa`,
 - `StartPlanowany`.
 
-Importer rozpoznaje też typowe warianty, np. `ID obiektu`, `Klient`, `Nazwa budowy` i `Godzina`. Dokładne mapowanie eksportu KDX będzie można rozszerzyć po sprawdzeniu prawdziwego pliku bez zmiany modelu Budowy.
+`ID_Budowy` jest opcjonalne. Importer zachowuje istniejące ID jako tekst, a brakujące uzupełnia serią `CSV-001`, `CSV-002` itd. Rozpoznaje też typowe warianty, np. `ID obiektu`, `Klient`, `Nazwa budowy` i `Godzina`. Dokładne mapowanie eksportu KDX będzie można rozszerzyć po sprawdzeniu prawdziwego pliku bez zmiany modelu Budowy.
 
 ## Test automatyczny dla programisty
 

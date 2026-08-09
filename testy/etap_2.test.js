@@ -67,6 +67,50 @@ function sprawdzAliasyINiektoreFormaty(aplikacja) {
   assert.equal(stanImportu.budowy[0].budowa, "Plac, sektor B");
 }
 
+function sprawdzAutomatyczneId(aplikacja) {
+  const csvBezKolumnyId = [
+    "Firma;Budowa;StartPlanowany",
+    "Firma A;Budowa A;07:00",
+    "Firma B;Budowa B;08:00"
+  ].join("\n");
+  const importBezKolumnyId = aplikacja.importCsv.przetworzCsv(
+    csvBezKolumnyId,
+    "bez-id.csv"
+  );
+
+  assert.deepEqual(
+    Array.from(importBezKolumnyId.budowy, function (budowa) {
+      return budowa.idBudowy;
+    }),
+    ["CSV-001", "CSV-002"]
+  );
+  assert.equal(importBezKolumnyId.ostrzezenia.length, 1);
+  assert.match(importBezKolumnyId.ostrzezenia[0], /nie znaleziono kolumny ID budowy/i);
+  assert.match(importBezKolumnyId.ostrzezenia[0], /liczba: 2/i);
+
+  const csvZCzesciowymiId = [
+    "ID_Budowy;Firma;Budowa;StartPlanowany",
+    ";Firma A;Budowa A;07:00",
+    "CSV-001;Firma B;Budowa B;08:00",
+    ";Firma C;Budowa C;09:00",
+    "0007;Firma D;Budowa D;10:00"
+  ].join("\n");
+  const importZCzesciowymiId = aplikacja.importCsv.przetworzCsv(
+    csvZCzesciowymiId,
+    "czesciowe-id.csv"
+  );
+
+  assert.deepEqual(
+    Array.from(importZCzesciowymiId.budowy, function (budowa) {
+      return budowa.idBudowy;
+    }),
+    ["CSV-002", "CSV-001", "CSV-003", "0007"]
+  );
+  assert.equal(importZCzesciowymiId.ostrzezenia.length, 1);
+  assert.match(importZCzesciowymiId.ostrzezenia[0], /niektóre pozycje nie miały ID/i);
+  assert.match(importZCzesciowymiId.ostrzezenia[0], /liczba: 2/i);
+}
+
 function sprawdzBlednePliki(aplikacja) {
   assert.throws(
     function () {
@@ -175,6 +219,7 @@ async function uruchomTesty() {
 
   sprawdzPoprawnyImport(aplikacja);
   sprawdzAliasyINiektoreFormaty(aplikacja);
+  sprawdzAutomatyczneId(aplikacja);
   sprawdzBlednePliki(aplikacja);
   sprawdzBudowyReczne(aplikacja);
   sprawdzWymianeImportu(aplikacja);

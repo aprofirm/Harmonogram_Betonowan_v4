@@ -101,6 +101,8 @@ Doprowadzić dane z KDX/CSV do uporządkowanego modelu `Budowy`, który będzie 
 - jasne komunikaty po polsku,
 - obsługa wymaganych kolumn,
 - zachowanie `ID_Budowy` jako tekstu,
+- automatyczne nadawanie `CSV-001`, `CSV-002` itd., gdy kolumny ID nie ma albo pojedyncze ID jest puste,
+- ostrzeżenie zamiast odrzucenia pliku przy braku ID,
 - rozdzielenie pól `Firma` i `Budowa`,
 - utworzenie `StartPlanowany`,
 - przygotowanie `StartRoboczy`,
@@ -113,6 +115,9 @@ Doprowadzić dane z KDX/CSV do uporządkowanego modelu `Budowy`, który będzie 
 
 - [x] poprawny CSV tworzy listę budów,
 - [x] `ID_Budowy` nie traci zer ani innych cech tekstowych,
+- [x] brak kolumny ID nie blokuje importu i powoduje nadanie automatycznych identyfikatorów,
+- [x] puste ID w pojedynczym wierszu jest uzupełniane bez zmiany prawidłowych ID,
+- [x] operator widzi ostrzeżenie o automatycznie nadanych identyfikatorach,
 - [x] `Firma` i `Budowa` są oddzielnymi polami,
 - [x] `StartPlanowany` zachowuje dokładną wartość źródłową,
 - [x] błędny lub pusty plik daje czytelny komunikat,
