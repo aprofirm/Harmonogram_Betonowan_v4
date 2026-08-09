@@ -6,9 +6,24 @@ Najpierw przejrzyj aktualny stan repozytorium, wszystkie pliki z zasadami i usta
 
 ## Dokumentacja projektu
 
+- [AGENTS.md](AGENTS.md) — obowiązkowy sposób rozpoczynania pracy i zapisywania pamięci projektu.
 - [ZASADY_KODU.md](ZASADY_KODU.md) — jak piszemy i modyfikujemy kod.
 - [PROJECT_DECISIONS.md](PROJECT_DECISIONS.md) — obowiązujące decyzje biznesowe i architektoniczne.
+- [POMYSLY_I_BACKLOG.md](POMYSLY_I_BACKLOG.md) — pomysły, propozycje i tematy wymagające doprecyzowania.
 - [ETAPY_ROZWOJU.md](ETAPY_ROZWOJU.md) — kolejność wdrażania funkcji, kryteria zakończenia i testy po każdym etapie.
+
+## Trwała pamięć projektu
+
+Repozytorium jest głównym źródłem pamięci projektu. Historia rozmów pomaga zachować ciągłość, ale zatwierdzone ustalenia, pomysły i aktualny stan prac muszą znajdować się w dokumentacji.
+
+Na końcu każdej rozmowy projektowej należy sprawdzić, czy pojawiły się:
+
+- nowe zatwierdzone decyzje — dopisać je do `PROJECT_DECISIONS.md`,
+- nowe pomysły albo pytania — dopisać je do `POMYSLY_I_BACKLOG.md`,
+- zmiany statusu etapu lub następnego kroku — zaktualizować `ETAPY_ROZWOJU.md`,
+- nowe stałe zasady tworzenia kodu — zaktualizować `ZASADY_KODU.md`.
+
+Nie dodajemy pustych wpisów, jeżeli rozmowa nie wniosła nic nowego. Luźnego pomysłu nie wolno przedstawiać jako zatwierdzonej decyzji. Dokładna procedura znajduje się w `AGENTS.md`.
 
 ## Uruchomienie
 
