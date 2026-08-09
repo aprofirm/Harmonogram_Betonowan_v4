@@ -30,6 +30,8 @@
       startRoboczy: startPlanowany,
       rodzajBetonu: String(daneBudowy.rodzajBetonu || "").trim(),
       iloscBetonuM3: String(daneBudowy.iloscBetonuM3 || "").trim(),
+      dataPlanowana: String(daneBudowy.dataPlanowana || "").trim(),
+      rodzajRozladunku: String(daneBudowy.rodzajRozladunku || "").trim(),
       zrodlo: "csv",
       daneZrodlowe: daneBudowy.daneZrodlowe
     };
@@ -68,6 +70,8 @@
       startRoboczy: startPlanowany,
       rodzajBetonu: "",
       iloscBetonuM3: "",
+      dataPlanowana: "",
+      rodzajRozladunku: "",
       zrodlo: "reczna",
       daneZrodlowe: null
     };
