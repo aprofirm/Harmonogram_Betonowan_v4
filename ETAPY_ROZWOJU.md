@@ -31,7 +31,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 # Status projektu
 
-- [ ] Etap 1 — Szkielet aplikacji
+- [x] Etap 1 — Szkielet aplikacji
 - [ ] Etap 2 — Import CSV i model Budowy
 - [ ] Etap 3 — Podstawowy silnik gruszek
 - [ ] Etap 4 — Pompy
@@ -73,13 +73,13 @@ Zbudować czystą, modułową podstawę programu bez wdrażania jeszcze skomplik
 
 ## Kryteria zakończenia
 
-- [ ] `index.html` otwiera się lokalnie bez instalacji,
-- [ ] strona nie wymaga internetu do uruchomienia podstawowego interfejsu,
-- [ ] brak błędów JavaScript po uruchomieniu,
-- [ ] moduły mają proste i opisowe nazwy,
-- [ ] interfejs i silnik są rozdzielone,
-- [ ] przycisk `Przelicz` uruchamia kontrolowany przepływ programu, nawet jeśli na tym etapie nie wykonuje jeszcze pełnych obliczeń,
-- [ ] kod jest zgodny z `ZASADY_KODU.md`.
+- [x] `index.html` otwiera się lokalnie bez instalacji,
+- [x] strona nie wymaga internetu do uruchomienia podstawowego interfejsu,
+- [x] brak błędów JavaScript po uruchomieniu,
+- [x] moduły mają proste i opisowe nazwy,
+- [x] interfejs i silnik są rozdzielone,
+- [x] przycisk `Przelicz` uruchamia kontrolowany przepływ programu, nawet jeśli na tym etapie nie wykonuje jeszcze pełnych obliczeń,
+- [x] kod jest zgodny z `ZASADY_KODU.md`.
 
 ## Test regresji
 
@@ -446,6 +446,4 @@ Repozytorium powinno po każdym zakończonym etapie zawierać możliwą do uruch
 
 # Kolejny krok
 
-Rozpocząć **Etap 1 — Szkielet aplikacji**.
-
-Przed rozpoczęciem kodowania należy ponownie przeczytać `ZASADY_KODU.md` oraz odpowiednie części `PROJECT_DECISIONS.md`.
+Wykonać test ręczny Etapu 1 na komputerze operatora. Po jego potwierdzeniu rozpocząć **Etap 2 — Import CSV i model Budowy**.
