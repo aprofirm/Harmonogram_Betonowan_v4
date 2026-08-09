@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#12304a">
+    <title>Harmonogram Betonowań v4</title>
+    <link rel="stylesheet" href="style/glowny.css">
+  </head>
+  <body>
+    <noscript>
+      <div class="komunikat-bez-skryptow">
+        Ta aplikacja wymaga włączonej obsługi JavaScript w przeglądarce.
+      </div>
+    </noscript>
+
+    <div class="aplikacja">
+      <header class="naglowek">
+        <div>
+          <p class="nadtytul">BETONIARNIA · PLAN DNIA</p>
+          <h1>Harmonogram Betonowań</h1>
+          <p class="podtytul">Planowanie budów, gruszek i pomp w jednym miejscu.</p>
+        </div>
+        <div class="znacznik-offline" aria-label="Aplikacja gotowa do działania lokalnego">
+          <span class="znacznik-offline__kropka" aria-hidden="true"></span>
+          Tryb lokalny
+        </div>
+      </header>
+
+      <main class="uklad-glowny">
+        <aside class="panel panel-parametrow" aria-labelledby="tytul-parametrow">
+          <div class="panel__naglowek">
+            <div>
+              <p class="etykieta-sekcji">USTAWIENIA</p>
+              <h2 id="tytul-parametrow">Parametry planu</h2>
+            </div>
+            <span class="znacznik-etapu">Etap 1</span>
+          </div>
+
+          <form id="panel-parametrow" class="formularz-parametrow" novalidate>
+            <label class="pole-formularza" for="poczatek-dnia">
+              <span>Początek dnia</span>
+              <input id="poczatek-dnia" name="poczatekDnia" type="time" required>
+            </label>
+
+            <label class="pole-formularza" for="pojemnosc-gruszki">
+              <span>Pojemność gruszki</span>
+              <span class="pole-z-jednostka">
+                <input id="pojemnosc-gruszki" name="pojemnoscGruszkiM3" type="number" min="0.1" step="0.1" required>
+                <span>m³</span>
+              </span>
+            </label>
+
+            <label class="pole-formularza" for="czas-zaladunku">
+              <span>Czas załadunku</span>
+              <span class="pole-z-jednostka">
+                <input id="czas-zaladunku" name="czasZaladunkuMinuty" type="number" min="1" step="1" required>
+                <span>min</span>
+              </span>
+            </label>
+
+            <label class="pole-formularza" for="maksymalne-opoznienie">
+              <span>Maksymalne opóźnienie startu</span>
+              <span class="pole-z-jednostka">
+                <input id="maksymalne-opoznienie" name="maksymalneOpoznienieStartuMinuty" type="number" min="0" step="1" required>
+                <span>min</span>
+              </span>
+            </label>
+          </form>
+
+          <button id="przycisk-przelicz" class="przycisk-glowny" type="button">
+            <span>Przelicz harmonogram</span>
+            <span aria-hidden="true">→</span>
+          </button>
+
+          <p class="informacja-etapu">
+            W tym etapie przycisk sprawdza pełny przepływ aplikacji. Obliczenia kursów i zasobów dojdą w kolejnych etapach.
+          </p>
+        </aside>
+
+        <section class="obszar-roboczy" aria-labelledby="tytul-harmonogramu">
+          <div id="sekcja-statusu" class="status-aplikacji" data-rodzaj="gotowosc" role="status" aria-live="polite">
+            <span class="status-aplikacji__ikona" aria-hidden="true"></span>
+            <div>
+              <strong id="tytul-statusu">Aplikacja gotowa</strong>
+              <p id="tresc-statusu">Ustaw parametry i wybierz „Przelicz harmonogram”.</p>
+            </div>
+          </div>
+
+          <div class="panel panel-harmonogramu">
+            <div class="panel__naglowek panel__naglowek--harmonogram">
+              <div>
+                <p class="etykieta-sekcji">WYNIK</p>
+                <h2 id="tytul-harmonogramu">Dzisiejszy harmonogram</h2>
+              </div>
+              <div class="podsumowanie" aria-label="Podsumowanie harmonogramu">
+                <div>
+                  <span id="liczba-budow">0</span>
+                  <small>budów</small>
+                </div>
+                <div>
+                  <span id="liczba-kursow">0</span>
+                  <small>kursów</small>
+                </div>
+                <div>
+                  <span id="liczba-konfliktow">0</span>
+                  <small>konfliktów</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="tabela-przewijana">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Start planowany</th>
+                    <th>Firma</th>
+                    <th>Budowa</th>
+                    <th>Beton</th>
+                    <th>Pompa</th>
+                    <th>Gruszki</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="wiersze-harmonogramu">
+                  <tr class="pusty-wiersz">
+                    <td colspan="7">
+                      <span class="pusty-wiersz__ikona" aria-hidden="true">▦</span>
+                      <strong>Brak danych do wyświetlenia</strong>
+                      <span>Import CSV zostanie dodany w etapie 2.</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="stopka">
+        <span>Harmonogram Betonowań v4</span>
+        <span>Etap 1 · szkielet aplikacji offline</span>
+      </footer>
+    </div>
+
+    <script defer src="js/konfiguracja/konfiguracja.js"></script>
+    <script defer src="js/import/import_csv.js"></script>
+    <script defer src="js/budowy/budowy.js"></script>
+    <script defer src="js/pompy/pompy.js"></script>
+    <script defer src="js/gruszki/gruszki.js"></script>
+    <script defer src="js/lokalizacje/lokalizacje.js"></script>
+    <script defer src="js/harmonogram/harmonogram.js"></script>
+    <script defer src="js/interfejs/interfejs.js"></script>
+    <script defer src="js/aplikacja.js"></script>
+  </body>
+</html>
