@@ -208,11 +208,31 @@
 
   function pokazUdanyImport(stanImportu, listaBudow) {
     const liczbaZPliku = stanImportu.budowy.length;
-    elementy.informacjaOImporcie.dataset.rodzaj = "sukces";
-    elementy.nazwaPlikuCsv.textContent = stanImportu.nazwaPliku;
-    elementy.szczegolyPlikuCsv.textContent =
+    const ostrzezenia = Array.isArray(stanImportu.ostrzezenia)
+      ? stanImportu.ostrzezenia
+      : [];
+    const czySaOstrzezenia = ostrzezenia.length > 0;
+    const podsumowanieImportu =
       "Wczytano " + liczbaZPliku + (liczbaZPliku === 1 ? " budowę." : " budów.");
+
+    elementy.informacjaOImporcie.dataset.rodzaj = czySaOstrzezenia
+      ? "ostrzezenie"
+      : "sukces";
+    elementy.nazwaPlikuCsv.textContent = stanImportu.nazwaPliku;
+    elementy.szczegolyPlikuCsv.textContent = czySaOstrzezenia
+      ? podsumowanieImportu + " " + ostrzezenia.join(" ")
+      : podsumowanieImportu;
     pokazListeBudow(listaBudow);
+
+    if (czySaOstrzezenia) {
+      ustawStatus(
+        "ostrzezenie",
+        "CSV wczytany z ostrzeżeniem",
+        ostrzezenia.join(" ")
+      );
+      return;
+    }
+
     ustawStatus(
       "sukces",
       "CSV wczytany",
