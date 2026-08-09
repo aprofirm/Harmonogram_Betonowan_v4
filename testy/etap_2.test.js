@@ -67,6 +67,31 @@ function sprawdzAliasyINiektoreFormaty(aplikacja) {
   assert.equal(stanImportu.budowy[0].budowa, "Plac, sektor B");
 }
 
+function sprawdzTestowyUkladKdx(aplikacja) {
+  const sciezkaPrzykladuKdx = path.join(
+    katalogProjektu,
+    "przyklady/przykladowy_eksport_kdx.csv"
+  );
+  const csv = fs.readFileSync(sciezkaPrzykladuKdx, "utf8");
+  const stanImportu = aplikacja.importCsv.przetworzCsv(
+    csv,
+    "przykladowy_eksport_kdx.csv"
+  );
+
+  assert.equal(stanImportu.budowy.length, 2);
+  assert.equal(stanImportu.budowy[0].idBudowy, "CSV-001");
+  assert.equal(stanImportu.budowy[0].firma, "Przykładowa Firma A");
+  assert.equal(stanImportu.budowy[0].budowa, "Osiedle Zielone");
+  assert.equal(stanImportu.budowy[0].startPlanowany, "08:00");
+  assert.equal(stanImportu.budowy[0].startRoboczy, "08:00");
+  assert.equal(stanImportu.budowy[0].dataPlanowana, "7.08.2026");
+  assert.equal(stanImportu.budowy[0].iloscBetonuM3, "8");
+  assert.equal(stanImportu.budowy[0].rodzajRozladunku, "Pompa");
+  assert.equal(stanImportu.budowy[0].daneZrodlowe.Nazwa, "Przykładowa Firma A");
+  assert.equal(stanImportu.ostrzezenia.length, 1);
+  assert.match(stanImportu.ostrzezenia[0], /liczba: 2/i);
+}
+
 function sprawdzAutomatyczneId(aplikacja) {
   const csvBezKolumnyId = [
     "Firma;Budowa;StartPlanowany",
@@ -219,6 +244,7 @@ async function uruchomTesty() {
 
   sprawdzPoprawnyImport(aplikacja);
   sprawdzAliasyINiektoreFormaty(aplikacja);
+  sprawdzTestowyUkladKdx(aplikacja);
   sprawdzAutomatyczneId(aplikacja);
   sprawdzBlednePliki(aplikacja);
   sprawdzBudowyReczne(aplikacja);

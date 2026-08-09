@@ -32,6 +32,17 @@ Importer wymaga informacji odpowiadających kolumnom:
 
 Rozpoznawane są również typowe warianty nazw, np. `ID obiektu`, `Klient`, `Nazwa budowy` i `Godzina`. Przykładowy plik znajduje się w [przyklady/przykladowe_budowy.csv](przyklady/przykladowe_budowy.csv).
 
+Importer obsługuje również testowy układ eksportu KDX:
+
+- `Nazwa` → Firma,
+- `Tytuł` → Budowa,
+- `Czas rozładunku` → StartPlanowany,
+- `Zamówiono (m3)` → ilość betonu,
+- `Data` → data planowana,
+- `Rodzaj rozładunku` → osobna informacja o sposobie rozładunku.
+
+Anonimowy plik o takim układzie znajduje się w [przyklady/przykladowy_eksport_kdx.csv](przyklady/przykladowy_eksport_kdx.csv). Mapowanie jest celowo wydzielone w importerze, aby po sprawdzeniu niezmienionego eksportu z KDX można je było łatwo skorygować bez przebudowy modelu Budowy.
+
 Program obsługuje wybór pliku i przeciąganie CSV. Kolejny poprawny import zastępuje dane z poprzedniego pliku, natomiast budowy dodane ręcznie pozostają osobną listą.
 
 ## Testy etapów 1 i 2
