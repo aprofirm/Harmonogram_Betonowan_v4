@@ -66,3 +66,64 @@ Kierownik powinien móc otworzyć program lub przygotowany harmonogram na swoim 
 - na którym etapie wdrożyć publikowanie i udostępnianie planu.
 
 Wspólny silnik obliczeniowy dla wersji lokalnej i internetowej jest już zatwierdzoną decyzją w `PROJECT_DECISIONS.md`.
+
+---
+
+## P-003 — Docelowy sposób liczenia czasu załadunku
+
+**Data:** przeniesiono z wcześniejszych ustaleń  
+**Status:** DO DOPRECYZOWANIA  
+**Powiązanie:** Etap 3 — Podstawowy silnik gruszek
+
+Obecna wartość domyślna to 10 minut. Trzeba ustalić, czy czas załadunku będzie zawsze stały, czy zależny od ilości ładowanego betonu.
+
+---
+
+## P-004 — Finalny zestaw kolumn harmonogramu
+
+**Data:** przeniesiono z wcześniejszych ustaleń  
+**Status:** DO DOPRECYZOWANIA  
+**Powiązanie:** Etap 7 — Docelowy interfejs operatora
+
+Trzeba ostatecznie ustalić zestaw informacji widocznych na głównym ekranie operatora. Kolumny mają wspierać codzienną pracę i nie przeciążać widoku diagnostyką techniczną.
+
+---
+
+## P-005 — Finalny wygląd interfejsu
+
+**Data:** przeniesiono z wcześniejszych ustaleń  
+**Status:** POMYSŁ  
+**Powiązanie:** Etap 7 — Docelowy interfejs operatora
+
+Wygląd będzie dopracowywany iteracyjnie. Priorytetem pozostają poprawny silnik i czytelny przepływ pracy, a dopiero później końcowe szczegóły wizualne.
+
+---
+
+## P-006 — Priorytety przy kolizji budów
+
+**Data:** przeniesiono z wcześniejszych ustaleń  
+**Status:** DO DOPRECYZOWANIA  
+**Powiązanie:** Etap 5 — Konflikty i korekty
+
+Trzeba ustalić regułę wyboru budowy przesuwanej w czasie, gdy kilka rozwiązań konfliktu zasobów jest możliwych.
+
+---
+
+## P-007 — Jednoczesny niedobór pomp i gruszek
+
+**Data:** przeniesiono z wcześniejszych ustaleń  
+**Status:** DO WERYFIKACJI  
+**Powiązanie:** Etap 5 — Konflikty i korekty
+
+Silnik ma przeliczać realny plan przy ograniczonej liczbie obu zasobów. Dokładna funkcja celu i kolejność optymalizacji wymagają implementacji oraz prób na rzeczywistych scenariuszach.
+
+---
+
+## P-008 — Wybór usługi geokodowania i routingu
+
+**Data:** przeniesiono z wcześniejszych ustaleń  
+**Status:** DO DOPRECYZOWANIA  
+**Powiązanie:** Etap 6 — Adresy, lokalizacje i trasy
+
+OpenStreetMap pozostaje preferowanym źródłem danych mapowych, ale konkretny dostawca usług online nie jest jeszcze trwale wybrany. Warstwa usług ma być wymienna bez przebudowy silnika harmonogramu.
+
