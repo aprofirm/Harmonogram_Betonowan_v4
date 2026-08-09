@@ -237,7 +237,22 @@ Jeśli coś można bezpiecznie wykryć, obliczyć albo podpowiedzieć automatycz
 
 Nie oznacza to jednak wykonywania nieodwracalnych lub ryzykownych czynności bez wiedzy użytkownika.
 
-## 20. Zasada końcowa
+## 20. Dokumentacja i pamięć projektu
+
+Zmiana kodu jest kompletna dopiero wtedy, gdy dokumentacja odpowiada jego rzeczywistemu zachowaniu.
+
+Jeżeli podczas pracy:
+
+- zatwierdzono nową decyzję biznesową lub architektoniczną,
+- pojawił się nowy pomysł albo pytanie wymagające późniejszej decyzji,
+- zmienił się status etapu,
+- ustalono nową stałą zasadę tworzenia kodu,
+
+należy zaktualizować odpowiednio `PROJECT_DECISIONS.md`, `POMYSLY_I_BACKLOG.md`, `ETAPY_ROZWOJU.md` albo ten plik.
+
+Dokumentację zapisujemy razem z powiązaną zmianą, bez dublowania wpisów i bez przedstawiania propozycji jako zatwierdzonej decyzji. Przed końcowym podsumowaniem każdej rozmowy projektowej należy wykonać krótką kontrolę aktualności dokumentów zgodnie z `AGENTS.md`.
+
+## 21. Zasada końcowa
 
 Kod ma być przede wszystkim:
 
