@@ -208,11 +208,12 @@ Zasady:
 
 - `ID_Budowy` traktujemy jako tekst,
 - nie tworzymy własnego ID, jeżeli źródło ma już prawidłowe ID,
-- awaryjne ID może być utworzone dopiero wtedy, gdy rzeczywiście brak identyfikatora źródłowego.
+- brak kolumny ID albo puste ID w pojedynczym wierszu nie odrzuca całego pliku,
+- dla budów z CSV bez źródłowego ID program nadaje identyfikatory `CSV-001`, `CSV-002` itd.,
+- dla budów dodawanych ręcznie program używa osobnej serii `RECZNE-001`, `RECZNE-002` itd.,
+- automatycznie nadane ID nie może kolidować z identyfikatorem już obecnym w pliku.
 
-Przykład awaryjnego ID:
-
-`RECZNE-001`
+Jeżeli program nadaje ID automatycznie, import kończy się powodzeniem z czytelnym ostrzeżeniem dla operatora.
 
 ---
 
