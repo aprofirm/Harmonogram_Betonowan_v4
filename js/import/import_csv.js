@@ -16,7 +16,18 @@
       "godzina"
     ],
     rodzajBetonu: ["beton", "rodzajbetonu", "receptura", "produkt"],
-    iloscBetonuM3: ["iloscbetonu", "iloscm3", "kubatura", "m3"]
+    iloscBetonuM3: ["iloscbetonu", "iloscm3", "kubatura", "m3"],
+    dataPlanowana: ["dataplanowana", "databetonowania"],
+    rodzajRozladunku: ["rodzajrozladunku", "sposobrozladunku", "rozladunek"]
+  });
+
+  const kolumnyTestowegoUkladuKdx = Object.freeze({
+    firma: "nazwa",
+    budowa: "tytul",
+    startPlanowany: "czasrozladunku",
+    iloscBetonuM3: "zamowionom3",
+    dataPlanowana: "data",
+    rodzajRozladunku: "rodzajrozladunku"
   });
 
   const wymaganeKolumny = Object.freeze([
@@ -39,6 +50,7 @@
     return String(nazwaKolumny || "")
       .trim()
       .toLowerCase()
+      .replace(/ł/g, "l")
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/[^a-z0-9]/g, "");
@@ -149,12 +161,41 @@
     return -1;
   }
 
+  function czyTestowyUkladKdx(naglowkiZnormalizowane) {
+    return ["nazwa", "tytul", "czasrozladunku"].every(function (nazwaKolumny) {
+      return naglowkiZnormalizowane.includes(nazwaKolumny);
+    });
+  }
+
+  function znajdzIndeksKolumnyKdx(naglowkiZnormalizowane, nazwaPola) {
+    const nazwaKolumnyKdx = kolumnyTestowegoUkladuKdx[nazwaPola];
+
+    if (!nazwaKolumnyKdx || !czyTestowyUkladKdx(naglowkiZnormalizowane)) {
+      return -1;
+    }
+
+    return naglowkiZnormalizowane.indexOf(nazwaKolumnyKdx);
+  }
+
+  function znajdzIndeksPola(naglowkiZnormalizowane, nazwaPola) {
+    const indeksStandardowy = znajdzIndeksKolumny(
+      naglowkiZnormalizowane,
+      nazwaPola
+    );
+
+    if (indeksStandardowy !== -1) {
+      return indeksStandardowy;
+    }
+
+    return znajdzIndeksKolumnyKdx(naglowkiZnormalizowane, nazwaPola);
+  }
+
   function znajdzKolumny(naglowki) {
     const naglowkiZnormalizowane = naglowki.map(normalizujNazweKolumny);
     const indeksyKolumn = {};
 
     wymaganeKolumny.forEach(function (opisKolumny) {
-      const indeksKolumny = znajdzIndeksKolumny(
+      const indeksKolumny = znajdzIndeksPola(
         naglowkiZnormalizowane,
         opisKolumny.pole
       );
@@ -173,13 +214,21 @@
       naglowkiZnormalizowane,
       "idBudowy"
     );
-    indeksyKolumn.rodzajBetonu = znajdzIndeksKolumny(
+    indeksyKolumn.rodzajBetonu = znajdzIndeksPola(
       naglowkiZnormalizowane,
       "rodzajBetonu"
     );
-    indeksyKolumn.iloscBetonuM3 = znajdzIndeksKolumny(
+    indeksyKolumn.iloscBetonuM3 = znajdzIndeksPola(
       naglowkiZnormalizowane,
       "iloscBetonuM3"
+    );
+    indeksyKolumn.dataPlanowana = znajdzIndeksPola(
+      naglowkiZnormalizowane,
+      "dataPlanowana"
+    );
+    indeksyKolumn.rodzajRozladunku = znajdzIndeksPola(
+      naglowkiZnormalizowane,
+      "rodzajRozladunku"
     );
 
     return indeksyKolumn;
@@ -328,6 +377,14 @@
           iloscBetonuM3: pobierzWartoscOpcjonalna(
             wiersz,
             indeksyKolumn.iloscBetonuM3
+          ),
+          dataPlanowana: pobierzWartoscOpcjonalna(
+            wiersz,
+            indeksyKolumn.dataPlanowana
+          ),
+          rodzajRozladunku: pobierzWartoscOpcjonalna(
+            wiersz,
+            indeksyKolumn.rodzajRozladunku
           ),
           daneZrodlowe: daneZrodlowe
         },
