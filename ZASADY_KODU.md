@@ -1,3 +1,6 @@
+Najpierw przejrzyj aktualny stan repozytorium, wszystkie pliki z zasadami i ustaleniami oraz aktualny etap prac. Następnie kontynuuj pracę zgodnie z dokumentacją projektu.
+
+
 # ZASADY KODU
 
 Ten plik zawiera stałe zasady tworzenia i modyfikowania kodu w repozytorium. Przed rozpoczęciem pracy nad kodem należy go przeczytać i stosować się do poniższych zasad.
