@@ -1029,58 +1029,43 @@ Najpierw tworzymy prostą i stabilną wersję, a dopiero później dokładamy do
 
 ## 63. Dokumentacja jako część projektu
 
-`PROJECT_DECISIONS.md` i `ZASADY_KODU.md` są częścią projektu, a nie dokumentami pomocniczymi przeznaczonymi do jednorazowego użycia.
+Dokumentacja prowadząca projekt jest częścią produktu, a nie materiałem pomocniczym przeznaczonym do jednorazowego użycia.
 
-Przed większą zmianą należy sprawdzić:
+Obowiązują następujące pliki:
 
-1. `ZASADY_KODU.md`,
-2. `PROJECT_DECISIONS.md`,
-3. aktualny kod repozytorium,
-4. zależności zmienianego mechanizmu.
+- `AGENTS.md` — sposób pracy z repozytorium,
+- `README.md` — skrót projektu i mapa dokumentacji,
+- `ZASADY_KODU.md` — stałe zasady tworzenia i zmieniania kodu,
+- `PROJECT_DECISIONS.md` — zatwierdzone decyzje,
+- `POMYSLY_I_BACKLOG.md` — pomysły i tematy otwarte,
+- `ETAPY_ROZWOJU.md` — kolejność prac i aktualny postęp.
 
-Dopiero potem należy wprowadzać zmiany.
+Przed zmianą należy przeczytać `AGENTS.md`, wszystkie powyższe dokumenty, aktualny kod, testy, przykłady i zależności zmienianego mechanizmu. Dopiero potem należy wprowadzać zmiany.
 
 ---
 
-# Otwarte tematy
+## 64. Trwała pamięć projektu po rozmowie
 
-Poniższe kwestie były omawiane, ale nie zostały jeszcze zamknięte ostateczną decyzją.
+Repozytorium jest trwałym źródłem pamięci projektu. Po każdej rozmowie projektowej należy sprawdzić, czy pojawiły się nowe informacje wymagające zapisu.
 
-Nie należy ich traktować jako obowiązujących wymagań, dopóki nie zostaną uzgodnione.
+Obowiązują zasady:
 
-## O1. Dokładny format CSV z KDX
+- zatwierdzone decyzje trafiają do `PROJECT_DECISIONS.md`,
+- pomysły, warianty i pytania do doprecyzowania trafiają do `POMYSLY_I_BACKLOG.md`,
+- zmiana postępu lub następnego kroku trafia do `ETAPY_ROZWOJU.md`,
+- nowa stała reguła pracy z kodem trafia do `ZASADY_KODU.md`,
+- dokumentację aktualizujemy razem z powiązaną zmianą kodu albo najpóźniej przed końcowym podsumowaniem zadania,
+- nie tworzymy pustego wpisu, jeżeli rozmowa nie wniosła nowego ustalenia,
+- nie przedstawiamy luźnego pomysłu jako zatwierdzonej decyzji,
+- nie powielamy wpisów już istniejących w dokumentacji.
 
-Trzeba sprawdzić rzeczywisty plik używany w pracy i ustalić dokładne mapowanie kolumn.
+Szczegółową procedurę pracy opisuje `AGENTS.md`.
 
-## O2. Czas załadunku
+---
 
-Obecna wartość domyślna to 10 minut.
+# Powiązane tematy otwarte
 
-Do ustalenia pozostaje, czy czas będzie zawsze stały, czy będzie zależał od ilości ładowanego betonu.
-
-## O3. Finalny zestaw kolumn harmonogramu
-
-Nie został jeszcze ostatecznie zamknięty zestaw wszystkich informacji widocznych na głównym ekranie operatora.
-
-## O4. Finalny wygląd interfejsu
-
-Najpierw priorytetem jest poprawny silnik i czytelny przepływ pracy.
-
-Wygląd będzie dopracowywany iteracyjnie.
-
-## O5. Priorytety kolidujących budów
-
-Do ustalenia pozostaje dokładna reguła wyboru, którą budowę przesuwać w sytuacji konfliktu zasobów, jeżeli kilka rozwiązań jest możliwych.
-
-## O6. Jednoczesny niedobór pomp i gruszek
-
-Silnik ma umieć przeliczyć rzeczywistość przy ograniczonych zasobach, ale dokładna funkcja celu i kolejność optymalizacji będą dopracowane podczas implementacji oraz testów na realnych danych.
-
-## O7. Dokładna usługa geokodowania i routingu
-
-OpenStreetMap jest preferowanym źródłem danych mapowych, ale konkretny dostawca usług online nie jest jeszcze trwale wybrany.
-
-Moduł ma być przygotowany tak, aby można było zmienić usługę bez przebudowy silnika harmonogramu.
+Pomysły, warianty i pytania, które nie są jeszcze obowiązującymi decyzjami, są prowadzone w `POMYSLY_I_BACKLOG.md`. Dzięki temu ten dokument pozostaje jednoznacznym źródłem zatwierdzonych ustaleń.
 
 ---
 

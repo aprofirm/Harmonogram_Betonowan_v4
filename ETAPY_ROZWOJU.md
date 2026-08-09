@@ -6,8 +6,10 @@ Jego celem jest rozwijanie programu małymi, bezpiecznymi etapami, tak aby po ka
 
 Dokument należy czytać razem z:
 
+- `AGENTS.md` — jak rozpoczynamy i kończymy pracę z repozytorium,
 - `ZASADY_KODU.md` — jak piszemy kod,
-- `PROJECT_DECISIONS.md` — co program ma robić i jakie decyzje są obowiązujące.
+- `PROJECT_DECISIONS.md` — co program ma robić i jakie decyzje są obowiązujące,
+- `POMYSLY_I_BACKLOG.md` — jakie pomysły i pytania wymagają jeszcze rozstrzygnięcia.
 
 ---
 
@@ -446,6 +448,12 @@ Jeżeli szybkie rozwiązanie wymaga wymieszania importu, interfejsu, pomp i grus
 ## 7. Działająca wersja po każdym etapie
 
 Repozytorium powinno po każdym zakończonym etapie zawierać możliwą do uruchomienia wersję programu.
+
+## 8. Aktualizacja pamięci projektu
+
+Na końcu każdej rozmowy projektowej sprawdzamy, czy zmieniły się decyzje, backlog, status etapu albo następny krok. Aktualizujemy odpowiedni dokument przed końcowym podsumowaniem zadania.
+
+Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomysł pozostaje w `POMYSLY_I_BACKLOG.md`, dopóki nie zostanie wyraźnie zatwierdzony i przeniesiony do `PROJECT_DECISIONS.md`.
 
 ---
 
