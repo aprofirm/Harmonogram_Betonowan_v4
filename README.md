@@ -24,10 +24,11 @@ Podstawowy interfejs działa lokalnie, bez instalacji, logowania, serwera i poł
 
 Importer wymaga informacji odpowiadających kolumnom:
 
-- `ID_Budowy`,
 - `Firma`,
 - `Budowa`,
 - `StartPlanowany`.
+
+`ID_Budowy` jest opcjonalne. Jeżeli znajduje się w pliku, program zachowuje je dokładnie, również z zerami na początku. Gdy kolumny ID nie ma albo pojedynczy wiersz ma puste ID, program nadaje bezpieczne identyfikatory `CSV-001`, `CSV-002` itd. i pokazuje ostrzeżenie zamiast odrzucać plik.
 
 Rozpoznawane są również typowe warianty nazw, np. `ID obiektu`, `Klient`, `Nazwa budowy` i `Godzina`. Przykładowy plik znajduje się w [przyklady/przykladowe_budowy.csv](przyklady/przykladowe_budowy.csv).
 
