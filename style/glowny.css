@@ -71,7 +71,7 @@ button {
 
 .logo-aplikacji {
   display: block;
-  width: clamp(88px, 8vw, 104px);
+  width: clamp(164px, 16vw, 210px);
   height: auto;
   margin-bottom: 13px;
 }

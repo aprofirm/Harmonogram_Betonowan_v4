@@ -123,7 +123,7 @@ function uruchomSkryptyAplikacji() {
 }
 
 function sprawdzPlikiEtapu() {
-  ["index.html", "style/glowny.css", "logo.svg", "favicon.png"]
+  ["index.html", "style/glowny.css", "logo.png", "favicon.png"]
     .concat(plikiJavaScript)
     .forEach(function (sciezkaPliku) {
       assert.equal(fs.existsSync(path.join(katalogProjektu, sciezkaPliku)), true, sciezkaPliku);
@@ -132,15 +132,18 @@ function sprawdzPlikiEtapu() {
 
 function sprawdzTrybOffline() {
   const dokumentHtml = wczytajPlik("index.html");
-  const logoSvg = wczytajPlik("logo.svg");
+  const logoPng = fs.readFileSync(path.join(katalogProjektu, "logo.png"));
   const faviconPng = fs.readFileSync(path.join(katalogProjektu, "favicon.png"));
 
   assert.equal(/(?:src|href)=["']https?:\/\//i.test(dokumentHtml), false);
   assert.equal(/<script[^>]+type=["']module["']/i.test(dokumentHtml), false);
-  assert.equal(dokumentHtml.includes('src="logo.svg"'), true);
-  assert.equal(dokumentHtml.includes('href="logo.svg"'), true);
+  assert.equal(dokumentHtml.includes('src="logo.png"'), true);
   assert.equal(dokumentHtml.includes('href="favicon.png"'), true);
-  assert.equal(logoSvg.includes('viewBox="0 0 128 128"'), true);
+  assert.deepEqual(
+    Array.from(logoPng.subarray(0, 8)),
+    [137, 80, 78, 71, 13, 10, 26, 10]
+  );
+  assert.equal(logoPng.includes(Buffer.from("IEND")), true);
   assert.deepEqual(
     Array.from(faviconPng.subarray(0, 8)),
     [137, 80, 78, 71, 13, 10, 26, 10]

@@ -66,9 +66,9 @@ Program obsługuje wybór pliku i przeciąganie CSV. Kolejny poprawny import zas
 
 ## Logo aplikacji
 
-Plik `logo.svg` jest oficjalnym źródłem znaku aplikacji. Logo jest wyświetlane u góry strony, na środku nad nazwą programu, i działa również po lokalnym otwarciu `index.html`.
+Plik `logo.png` jest oficjalnym źródłem znaku aplikacji: pomarańczowo-granatowej betonomieszarki na tle zegara. Logo jest wyświetlane u góry strony, na środku nad nazwą programu, i działa również po lokalnym otwarciu `index.html`.
 
-Ten sam znak jest używany jako favicon na karcie przeglądarki. `logo.svg` zapewnia ostry obraz w nowoczesnych przeglądarkach, a `favicon.png` jest lokalnym odpowiednikiem zapasowym dla starszych przeglądarek.
+Ten sam znak jest używany jako favicon na karcie przeglądarki. Plik `favicon.png` jest kwadratowym wariantem przygotowanym z `logo.png` bez rozciągania grafiki. Oba pliki są przechowywane lokalnie i nie wymagają internetu.
 
 ## Testy etapów 1 i 2
 

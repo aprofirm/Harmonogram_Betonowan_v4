@@ -1067,7 +1067,7 @@ Szczegółową procedurę pracy opisuje `AGENTS.md`.
 
 Oficjalny znak Harmonogramu Betonowań jest wyświetlany u góry strony, na środku nad nazwą aplikacji.
 
-Ten sam znak jest używany jako favicon na karcie przeglądarki. Podstawowym źródłem grafiki jest lokalny plik `logo.svg`, a `favicon.png` stanowi jego lokalny odpowiednik zapasowy.
+Zatwierdzony znak przedstawia pomarańczowo-granatową betonomieszarkę na tle zegara, bez dodatkowych napisów. Ten sam motyw jest używany jako favicon na karcie przeglądarki. Podstawowym źródłem grafiki jest lokalny plik `logo.png`, a `favicon.png` stanowi jego kwadratowy wariant przygotowany bez rozciągania obrazu.
 
 Logo i favicon:
 

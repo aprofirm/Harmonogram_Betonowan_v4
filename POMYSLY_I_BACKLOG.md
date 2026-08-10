@@ -99,7 +99,7 @@ Wygląd będzie dopracowywany iteracyjnie. Priorytetem pozostają poprawny silni
 
 ### Element już zatwierdzony
 
-Logo aplikacji znajduje się u góry, na środku nad nazwą programu, a ten sam znak jest używany jako favicon. Pozostałe elementy finalnego wyglądu nadal będą dopracowywane iteracyjnie.
+Logo aplikacji znajduje się u góry, na środku nad nazwą programu. Zatwierdzony znak przedstawia betonomieszarkę na tle zegara, a ten sam motyw jest używany jako favicon. Pozostałe elementy finalnego wyglądu nadal będą dopracowywane iteracyjnie.
 
 ---
 
