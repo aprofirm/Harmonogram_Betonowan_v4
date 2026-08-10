@@ -50,6 +50,15 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 Wdrożenie diagnostyki nie zmienia statusu Etapu 2 ani nie rozpoczyna logiki Etapu 3.
 
+## Stan testów na zakończenie pracy 2026-08-10
+
+- [x] automatyczny test Etapu 1 przechodzi,
+- [x] automatyczny test Etapu 2 przechodzi,
+- [x] automatyczny test diagnostyki przechodzi,
+- [ ] osobny test zmiennych kolumn KDX wymaga weryfikacji na prawdziwym eksporcie; obecnie zatrzymuje się na sztucznym wierszu technicznym z większą liczbą pól niż nagłówek.
+
+Jest to jawnie zapisany wyjątek testowy. Importer nie został zmieniony podczas wdrażania logo ani diagnostyki.
+
 Statusy w tej sekcji powinny być aktualizowane w miarę postępu prac.
 
 ---
@@ -467,4 +476,4 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać test ręczny Etapu 2 na komputerze operatora, najlepiej również na prawdziwym eksporcie CSV z KDX. Po jego potwierdzeniu rozpocząć **Etap 3 — Podstawowy silnik gruszek**.
+Wczytać na komputerze operatora prawdziwy, niezmieniony eksport CSV z KDX. Na jego podstawie zweryfikować problematyczny wiersz techniczny w osobnym teście zmiennych kolumn i doprowadzić ten test do poprawnego wyniku bez osłabiania walidacji importera. Następnie wykonać pełny test ręczny Etapu 2 i po jego potwierdzeniu rozpocząć **Etap 3 — Podstawowy silnik gruszek**.

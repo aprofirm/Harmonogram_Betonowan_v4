@@ -45,6 +45,15 @@ Eksport KDX może mieć różną kolejność i zestaw kolumn zależnie od ustawi
 
 Sprawdzić niezmieniony eksport CSV z KDX używany w pracy i potwierdzić nazwy pól potrzebnych do harmonogramu. Obecne aliasy testowe są rozwiązaniem wstępnym.
 
+### Stan testów na zakończenie pracy 2026-08-10
+
+- automatyczne testy Etapu 1 i Etapu 2 przechodzą,
+- test diagnostyki przechodzi,
+- osobny test `kdx_zmienne_kolumny.test.js` zatrzymuje się na sztucznym technicznym wierszu, który ma więcej pól niż nagłówek,
+- logika importu KDX nie była przy tym zmieniana.
+
+Przed rozpoczęciem Etapu 3 trzeba porównać problematyczny wiersz testowy z prawdziwym eksportem KDX i na tej podstawie poprawić dane testowe albo obsługę takiego wariantu pliku. Nie należy osłabiać walidacji CSV bez potwierdzenia rzeczywistego formatu KDX.
+
 ---
 
 ## P-002 — Udostępnianie harmonogramu kierownikowi przez adres WWW
