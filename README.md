@@ -47,18 +47,26 @@ Importer wymaga informacji odpowiadających kolumnom:
 
 Rozpoznawane są również typowe warianty nazw, np. `ID obiektu`, `Klient`, `Nazwa budowy` i `Godzina`. Przykładowy plik znajduje się w [przyklady/przykladowe_budowy.csv](przyklady/przykladowe_budowy.csv).
 
-Importer obsługuje również testowy układ eksportu KDX:
+### Zmienne kolumny eksportu KDX
 
-- `Nazwa` → Firma,
-- `Tytuł` → Budowa,
+Eksport KDX nie ma jednego stałego układu kolumn. Użytkownik może zmieniać zarówno zestaw, jak i kolejność kolumn. Importer **nie może więc opierać się na numerach kolumn** — wyszukuje potrzebne dane po nazwach nagłówków.
+
+Aktualnie rozpoznawane są m.in. rzeczywiste nagłówki KDX:
+
+- `K.-Nazwa` lub `Nazwa` → Firma,
+- `Budowa` lub `Tytuł` → Budowa,
 - `Czas rozładunku` → StartPlanowany,
-- `Zamówiono (m3)` → ilość betonu,
-- `Data` → data planowana,
-- `Rodzaj rozładunku` → osobna informacja o sposobie rozładunku.
+- `Zam-o (mój zakład)` → ilość betonu,
+- `Nazwa materiału` → rodzaj betonu,
+- `Rodzaj rozładunku` → sposób rozładunku.
 
-Anonimowy plik o takim układzie znajduje się w [przyklady/przykladowy_eksport_kdx.csv](przyklady/przykladowy_eksport_kdx.csv). Mapowanie jest celowo wydzielone w importerze, aby po sprawdzeniu niezmienionego eksportu z KDX można je było łatwo skorygować bez przebudowy modelu Budowy.
+Dodatkowe, puste kolumny oraz zmiana kolejności kolumn nie powinny wpływać na import. Techniczny wiersz KDX bez danych budowy, np. `Normal`, jest pomijany. Nowe warianty nazw nagłówków należy dopisywać jako aliasy w module importu zamiast tworzyć osobne importery dla każdego układu.
 
 Program obsługuje wybór pliku i przeciąganie CSV. Kolejny poprawny import zastępuje dane z poprzedniego pliku, natomiast budowy dodane ręcznie pozostają osobną listą.
+
+## Logo aplikacji
+
+Plik `favicon.png` jest oficjalną ikoną aplikacji i jest używany jako favicon na karcie przeglądarki zarówno w wersji lokalnej, jak i publikowanej przez GitHub Pages.
 
 ## Testy etapów 1 i 2
 
@@ -71,9 +79,10 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
 
     node testy/etap_1.test.js
     node testy/etap_2.test.js
+    node testy/kdx_zmienne_kolumny.test.js
 
 Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
 ## Aktualny stan
 
-**Etap 2 — Import CSV i model Budowy** jest zaimplementowany i przeszedł testy automatyczne. Przed rozpoczęciem etapu 3 należy sprawdzić import na komputerze operatora, najlepiej również na prawdziwym eksporcie KDX.
+**Etap 2 — Import CSV i model Budowy** jest zaimplementowany. Importer został dodatkowo dostosowany do rzeczywistych, zmiennych układów eksportu KDX. Przed rozpoczęciem etapu 3 należy wykonać test na komputerze operatora z aktualnym eksportem KDX.
