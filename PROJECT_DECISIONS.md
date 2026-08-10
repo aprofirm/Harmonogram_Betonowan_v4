@@ -1078,6 +1078,24 @@ Logo i favicon:
 
 ---
 
+## 66. Lokalne logi i raport diagnostyczny
+
+Aplikacja automatycznie prowadzi diagnostykę działającą również po lokalnym otwarciu `index.html` i bez internetu.
+
+Obowiązują zasady:
+
+- logi są przechowywane lokalnie w przeglądarce i nie są automatycznie wysyłane,
+- zachowywanych jest maksymalnie 10 ostatnich uruchomień,
+- gdy trwała pamięć przeglądarki jest niedostępna, diagnostyka działa w pamięci bieżącej strony i jawnie informuje o tym operatora,
+- rejestrowane są uruchomienie aplikacji, import CSV, przeliczanie, ostrzeżenia i błędy techniczne,
+- raport zawiera nazwę i rozmiar pliku, nagłówki kolumn, wynik operacji, czas trwania oraz bezpieczny opis miejsca błędu,
+- logi i raport nie zawierają treści wierszy CSV ani nazw firm i budów,
+- pobranie raportu `.json` następuje wyłącznie po działaniu użytkownika,
+- operator może wyczyścić zapisane logi,
+- mechanizm diagnostyki pozostaje osobnym modułem i nie zmienia logiki importu KDX ani silnika harmonogramu.
+
+---
+
 # Powiązane tematy otwarte
 
 Pomysły, warianty i pytania, które nie są jeszcze obowiązującymi decyzjami, są prowadzone w `POMYSLY_I_BACKLOG.md`. Dzięki temu ten dokument pozostaje jednoznacznym źródłem zatwierdzonych ustaleń.

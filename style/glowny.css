@@ -237,7 +237,9 @@ h3 {
 
 .przycisk-drugoplanowy:focus-visible,
 .pole-upuszczania:focus-visible,
-.budowa-reczna summary:focus-visible {
+.budowa-reczna summary:focus-visible,
+.diagnostyka summary:focus-visible,
+.przycisk-tekstowy:focus-visible {
   outline: 3px solid rgba(242, 139, 53, 0.4);
   outline-offset: 2px;
 }
@@ -447,6 +449,71 @@ h3 {
   color: var(--kolor-tekstu-pomocniczego);
   font-size: 0.78rem;
   line-height: 1.55;
+}
+
+.diagnostyka {
+  margin-top: 16px;
+  border: 1px solid var(--kolor-obramowania);
+  border-radius: 10px;
+  background: #fbfcfd;
+}
+
+.diagnostyka summary {
+  padding: 11px 13px;
+  color: var(--kolor-granatowy);
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.diagnostyka__tresc {
+  display: grid;
+  gap: 10px;
+  padding: 2px 13px 13px;
+}
+
+.diagnostyka__stan,
+.diagnostyka__prywatnosc {
+  margin: 0;
+  color: var(--kolor-tekstu-pomocniczego);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.diagnostyka__przyciski {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.przycisk-tekstowy {
+  min-height: 36px;
+  padding: 0 8px;
+  border: 0;
+  color: #6b7984;
+  background: transparent;
+  font-size: 0.76rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.przycisk-tekstowy:hover {
+  color: var(--kolor-czerwony);
+}
+
+.diagnostyka__podglad {
+  max-height: 145px;
+  margin: 0;
+  overflow: auto;
+  padding: 9px 10px;
+  border: 1px solid #e0e7eb;
+  border-radius: 8px;
+  color: #526875;
+  background: #ffffff;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.66rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
 }
 
 .obszar-roboczy {

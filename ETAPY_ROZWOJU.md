@@ -42,6 +42,14 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
+## Funkcje przekrojowe wdrożone przed Etapem 3
+
+- [x] Lokalne logi diagnostyczne z limitem 10 ostatnich uruchomień.
+- [x] Ręczne pobieranie raportu `.json` bez treści danych KDX/CSV.
+- [x] Obsługa awaryjnej pamięci bieżącej strony, gdy przeglądarka blokuje trwały zapis.
+
+Wdrożenie diagnostyki nie zmienia statusu Etapu 2 ani nie rozpoczyna logiki Etapu 3.
+
 Statusy w tej sekcji powinny być aktualizowane w miarę postępu prac.
 
 ---

@@ -8,6 +8,7 @@ const vm = require("node:vm");
 const katalogProjektu = path.resolve(__dirname, "..");
 const plikiJavaScript = [
   "js/konfiguracja/konfiguracja.js",
+  "js/diagnostyka/diagnostyka.js",
   "js/import/import_csv.js",
   "js/budowy/budowy.js",
   "js/pompy/pompy.js",
@@ -75,7 +76,11 @@ function utworzDokumentTestowy() {
     "formularz-budowy-recznej",
     "reczna-firma",
     "reczna-budowa",
-    "reczny-start"
+    "reczny-start",
+    "stan-diagnostyki",
+    "podglad-logow",
+    "przycisk-pobierz-raport",
+    "przycisk-wyczysc-logi"
   ];
   const elementy = {};
 
@@ -104,10 +109,14 @@ function uruchomSkryptyAplikacji() {
   const kontekst = {
     console: console,
     document: dokumentTestowy,
-    window: {}
+    window: {},
+    Date: Date,
+    Math: Math
   };
   kontekst.window.window = kontekst.window;
   kontekst.window.document = dokumentTestowy;
+  kontekst.window.Date = Date;
+  kontekst.window.Math = Math;
   vm.createContext(kontekst);
 
   plikiJavaScript.forEach(function (sciezkaPliku) {

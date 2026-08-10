@@ -135,6 +135,27 @@
           <p class="informacja-etapu">
             Etap 2 porządkuje dane budów. Obliczenia kursów, gruszek i pomp dojdą w kolejnych etapach.
           </p>
+
+          <details class="diagnostyka">
+            <summary>Diagnostyka programu</summary>
+            <div class="diagnostyka__tresc">
+              <p id="stan-diagnostyki" class="diagnostyka__stan">
+                Przygotowywanie pamięci diagnostycznej…
+              </p>
+              <div class="diagnostyka__przyciski">
+                <button id="przycisk-pobierz-raport" class="przycisk-drugoplanowy" type="button">
+                  Pobierz raport
+                </button>
+                <button id="przycisk-wyczysc-logi" class="przycisk-tekstowy" type="button">
+                  Wyczyść logi
+                </button>
+              </div>
+              <pre id="podglad-logow" class="diagnostyka__podglad" aria-live="polite">Brak zdarzeń.</pre>
+              <p class="diagnostyka__prywatnosc">
+                Raport nie zawiera treści CSV ani nazw firm i budów.
+              </p>
+            </div>
+          </details>
         </aside>
 
         <section class="obszar-roboczy" aria-labelledby="tytul-harmonogramu">
@@ -203,6 +224,7 @@
     </div>
 
     <script defer src="js/konfiguracja/konfiguracja.js"></script>
+    <script defer src="js/diagnostyka/diagnostyka.js"></script>
     <script defer src="js/import/import_csv.js"></script>
     <script defer src="js/budowy/budowy.js"></script>
     <script defer src="js/pompy/pompy.js"></script>

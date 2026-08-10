@@ -64,6 +64,18 @@ Dodatkowe, puste kolumny oraz zmiana kolejności kolumn nie powinny wpływać na
 
 Program obsługuje wybór pliku i przeciąganie CSV. Kolejny poprawny import zastępuje dane z poprzedniego pliku, natomiast budowy dodane ręcznie pozostają osobną listą.
 
+## Diagnostyka i raport błędów
+
+Aplikacja automatycznie zapisuje techniczne zdarzenia z maksymalnie 10 ostatnich uruchomień. Rejestrowane są m.in. uruchomienie programu, rozpoczęcie i wynik importu CSV, przeliczenie harmonogramu, ostrzeżenia oraz błędy z bezpiecznym wskazaniem miejsca w kodzie.
+
+Sekcja **Diagnostyka programu** pozwala:
+
+- podejrzeć ostatnie zdarzenia,
+- pobrać raport `.json`, który można przesłać do analizy,
+- wyczyścić zapisane logi.
+
+Logi są przechowywane wyłącznie lokalnie w pamięci przeglądarki i nie są nigdzie wysyłane. Raport nie zawiera treści wierszy CSV ani nazw firm i budów. Jeżeli przeglądarka blokuje trwałą pamięć dla lokalnego `index.html`, aplikacja przechowuje logi do czasu zamknięcia strony i pokazuje tę informację w sekcji diagnostyki.
+
 ## Logo aplikacji
 
 Plik `logo.png` jest oficjalnym źródłem znaku aplikacji: pomarańczowo-granatowej betonomieszarki na tle zegara. Logo jest wyświetlane u góry strony, na środku nad nazwą programu, i działa również po lokalnym otwarciu `index.html`.
@@ -75,13 +87,15 @@ Ten sam znak jest używany jako favicon na karcie przeglądarki. Plik `favicon.p
 Instrukcje testów ręcznych znajdują się w plikach:
 
 - [testy/TESTY_ETAP_1.md](testy/TESTY_ETAP_1.md),
-- [testy/TESTY_ETAP_2.md](testy/TESTY_ETAP_2.md).
+- [testy/TESTY_ETAP_2.md](testy/TESTY_ETAP_2.md),
+- [testy/TESTY_DIAGNOSTYKA.md](testy/TESTY_DIAGNOSTYKA.md).
 
 Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczny:
 
     node testy/etap_1.test.js
     node testy/etap_2.test.js
     node testy/kdx_zmienne_kolumny.test.js
+    node testy/diagnostyka.test.js
 
 Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
