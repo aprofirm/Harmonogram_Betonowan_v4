@@ -4,30 +4,37 @@
   const aplikacja = zakresGlobalny.HarmonogramBetonowan =
     zakresGlobalny.HarmonogramBetonowan || {};
 
+  // KDX pozwala użytkownikowi zmieniać zestaw i kolejność kolumn eksportu.
+  // Dlatego importer rozpoznaje pola po nazwach nagłówków, a nigdy po numerze kolumny.
   const aliasyKolumn = Object.freeze({
     idBudowy: ["idbudowy", "idobiektu", "idbud"],
-    firma: ["firma", "klient", "kontrahent", "odbiorca"],
-    budowa: ["budowa", "nazwabudowy", "miejscebudowy", "obiekt"],
+    firma: ["firma", "klient", "kontrahent", "odbiorca", "nazwa", "knazwa"],
+    budowa: ["budowa", "tytul", "nazwabudowy", "miejscebudowy", "obiekt"],
     startPlanowany: [
       "startplanowany",
       "start",
       "godzinarozpoczecia",
       "godzinastartu",
-      "godzina"
+      "godzina",
+      "czasrozladunku"
     ],
-    rodzajBetonu: ["beton", "rodzajbetonu", "receptura", "produkt"],
-    iloscBetonuM3: ["iloscbetonu", "iloscm3", "kubatura", "m3"],
-    dataPlanowana: ["dataplanowana", "databetonowania"],
+    rodzajBetonu: [
+      "beton",
+      "rodzajbetonu",
+      "receptura",
+      "produkt",
+      "nazwamaterialu"
+    ],
+    iloscBetonuM3: [
+      "iloscbetonu",
+      "iloscm3",
+      "kubatura",
+      "m3",
+      "zamowionom3",
+      "zamomojzaklad"
+    ],
+    dataPlanowana: ["dataplanowana", "databetonowania", "data"],
     rodzajRozladunku: ["rodzajrozladunku", "sposobrozladunku", "rozladunek"]
-  });
-
-  const kolumnyTestowegoUkladuKdx = Object.freeze({
-    firma: "nazwa",
-    budowa: "tytul",
-    startPlanowany: "czasrozladunku",
-    iloscBetonuM3: "zamowionom3",
-    dataPlanowana: "data",
-    rodzajRozladunku: "rodzajrozladunku"
   });
 
   const wymaganeKolumny = Object.freeze([
@@ -161,41 +168,12 @@
     return -1;
   }
 
-  function czyTestowyUkladKdx(naglowkiZnormalizowane) {
-    return ["nazwa", "tytul", "czasrozladunku"].every(function (nazwaKolumny) {
-      return naglowkiZnormalizowane.includes(nazwaKolumny);
-    });
-  }
-
-  function znajdzIndeksKolumnyKdx(naglowkiZnormalizowane, nazwaPola) {
-    const nazwaKolumnyKdx = kolumnyTestowegoUkladuKdx[nazwaPola];
-
-    if (!nazwaKolumnyKdx || !czyTestowyUkladKdx(naglowkiZnormalizowane)) {
-      return -1;
-    }
-
-    return naglowkiZnormalizowane.indexOf(nazwaKolumnyKdx);
-  }
-
-  function znajdzIndeksPola(naglowkiZnormalizowane, nazwaPola) {
-    const indeksStandardowy = znajdzIndeksKolumny(
-      naglowkiZnormalizowane,
-      nazwaPola
-    );
-
-    if (indeksStandardowy !== -1) {
-      return indeksStandardowy;
-    }
-
-    return znajdzIndeksKolumnyKdx(naglowkiZnormalizowane, nazwaPola);
-  }
-
   function znajdzKolumny(naglowki) {
     const naglowkiZnormalizowane = naglowki.map(normalizujNazweKolumny);
     const indeksyKolumn = {};
 
     wymaganeKolumny.forEach(function (opisKolumny) {
-      const indeksKolumny = znajdzIndeksPola(
+      const indeksKolumny = znajdzIndeksKolumny(
         naglowkiZnormalizowane,
         opisKolumny.pole
       );
@@ -210,26 +188,18 @@
       indeksyKolumn[opisKolumny.pole] = indeksKolumny;
     });
 
-    indeksyKolumn.idBudowy = znajdzIndeksKolumny(
-      naglowkiZnormalizowane,
-      "idBudowy"
-    );
-    indeksyKolumn.rodzajBetonu = znajdzIndeksPola(
-      naglowkiZnormalizowane,
-      "rodzajBetonu"
-    );
-    indeksyKolumn.iloscBetonuM3 = znajdzIndeksPola(
-      naglowkiZnormalizowane,
-      "iloscBetonuM3"
-    );
-    indeksyKolumn.dataPlanowana = znajdzIndeksPola(
-      naglowkiZnormalizowane,
-      "dataPlanowana"
-    );
-    indeksyKolumn.rodzajRozladunku = znajdzIndeksPola(
-      naglowkiZnormalizowane,
+    [
+      "idBudowy",
+      "rodzajBetonu",
+      "iloscBetonuM3",
+      "dataPlanowana",
       "rodzajRozladunku"
-    );
+    ].forEach(function (nazwaPola) {
+      indeksyKolumn[nazwaPola] = znajdzIndeksKolumny(
+        naglowkiZnormalizowane,
+        nazwaPola
+      );
+    });
 
     return indeksyKolumn;
   }
@@ -242,10 +212,18 @@
     const daneZrodlowe = {};
 
     naglowki.forEach(function (naglowek, indeksKolumny) {
-      daneZrodlowe[naglowek] = wiersz[indeksKolumny] || "";
+      const nazwaKlucza = naglowek || "Kolumna_" + String(indeksKolumny + 1);
+      daneZrodlowe[nazwaKlucza] = wiersz[indeksKolumny] || "";
     });
 
     return daneZrodlowe;
+  }
+
+  function czyWierszTechnicznyLubPusty(wiersz, indeksyKolumn) {
+    return wymaganeKolumny.every(function (opisKolumny) {
+      const wartosc = wiersz[indeksyKolumn[opisKolumny.pole]];
+      return String(wartosc || "").trim() === "";
+    });
   }
 
   function pobierzIdZrodlowe(wiersz, indeksKolumnyId) {
@@ -327,13 +305,9 @@
       return String(naglowek).trim();
     });
     const indeksyKolumn = znajdzKolumny(naglowki);
-    const wierszeDanych = wiersze.slice(1);
-    const budowy = [];
-    const wierszeZrodlowe = [];
-    let liczbaAutomatycznychId = 0;
-    let kolejnyNumerAutomatyczny = 1;
+    const wszystkieWierszeDanych = wiersze.slice(1);
 
-    wierszeDanych.forEach(function (wiersz, indeksWiersza) {
+    wszystkieWierszeDanych.forEach(function (wiersz, indeksWiersza) {
       const numerWiersza = indeksWiersza + 2;
 
       if (wiersz.length > naglowki.length) {
@@ -343,6 +317,20 @@
       }
     });
 
+    // Eksport KDX potrafi zawierać wiersz techniczny (np. „Normal”) bez danych budowy.
+    // Ignorujemy tylko wiersze, w których wszystkie wymagane pola są puste.
+    const wierszeDanych = wszystkieWierszeDanych.filter(function (wiersz) {
+      return !czyWierszTechnicznyLubPusty(wiersz, indeksyKolumn);
+    });
+
+    if (!wierszeDanych.length) {
+      throw new Error("Plik CSV nie zawiera żadnych budów.");
+    }
+
+    const budowy = [];
+    const wierszeZrodlowe = [];
+    let liczbaAutomatycznychId = 0;
+    let kolejnyNumerAutomatyczny = 1;
     const uzyteId = zbierzIdZrodlowe(
       wierszeDanych,
       indeksyKolumn.idBudowy
