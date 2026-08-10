@@ -54,12 +54,26 @@ button {
 }
 
 .naglowek {
+  position: relative;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
   gap: 24px;
   margin-bottom: 28px;
   padding: 8px 2px;
+  text-align: center;
+}
+
+.naglowek__marka {
+  display: grid;
+  justify-items: center;
+}
+
+.logo-aplikacji {
+  display: block;
+  width: clamp(88px, 8vw, 104px);
+  height: auto;
+  margin-bottom: 13px;
 }
 
 .nadtytul,
@@ -118,6 +132,9 @@ h3 {
 }
 
 .znacznik-offline {
+  position: absolute;
+  top: 8px;
+  right: 2px;
   padding: 10px 14px;
   box-shadow: 0 5px 18px rgba(18, 48, 74, 0.06);
 }
@@ -640,6 +657,15 @@ td {
   .stopka {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .naglowek {
+    align-items: center;
+  }
+
+  .znacznik-offline {
+    position: static;
+    align-self: center;
   }
 
   .formularz-parametrow {

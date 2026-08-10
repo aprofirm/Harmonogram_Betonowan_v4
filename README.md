@@ -66,7 +66,9 @@ Program obsługuje wybór pliku i przeciąganie CSV. Kolejny poprawny import zas
 
 ## Logo aplikacji
 
-Plik `favicon.png` jest oficjalną ikoną aplikacji i jest używany jako favicon na karcie przeglądarki zarówno w wersji lokalnej, jak i publikowanej przez GitHub Pages.
+Plik `logo.svg` jest oficjalnym źródłem znaku aplikacji. Logo jest wyświetlane u góry strony, na środku nad nazwą programu, i działa również po lokalnym otwarciu `index.html`.
+
+Ten sam znak jest używany jako favicon na karcie przeglądarki. `logo.svg` zapewnia ostry obraz w nowoczesnych przeglądarkach, a `favicon.png` jest lokalnym odpowiednikiem zapasowym dla starszych przeglądarek.
 
 ## Testy etapów 1 i 2
 

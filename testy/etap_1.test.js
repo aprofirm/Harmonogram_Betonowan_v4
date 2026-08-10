@@ -123,16 +123,29 @@ function uruchomSkryptyAplikacji() {
 }
 
 function sprawdzPlikiEtapu() {
-  ["index.html", "style/glowny.css"].concat(plikiJavaScript).forEach(function (sciezkaPliku) {
-    assert.equal(fs.existsSync(path.join(katalogProjektu, sciezkaPliku)), true, sciezkaPliku);
-  });
+  ["index.html", "style/glowny.css", "logo.svg", "favicon.png"]
+    .concat(plikiJavaScript)
+    .forEach(function (sciezkaPliku) {
+      assert.equal(fs.existsSync(path.join(katalogProjektu, sciezkaPliku)), true, sciezkaPliku);
+    });
 }
 
 function sprawdzTrybOffline() {
   const dokumentHtml = wczytajPlik("index.html");
+  const logoSvg = wczytajPlik("logo.svg");
+  const faviconPng = fs.readFileSync(path.join(katalogProjektu, "favicon.png"));
 
   assert.equal(/(?:src|href)=["']https?:\/\//i.test(dokumentHtml), false);
   assert.equal(/<script[^>]+type=["']module["']/i.test(dokumentHtml), false);
+  assert.equal(dokumentHtml.includes('src="logo.svg"'), true);
+  assert.equal(dokumentHtml.includes('href="logo.svg"'), true);
+  assert.equal(dokumentHtml.includes('href="favicon.png"'), true);
+  assert.equal(logoSvg.includes('viewBox="0 0 128 128"'), true);
+  assert.deepEqual(
+    Array.from(faviconPng.subarray(0, 8)),
+    [137, 80, 78, 71, 13, 10, 26, 10]
+  );
+  assert.equal(faviconPng.includes(Buffer.from("IEND")), true);
 
   plikiJavaScript.forEach(function (sciezkaPliku) {
     assert.equal(dokumentHtml.includes("src=\"" + sciezkaPliku + "\""), true, sciezkaPliku);

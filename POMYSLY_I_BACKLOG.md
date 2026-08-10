@@ -97,6 +97,10 @@ Trzeba ostatecznie ustalić zestaw informacji widocznych na głównym ekranie op
 
 Wygląd będzie dopracowywany iteracyjnie. Priorytetem pozostają poprawny silnik i czytelny przepływ pracy, a dopiero później końcowe szczegóły wizualne.
 
+### Element już zatwierdzony
+
+Logo aplikacji znajduje się u góry, na środku nad nazwą programu, a ten sam znak jest używany jako favicon. Pozostałe elementy finalnego wyglądu nadal będą dopracowywane iteracyjnie.
+
 ---
 
 ## P-006 — Priorytety przy kolizji budów
@@ -126,4 +130,3 @@ Silnik ma przeliczać realny plan przy ograniczonej liczbie obu zasobów. Dokła
 **Powiązanie:** Etap 6 — Adresy, lokalizacje i trasy
 
 OpenStreetMap pozostaje preferowanym źródłem danych mapowych, ale konkretny dostawca usług online nie jest jeszcze trwale wybrany. Warstwa usług ma być wymienna bez przebudowy silnika harmonogramu.
-

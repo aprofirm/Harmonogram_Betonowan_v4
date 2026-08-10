@@ -1063,6 +1063,21 @@ Szczegółową procedurę pracy opisuje `AGENTS.md`.
 
 ---
 
+## 65. Logo aplikacji i favicon
+
+Oficjalny znak Harmonogramu Betonowań jest wyświetlany u góry strony, na środku nad nazwą aplikacji.
+
+Ten sam znak jest używany jako favicon na karcie przeglądarki. Podstawowym źródłem grafiki jest lokalny plik `logo.svg`, a `favicon.png` stanowi jego lokalny odpowiednik zapasowy.
+
+Logo i favicon:
+
+- nie mogą wymagać połączenia z internetem,
+- nie mogą korzystać z zewnętrznego CDN,
+- mają działać po bezpośrednim otwarciu lokalnego `index.html`,
+- nie mogą wpływać na logikę importu KDX ani silnik harmonogramu.
+
+---
+
 # Powiązane tematy otwarte
 
 Pomysły, warianty i pytania, które nie są jeszcze obowiązującymi decyzjami, są prowadzone w `POMYSLY_I_BACKLOG.md`. Dzięki temu ten dokument pozostaje jednoznacznym źródłem zatwierdzonych ustaleń.
