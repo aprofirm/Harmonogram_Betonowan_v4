@@ -82,12 +82,13 @@ Plik `logo.png` jest oficjalnym źródłem znaku aplikacji: pomarańczowo-granat
 
 Ten sam znak jest używany jako favicon na karcie przeglądarki. Plik `favicon.png` jest kwadratowym wariantem przygotowanym z `logo.png` bez rozciągania grafiki. Oba pliki są przechowywane lokalnie i nie wymagają internetu.
 
-## Testy etapów 1 i 2
+## Testy etapów 1–3A
 
 Instrukcje testów ręcznych znajdują się w plikach:
 
 - [testy/TESTY_ETAP_1.md](testy/TESTY_ETAP_1.md),
 - [testy/TESTY_ETAP_2.md](testy/TESTY_ETAP_2.md),
+- [testy/TESTY_ETAP_3A.md](testy/TESTY_ETAP_3A.md),
 - [testy/TESTY_DIAGNOSTYKA.md](testy/TESTY_DIAGNOSTYKA.md).
 
 Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczny:
@@ -96,9 +97,10 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_2.test.js
     node testy/kdx_zmienne_kolumny.test.js
     node testy/diagnostyka.test.js
+    node testy/etap_3a.test.js
 
 Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
 ## Aktualny stan
 
-**Etap 2 — Import CSV i model Budowy** jest zaimplementowany i zweryfikowany na prawdziwym eksporcie KDX. Importer obsługuje tolerancję czasu, np. `13:00 (+60 min)` jako okno 13:00–14:00, oraz oznacza pozycje z `0,0 m³` jako zrealizowane. Następny krok to **Etap 3 — podstawowy silnik gruszek**.
+**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów** został zaimplementowany: program dzieli pozostałą ilość betonu według ustawionej pojemności, tworzy niepełny ostatni kurs i pomija zrealizowane pozycje `0,0 m³`. Dzisiejszy scenariusz KDX daje `12` kursów przy pojemności `8 m³`. Następny krok po teście ręcznym to **3B — czasy cyklu gruszki**.
