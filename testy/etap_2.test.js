@@ -92,6 +92,27 @@ function sprawdzTestowyUkladKdx(aplikacja) {
   assert.match(stanImportu.ostrzezenia[0], /liczba: 2/i);
 }
 
+function sprawdzTolerancjeIZrealizowanePozycje(aplikacja) {
+  const csv = [
+    "Firma;Budowa;StartPlanowany;Zam-o (mój zakład)",
+    "Firma A;Budowa elastyczna;13:00 (-60 min);3,5 m3",
+    "Firma B;Budowa wykonana;12:00;0,0 m3"
+  ].join("\n");
+  const stanImportu = aplikacja.importCsv.przetworzCsv(csv, "rzeczywisty-kdx.csv");
+  const elastyczna = stanImportu.budowy[0];
+  const wykonana = stanImportu.budowy[1];
+
+  assert.equal(elastyczna.startPlanowanyZrodlowy, "13:00 (-60 min)");
+  assert.equal(elastyczna.startPlanowany, "13:00");
+  assert.equal(elastyczna.startRoboczy, "13:00");
+  assert.equal(elastyczna.tolerancjaStartuMinuty, 60);
+  assert.equal(elastyczna.najpozniejszyStart, "14:00");
+  assert.equal(elastyczna.iloscBetonuLiczbaM3, 3.5);
+  assert.equal(elastyczna.statusRealizacji, "do-realizacji");
+  assert.equal(wykonana.iloscBetonuLiczbaM3, 0);
+  assert.equal(wykonana.statusRealizacji, "zrealizowana");
+}
+
 function sprawdzAutomatyczneId(aplikacja) {
   const csvBezKolumnyId = [
     "Firma;Budowa;StartPlanowany",
@@ -245,6 +266,7 @@ async function uruchomTesty() {
   sprawdzPoprawnyImport(aplikacja);
   sprawdzAliasyINiektoreFormaty(aplikacja);
   sprawdzTestowyUkladKdx(aplikacja);
+  sprawdzTolerancjeIZrealizowanePozycje(aplikacja);
   sprawdzAutomatyczneId(aplikacja);
   sprawdzBlednePliki(aplikacja);
   sprawdzBudowyReczne(aplikacja);
