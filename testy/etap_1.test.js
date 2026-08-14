@@ -164,6 +164,20 @@ function sprawdzTrybOffline() {
   });
 }
 
+function sprawdzPolozeniePrzyciskuPrzelicz() {
+  const dokumentHtml = wczytajPlik("index.html");
+  const pozycjaPrzycisku = dokumentHtml.indexOf('id="przycisk-przelicz"');
+  const pozycjaUstawien = dokumentHtml.indexOf('id="tytul-parametrow"');
+
+  assert.notEqual(pozycjaPrzycisku, -1, "Brakuje przycisku przeliczania.");
+  assert.notEqual(pozycjaUstawien, -1, "Brakuje nagłówka ustawień.");
+  assert.equal(
+    pozycjaPrzycisku < pozycjaUstawien,
+    true,
+    "Przycisk przeliczania powinien znajdować się nad ustawieniami."
+  );
+}
+
 function sprawdzPrzeliczenie() {
   const srodowisko = uruchomSkryptyAplikacji();
   const aplikacja = srodowisko.aplikacja;
@@ -206,6 +220,7 @@ function sprawdzPrzeliczenie() {
 
 sprawdzPlikiEtapu();
 sprawdzTrybOffline();
+sprawdzPolozeniePrzyciskuPrzelicz();
 sprawdzPrzeliczenie();
 
 console.log("✓ Etap 1: wszystkie testy zakończyły się powodzeniem.");

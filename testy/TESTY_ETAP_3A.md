@@ -16,6 +16,11 @@ Potwierdzić, że aplikacja dzieli pozostałą ilość betonu na kursy zgodnie z
 7. Sprawdź, czy licznik pokazuje dokładnie **10 kursów**.
 8. Przywróć `8 m³` i przelicz ponownie — wynik powinien wrócić do **12 kursów**.
 
+## Kontrola układu interfejsu
+
+Główny przycisk **Przelicz harmonogram** powinien znajdować się na samej górze
+lewego panelu, nad nagłówkiem **USTAWIENIA** i polami parametrów.
+
 ## Oczekiwany podział dla 8 m³
 
 - `1 m³` → `1` kurs,

@@ -1096,6 +1096,17 @@ Obowiązują zasady:
 
 ---
 
+## 67. Położenie głównego przycisku przeliczania
+
+Główny przycisk **Przelicz harmonogram** znajduje się na początku lewego panelu,
+nad nagłówkiem i polami ustawień. Dzięki temu operator nie musi przewijać panelu
+do jego dolnej części, aby uruchomić ponowne przeliczenie.
+
+Zmiana położenia przycisku dotyczy wyłącznie interfejsu. Przycisk nadal uruchamia
+ten sam centralny mechanizm pełnego przeliczenia harmonogramu.
+
+---
+
 # Powiązane tematy otwarte
 
 Pomysły, warianty i pytania, które nie są jeszcze obowiązującymi decyzjami, są prowadzone w `POMYSLY_I_BACKLOG.md`. Dzięki temu ten dokument pozostaje jednoznacznym źródłem zatwierdzonych ustaleń.

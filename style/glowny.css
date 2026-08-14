@@ -444,6 +444,11 @@ h3 {
   cursor: wait;
 }
 
+.przycisk-glowny--nad-ustawieniami {
+  margin-top: 0;
+  margin-bottom: 24px;
+}
+
 .informacja-etapu {
   margin: 16px 2px 0;
   color: var(--kolor-tekstu-pomocniczego);
