@@ -477,3 +477,14 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 # Kolejny krok
 
 Wczytać na komputerze operatora prawdziwy, niezmieniony eksport CSV z KDX. Na jego podstawie zweryfikować problematyczny wiersz techniczny w osobnym teście zmiennych kolumn i doprowadzić ten test do poprawnego wyniku bez osłabiania walidacji importera. Następnie wykonać pełny test ręczny Etapu 2 i po jego potwierdzeniu rozpocząć **Etap 3 — Podstawowy silnik gruszek**.
+
+
+## Weryfikacja produkcyjnego KDX — 2026-08-14
+
+- [x] prawdziwy eksport KDX został wczytany przez GitHub Pages;
+- [x] rozpoznano 8 pozycji, firmy, budowy, beton, ilości i godziny;
+- [x] brak ID został bezpiecznie obsłużony przez serię `CSV-...`;
+- [x] potwierdzono tolerancję `13:00 (-60 min)` jako okno 13:00–14:00;
+- [x] potwierdzono, że `0,0 m³` oznacza pozycję zrealizowaną.
+
+Etap 2 jest zweryfikowany na rzeczywistych danych KDX. Następny krok to implementacja Etapu 3.
