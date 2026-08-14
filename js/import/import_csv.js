@@ -220,10 +220,18 @@
   }
 
   function czyWierszTechnicznyLubPusty(wiersz, indeksyKolumn) {
-    return wymaganeKolumny.every(function (opisKolumny) {
+    const czyWszystkieWymaganePuste = wymaganeKolumny.every(function (opisKolumny) {
       const wartosc = wiersz[indeksyKolumn[opisKolumny.pole]];
       return String(wartosc || "").trim() === "";
     });
+    const czyTechnicznyNormal = wiersz.some(function (wartosc) {
+      return normalizujNazweKolumny(wartosc) === "normal";
+    });
+    const czyBrakBudowyICzasu =
+      String(wiersz[indeksyKolumn.budowa] || "").trim() === "" &&
+      String(wiersz[indeksyKolumn.startPlanowany] || "").trim() === "";
+
+    return czyWszystkieWymaganePuste || (czyTechnicznyNormal && czyBrakBudowyICzasu);
   }
 
   function pobierzIdZrodlowe(wiersz, indeksKolumnyId) {
@@ -307,7 +315,13 @@
     const indeksyKolumn = znajdzKolumny(naglowki);
     const wszystkieWierszeDanych = wiersze.slice(1);
 
-    wszystkieWierszeDanych.forEach(function (wiersz, indeksWiersza) {
+    // Eksport KDX potrafi zawierać wiersz techniczny (np. „Normal”) bez danych budowy.
+    // Pomijamy go przed kontrolą liczby pól, ponieważ taki wiersz bywa szerszy od nagłówka.
+    const wierszeDanych = wszystkieWierszeDanych.filter(function (wiersz) {
+      return !czyWierszTechnicznyLubPusty(wiersz, indeksyKolumn);
+    });
+
+    wierszeDanych.forEach(function (wiersz, indeksWiersza) {
       const numerWiersza = indeksWiersza + 2;
 
       if (wiersz.length > naglowki.length) {
@@ -315,12 +329,6 @@
           "Wiersz " + numerWiersza + " ma więcej pól niż nagłówek pliku CSV."
         );
       }
-    });
-
-    // Eksport KDX potrafi zawierać wiersz techniczny (np. „Normal”) bez danych budowy.
-    // Ignorujemy tylko wiersze, w których wszystkie wymagane pola są puste.
-    const wierszeDanych = wszystkieWierszeDanych.filter(function (wiersz) {
-      return !czyWierszTechnicznyLubPusty(wiersz, indeksyKolumn);
     });
 
     if (!wierszeDanych.length) {
