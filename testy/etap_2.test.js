@@ -95,14 +95,14 @@ function sprawdzTestowyUkladKdx(aplikacja) {
 function sprawdzTolerancjeIZrealizowanePozycje(aplikacja) {
   const csv = [
     "Firma;Budowa;StartPlanowany;Zam-o (mój zakład)",
-    "Firma A;Budowa elastyczna;13:00 (-60 min);3,5 m3",
+    "Firma A;Budowa elastyczna;13:00 (+60 min);3,5 m3",
     "Firma B;Budowa wykonana;12:00;0,0 m3"
   ].join("\n");
   const stanImportu = aplikacja.importCsv.przetworzCsv(csv, "rzeczywisty-kdx.csv");
   const elastyczna = stanImportu.budowy[0];
   const wykonana = stanImportu.budowy[1];
 
-  assert.equal(elastyczna.startPlanowanyZrodlowy, "13:00 (-60 min)");
+  assert.equal(elastyczna.startPlanowanyZrodlowy, "13:00 (+60 min)");
   assert.equal(elastyczna.startPlanowany, "13:00");
   assert.equal(elastyczna.startRoboczy, "13:00");
   assert.equal(elastyczna.tolerancjaStartuMinuty, 60);
