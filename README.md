@@ -101,4 +101,4 @@ Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
 ## Aktualny stan
 
-**Etap 2 — Import CSV i model Budowy** jest zaimplementowany i zweryfikowany na prawdziwym eksporcie KDX. Importer obsługuje tolerancję czasu, np. `13:00 (-60 min)` jako okno 13:00–14:00, oraz oznacza pozycje z `0,0 m³` jako zrealizowane. Następny krok to **Etap 3 — podstawowy silnik gruszek**.
+**Etap 2 — Import CSV i model Budowy** jest zaimplementowany i zweryfikowany na prawdziwym eksporcie KDX. Importer obsługuje tolerancję czasu, np. `13:00 (+60 min)` jako okno 13:00–14:00, oraz oznacza pozycje z `0,0 m³` jako zrealizowane. Następny krok to **Etap 3 — podstawowy silnik gruszek**.
