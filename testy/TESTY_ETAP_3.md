@@ -2,7 +2,7 @@
 
 ## Status
 
-Ten plik przygotowuje testy przed implementacją Etapu 3. Samo dodanie planu testów **nie rozpoczyna Etapu 3** i nie zmienia statusu projektu. Przed rozpoczęciem implementacji nadal należy wykonać uzgodnioną weryfikację Etapu 2 na prawdziwym eksporcie KDX.
+Etap 3 jest w toku. **Punkt 3A — generowanie kursów** został zaimplementowany i ma osobny test automatyczny oraz instrukcję testu ręcznego w `TESTY_ETAP_3A.md`. Testy czasu cyklu, przydziału i dostępności gruszek pozostają planem dla kolejnych punktów 3B–3E.
 
 ## Cel
 

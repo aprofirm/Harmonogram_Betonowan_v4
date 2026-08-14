@@ -35,7 +35,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku, punkt 3A zakończony**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -50,14 +50,14 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 Wdrożenie diagnostyki nie zmienia statusu Etapu 2 ani nie rozpoczyna logiki Etapu 3.
 
-## Stan testów na zakończenie pracy 2026-08-10
+## Stan testów po zakończeniu punktu 3A — 2026-08-14
 
 - [x] automatyczny test Etapu 1 przechodzi,
 - [x] automatyczny test Etapu 2 przechodzi,
 - [x] automatyczny test diagnostyki przechodzi,
-- [ ] osobny test zmiennych kolumn KDX wymaga weryfikacji na prawdziwym eksporcie; obecnie zatrzymuje się na sztucznym wierszu technicznym z większą liczbą pól niż nagłówek.
-
-Jest to jawnie zapisany wyjątek testowy. Importer nie został zmieniony podczas wdrażania logo ani diagnostyki.
+- [x] osobny test zmiennych kolumn KDX przechodzi,
+- [x] automatyczny test punktu 3A przechodzi,
+- [ ] ręczny test na GitHub Pages ma potwierdzić `12` kursów przy pojemności `8 m³`.
 
 Statusy w tej sekcji powinny być aktualizowane w miarę postępu prac.
 
@@ -160,6 +160,16 @@ Doprowadzić dane z KDX/CSV do uporządkowanego modelu `Budowy`, który będzie 
 
 Zbudować niezależną logikę kursów i dostępności gruszek.
 
+## Postęp punktów Etapu 3
+
+- [x] **3A — generowanie kursów:** podział ilości betonu na pełne i niepełne kursy, pomijanie zrealizowanych pozycji i pełne tworzenie wyniku od nowa.
+- [ ] **3B — czasy cyklu:** załadunek, dojazd, rozładunek i powrót.
+- [ ] **3C — przydział gruszek:** brak nakładania kursów jednej gruszki.
+- [ ] **3D — minimalna liczba gruszek.**
+- [ ] **3E — tryb „mam X gruszek” i ponowne przeliczenie zasobów.**
+
+Po każdym punkcie wykonujemy jego osobny test oraz pełną regresję wcześniejszych funkcji. Dopiero potem zapisujemy opis wykonanej pracy, bieżący punkt i następny krok.
+
 ## Zakres
 
 - pojemność gruszki jako parametr, domyślnie 8 m³,
@@ -178,20 +188,20 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
 
 ## Kryteria zakończenia
 
-- [ ] liczba kursów odpowiada ilości betonu i pojemności gruszki,
+- [x] liczba kursów odpowiada ilości betonu i pojemności gruszki,
 - [ ] jedna gruszka nie może być jednocześnie w dwóch kursach,
 - [ ] dostępność gruszki następuje dopiero po zakończeniu pełnego cyklu,
 - [ ] program potrafi podać minimalną potrzebną liczbę gruszek,
 - [ ] zmniejszenie dostępnej liczby gruszek powoduje nowe realne wyliczenie,
-- [ ] ponowne przeliczenie nie pozostawia starych kursów,
-- [ ] zmiana parametrów jest wykonywana przez konfigurację, a nie zmianę kodu.
+- [x] ponowne przeliczenie liczby kursów nie pozostawia starych kursów,
+- [x] zmiana pojemności gruszki jest wykonywana przez konfigurację, a nie zmianę kodu.
 
 ## Test regresji
 
-- [ ] import CSV nadal działa,
-- [ ] budowy ręczne nadal działają,
-- [ ] `StartPlanowany` pozostaje nienaruszony,
-- [ ] drugi import CSV czyści poprzedni plan roboczy poprawnie.
+- [x] import CSV nadal działa,
+- [x] budowy ręczne nadal działają,
+- [x] `StartPlanowany` pozostaje nienaruszony,
+- [x] drugi import CSV czyści poprzedni plan roboczy poprawnie.
 
 ---
 
@@ -476,7 +486,7 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wczytać na komputerze operatora prawdziwy, niezmieniony eksport CSV z KDX. Na jego podstawie zweryfikować problematyczny wiersz techniczny w osobnym teście zmiennych kolumn i doprowadzić ten test do poprawnego wyniku bez osłabiania walidacji importera. Następnie wykonać pełny test ręczny Etapu 2 i po jego potwierdzeniu rozpocząć **Etap 3 — Podstawowy silnik gruszek**.
+Wykonać test ręczny punktu 3A na stronie GitHub Pages: ten sam eksport KDX powinien dać `12` kursów dla pojemności `8 m³` i `10` kursów dla `10 m³`. Po potwierdzeniu rozpocząć **punkt 3B — czasy cyklu gruszki**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -487,4 +497,16 @@ Wczytać na komputerze operatora prawdziwy, niezmieniony eksport CSV z KDX. Na j
 - [x] potwierdzono rzeczywisty zapis tolerancji `13:00 (+60 min)` jako okno 13:00–14:00;
 - [x] potwierdzono, że `0,0 m³` oznacza pozycję zrealizowaną.
 
-Etap 2 jest zweryfikowany na rzeczywistych danych KDX. Następny krok to implementacja Etapu 3.
+Etap 2 jest zweryfikowany na rzeczywistych danych KDX i pozostaje zamknięty.
+
+## Punkt 3A — generowanie kursów — 2026-08-14
+
+- [x] kursy są generowane w module `gruszki`, bez zależności od interfejsu;
+- [x] pełny kurs nie przekracza ustawionej pojemności gruszki;
+- [x] ostatni kurs może być niepełny;
+- [x] pozycje z `0,0 m³` nie generują kursów;
+- [x] każdy kurs ma własne ID, numer, ilość i powiązanie z budową;
+- [x] zmiana pojemności powoduje utworzenie nowej listy kursów od początku;
+- [x] testy Etapów 1–2, KDX, diagnostyki i punktu 3A przechodzą.
+
+Etap 3 pozostaje w toku. Punkt 3A nie przydziela jeszcze konkretnych gruszek i nie wylicza godzin kursów.
