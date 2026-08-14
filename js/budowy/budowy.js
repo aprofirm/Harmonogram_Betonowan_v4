@@ -28,7 +28,7 @@
   function przetworzStartPlanowany(wartosc, numerWiersza) {
     const wartoscZrodlowa = pobierzWymaganyTekst(wartosc, "StartPlanowany", numerWiersza);
     const dopasowanieTolerancji = wartoscZrodlowa.match(
-      /^(\d{1,2}:\d{2})\s*\(\s*-(\d+)\s*min\s*\)$/i
+      /^(\d{1,2}:\d{2})\s*\(\s*[+-](\d+)\s*min\s*\)$/i
     );
 
     if (!dopasowanieTolerancji) {
