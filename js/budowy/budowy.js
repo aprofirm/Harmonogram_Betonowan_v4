@@ -15,21 +15,71 @@
     return tekst;
   }
 
-  function utworzBudoweZImportu(daneBudowy, numerWiersza) {
-    const startPlanowany = pobierzWymaganyTekst(
-      daneBudowy.startPlanowany,
-      "StartPlanowany",
-      numerWiersza
+  function dodajMinutyDoGodziny(godzina, liczbaMinut) {
+    const czesci = godzina.split(":");
+    const minutyDnia = Number(czesci[0]) * 60 + Number(czesci[1]) + liczbaMinut;
+    const minutyPoPolnocy = ((minutyDnia % 1440) + 1440) % 1440;
+    const godziny = Math.floor(minutyPoPolnocy / 60);
+    const minuty = minutyPoPolnocy % 60;
+
+    return String(godziny).padStart(2, "0") + ":" + String(minuty).padStart(2, "0");
+  }
+
+  function przetworzStartPlanowany(wartosc, numerWiersza) {
+    const wartoscZrodlowa = pobierzWymaganyTekst(wartosc, "StartPlanowany", numerWiersza);
+    const dopasowanieTolerancji = wartoscZrodlowa.match(
+      /^(\d{1,2}:\d{2})\s*\(\s*-(\d+)\s*min\s*\)$/i
     );
+
+    if (!dopasowanieTolerancji) {
+      return {
+        wartoscZrodlowa: wartoscZrodlowa,
+        startPlanowany: wartoscZrodlowa,
+        tolerancjaStartuMinuty: 0,
+        najpozniejszyStart: wartoscZrodlowa
+      };
+    }
+
+    const startPlanowany = dopasowanieTolerancji[1].padStart(5, "0");
+    const tolerancjaStartuMinuty = Number(dopasowanieTolerancji[2]);
+
+    return {
+      wartoscZrodlowa: wartoscZrodlowa,
+      startPlanowany: startPlanowany,
+      tolerancjaStartuMinuty: tolerancjaStartuMinuty,
+      najpozniejszyStart: dodajMinutyDoGodziny(startPlanowany, tolerancjaStartuMinuty)
+    };
+  }
+
+  function pobierzIloscBetonuLiczbaM3(wartosc) {
+    const tekst = String(wartosc || "").trim();
+    const dopasowanie = tekst.match(/-?\d+(?:[.,]\d+)?/);
+
+    if (!dopasowanie) {
+      return null;
+    }
+
+    const liczba = Number(dopasowanie[0].replace(",", "."));
+    return Number.isFinite(liczba) ? liczba : null;
+  }
+
+  function utworzBudoweZImportu(daneBudowy, numerWiersza) {
+    const opisStartu = przetworzStartPlanowany(daneBudowy.startPlanowany, numerWiersza);
+    const iloscBetonuLiczbaM3 = pobierzIloscBetonuLiczbaM3(daneBudowy.iloscBetonuM3);
 
     return {
       idBudowy: pobierzWymaganyTekst(daneBudowy.idBudowy, "ID_Budowy", numerWiersza),
       firma: pobierzWymaganyTekst(daneBudowy.firma, "Firma", numerWiersza),
       budowa: pobierzWymaganyTekst(daneBudowy.budowa, "Budowa", numerWiersza),
-      startPlanowany: startPlanowany,
-      startRoboczy: startPlanowany,
+      startPlanowanyZrodlowy: opisStartu.wartoscZrodlowa,
+      startPlanowany: opisStartu.startPlanowany,
+      startRoboczy: opisStartu.startPlanowany,
+      tolerancjaStartuMinuty: opisStartu.tolerancjaStartuMinuty,
+      najpozniejszyStart: opisStartu.najpozniejszyStart,
       rodzajBetonu: String(daneBudowy.rodzajBetonu || "").trim(),
       iloscBetonuM3: String(daneBudowy.iloscBetonuM3 || "").trim(),
+      iloscBetonuLiczbaM3: iloscBetonuLiczbaM3,
+      statusRealizacji: iloscBetonuLiczbaM3 === 0 ? "zrealizowana" : "do-realizacji",
       dataPlanowana: String(daneBudowy.dataPlanowana || "").trim(),
       rodzajRozladunku: String(daneBudowy.rodzajRozladunku || "").trim(),
       zrodlo: "csv",
@@ -66,10 +116,15 @@
       idBudowy: "RECZNE-" + String(numer).padStart(3, "0"),
       firma: pobierzWymaganyTekst(daneBudowy && daneBudowy.firma, "Firma"),
       budowa: pobierzWymaganyTekst(daneBudowy && daneBudowy.budowa, "Budowa"),
+      startPlanowanyZrodlowy: startPlanowany,
       startPlanowany: startPlanowany,
       startRoboczy: startPlanowany,
+      tolerancjaStartuMinuty: 0,
+      najpozniejszyStart: startPlanowany,
       rodzajBetonu: "",
       iloscBetonuM3: "",
+      iloscBetonuLiczbaM3: null,
+      statusRealizacji: "do-realizacji",
       dataPlanowana: "",
       rodzajRozladunku: "",
       zrodlo: "reczna",

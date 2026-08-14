@@ -1130,3 +1130,15 @@ Najpierw budujemy prosty, czytelny i poprawny silnik.
 Następnie dokładamy kolejne funkcje jako osobne, zrozumiałe moduły.
 
 Każda nowa funkcja powinna mieć jasny powód biznesowy i nie powinna niepotrzebnie zwiększać złożoności całego projektu.
+
+
+---
+
+## 35. Tolerancja czasu i zrealizowane pozycje KDX
+
+Prawdziwy eksport KDX został zweryfikowany na komputerze operatora 2026-08-14.
+
+- zapis w rodzaju `13:00 (-60 min)` oznacza dopuszczalne okno rozpoczęcia od `13:00` do `14:00`;
+- wartość źródłowa pozostaje zachowana, a model roboczy przechowuje osobno początek, tolerancję i najpóźniejszy start;
+- ilość `0,0 m³` oznacza pozycję już zrealizowaną;
+- zrealizowana pozycja pozostaje widoczna w planie dnia, ale nie może generować nowych kursów ani zajmować gruszek.
