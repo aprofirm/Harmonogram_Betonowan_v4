@@ -13,9 +13,10 @@
 
   aplikacja.konfiguracja = Object.freeze({
     nazwaAplikacji: "Harmonogram Betonowań v4",
-    numerEtapu: 2,
+    numerEtapu: 3,
+    punktEtapu: "3A",
     parametryDomyslne: parametryDomyslne,
     komunikatPoPrzeliczeniu:
-      "Dane budów są gotowe. Obliczenia kursów i zasobów zostaną dodane w kolejnych etapach."
+      "Kursy zostały wygenerowane na podstawie ilości betonu i pojemności gruszki."
   });
 })(window);
