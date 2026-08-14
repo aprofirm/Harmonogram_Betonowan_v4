@@ -57,7 +57,7 @@ Wdrożenie diagnostyki nie zmienia statusu Etapu 2 ani nie rozpoczyna logiki Eta
 - [x] automatyczny test diagnostyki przechodzi,
 - [x] osobny test zmiennych kolumn KDX przechodzi,
 - [x] automatyczny test punktu 3A przechodzi,
-- [ ] ręczny test na GitHub Pages ma potwierdzić `12` kursów przy pojemności `8 m³`.
+- [x] ręczny test na GitHub Pages potwierdził poprawne działanie punktu 3A.
 
 Statusy w tej sekcji powinny być aktualizowane w miarę postępu prac.
 
@@ -486,7 +486,7 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać test ręczny punktu 3A na stronie GitHub Pages: ten sam eksport KDX powinien dać `12` kursów dla pojemności `8 m³` i `10` kursów dla `10 m³`. Po potwierdzeniu rozpocząć **punkt 3B — czasy cyklu gruszki**.
+Rozpocząć **punkt 3B — czasy cyklu gruszki**: załadunek, dojazd, rozładunek i powrót.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -508,5 +508,6 @@ Etap 2 jest zweryfikowany na rzeczywistych danych KDX i pozostaje zamknięty.
 - [x] każdy kurs ma własne ID, numer, ilość i powiązanie z budową;
 - [x] zmiana pojemności powoduje utworzenie nowej listy kursów od początku;
 - [x] testy Etapów 1–2, KDX, diagnostyki i punktu 3A przechodzą.
+- [x] test ręczny operatora na GitHub Pages zakończył się powodzeniem.
 
 Etap 3 pozostaje w toku. Punkt 3A nie przydziela jeszcze konkretnych gruszek i nie wylicza godzin kursów.
