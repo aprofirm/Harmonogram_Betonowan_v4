@@ -748,3 +748,15 @@ td {
     min-width: 0;
   }
 }
+
+
+/* Pozycje z zerową ilością pozostałą są zachowane jako historia dnia. */
+.wiersz-zrealizowany {
+  opacity: 0.58;
+  background: #f2f5f7;
+}
+
+.status-zrealizowany {
+  color: #61717d;
+  font-weight: 700;
+}
