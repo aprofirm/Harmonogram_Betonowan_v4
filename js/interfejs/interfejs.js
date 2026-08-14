@@ -137,23 +137,42 @@
     }
 
     if (budowa.iloscBetonuM3) {
-      opis.push(budowa.iloscBetonuM3 + " m³");
+      const ilosc = String(budowa.iloscBetonuM3).trim();
+      opis.push(/m(?:3|³)\s*$/i.test(ilosc) ? ilosc.replace(/m3\s*$/i, "m³") : ilosc + " m³");
     }
 
     return opis.length ? opis.join(" · ") : "—";
   }
 
+  function opiszOknoStartu(budowa) {
+    if (budowa.tolerancjaStartuMinuty > 0 && budowa.najpozniejszyStart) {
+      return budowa.startPlanowany + "–" + budowa.najpozniejszyStart;
+    }
+
+    return budowa.startPlanowany;
+  }
+
   function utworzWierszBudowy(budowa) {
     const wiersz = document.createElement("tr");
     const etykietaZrodla = budowa.zrodlo === "reczna" ? "Ręczna" : "CSV";
+    const czyZrealizowana = budowa.statusRealizacji === "zrealizowana";
 
-    wiersz.appendChild(utworzKomorke(budowa.startPlanowany, "wartosc-wazna"));
+    if (czyZrealizowana) {
+      wiersz.className = "wiersz-zrealizowany";
+    }
+
+    wiersz.appendChild(utworzKomorke(opiszOknoStartu(budowa), "wartosc-wazna"));
     wiersz.appendChild(utworzKomorke(budowa.firma));
     wiersz.appendChild(utworzKomorke(budowa.budowa));
     wiersz.appendChild(utworzKomorke(opiszBeton(budowa)));
     wiersz.appendChild(utworzKomorke(budowa.idBudowy, "identyfikator-budowy"));
     wiersz.appendChild(utworzKomorke(etykietaZrodla));
-    wiersz.appendChild(utworzKomorke("Dane gotowe", "status-danych"));
+    wiersz.appendChild(
+      utworzKomorke(
+        czyZrealizowana ? "Zrealizowana" : "Dane gotowe",
+        czyZrealizowana ? "status-zrealizowany" : "status-danych"
+      )
+    );
 
     return wiersz;
   }
