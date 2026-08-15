@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; przed 3B.2 poprawiamy sposób podawania rozładunku w 3B.1, kończymy KP-3 i test operatora KP-1.9**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono 3B.1 oraz kroki przekrojowe KP-1–KP-3, następny punkt to 3B.2 — rytm dostaw**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -63,7 +63,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 Wdrożenie diagnostyki nie zmienia statusu Etapu 2 ani nie rozpoczyna logiki Etapu 3.
 
-## Aktywny krok przekrojowy KP-1 — pamięć planu dnia
+## Zakończony krok przekrojowy KP-1 — pamięć planu dnia
 
 KP-1 zabezpiecza bieżącą pracę operatora przed utratą po odświeżeniu strony.
 Nie jest podpunktem 3B i nie zmienia kolejności Etapu 3. Po zamknięciu KP-1
@@ -88,7 +88,7 @@ wracamy do kroku 3B.2.
   diagnostyki.
 - [x] **KP-1.8 — testy automatyczne i pełna regresja:** sprawdzenie całego KP-1
   oraz wcześniejszych funkcji przed publikacją wersji do testu operatorskiego.
-- [ ] **KP-1.9 — test operatora i zamknięcie:** odświeżenie, odtworzenie,
+- [x] **KP-1.9 — test operatora i zamknięcie:** odświeżenie, odtworzenie,
   historia, anulowanie czyszczenia, potwierdzenie czyszczenia i ponowna kontrola
   planu.
 
@@ -105,11 +105,11 @@ Kryteria zamknięcia KP-1:
   logi diagnostyczne;
 - [x] aplikacja nadal działa offline i przechodzi pełną regresję automatyczną.
 
-Test operatora KP-1.9 jest częściowo potwierdzony: odświeżenie strony zachowało
-plan, zapis historyczny można było przywrócić, a potwierdzone czyszczenie
-usunęło bieżący plan. Nadal trzeba sprawdzić odtworzenie planu niepełnego,
-anulowanie czyszczenia oraz pełną kontrolę historii i diagnostyki po
-wyczyszczeniu i odświeżeniu strony.
+Test operatora KP-1.9 potwierdził odtworzenie planu pełnego i niepełnego,
+przywracanie historii, brak zmian po anulowaniu czyszczenia oraz zachowanie
+pustego planu po potwierdzonym czyszczeniu i odświeżeniu. Historia, pamięć tras
+i diagnostyka pozostały dostępne, a zapis historyczny można było ponownie
+przywrócić. Cały punkt KP-1 jest zakończony.
 
 ## Zakończony krok przekrojowy KP-2 — pamięć znanych tras
 
@@ -157,7 +157,7 @@ Kryteria zamknięcia KP-2:
 - [x] brak lub uszkodzenie pamięci tras nie blokuje harmonogramu;
 - [x] aplikacja pozostaje możliwa do uruchomienia całkowicie offline.
 
-## Aktywny krok przekrojowy KP-3 — budowa ręczna i kompaktowy widok operatora
+## Zakończony krok przekrojowy KP-3 — budowa ręczna i kompaktowy widok operatora
 
 KP-3 uzupełnia brak ujawniony podczas ręcznego dodawania budowy oraz lepiej
 wykorzystuje szerokość dużego monitora. Nie jest podpunktem 3B i nie zmienia
@@ -177,7 +177,7 @@ logiki rytmu dostaw. Po jego zakończeniu i domknięciu KP-1.9 wracamy do 3B.2.
   ekranu przy zoomie przeglądarki 100%, małe marginesy boczne, stały rozsądny
   panel po lewej, rozszerzalny obszar tabel i mniejsza potrzeba przewijania
   poziomego bez używania CSS `zoom` ani `transform: scale()`.
-- [ ] **KP-3.3 — regresja i test operatora:** pełna regresja automatyczna oraz
+- [x] **KP-3.3 — regresja i test operatora:** pełna regresja automatyczna oraz
   sprawdzenie na GitHub Pages dodania budowy z ilością, jej kursów, odświeżenia
   strony i układu przy zoomie 100% na dużym ekranie.
   - [x] **KP-3.3.1 — dokumentacja:** decyzje, instrukcja obsługi i osobny
@@ -186,7 +186,7 @@ logiki rytmu dostaw. Po jego zakończeniu i domknięciu KP-1.9 wracamy do 3B.2.
     test KP-3, przechodzą po ostatecznych zmianach.
   - [x] **KP-3.3.3 — publikacja:** kompletny pakiet trafia do `main`, a
     wdrożona wersja GitHub Pages odpowiada najnowszemu commitowi.
-  - [ ] **KP-3.3.4 — test operatora i zamknięcie:** operator potwierdza ilość
+  - [x] **KP-3.3.4 — test operatora i zamknięcie:** operator potwierdza ilość
     ręczną, zmianę i przywrócenie wartości, odtworzenie po odświeżeniu oraz
     szeroki układ przy zoomie Chrome 100%.
 
@@ -200,7 +200,7 @@ Kryteria zamknięcia KP-3:
 - [x] na dużym ekranie aplikacja wykorzystuje niemal całą dostępną szerokość;
 - [x] układ zachowuje techniczny breakpoint jednokolumnowy na węższych ekranach;
 - [x] aplikacja nie próbuje zmieniać zoomu przeglądarki;
-- [ ] pełna regresja automatyczna i test operatora przechodzą poprawnie.
+- [x] pełna regresja automatyczna i test operatora przechodzą poprawnie.
 
 ## Stan testów po zakończeniu kroku 3B.1 — 2026-08-15
 
@@ -319,10 +319,8 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
 
 - [x] **3A — generowanie kursów:** podział ilości betonu na pełne i niepełne kursy, pomijanie zrealizowanych pozycji i pełne tworzenie wyniku od nowa.
 - [ ] **3B — czasy cyklu i rytm dostaw:**
-  - [ ] **3B.1 — podstawowe czasy kursu:** wcześniejszy zakres załadunku,
-    dojazdu, rozładunku, powrotu i gotowości jest wdrożony, ale punkt został
-    ponownie otwarty w celu zastąpienia „dodatkowego rozładunku” dokładnym
-    czasem rozładunku widocznym dla każdej budowy.
+  - [x] **3B.1 — podstawowe czasy kursu:** załadunek, dojazd, dokładny czas
+    rozładunku, powrót i ponowna gotowość są wdrożone oraz przetestowane.
     - [x] **3B.1.1 — model wartości efektywnej:** ustawienie globalne jest
       wartością domyślną, a budowa może przechowywać dokładne ręczne nadpisanie.
     - [x] **3B.1.2 — interfejs i przywracanie:** kolumna **Rozładunek** pokazuje
@@ -331,7 +329,7 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
     - [x] **3B.1.3 — zgodność pamięci i regresja:** starsze dodatkowe minuty są
       bezpiecznie migrowane, pamięć planu zachowuje nadpisanie, a pełna
       regresja automatyczna przechodzi.
-    - [ ] **3B.1.4 — publikacja i test operatora:** wersja trafia na `main`,
+    - [x] **3B.1.4 — publikacja i test operatora:** wersja trafia na `main`,
       GitHub Pages buduje się poprawnie, a operator potwierdza wartość
       domyślną, ręczną zmianę i przywrócenie.
   - [ ] **3B.2 — rytm dostaw:** oddzielenie odstępu pomiędzy kolejnymi
@@ -660,11 +658,10 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać test operatora w **3B.1.4** na opublikowanej stronie. Równolegle nadal
-otwarte są KP-3.3.4 i KP-1.9. Dopiero po
-zamknięciu tych punktów wracamy do **3B.2 — rytm dostaw**.
-Punkt 3C pozostaje zablokowany do czasu zakończenia i przetestowania całego
-punktu 3B.
+Przed rozpoczęciem rozpisać wszystkie znane podetapy, a następnie wykonać
+**3B.2 — rytm dostaw**, czyli oddzielić odstęp pomiędzy kolejnymi dostawami od
+fizycznego czasu zajęcia gruszki. Punkt 3B pozostaje otwarty, a 3C jest
+zablokowany do czasu zakończenia i przetestowania całego punktu 3B.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1033,7 +1030,7 @@ Pełna regresja 11 zestawów testów zakończyła się poprawnie. Podetap 3B.1.3
 zakończony. Punkt 3B.1 pozostaje otwarty. Następny podetap to 3B.1.4 —
 publikacja i test operatora; 3B.2 czeka, a 3C pozostaje zablokowany.
 
-## 3B.1.4 — publikacja wykonana, test operatora otwarty — 2026-08-15
+## 3B.1.4 — publikacja i test operatora — 2026-08-15
 
 - [x] zmiany opublikowano na `main` w commicie
   `c83cbdc102b20dbe2b5d49b1db6c930a205d60c0`;
@@ -1041,9 +1038,28 @@ publikacja i test operatora; 3B.2 czeka, a 3C pozostaje zablokowany.
   wartości, przycisk `↺`, pamięć i migrację;
 - [x] GitHub Pages zakończył budowę ze statusem `built`, bez błędu i dokładnie
   z tego commitu;
-- [ ] operator potwierdza na stronie wartość z ustawień, ręczną zmianę,
+- [x] operator potwierdził na stronie wartość z ustawień, ręczną zmianę,
   zachowanie po odświeżeniu oraz przywrócenie przyciskiem `↺`.
 
-Publikacyjna część 3B.1.4 jest zakończona, ale cały podetap i punkt 3B.1
-pozostają otwarte do testu operatora. Następny krok to test na GitHub Pages;
-3B.2 czeka, a 3C pozostaje zablokowany.
+Podetap 3B.1.4 i cały punkt 3B.1 są zakończone. Punkt 3B pozostaje otwarty.
+Następny punkt to 3B.2 — rytm dostaw; 3C pozostaje zablokowany.
+
+## Zamknięcie 3B.1, KP-1 i KP-3 — 2026-08-15
+
+- [x] operator potwierdził domyślny, ręczny i przywrócony czas rozładunku oraz
+  zachowanie wartości po odświeżeniu;
+- [x] operator potwierdził ilość budowy ręcznej, wariant roboczy, przywrócenie
+  wartości bazowej i prawidłowe przeliczenie kursów;
+- [x] szeroki, kompaktowy układ został potwierdzony przy zoomie Chrome 100%;
+- [x] niepełny plan odtworzył się po odświeżeniu bez awarii i z ostrzeżeniem o
+  brakujących czasach;
+- [x] anulowanie czyszczenia nie zmieniło danych;
+- [x] potwierdzone czyszczenie zachowało pusty plan po odświeżeniu, nie usunęło
+  historii, pamięci tras ani diagnostyki, a plan historyczny można było
+  ponownie przywrócić;
+- [x] pełna regresja jedenastu zestawów testów przechodzi poprawnie.
+
+Zakończone podetapy: 3B.1.4, KP-1.9 i KP-3.3.4. Zakończone punkty nadrzędne:
+3B.1, KP-1 i KP-3. Punkt 3B nadal pozostaje otwarty. Następny niezakończony
+punkt to 3B.2 — rytm dostaw; przed jego rozpoczęciem trzeba rozpisać wszystkie
+znane podetapy. Punkt 3C pozostaje zablokowany do zamknięcia całego 3B.
