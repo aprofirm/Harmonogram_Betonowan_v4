@@ -244,7 +244,8 @@ h3 {
 .przycisk-historii:focus-visible,
 .przycisk-zamknij:focus-visible,
 .przycisk-wczytaj-zapis:focus-visible,
-.przycisk-przywroc-ilosc:focus-visible {
+.przycisk-przywroc-ilosc:focus-visible,
+.przycisk-przywroc-czas-rozladunku:focus-visible {
   outline: 3px solid rgba(242, 139, 53, 0.4);
   outline-offset: 2px;
 }
@@ -946,6 +947,10 @@ td {
   color: #a65e1e;
 }
 
+.znacznik-zrodla-czasu[data-zrodlo="ustawienia"] {
+  color: var(--kolor-zielony);
+}
+
 .pole-czasu-budowy {
   width: 72px;
   min-height: 34px;
@@ -967,6 +972,41 @@ td {
 .pole-czasu-budowy:disabled {
   color: #8b989f;
   background: #edf1f3;
+}
+
+.komorka-czasu-rozladunku {
+  min-width: 126px;
+}
+
+.kontrolki-czasu-rozladunku {
+  display: inline-grid;
+  grid-template-columns: 72px 32px;
+  align-items: center;
+  gap: 5px;
+}
+
+.przycisk-przywroc-czas-rozladunku {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #bfd2de;
+  border-radius: 8px;
+  color: var(--kolor-niebieski);
+  background: #f1f8fc;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.przycisk-przywroc-czas-rozladunku:hover:not(:disabled) {
+  border-color: var(--kolor-niebieski);
+  background: #e7f4fa;
+}
+
+.przycisk-przywroc-czas-rozladunku:disabled {
+  opacity: 0.38;
+  cursor: default;
 }
 
 .komorka-betonu {

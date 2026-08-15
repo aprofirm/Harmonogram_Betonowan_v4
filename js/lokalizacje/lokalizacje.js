@@ -152,6 +152,7 @@
       czasDojazduRoboczyMinuty: wynikOdczytu.trasa.czasDojazduMinuty,
       czasPowrotuRoboczyMinuty: wynikOdczytu.trasa.czasPowrotuMinuty,
       dodatkowyCzasZaladunkuMinuty: budowa.dodatkowyCzasZaladunkuMinuty,
+      czasRozladunkuRoboczyMinuty: budowa.czasRozladunkuRoboczyMinuty,
       dodatkowyCzasRozladunkuMinuty: budowa.dodatkowyCzasRozladunkuMinuty,
       zrodloCzasuDojazdu: "pamiec",
       zrodloCzasuPowrotu: "pamiec"
@@ -244,6 +245,7 @@
         czasDojazduRoboczyMinuty: trasaZMapy.czasDojazduMinuty,
         czasPowrotuRoboczyMinuty: trasaZMapy.czasPowrotuMinuty,
         dodatkowyCzasZaladunkuMinuty: budowa.dodatkowyCzasZaladunkuMinuty,
+        czasRozladunkuRoboczyMinuty: budowa.czasRozladunkuRoboczyMinuty,
         dodatkowyCzasRozladunkuMinuty: budowa.dodatkowyCzasRozladunkuMinuty,
         zrodloCzasuDojazdu: "mapa",
         zrodloCzasuPowrotu: "mapa"

@@ -345,6 +345,90 @@
     return komorka;
   }
 
+  function pobierzDomyslnyCzasRozladunkuZInterfejsu() {
+    const czasZPola = Number(elementy.czasRozladunku.value);
+
+    if (Number.isFinite(czasZPola) && czasZPola > 0) {
+      return czasZPola;
+    }
+
+    return Number(parametryDomyslneInterfejsu.czasRozladunkuMinuty);
+  }
+
+  function utworzKomorkeCzasuRozladunku(budowa) {
+    const komorka = document.createElement("td");
+    const kontrolki = document.createElement("span");
+    const pole = document.createElement("input");
+    const przyciskPrzywroc = document.createElement("button");
+    const znacznikZrodla = document.createElement("small");
+    const czasDomyslnyMinuty = pobierzDomyslnyCzasRozladunkuZInterfejsu();
+    const czasEfektywnyMinuty =
+      aplikacja.budowy.pobierzEfektywnyCzasRozladunkuMinuty(
+        budowa,
+        czasDomyslnyMinuty
+      );
+    const czyMaNoweNadpisanie =
+      Object.prototype.hasOwnProperty.call(budowa, "czasRozladunkuRoboczyMinuty") &&
+      budowa.czasRozladunkuRoboczyMinuty !== null &&
+      budowa.czasRozladunkuRoboczyMinuty !== undefined &&
+      budowa.czasRozladunkuRoboczyMinuty !== "";
+    const czyMaStarszeNadpisanie =
+      !Object.prototype.hasOwnProperty.call(budowa, "czasRozladunkuRoboczyMinuty") &&
+      Number(budowa.dodatkowyCzasRozladunkuMinuty) > 0;
+    const czyNadpisany = czyMaNoweNadpisanie || czyMaStarszeNadpisanie;
+    const czyZrealizowana = budowa.statusRealizacji === "zrealizowana";
+
+    komorka.className = "komorka-czasu-budowy komorka-czasu-rozladunku";
+    kontrolki.className = "kontrolki-czasu-rozladunku";
+
+    pole.className = "pole-czasu-budowy pole-czasu-rozladunku";
+    pole.type = "number";
+    pole.min = "1";
+    pole.step = "1";
+    pole.value = String(czasEfektywnyMinuty);
+    pole.disabled = czyZrealizowana;
+    pole.setAttribute(
+      "aria-label",
+      "Czas rozładunku dla budowy " + budowa.idBudowy
+    );
+    pole.addEventListener("change", function () {
+      obslugaZmianyCzasowBudowy(
+        budowa.idBudowy,
+        "czasRozladunkuRoboczyMinuty",
+        pole.value
+      );
+    });
+
+    przyciskPrzywroc.className = "przycisk-przywroc-czas-rozladunku";
+    przyciskPrzywroc.type = "button";
+    przyciskPrzywroc.textContent = "↺";
+    przyciskPrzywroc.disabled = czyZrealizowana || !czyNadpisany;
+    przyciskPrzywroc.title =
+      "Przywróć czas z ustawień: " + String(czasDomyslnyMinuty) + " min";
+    przyciskPrzywroc.setAttribute(
+      "aria-label",
+      "Przywróć czas rozładunku " + String(czasDomyslnyMinuty) +
+        " min z ustawień dla budowy " + budowa.budowa
+    );
+    przyciskPrzywroc.addEventListener("click", function () {
+      obslugaZmianyCzasowBudowy(
+        budowa.idBudowy,
+        "czasRozladunkuRoboczyMinuty",
+        ""
+      );
+    });
+
+    znacznikZrodla.className = "znacznik-zrodla-czasu";
+    znacznikZrodla.dataset.zrodlo = czyNadpisany ? "reczny" : "ustawienia";
+    znacznikZrodla.textContent = czyNadpisany ? "Ręcznie" : "Z ustawień";
+
+    kontrolki.appendChild(pole);
+    kontrolki.appendChild(przyciskPrzywroc);
+    komorka.appendChild(kontrolki);
+    komorka.appendChild(znacznikZrodla);
+    return komorka;
+  }
+
   function opiszOknoStartu(budowa) {
     if (budowa.tolerancjaStartuMinuty > 0 && budowa.najpozniejszyStart) {
       return budowa.startPlanowany + "–" + budowa.najpozniejszyStart;
@@ -405,15 +489,7 @@
         )
       )
     );
-    wiersz.appendChild(
-      utworzKomorkeZPolemCzasu(
-        utworzPoleCzasuBudowy(
-          budowa,
-          "dodatkowyCzasRozladunkuMinuty",
-          "Dodatkowy czas rozładunku"
-        )
-      )
-    );
+    wiersz.appendChild(utworzKomorkeCzasuRozladunku(budowa));
     wiersz.appendChild(utworzKomorkeIlosciBetonu(budowa));
     wiersz.appendChild(utworzKomorke(budowa.idBudowy, "identyfikator-budowy"));
     wiersz.appendChild(utworzKomorke(etykietaZrodla));

@@ -29,6 +29,7 @@
     "czasDojazduRoboczyMinuty",
     "czasPowrotuRoboczyMinuty",
     "dodatkowyCzasZaladunkuMinuty",
+    "czasRozladunkuRoboczyMinuty",
     "dodatkowyCzasRozladunkuMinuty",
     "zrodloCzasuDojazdu",
     "zrodloCzasuPowrotu"
@@ -72,7 +73,7 @@
 
   function utworzDanePlanuDoZapisu() {
     return {
-      wersjaStanuAplikacji: 1,
+      wersjaStanuAplikacji: 2,
       nazwaPliku: stanImportu.nazwaPliku || null,
       separator: stanImportu.separator || null,
       ostrzezeniaImportu: Array.isArray(stanImportu.ostrzezenia)
@@ -464,6 +465,7 @@
 
   function obsluzZmianeParametrow() {
     oznaczPlanJakoNieprzeliczony(true);
+    aplikacja.interfejs.pokazListeBudow(pobierzAktualnaListeBudow());
     zapiszZdarzenieDiagnostyczne(
       "informacja",
       "zmiana-parametrow-planu",
@@ -491,6 +493,31 @@
     numerOstatniegoImportu += 1;
     stanImportu = utworzStanImportuZPamieci(danePlanu);
     budowyReczne = skopiujListeBudowDoPamieci(danePlanu.budowyReczne);
+    const zapisanyCzasRozladunku = Number(
+      danePlanu.parametry && danePlanu.parametry.czasRozladunkuMinuty
+    );
+    const czasRozladunkuDoMigracji =
+      Number.isFinite(zapisanyCzasRozladunku) && zapisanyCzasRozladunku > 0
+        ? zapisanyCzasRozladunku
+        : aplikacja.konfiguracja.parametryDomyslne.czasRozladunkuMinuty;
+    let liczbaMigrowanychCzasowRozladunku = 0;
+
+    stanImportu.budowy.concat(budowyReczne).forEach(function (budowa) {
+      const czyWymagaMigracji =
+        !Object.prototype.hasOwnProperty.call(
+          budowa,
+          "czasRozladunkuRoboczyMinuty"
+        ) || Number(budowa.dodatkowyCzasRozladunkuMinuty) !== 0;
+
+      aplikacja.budowy.migrujCzasRozladunkuBudowy(
+        budowa,
+        czasRozladunkuDoMigracji
+      );
+
+      if (czyWymagaMigracji) {
+        liczbaMigrowanychCzasowRozladunku += 1;
+      }
+    });
     stanImportu.budowy.forEach(aplikacja.budowy.uzupelnijBazowaIloscBetonu);
     budowyReczne.forEach(aplikacja.budowy.uzupelnijBazowaIloscBetonu);
     czyOstatniPlanPrzeliczony = Boolean(danePlanu.czyHarmonogramPrzeliczony);
@@ -504,6 +531,16 @@
       danePlanu.parametry || {},
       czyOstatniPlanPrzeliczony
     );
+
+    if (liczbaMigrowanychCzasowRozladunku > 0) {
+      zapiszBiezacyPlan();
+      zapiszZdarzenieDiagnostyczne(
+        "informacja",
+        "migracja-czasow-rozladunku",
+        "Przeniesiono czasy rozładunku ze starszego formatu planu.",
+        { liczbaBudow: liczbaMigrowanychCzasowRozladunku }
+      );
+    }
 
     if (czyPrzeliczycPonownie && czyOstatniPlanPrzeliczony) {
       wykonajPrzeliczenie({

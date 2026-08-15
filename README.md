@@ -89,6 +89,18 @@ utrzymuje zwarty panel operatora po lewej i rozszerza obszar harmonogramu.
 Nie ustawia i nie symuluje zoomu Chrome. Na węższych ekranach układ pozostaje
 responsywny i przechodzi do jednej kolumny.
 
+## Czas rozładunku dla budowy
+
+Ustawienie **Czas rozładunku** jest wartością domyślną dla wszystkich budów,
+dlatego przy standardowych ustawieniach w kolumnie **Rozładunek** od razu widać
+`15 min`. Wpisanie innej liczby w wierszu, np. `20`, oznacza dokładnie `20 min`
+dla każdego kursu tej budowy — program nie dodaje tej liczby do ustawienia.
+
+Budowy bez wyjątku reagują na późniejszą zmianę wartości globalnej. Wartości
+oznaczone jako **Ręcznie** pozostają bez zmian. Przycisk `↺` przy polu usuwa
+wyjątek tylko dla wybranej budowy i przywraca bieżący czas z ustawień. Ręczne
+czasy są zachowywane po odświeżeniu strony i w zapisach historycznych.
+
 ## Diagnostyka i raport błędów
 
 Aplikacja automatycznie zapisuje techniczne zdarzenia z maksymalnie 10 ostatnich uruchomień. Rejestrowane są m.in. uruchomienie programu, rozpoczęcie i wynik importu CSV, przeliczenie harmonogramu, ostrzeżenia oraz błędy z bezpiecznym wskazaniem miejsca w kodzie.
@@ -173,4 +185,4 @@ Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
 ## Aktualny stan
 
-**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów**, krok **3B.1 — podstawowe czasy kursów** oraz cały krok przekrojowy **KP-2 — pamięć znanych tras** są zakończone. W KP-3 zakończono implementację ilości budowy ręcznej, wariantu roboczego i kompaktowego widoku; do zamknięcia pozostaje test operatora na opublikowanej stronie. Przed 3B.2 trzeba również dokończyć **KP-1.9 — pamięć planu dnia**. Punkt 3C nadal pozostaje zablokowany.
+**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów** oraz cały krok przekrojowy **KP-2 — pamięć znanych tras** są zakończone. Krok **3B.1 — podstawowe czasy kursów** został ponownie otwarty w celu korekty modelu rozładunku; implementacja i regresja są gotowe, a do zamknięcia pozostaje publikacja i test operatora. W KP-3 zakończono implementację ilości budowy ręcznej, wariantu roboczego i kompaktowego widoku; do zamknięcia pozostaje test operatora na opublikowanej stronie. Przed 3B.2 trzeba również dokończyć **KP-1.9 — pamięć planu dnia**. Punkt 3C nadal pozostaje zablokowany.

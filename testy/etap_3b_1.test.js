@@ -45,6 +45,7 @@ function utworzBudowe(daneCzasow) {
     czasDojazduRoboczyMinuty: 25,
     czasPowrotuRoboczyMinuty: 25,
     dodatkowyCzasZaladunkuMinuty: 0,
+    czasRozladunkuRoboczyMinuty: null,
     dodatkowyCzasRozladunkuMinuty: 0
   }, daneCzasow || {});
 }
@@ -79,7 +80,7 @@ function sprawdzPodstawowyCykl(aplikacja) {
 function sprawdzWydluzoneCzasy(aplikacja) {
   const wynik = przelicz(aplikacja, utworzBudowe({
     dodatkowyCzasZaladunkuMinuty: 5,
-    dodatkowyCzasRozladunkuMinuty: 10
+    czasRozladunkuRoboczyMinuty: 25
   }));
   const pierwszyKurs = wynik.kursy[0];
   const drugiKurs = wynik.kursy[1];
@@ -119,15 +120,70 @@ function sprawdzRoboczeCzasyBudowy(aplikacja) {
     czasDojazduRoboczyMinuty: 20,
     czasPowrotuRoboczyMinuty: 30,
     dodatkowyCzasZaladunkuMinuty: 4,
-    dodatkowyCzasRozladunkuMinuty: 6
+    czasRozladunkuRoboczyMinuty: 21
   });
 
   assert.equal(budowa.czasDojazduRoboczyMinuty, 20);
   assert.equal(budowa.czasPowrotuRoboczyMinuty, 30);
   assert.equal(budowa.dodatkowyCzasZaladunkuMinuty, 4);
-  assert.equal(budowa.dodatkowyCzasRozladunkuMinuty, 6);
+  assert.equal(budowa.czasRozladunkuRoboczyMinuty, 21);
   assert.equal(budowa.zrodloCzasuDojazdu, "reczny");
   assert.equal(budowa.zrodloCzasuPowrotu, "reczny");
+}
+
+function sprawdzDokladnyCzasRozladunku(aplikacja) {
+  const budowaZUstawien = utworzBudowe();
+  const budowaZNadpisaniem = utworzBudowe({
+    czasRozladunkuRoboczyMinuty: 25
+  });
+
+  assert.equal(
+    aplikacja.budowy.pobierzEfektywnyCzasRozladunkuMinuty(
+      budowaZUstawien,
+      15
+    ),
+    15
+  );
+  assert.equal(
+    aplikacja.budowy.pobierzEfektywnyCzasRozladunkuMinuty(
+      budowaZUstawien,
+      18
+    ),
+    18
+  );
+  assert.equal(
+    aplikacja.budowy.pobierzEfektywnyCzasRozladunkuMinuty(
+      budowaZNadpisaniem,
+      18
+    ),
+    25
+  );
+
+  aplikacja.budowy.zmienCzasRoboczyBudowy(
+    budowaZNadpisaniem,
+    "czasRozladunkuRoboczyMinuty",
+    ""
+  );
+  assert.equal(budowaZNadpisaniem.czasRozladunkuRoboczyMinuty, null);
+  assert.equal(
+    aplikacja.budowy.pobierzEfektywnyCzasRozladunkuMinuty(
+      budowaZNadpisaniem,
+      18
+    ),
+    18
+  );
+
+  const budowaZeStarszegoPlanu = utworzBudowe({
+    dodatkowyCzasRozladunkuMinuty: 10
+  });
+  delete budowaZeStarszegoPlanu.czasRozladunkuRoboczyMinuty;
+  assert.equal(
+    aplikacja.budowy.pobierzEfektywnyCzasRozladunkuMinuty(
+      budowaZeStarszegoPlanu,
+      15
+    ),
+    25
+  );
 }
 
 function sprawdzDomyslnaRownoscDojazduIPowrotu(aplikacja) {
@@ -196,5 +252,6 @@ sprawdzWydluzoneCzasy(aplikacja);
 sprawdzBrakCzasuPrzejazdu(aplikacja);
 sprawdzRoboczeCzasyBudowy(aplikacja);
 sprawdzDomyslnaRownoscDojazduIPowrotu(aplikacja);
+sprawdzDokladnyCzasRozladunku(aplikacja);
 
 console.log("✓ Etap 3B.1: pełne czasy kursów są obliczane poprawnie.");

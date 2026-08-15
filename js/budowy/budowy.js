@@ -111,6 +111,7 @@
       czasDojazduRoboczyMinuty: null,
       czasPowrotuRoboczyMinuty: null,
       dodatkowyCzasZaladunkuMinuty: 0,
+      czasRozladunkuRoboczyMinuty: null,
       dodatkowyCzasRozladunkuMinuty: 0,
       zrodloCzasuDojazdu: "brak",
       zrodloCzasuPowrotu: "brak"
@@ -134,6 +135,82 @@
   function pobierzNieujemnaLiczbe(wartosc, nazwaPola) {
     const liczba = pobierzNieujemnaLiczbeLubBrak(wartosc, nazwaPola);
     return liczba === null ? 0 : liczba;
+  }
+
+  function pobierzDodatniaLiczbeLubBrak(wartosc, nazwaPola) {
+    if (wartosc === null || wartosc === undefined || wartosc === "") {
+      return null;
+    }
+
+    const liczba = Number(wartosc);
+
+    if (!Number.isFinite(liczba) || liczba <= 0) {
+      throw new Error("Pole „" + nazwaPola + "” musi zawierać liczbę większą niż 0.");
+    }
+
+    return liczba;
+  }
+
+  function pobierzEfektywnyCzasRozladunkuMinuty(budowa, czasDomyslnyMinuty) {
+    const czasDomyslny = pobierzDodatniaLiczbeLubBrak(
+      czasDomyslnyMinuty,
+      "Czas rozładunku"
+    );
+
+    if (czasDomyslny === null) {
+      throw new Error("Pole „Czas rozładunku” musi zawierać liczbę większą niż 0.");
+    }
+
+    if (
+      budowa &&
+      Object.prototype.hasOwnProperty.call(budowa, "czasRozladunkuRoboczyMinuty")
+    ) {
+      const czasRoboczy = pobierzDodatniaLiczbeLubBrak(
+        budowa.czasRozladunkuRoboczyMinuty,
+        "Czas rozładunku"
+      );
+      return czasRoboczy === null ? czasDomyslny : czasRoboczy;
+    }
+
+    const dodatkowyCzasZeStarszegoPlanu = pobierzNieujemnaLiczbe(
+      budowa && budowa.dodatkowyCzasRozladunkuMinuty,
+      "Dodatkowy czas rozładunku"
+    );
+
+    return czasDomyslny + dodatkowyCzasZeStarszegoPlanu;
+  }
+
+  function migrujCzasRozladunkuBudowy(budowa, czasDomyslnyMinuty) {
+    if (!budowa || typeof budowa !== "object") {
+      throw new Error("Nie znaleziono budowy do migracji czasu rozładunku.");
+    }
+
+    const czyMaNowePole = Object.prototype.hasOwnProperty.call(
+      budowa,
+      "czasRozladunkuRoboczyMinuty"
+    );
+    const czasEfektywny = pobierzEfektywnyCzasRozladunkuMinuty(
+      budowa,
+      czasDomyslnyMinuty
+    );
+    const dodatkowyCzasZeStarszegoPlanu = pobierzNieujemnaLiczbe(
+      budowa.dodatkowyCzasRozladunkuMinuty,
+      "Dodatkowy czas rozładunku"
+    );
+
+    if (czyMaNowePole) {
+      budowa.czasRozladunkuRoboczyMinuty = pobierzDodatniaLiczbeLubBrak(
+        budowa.czasRozladunkuRoboczyMinuty,
+        "Czas rozładunku"
+      );
+    } else {
+      budowa.czasRozladunkuRoboczyMinuty = dodatkowyCzasZeStarszegoPlanu > 0
+        ? czasEfektywny
+        : null;
+    }
+
+    budowa.dodatkowyCzasRozladunkuMinuty = 0;
+    return budowa;
   }
 
   function pobierzZrodloCzasu(wartosc, czyJestCzas) {
@@ -245,6 +322,12 @@
       noweCzasy.dodatkowyCzasZaladunkuMinuty,
       "Dodatkowy czas załadunku"
     );
+    budowa.czasRozladunkuRoboczyMinuty = pobierzDodatniaLiczbeLubBrak(
+      Object.prototype.hasOwnProperty.call(noweCzasy, "czasRozladunkuRoboczyMinuty")
+        ? noweCzasy.czasRozladunkuRoboczyMinuty
+        : budowa.czasRozladunkuRoboczyMinuty,
+      "Czas rozładunku"
+    );
     budowa.dodatkowyCzasRozladunkuMinuty = pobierzNieujemnaLiczbe(
       noweCzasy.dodatkowyCzasRozladunkuMinuty,
       "Dodatkowy czas rozładunku"
@@ -297,6 +380,7 @@
       "czasDojazduRoboczyMinuty",
       "czasPowrotuRoboczyMinuty",
       "dodatkowyCzasZaladunkuMinuty",
+      "czasRozladunkuRoboczyMinuty",
       "dodatkowyCzasRozladunkuMinuty"
     ];
 
@@ -315,11 +399,16 @@
       czasDojazduRoboczyMinuty: budowa.czasDojazduRoboczyMinuty,
       czasPowrotuRoboczyMinuty: budowa.czasPowrotuRoboczyMinuty,
       dodatkowyCzasZaladunkuMinuty: budowa.dodatkowyCzasZaladunkuMinuty,
+      czasRozladunkuRoboczyMinuty: budowa.czasRozladunkuRoboczyMinuty,
       dodatkowyCzasRozladunkuMinuty: budowa.dodatkowyCzasRozladunkuMinuty,
       zrodloCzasuDojazdu: budowa.zrodloCzasuDojazdu,
       zrodloCzasuPowrotu: budowa.zrodloCzasuPowrotu
     };
     noweCzasy[nazwaPola] = wartosc;
+
+    if (nazwaPola === "czasRozladunkuRoboczyMinuty") {
+      noweCzasy.dodatkowyCzasRozladunkuMinuty = 0;
+    }
 
     if (nazwaPola === "czasDojazduRoboczyMinuty") {
       noweCzasy.zrodloCzasuDojazdu = czyBrakWartosci(wartosc)
@@ -369,6 +458,8 @@
     utworzListeRobocza: utworzListeRobocza,
     uzupelnijBazowaIloscBetonu: uzupelnijBazowaIloscBetonu,
     ustawCzasyRobocze: ustawCzasyRobocze,
+    pobierzEfektywnyCzasRozladunkuMinuty: pobierzEfektywnyCzasRozladunkuMinuty,
+    migrujCzasRozladunkuBudowy: migrujCzasRozladunkuBudowy,
     zmienCzasRoboczyBudowy: zmienCzasRoboczyBudowy,
     zmienIloscBetonuRoboczaBudowy: zmienIloscBetonuRoboczaBudowy,
     przywrocBazowaIloscBetonuBudowy: przywrocBazowaIloscBetonuBudowy

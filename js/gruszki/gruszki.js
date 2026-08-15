@@ -183,7 +183,7 @@
       parametry.czasZaladunkuMinuty,
       "Czas załadunku"
     );
-    const czasRozladunkuMinuty = pobierzDodatniCzas(
+    const czasRozladunkuDomyslnyMinuty = pobierzDodatniCzas(
       parametry.czasRozladunkuMinuty,
       "Czas rozładunku"
     );
@@ -202,15 +202,14 @@
       "Dodatkowy czas załadunku",
       budowa.idBudowy
     );
-    const dodatkowyCzasRozladunkuMinuty = pobierzDodatkowyCzas(
-      budowa.dodatkowyCzasRozladunkuMinuty,
-      "Dodatkowy czas rozładunku",
-      budowa.idBudowy
-    );
+    const czasRozladunkuMinuty =
+      aplikacja.budowy.pobierzEfektywnyCzasRozladunkuMinuty(
+        budowa,
+        czasRozladunkuDomyslnyMinuty
+      );
     const calkowityCzasZaladunkuMinuty =
       czasZaladunkuMinuty + dodatkowyCzasZaladunkuMinuty;
-    const calkowityCzasRozladunkuMinuty =
-      czasRozladunkuMinuty + dodatkowyCzasRozladunkuMinuty;
+    const calkowityCzasRozladunkuMinuty = czasRozladunkuMinuty;
     const startBudowyMinuty = pobierzMinutyGodziny(
       budowa.startRoboczy,
       "StartRoboczy",
@@ -230,9 +229,14 @@
       dodatkowyCzasZaladunkuMinuty: dodatkowyCzasZaladunkuMinuty,
       calkowityCzasZaladunkuMinuty: calkowityCzasZaladunkuMinuty,
       czasDojazduMinuty: czasDojazduMinuty,
+      czasRozladunkuDomyslnyMinuty: czasRozladunkuDomyslnyMinuty,
       czasRozladunkuMinuty: czasRozladunkuMinuty,
-      dodatkowyCzasRozladunkuMinuty: dodatkowyCzasRozladunkuMinuty,
+      dodatkowyCzasRozladunkuMinuty: 0,
       calkowityCzasRozladunkuMinuty: calkowityCzasRozladunkuMinuty,
+      czyNadpisanyCzasRozladunku:
+        budowa.czasRozladunkuRoboczyMinuty !== null &&
+        budowa.czasRozladunkuRoboczyMinuty !== undefined &&
+        budowa.czasRozladunkuRoboczyMinuty !== "",
       czasPowrotuMinuty: czasPowrotuMinuty,
       godzinaRozpoczeciaZaladunku: formatujMinutyJakoGodzine(
         rozpoczecieZaladunkuMinuty

@@ -248,6 +248,11 @@ function znajdzPierwszePoleDojazdu(srodowisko) {
   return wiersze[0].children[3].children[0];
 }
 
+function znajdzPierwszaKomorkeRozladunku(srodowisko) {
+  const wiersze = srodowisko.dokument.elementy["wiersze-harmonogramu"].children;
+  return wiersze[0].children[6];
+}
+
 function sprawdzMigracjeTrasZeStarszegoPlanu() {
   const pamiecLokalna = utworzPamiecLokalna();
   const ustawieniaPotwierdzenia = { wynik: true };
@@ -299,6 +304,10 @@ function sprawdzMigracjeTrasZeStarszegoPlanu() {
     }
   );
   niekompletnaBudowa.czasDojazduRoboczyMinuty = 11;
+  pierwszaBudowa.dodatkowyCzasRozladunkuMinuty = 10;
+  delete pierwszaBudowa.czasRozladunkuRoboczyMinuty;
+  delete drugaBudowa.czasRozladunkuRoboczyMinuty;
+  delete niekompletnaBudowa.czasRozladunkuRoboczyMinuty;
 
   pamiecLokalna.removeItem(kluczPamieciTras);
   pamiecLokalna.setItem(kluczPlanu, JSON.stringify({
@@ -311,7 +320,7 @@ function sprawdzMigracjeTrasZeStarszegoPlanu() {
       ostrzezeniaImportu: [],
       budowyZImportu: [pierwszaBudowa, drugaBudowa, niekompletnaBudowa],
       budowyReczne: [],
-      parametry: {},
+      parametry: { czasRozladunkuMinuty: "15" },
       czyHarmonogramPrzeliczony: false
     }
   }));
@@ -334,6 +343,20 @@ function sprawdzMigracjeTrasZeStarszegoPlanu() {
       return [trasa.czasDojazduMinuty, trasa.czasPowrotuMinuty];
     }),
     [[14, 16], [22, 25]]
+  );
+  const zmigrowanyPlan = odczytajDanePlanu(pamiecLokalna);
+  assert.equal(
+    zmigrowanyPlan.budowyZImportu[0].czasRozladunkuRoboczyMinuty,
+    25
+  );
+  assert.equal(
+    zmigrowanyPlan.budowyZImportu[0].dodatkowyCzasRozladunkuMinuty,
+    0
+  );
+  assert.equal(
+    stronaPoAktualizacji.dokument.elementy["wiersze-harmonogramu"]
+      .children[0].children[6].children[0].children[0].value,
+    "25"
   );
 }
 
@@ -386,6 +409,45 @@ async function uruchomTest() {
     pierwszaStrona.dokument.elementy["wiersze-harmonogramu"]
       .children[0].children[3].children[1].textContent,
     "Z pamięci"
+  );
+
+  let komorkaRozladunku = znajdzPierwszaKomorkeRozladunku(pierwszaStrona);
+  assert.equal(komorkaRozladunku.children[0].children[0].value, "15");
+  assert.equal(komorkaRozladunku.children[0].children[1].disabled, true);
+  assert.equal(komorkaRozladunku.children[1].textContent, "Z ustawień");
+
+  const poleGlobalnegoRozladunku =
+    pierwszaStrona.dokument.elementy["czas-rozladunku"];
+  poleGlobalnegoRozladunku.value = "18";
+  poleGlobalnegoRozladunku.zdarzenia.change();
+  komorkaRozladunku = znajdzPierwszaKomorkeRozladunku(pierwszaStrona);
+  assert.equal(komorkaRozladunku.children[0].children[0].value, "18");
+
+  komorkaRozladunku.children[0].children[0].value = "20";
+  komorkaRozladunku.children[0].children[0].zdarzenia.change();
+  komorkaRozladunku = znajdzPierwszaKomorkeRozladunku(pierwszaStrona);
+  assert.equal(komorkaRozladunku.children[0].children[0].value, "20");
+  assert.equal(komorkaRozladunku.children[0].children[1].disabled, false);
+  assert.equal(komorkaRozladunku.children[1].textContent, "Ręcznie");
+
+  poleGlobalnegoRozladunku.value = "16";
+  poleGlobalnegoRozladunku.zdarzenia.change();
+  komorkaRozladunku = znajdzPierwszaKomorkeRozladunku(pierwszaStrona);
+  assert.equal(komorkaRozladunku.children[0].children[0].value, "20");
+  komorkaRozladunku.children[0].children[1].zdarzenia.click();
+  komorkaRozladunku = znajdzPierwszaKomorkeRozladunku(pierwszaStrona);
+  assert.equal(komorkaRozladunku.children[0].children[0].value, "16");
+  assert.equal(komorkaRozladunku.children[1].textContent, "Z ustawień");
+
+  poleGlobalnegoRozladunku.value = "15";
+  poleGlobalnegoRozladunku.zdarzenia.change();
+  komorkaRozladunku = znajdzPierwszaKomorkeRozladunku(pierwszaStrona);
+  komorkaRozladunku.children[0].children[0].value = "19";
+  komorkaRozladunku.children[0].children[0].zdarzenia.change();
+  assert.equal(
+    odczytajDanePlanu(pamiecLokalna).budowyZImportu[0]
+      .czasRozladunkuRoboczyMinuty,
+    19
   );
 
   let wierszBudowyRecznej = pierwszaStrona.dokument.elementy[
@@ -442,6 +504,11 @@ async function uruchomTest() {
   assert.equal(
     stronaPoOdswiezeniu.dokument.elementy["nazwa-pliku-csv"].textContent,
     "plan-testowy.csv"
+  );
+  assert.equal(
+    znajdzPierwszaKomorkeRozladunku(stronaPoOdswiezeniu)
+      .children[0].children[0].value,
+    "19"
   );
 
   ustawieniaPotwierdzenia.wynik = false;

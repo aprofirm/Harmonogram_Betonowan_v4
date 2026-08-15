@@ -1125,9 +1125,17 @@ W kroku 3B.1 obowiązuje następujący model:
 - podstawowy czas załadunku wynosi domyślnie `10 minut` i pozostaje parametrem;
 - podstawowy czas rozładunku wynosi domyślnie `15 minut` dla każdego kursu,
   również dla ostatniego kursu niepełnego;
-- każda budowa może mieć osobny dodatkowy czas załadunku oraz dodatkowy czas
-  rozładunku, domyślnie `0 minut`;
-- dodatkowy czas rozładunku wpływa na odstęp pomiędzy kolejnymi dostawami tej
+- każda budowa może mieć osobny dodatkowy czas załadunku, domyślnie `0 minut`;
+- kolumna **Rozładunek** pokazuje dokładny czas używany w obliczeniach: bez
+  wyjątku jest to bieżąca wartość z ustawień, a ręcznie wpisana liczba zastępuje
+  ją dla wybranej budowy i nie jest do niej dodawana;
+- zmiana globalnego czasu rozładunku aktualizuje budowy bez ręcznego wyjątku,
+  ale nie zmienia wartości nadpisanych;
+- przycisk `↺` przy czasie rozładunku usuwa ręczny wyjątek wybranej budowy i
+  przywraca jej bieżącą wartość z ustawień;
+- ręczny wyjątek jest zapisywany razem z planem, a starsze zapisy zawierające
+  dodatkowe minuty rozładunku są migrowane do równoważnego czasu dokładnego;
+- dokładny czas rozładunku wpływa na odstęp pomiędzy kolejnymi dostawami tej
   budowy;
 - czas dojazdu i czas powrotu są osobnymi wartościami roboczymi dla budowy;
 - jeżeli oba czasy są puste, pierwsze wpisanie dojazdu albo powrotu kopiuje tę

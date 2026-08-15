@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; KP-2 zakończony, przed 3B.2 realizujemy KP-3 i kończymy test operatora KP-1.9**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; przed 3B.2 poprawiamy sposób podawania rozładunku w 3B.1, kończymy KP-3 i test operatora KP-1.9**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -319,9 +319,21 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
 
 - [x] **3A — generowanie kursów:** podział ilości betonu na pełne i niepełne kursy, pomijanie zrealizowanych pozycji i pełne tworzenie wyniku od nowa.
 - [ ] **3B — czasy cyklu i rytm dostaw:**
-  - [x] **3B.1 — podstawowe czasy kursu:** załadunek, dojazd, rozładunek,
-    powrót, ponowna gotowość oraz ręczne korekty czasów; test automatyczny,
-    regresja i test operatora zakończone powodzeniem.
+  - [ ] **3B.1 — podstawowe czasy kursu:** wcześniejszy zakres załadunku,
+    dojazdu, rozładunku, powrotu i gotowości jest wdrożony, ale punkt został
+    ponownie otwarty w celu zastąpienia „dodatkowego rozładunku” dokładnym
+    czasem rozładunku widocznym dla każdej budowy.
+    - [x] **3B.1.1 — model wartości efektywnej:** ustawienie globalne jest
+      wartością domyślną, a budowa może przechowywać dokładne ręczne nadpisanie.
+    - [x] **3B.1.2 — interfejs i przywracanie:** kolumna **Rozładunek** pokazuje
+      wartość efektywną, pozwala ją zmienić i ma przycisk `↺` powrotu do
+      aktualnej wartości z ustawień.
+    - [x] **3B.1.3 — zgodność pamięci i regresja:** starsze dodatkowe minuty są
+      bezpiecznie migrowane, pamięć planu zachowuje nadpisanie, a pełna
+      regresja automatyczna przechodzi.
+    - [ ] **3B.1.4 — publikacja i test operatora:** wersja trafia na `main`,
+      GitHub Pages buduje się poprawnie, a operator potwierdza wartość
+      domyślną, ręczną zmianę i przywrócenie.
   - [ ] **3B.2 — rytm dostaw:** oddzielenie odstępu pomiędzy kolejnymi
     dostawami od fizycznego czasu zajęcia gruszki.
 - [ ] **3C — przydział gruszek:** brak nakładania kursów jednej gruszki.
@@ -648,9 +660,9 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **KP-3.3.4 — test operatora i zamknięcie KP-3**.
-Po zamknięciu KP-3 trzeba dokończyć **KP-1.9 — test operatora pamięci planu
-dnia**. Dopiero po zamknięciu obu punktów wracamy do **3B.2 — rytm dostaw**.
+Wykonać **3B.1.4 — publikacja i test operatora**. Równolegle nadal otwarte są
+KP-3.3.4 i KP-1.9. Dopiero po
+zamknięciu tych punktów wracamy do **3B.2 — rytm dostaw**.
 Punkt 3C pozostaje zablokowany do czasu zakończenia i przetestowania całego
 punktu 3B.
 
@@ -972,3 +984,51 @@ KP-3.3.4 — test operatora i zamknięcie. KP-1.9 nadal jest częściowo otwarty
 KP-3.3.3 jest zakończony. KP-3.3 oraz KP-3 pozostają otwarte. Następny i
 ostatni podetap to KP-3.3.4 — test operatora na GitHub Pages przy zoomie 100%.
 KP-1.9 nadal jest częściowo otwarty; 3B.2 czeka, a 3C pozostaje zablokowany.
+
+## Ponowne otwarcie 3B.1 — dokładny czas rozładunku — 2026-08-15
+
+Dotychczasowa kolumna **+ rozładunek** przechowywała dodatkowe minuty ponad
+wartość z ustawień. Operator zatwierdził czytelniejszy model: tabela ma od razu
+pokazywać dokładny domyślny czas, np. `15 min`, a wpisanie `20` ma oznaczać
+łącznie `20 min`, nie `15 + 20 min`.
+
+Przed zmianą kodu zapisano podetapy 3B.1.1–3B.1.4 obejmujące model, interfejs,
+migrację starszych planów, regresję, publikację i test operatora. 3B.1 jest
+ponownie otwarty. Następny podetap to 3B.1.1; 3B.2 czeka, a 3C jest zablokowany.
+
+## Kontrola po 3B.1.1 — 2026-08-15
+
+Model budowy przechowuje teraz opcjonalny dokładny czas rozładunku. Brak
+nadpisania oznacza bieżącą wartość z ustawień, a ręczna liczba jest pełnym
+czasem rozładunku i nie jest dodawana do wartości globalnej. Zachowano odczyt
+starego pola dodatkowych minut na potrzeby migracji wcześniejszych zapisów.
+
+Test `node testy/etap_3b_1.test.js` zakończył się poprawnie, w tym dla zmiany
+wartości globalnej, dokładnego wyjątku, resetu i starego modelu danych.
+Podetap 3B.1.1 jest zakończony. Punkt 3B.1 pozostaje otwarty. Następny podetap
+to 3B.1.2; 3B.2 czeka, a 3C pozostaje zablokowany.
+
+## Kontrola po 3B.1.2 — 2026-08-15
+
+Nagłówek tabeli brzmi teraz **Rozładunek**. Każda budowa pokazuje od razu
+efektywną wartość z ustawień, a ręczne wpisanie liczby tworzy dokładny wyjątek.
+Znacznik rozróżnia „Z ustawień” i „Ręcznie”, a przycisk `↺` usuwa wyjątek i
+przywraca bieżącą wartość globalną. Zmiana ustawienia odświeża tylko wartości
+dziedziczone; wyjątki ręczne pozostają bez zmian.
+
+Test `node testy/pamiec_aplikacji.test.js` zakończył się poprawnie i sprawdził
+wartość domyślną, zmianę globalną, ręczne nadpisanie oraz reset. Podetap 3B.1.2
+jest zakończony. Punkt 3B.1 pozostaje otwarty. Następny podetap to 3B.1.3;
+3B.2 czeka, a 3C pozostaje zablokowany.
+
+## Kontrola po 3B.1.3 — 2026-08-15
+
+Pamięć planu zapisuje dokładne ręczne nadpisanie czasu rozładunku. Po
+odświeżeniu wartość i jej źródło pozostają widoczne. Starszy zapis zawierający
+dodatkowe minuty jest automatycznie przeliczany na równoważny czas dokładny,
+np. ustawienie `15` i stary dodatek `10` stają się ręcznym czasem `25`.
+
+Zaktualizowano `README.md`, `PROJECT_DECISIONS.md` i instrukcję testu ręcznego.
+Pełna regresja 11 zestawów testów zakończyła się poprawnie. Podetap 3B.1.3 jest
+zakończony. Punkt 3B.1 pozostaje otwarty. Następny podetap to 3B.1.4 —
+publikacja i test operatora; 3B.2 czeka, a 3C pozostaje zablokowany.
