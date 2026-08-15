@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; przed 3B.2 kończymy KP-1 i realizujemy zatwierdzony krok przekrojowy KP-2**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; KP-2 zakończony, przed 3B.2 kończymy test operatora KP-1.9**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -106,10 +106,12 @@ Kryteria zamknięcia KP-1:
 - [x] aplikacja nadal działa offline i przechodzi pełną regresję automatyczną.
 
 Test operatora KP-1.9 jest częściowo potwierdzony: odświeżenie strony zachowało
-plan oraz ponownie pokazało dane. Historia i oba warianty czyszczenia nadal
-wymagają sprawdzenia przed zamknięciem KP-1.
+plan, zapis historyczny można było przywrócić, a potwierdzone czyszczenie
+usunęło bieżący plan. Nadal trzeba sprawdzić odtworzenie planu niepełnego,
+anulowanie czyszczenia oraz pełną kontrolę historii i diagnostyki po
+wyczyszczeniu i odświeżeniu strony.
 
-## Aktywny krok przekrojowy KP-2 — pamięć znanych tras
+## Zakończony krok przekrojowy KP-2 — pamięć znanych tras
 
 KP-2 przygotowuje lokalną książkę tras przed pełną integracją mapową Etapu 6.
 Został świadomie zlecony przed 3B.2. Nie uruchamia jeszcze zewnętrznej usługi
@@ -131,12 +133,12 @@ wyników mapowych.
   **Ręcznie** i **OpenMap** przy czasach oraz licznik znanych tras.
 - [x] **KP-2.6 — testy automatyczne i pełna regresja:** test modułu, integracji,
   pomijania zapytania sieciowego przy trafieniu oraz wcześniejszych funkcji.
-- [ ] **KP-2.7 — test operatora i zamknięcie:** poprawka oraz ponowne sprawdzenie
+- [x] **KP-2.7 — test operatora i zamknięcie:** poprawka oraz ponowne sprawdzenie
   pełnego przepływu ujawnionego podczas pierwszej próby operatorskiej:
   - [x] **KP-2.7.1 — automatyczna archiwizacja kompletnych tras:** zapisanie
     wszystkich budów z dojazdem i powrotem podczas przeliczenia oraz bezpieczne
     uzupełnienie brakujących wpisów ze starszego odtworzonego planu;
-  - [ ] **KP-2.7.2 — powtórny test operatora:** ponowny import tych samych budów,
+  - [x] **KP-2.7.2 — powtórny test operatora:** ponowny import tych samych budów,
     odtworzenie osobnych czasów oraz potwierdzenie, że czyszczenie planu nie
     usuwa książki tras.
 
@@ -601,9 +603,10 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Opublikować wersję do **KP-2.7 — testu operatora pamięci tras** i równolegle
-dokończyć otwarte próby KP-1.9 dotyczące historii oraz czyszczenia. Po
-zamknięciu KP-1 i KP-2 wracamy do **3B.2 — rytm dostaw**. Punkt 3C pozostaje
+Dokończyć **KP-1.9 — test operatora pamięci planu dnia**: sprawdzić odtworzenie
+niepełnego planu, anulowanie czyszczenia oraz zachowanie historii i diagnostyki
+po potwierdzonym czyszczeniu i odświeżeniu strony. KP-2 jest zakończony. Po
+zamknięciu KP-1 wracamy do **3B.2 — rytm dostaw**. Punkt 3C pozostaje
 zablokowany do czasu zakończenia i przetestowania całego punktu 3B.
 
 
@@ -853,3 +856,15 @@ KP-2.7.1 jest zakończony. KP-2 oraz KP-2.7 pozostają otwarte. Następny i osta
 podetap to KP-2.7.2 — powtórny test operatora na GitHub Pages. KP-1.9 nadal
 wymaga prób historii i czyszczenia; po obu testach wracamy do 3B.2, a punkt 3C
 pozostaje zablokowany.
+
+## KP-2.7.2 — powtórny test operatora i zamknięcie KP-2 — 2026-08-15
+
+- [x] odtworzony starszy plan uzupełnił licznik wszystkimi kompletnymi trasami;
+- [x] czyszczenie planu dnia nie usunęło książki tras;
+- [x] ponowny import tych samych budów odtworzył zapisane dojazdy i powroty;
+- [x] operator potwierdził poprawny wynik na GitHub Pages po publikacji
+  poprawki KP-2.7.1.
+
+KP-2.7.2 oraz cały punkt KP-2 są zakończone. Następny niezakończony punkt to
+KP-1.9 — dokończenie testu operatora pamięci planu dnia. Po jego zamknięciu
+wracamy do 3B.2 — rytm dostaw; punkt 3C nadal pozostaje zablokowany.

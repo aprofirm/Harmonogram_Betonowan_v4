@@ -2,10 +2,9 @@
 
 ## Status
 
-Implementacja KP-2.1–KP-2.6 oraz poprawka automatycznej archiwizacji KP-2.7.1
-są zakończone. Poniższy test operatorski jest ostatnim podetapem KP-2.7.2.
-Pełne połączenie z OpenStreetMap nie jest jeszcze aktywne — pozostaje zakresem
-Etapu 6.
+Implementacja KP-2.1–KP-2.6, poprawka KP-2.7.1 i powtórny test operatora
+KP-2.7.2 są zakończone. Cały punkt KP-2 został zamknięty 2026-08-15. Pełne
+połączenie z OpenStreetMap nie jest jeszcze aktywne — pozostaje zakresem Etapu 6.
 
 ## Cel
 
