@@ -41,7 +41,11 @@ function utworzBudowe(idBudowy, iloscBetonuM3, statusRealizacji) {
     startPlanowany: "08:00",
     startRoboczy: "08:00",
     iloscBetonuLiczbaM3: iloscBetonuM3,
-    statusRealizacji: statusRealizacji || "do-realizacji"
+    statusRealizacji: statusRealizacji || "do-realizacji",
+    czasDojazduRoboczyMinuty: 0,
+    czasPowrotuRoboczyMinuty: 0,
+    dodatkowyCzasZaladunkuMinuty: 0,
+    dodatkowyCzasRozladunkuMinuty: 0
   };
 }
 
@@ -94,6 +98,14 @@ function sprawdzDzisiejszyScenariuszKdx(aplikacja) {
     "Firma H;Budowa 8;14:00;0,0 m3"
   ].join("\n");
   const stanImportu = aplikacja.importCsv.przetworzCsv(csv, "test-kdx.csv");
+  stanImportu.budowy.forEach(function (budowa) {
+    aplikacja.budowy.ustawCzasyRobocze(budowa, {
+      czasDojazduRoboczyMinuty: 0,
+      czasPowrotuRoboczyMinuty: 0,
+      dodatkowyCzasZaladunkuMinuty: 0,
+      dodatkowyCzasRozladunkuMinuty: 0
+    });
+  });
   const wynik = aplikacja.harmonogram.przeliczCalyHarmonogram({
     stanImportu: stanImportu,
     parametry: { pojemnoscGruszkiM3: 8 }

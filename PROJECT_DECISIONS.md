@@ -1107,6 +1107,49 @@ ten sam centralny mechanizm pełnego przeliczenia harmonogramu.
 
 ---
 
+## 68. Tolerancja czasu i zrealizowane pozycje KDX
+
+Prawdziwy eksport KDX został zweryfikowany na komputerze operatora 2026-08-14.
+
+- rzeczywisty zapis KDX `13:00 (+60 min)` oznacza dopuszczalne okno rozpoczęcia od `13:00` do `14:00`; importer akceptuje również wariant ze znakiem minus, jeżeli pojawi się w innym eksporcie;
+- wartość źródłowa pozostaje zachowana, a model roboczy przechowuje osobno początek, tolerancję i najpóźniejszy start;
+- ilość `0,0 m³` oznacza pozycję już zrealizowaną;
+- zrealizowana pozycja pozostaje widoczna w planie dnia, ale nie może generować nowych kursów ani zajmować gruszek.
+
+---
+
+## 69. Model podstawowych czasów kursu w kroku 3B.1
+
+W kroku 3B.1 obowiązuje następujący model:
+
+- podstawowy czas załadunku wynosi domyślnie `10 minut` i pozostaje parametrem;
+- podstawowy czas rozładunku wynosi domyślnie `15 minut` dla każdego kursu,
+  również dla ostatniego kursu niepełnego;
+- każda budowa może mieć osobny dodatkowy czas załadunku oraz dodatkowy czas
+  rozładunku, domyślnie `0 minut`;
+- dodatkowy czas rozładunku wpływa na odstęp pomiędzy kolejnymi dostawami tej
+  budowy;
+- czas dojazdu i czas powrotu są osobnymi wartościami roboczymi dla budowy;
+- w kroku 3B.1 operator podaje je ręcznie, a przyszły moduł mapowy będzie mógł
+  dostarczyć te same wartości bez zmiany silnika kursów;
+- brak czasu dojazdu lub powrotu dla budowy generującej kursy zatrzymuje
+  przeliczenie i powoduje czytelny monit z ID budowy;
+- ręcznie wpisane czasy pozostają zachowane podczas zwykłego ponownego
+  przeliczenia tych samych danych.
+
+Każdy kurs otrzymuje godziny:
+
+1. rozpoczęcia i zakończenia załadunku,
+2. wyjazdu z betoniarni i przyjazdu na budowę,
+3. rozpoczęcia i zakończenia rozładunku,
+4. powrotu do betoniarni,
+5. ponownej gotowości do następnego kursu.
+
+Krok 3B.1 nie przypisuje jeszcze konkretnego numeru gruszki. Przydział pojazdów
+i kontrola nakładania ich kursów należą do punktu 3C.
+
+---
+
 # Powiązane tematy otwarte
 
 Pomysły, warianty i pytania, które nie są jeszcze obowiązującymi decyzjami, są prowadzone w `POMYSLY_I_BACKLOG.md`. Dzięki temu ten dokument pozostaje jednoznacznym źródłem zatwierdzonych ustaleń.
@@ -1141,15 +1184,3 @@ Najpierw budujemy prosty, czytelny i poprawny silnik.
 Następnie dokładamy kolejne funkcje jako osobne, zrozumiałe moduły.
 
 Każda nowa funkcja powinna mieć jasny powód biznesowy i nie powinna niepotrzebnie zwiększać złożoności całego projektu.
-
-
----
-
-## 35. Tolerancja czasu i zrealizowane pozycje KDX
-
-Prawdziwy eksport KDX został zweryfikowany na komputerze operatora 2026-08-14.
-
-- rzeczywisty zapis KDX `13:00 (+60 min)` oznacza dopuszczalne okno rozpoczęcia od `13:00` do `14:00`; importer akceptuje również wariant ze znakiem minus, jeżeli pojawi się w innym eksporcie;
-- wartość źródłowa pozostaje zachowana, a model roboczy przechowuje osobno początek, tolerancję i najpóźniejszy start;
-- ilość `0,0 m³` oznacza pozycję już zrealizowaną;
-- zrealizowana pozycja pozostaje widoczna w planie dnia, ale nie może generować nowych kursów ani zajmować gruszek.

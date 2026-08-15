@@ -86,6 +86,10 @@ Wspólny silnik obliczeniowy dla wersji lokalnej i internetowej jest już zatwie
 
 Obecna wartość domyślna to 10 minut. Trzeba ustalić, czy czas załadunku będzie zawsze stały, czy zależny od ilości ładowanego betonu.
 
+W kroku 3B.1 przyjęto 10 minut jako czas podstawowy oraz osobną ręczną korektę
+dla budowy. Pytanie o ewentualne automatyczne uzależnienie czasu od ilości betonu
+pozostaje otwarte na późniejszy etap.
+
 ---
 
 ## P-004 — Finalny zestaw kolumn harmonogramu

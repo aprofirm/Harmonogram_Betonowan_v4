@@ -58,6 +58,7 @@ function utworzDokumentTestowy() {
     "poczatek-dnia",
     "pojemnosc-gruszki",
     "czas-zaladunku",
+    "czas-rozladunku",
     "maksymalne-opoznienie",
     "przycisk-przelicz",
     "sekcja-statusu",
@@ -67,6 +68,7 @@ function utworzDokumentTestowy() {
     "liczba-kursow",
     "liczba-konfliktow",
     "wiersze-harmonogramu",
+    "wiersze-kursow",
     "pole-pliku-csv",
     "przycisk-wybierz-csv",
     "pole-upuszczania-csv",
@@ -185,6 +187,7 @@ function sprawdzPrzeliczenie() {
     poczatekDnia: "06:30",
     pojemnoscGruszkiM3: 7,
     czasZaladunkuMinuty: 9,
+    czasRozladunkuMinuty: 14,
     maksymalneOpoznienieStartuMinuty: 25
   };
   const wynik = aplikacja.harmonogram.przeliczCalyHarmonogram({ parametry: parametry });
@@ -192,10 +195,12 @@ function sprawdzPrzeliczenie() {
   assert.equal(wynik.status, "gotowy");
   assert.equal(wynik.etap, aplikacja.konfiguracja.numerEtapu);
   assert.equal(wynik.parametry.pojemnoscGruszkiM3, 7);
+  assert.equal(wynik.parametry.czasRozladunkuMinuty, 14);
   assert.deepEqual(Array.from(wynik.budowy), []);
   assert.deepEqual(Array.from(wynik.kursy), []);
   assert.deepEqual(Array.from(wynik.konflikty), []);
   assert.equal(Object.isFrozen(aplikacja.konfiguracja.parametryDomyslne), true);
+  assert.equal(srodowisko.dokument.elementy["czas-rozladunku"].value, "15");
 
   const przycisk = srodowisko.dokument.elementy["przycisk-przelicz"];
   przycisk.zdarzenia.click();

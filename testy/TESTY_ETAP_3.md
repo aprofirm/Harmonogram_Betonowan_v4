@@ -2,7 +2,7 @@
 
 ## Status
 
-Etap 3 jest w toku. **Punkt 3A — generowanie kursów** został zaimplementowany i ma osobny test automatyczny oraz instrukcję testu ręcznego w `TESTY_ETAP_3A.md`. Testy czasu cyklu, przydziału i dostępności gruszek pozostają planem dla kolejnych punktów 3B–3E.
+Etap 3 jest w toku. **Punkt 3A — generowanie kursów** jest zakończony. Pierwszy krok **3B.1 — podstawowe czasy kursów** został zaimplementowany i ma osobny test automatyczny oraz instrukcję w `TESTY_ETAP_3B_1.md`. Przydział i dostępność konkretnych gruszek pozostają zakresem punktów 3C–3E.
 
 ## Cel
 
@@ -14,6 +14,9 @@ Silnik ma pozostać niezależny od interfejsu HTML oraz od sposobu pozyskania cz
 
 - domyślna pojemność gruszki: `8 m³`,
 - domyślny czas załadunku: `10 min`,
+- domyślny czas rozładunku każdego kursu: `15 min`,
+- czas dojazdu i powrotu jest w 3B.1 podawany ręcznie dla budowy,
+- budowa może posiadać dodatkowy czas załadunku i rozładunku,
 - gruszka jest zajęta przez cały cykl: załadunek → dojazd → rozładunek → powrót,
 - godzina startu budowy oznacza przyjazd pierwszej gruszki / rozpoczęcie betonowania,
 - `StartPlanowany` nie może być nadpisywany,
@@ -180,10 +183,11 @@ Po wdrożeniu Etapu 3 nadal muszą działać:
 - diagnostyka i pobieranie raportu,
 - zachowanie `StartPlanowany`.
 
-## Plan testu automatycznego
+## Testy automatyczne
 
-Po rozpoczęciu implementacji Etapu 3 należy dodać osobny plik, np.:
+Zaimplementowane części Etapu 3 sprawdzają osobne pliki:
 
-`testy/etap_3.test.js`
+- `testy/etap_3a.test.js` — liczby i ilości kursów,
+- `testy/etap_3b_1.test.js` — godziny pełnego cyklu i wydłużenia.
 
-Test automatyczny powinien sprawdzać czystą logikę modułu gruszek bez zależności od DOM i bez połączenia z internetem.
+Testy sprawdzają czystą logikę modułu gruszek bez zależności od DOM i bez połączenia z internetem.

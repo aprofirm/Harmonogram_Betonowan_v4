@@ -35,7 +35,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku, punkt 3A zakończony**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku, krok 3B.1 czeka na test ręczny**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 Wdrożenie diagnostyki nie zmienia statusu Etapu 2 ani nie rozpoczyna logiki Etapu 3.
 
-## Stan testów po zakończeniu punktu 3A — 2026-08-14
+## Stan testów po implementacji kroku 3B.1 — 2026-08-15
 
 - [x] automatyczny test Etapu 1 przechodzi,
 - [x] automatyczny test Etapu 2 przechodzi,
@@ -58,6 +58,9 @@ Wdrożenie diagnostyki nie zmienia statusu Etapu 2 ani nie rozpoczyna logiki Eta
 - [x] osobny test zmiennych kolumn KDX przechodzi,
 - [x] automatyczny test punktu 3A przechodzi,
 - [x] ręczny test na GitHub Pages potwierdził poprawne działanie punktu 3A.
+- [x] automatyczny test kroku 3B.1 przechodzi,
+- [x] regresja Etapów 1–3A po zmianach 3B.1 przechodzi,
+- [ ] ręczny test kroku 3B.1 na GitHub Pages czeka na wykonanie przez operatora.
 
 Statusy w tej sekcji powinny być aktualizowane w miarę postępu prac.
 
@@ -163,7 +166,7 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
 ## Postęp punktów Etapu 3
 
 - [x] **3A — generowanie kursów:** podział ilości betonu na pełne i niepełne kursy, pomijanie zrealizowanych pozycji i pełne tworzenie wyniku od nowa.
-- [ ] **3B — czasy cyklu:** załadunek, dojazd, rozładunek i powrót.
+- [ ] **3B — czasy cyklu:** krok **3B.1** oblicza załadunek, dojazd, rozładunek, powrót i ponowną gotowość; test automatyczny przechodzi, test ręczny jest następny.
 - [ ] **3C — przydział gruszek:** brak nakładania kursów jednej gruszki.
 - [ ] **3D — minimalna liczba gruszek.**
 - [ ] **3E — tryb „mam X gruszek” i ponowne przeliczenie zasobów.**
@@ -486,7 +489,7 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Rozpocząć **punkt 3B — czasy cyklu gruszki**: załadunek, dojazd, rozładunek i powrót.
+Wykonać ręczny test **kroku 3B.1 — podstawowe czasy kursów** zgodnie z `testy/TESTY_ETAP_3B_1.md`. Po potwierdzeniu zamknąć 3B.1 i dopiero wtedy przejść dalej.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -510,4 +513,20 @@ Etap 2 jest zweryfikowany na rzeczywistych danych KDX i pozostaje zamknięty.
 - [x] testy Etapów 1–2, KDX, diagnostyki i punktu 3A przechodzą.
 - [x] test ręczny operatora na GitHub Pages zakończył się powodzeniem.
 
-Etap 3 pozostaje w toku. Punkt 3A nie przydziela jeszcze konkretnych gruszek i nie wylicza godzin kursów.
+Etap 3 pozostaje w toku. Punkt 3A odpowiada wyłącznie za liczbę i ilości kursów;
+godziny cyklu są dokładane w kroku 3B.1, nadal bez przydziału konkretnych gruszek.
+
+## Krok 3B.1 — podstawowe czasy kursów — 2026-08-15
+
+- [x] domyślny czas załadunku wynosi `10 min` i pozostaje parametrem;
+- [x] domyślny czas rozładunku wynosi `15 min` dla każdego kursu;
+- [x] czas dojazdu i powrotu jest przechowywany osobno dla każdej budowy;
+- [x] brak wymaganego czasu przejazdu daje czytelny komunikat z ID budowy;
+- [x] operator może dodać osobny dodatkowy czas załadunku i rozładunku dla budowy;
+- [x] każdy kurs ma godzinę rozpoczęcia i zakończenia załadunku, dojazdu, rozładunku oraz powrotu;
+- [x] każdy kurs ma godzinę ponownej gotowości gruszki;
+- [x] liczba kursów nie zmienia się przez dodanie czasów;
+- [x] test automatyczny 3B.1 i pełna regresja przechodzą;
+- [ ] test ręczny na GitHub Pages czeka na potwierdzenie operatora.
+
+Krok 3B.1 nie przydziela jeszcze numerów gruszek i nie sprawdza nakładania ich kursów. Jest to zakres punktu 3C.

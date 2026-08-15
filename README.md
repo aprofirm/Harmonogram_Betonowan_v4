@@ -31,7 +31,8 @@ Nie dodajemy pustych wpisów, jeżeli rozmowa nie wniosła nic nowego. Luźnego 
 2. Otwórz plik [index.html](index.html) dwukrotnym kliknięciem.
 3. Wczytaj plik CSV, przeciągając go na pole importu albo wybierając z komputera.
 4. W razie potrzeby dodaj budowę ręcznie.
-5. Ustaw parametry i wybierz przycisk **Przelicz harmonogram**.
+5. Uzupełnij czas dojazdu i powrotu przy aktywnych budowach.
+6. Ustaw parametry i wybierz przycisk **Przelicz harmonogram**.
 
 Podstawowy interfejs działa lokalnie, bez instalacji, logowania, serwera i połączenia z internetem.
 
@@ -82,13 +83,14 @@ Plik `logo.png` jest oficjalnym źródłem znaku aplikacji: pomarańczowo-granat
 
 Ten sam znak jest używany jako favicon na karcie przeglądarki. Plik `favicon.png` jest kwadratowym wariantem przygotowanym z `logo.png` bez rozciągania grafiki. Oba pliki są przechowywane lokalnie i nie wymagają internetu.
 
-## Testy etapów 1–3A
+## Testy etapów 1–3B.1
 
 Instrukcje testów ręcznych znajdują się w plikach:
 
 - [testy/TESTY_ETAP_1.md](testy/TESTY_ETAP_1.md),
 - [testy/TESTY_ETAP_2.md](testy/TESTY_ETAP_2.md),
 - [testy/TESTY_ETAP_3A.md](testy/TESTY_ETAP_3A.md),
+- [testy/TESTY_ETAP_3B_1.md](testy/TESTY_ETAP_3B_1.md),
 - [testy/TESTY_DIAGNOSTYKA.md](testy/TESTY_DIAGNOSTYKA.md).
 
 Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczny:
@@ -98,9 +100,10 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/kdx_zmienne_kolumny.test.js
     node testy/diagnostyka.test.js
     node testy/etap_3a.test.js
+    node testy/etap_3b_1.test.js
 
 Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
 ## Aktualny stan
 
-**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów** został zaimplementowany: program dzieli pozostałą ilość betonu według ustawionej pojemności, tworzy niepełny ostatni kurs i pomija zrealizowane pozycje `0,0 m³`. Dzisiejszy scenariusz KDX daje `12` kursów przy pojemności `8 m³`. Następny krok po teście ręcznym to **3B — czasy cyklu gruszki**.
+**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów** jest zakończony i sprawdzony. Pierwszy krok **3B.1 — podstawowe czasy kursów** został zaimplementowany: program liczy załadunek, dojazd, rozładunek, powrót i ponowną gotowość, przyjmuje ręczne czasy przejazdu oraz dodatkowe czasy dla budowy. Automatyczny test i pełna regresja przechodzą, a następny krok to ręczny test 3B.1 na GitHub Pages.

@@ -31,6 +31,57 @@
     return aplikacja.budowy.utworzListeRobocza(stanImportu.budowy, budowyReczne);
   }
 
+  function znajdzBudoweDoZmiany(idBudowy) {
+    return stanImportu.budowy.concat(budowyReczne).find(function (budowa) {
+      return String(budowa.idBudowy) === String(idBudowy);
+    });
+  }
+
+  function obsluzZmianeCzasowBudowy(idBudowy, nazwaPola, wartosc) {
+    const dozwolonePola = [
+      "czasDojazduRoboczyMinuty",
+      "czasPowrotuRoboczyMinuty",
+      "dodatkowyCzasZaladunkuMinuty",
+      "dodatkowyCzasRozladunkuMinuty"
+    ];
+
+    try {
+      if (!dozwolonePola.includes(nazwaPola)) {
+        throw new Error("Nie rozpoznano zmienianego pola czasu budowy.");
+      }
+
+      const budowa = znajdzBudoweDoZmiany(idBudowy);
+
+      if (!budowa) {
+        throw new Error("Nie znaleziono budowy o ID „" + idBudowy + "”.");
+      }
+
+      const noweCzasy = {
+        czasDojazduRoboczyMinuty: budowa.czasDojazduRoboczyMinuty,
+        czasPowrotuRoboczyMinuty: budowa.czasPowrotuRoboczyMinuty,
+        dodatkowyCzasZaladunkuMinuty: budowa.dodatkowyCzasZaladunkuMinuty,
+        dodatkowyCzasRozladunkuMinuty: budowa.dodatkowyCzasRozladunkuMinuty
+      };
+      noweCzasy[nazwaPola] = wartosc;
+
+      aplikacja.budowy.ustawCzasyRobocze(budowa, noweCzasy);
+      zapiszZdarzenieDiagnostyczne(
+        "informacja",
+        "zmiana-czasow-budowy",
+        "Zmieniono robocze czasy budowy.",
+        { idBudowy: budowa.idBudowy, pole: nazwaPola }
+      );
+    } catch (blad) {
+      aplikacja.interfejs.pokazBladCzasow(blad);
+      aplikacja.interfejs.pokazListeBudow(pobierzAktualnaListeBudow());
+      zapiszBladDiagnostyczny(
+        blad,
+        "blad-zmiany-czasow-budowy",
+        "Nie udało się zapisać roboczych czasów budowy."
+      );
+    }
+  }
+
   function obsluzPrzeliczenie() {
     if (czyTrwaPrzeliczanie) {
       zapiszZdarzenieDiagnostyczne(
@@ -200,7 +251,8 @@
         aplikacja.konfiguracja.parametryDomyslne,
         obsluzPrzeliczenie,
         obsluzImportPliku,
-        obsluzDodanieBudowyRecznej
+        obsluzDodanieBudowyRecznej,
+        obsluzZmianeCzasowBudowy
       );
       zapiszZdarzenieDiagnostyczne(
         "informacja",

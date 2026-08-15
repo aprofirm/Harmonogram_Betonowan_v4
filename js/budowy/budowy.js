@@ -63,11 +63,41 @@
     return Number.isFinite(liczba) ? liczba : null;
   }
 
+  function utworzPoczatkoweCzasyRobocze() {
+    return {
+      czasDojazduRoboczyMinuty: null,
+      czasPowrotuRoboczyMinuty: null,
+      dodatkowyCzasZaladunkuMinuty: 0,
+      dodatkowyCzasRozladunkuMinuty: 0,
+      zrodloCzasuDojazdu: "brak",
+      zrodloCzasuPowrotu: "brak"
+    };
+  }
+
+  function pobierzNieujemnaLiczbeLubBrak(wartosc, nazwaPola) {
+    if (wartosc === null || wartosc === undefined || wartosc === "") {
+      return null;
+    }
+
+    const liczba = Number(wartosc);
+
+    if (!Number.isFinite(liczba) || liczba < 0) {
+      throw new Error("Pole „" + nazwaPola + "” musi zawierać liczbę nie mniejszą niż 0.");
+    }
+
+    return liczba;
+  }
+
+  function pobierzNieujemnaLiczbe(wartosc, nazwaPola) {
+    const liczba = pobierzNieujemnaLiczbeLubBrak(wartosc, nazwaPola);
+    return liczba === null ? 0 : liczba;
+  }
+
   function utworzBudoweZImportu(daneBudowy, numerWiersza) {
     const opisStartu = przetworzStartPlanowany(daneBudowy.startPlanowany, numerWiersza);
     const iloscBetonuLiczbaM3 = pobierzIloscBetonuLiczbaM3(daneBudowy.iloscBetonuM3);
 
-    return {
+    return Object.assign({
       idBudowy: pobierzWymaganyTekst(daneBudowy.idBudowy, "ID_Budowy", numerWiersza),
       firma: pobierzWymaganyTekst(daneBudowy.firma, "Firma", numerWiersza),
       budowa: pobierzWymaganyTekst(daneBudowy.budowa, "Budowa", numerWiersza),
@@ -84,7 +114,7 @@
       rodzajRozladunku: String(daneBudowy.rodzajRozladunku || "").trim(),
       zrodlo: "csv",
       daneZrodlowe: daneBudowy.daneZrodlowe
-    };
+    }, utworzPoczatkoweCzasyRobocze());
   }
 
   function znajdzKolejnyNumerReczny(listaIstniejacychBudow) {
@@ -112,7 +142,7 @@
       "Start planowany"
     );
 
-    return {
+    return Object.assign({
       idBudowy: "RECZNE-" + String(numer).padStart(3, "0"),
       firma: pobierzWymaganyTekst(daneBudowy && daneBudowy.firma, "Firma"),
       budowa: pobierzWymaganyTekst(daneBudowy && daneBudowy.budowa, "Budowa"),
@@ -129,7 +159,38 @@
       rodzajRozladunku: "",
       zrodlo: "reczna",
       daneZrodlowe: null
-    };
+    }, utworzPoczatkoweCzasyRobocze());
+  }
+
+  function ustawCzasyRobocze(budowa, daneCzasow) {
+    if (!budowa) {
+      throw new Error("Nie znaleziono budowy, dla której mają zostać zapisane czasy.");
+    }
+
+    const noweCzasy = daneCzasow || {};
+    const czasDojazdu = pobierzNieujemnaLiczbeLubBrak(
+      noweCzasy.czasDojazduRoboczyMinuty,
+      "Czas dojazdu"
+    );
+    const czasPowrotu = pobierzNieujemnaLiczbeLubBrak(
+      noweCzasy.czasPowrotuRoboczyMinuty,
+      "Czas powrotu"
+    );
+
+    budowa.czasDojazduRoboczyMinuty = czasDojazdu;
+    budowa.czasPowrotuRoboczyMinuty = czasPowrotu;
+    budowa.dodatkowyCzasZaladunkuMinuty = pobierzNieujemnaLiczbe(
+      noweCzasy.dodatkowyCzasZaladunkuMinuty,
+      "Dodatkowy czas załadunku"
+    );
+    budowa.dodatkowyCzasRozladunkuMinuty = pobierzNieujemnaLiczbe(
+      noweCzasy.dodatkowyCzasRozladunkuMinuty,
+      "Dodatkowy czas rozładunku"
+    );
+    budowa.zrodloCzasuDojazdu = czasDojazdu === null ? "brak" : "reczny";
+    budowa.zrodloCzasuPowrotu = czasPowrotu === null ? "brak" : "reczny";
+
+    return budowa;
   }
 
   function utworzListeRobocza(budowyZImportu, budowyReczne) {
@@ -144,6 +205,7 @@
   aplikacja.budowy = {
     utworzBudoweZImportu: utworzBudoweZImportu,
     utworzBudoweReczna: utworzBudoweReczna,
-    utworzListeRobocza: utworzListeRobocza
+    utworzListeRobocza: utworzListeRobocza,
+    ustawCzasyRobocze: ustawCzasyRobocze
   };
 })(window);

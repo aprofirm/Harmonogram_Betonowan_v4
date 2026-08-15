@@ -9,7 +9,7 @@ Potwierdzić, że podstawowa aplikacja działa lokalnie bez instalacji i bez int
 1. Pobierz repozytorium na komputer.
 2. Wyłącz połączenie z internetem.
 3. Otwórz plik index.html dwukrotnym kliknięciem.
-4. Sprawdź, czy w panelu są wartości domyślne: 07:00, 8 m³, 10 min i 30 min.
+4. Sprawdź, czy w panelu są wartości domyślne: 07:00, 8 m³, 10 min załadunku, 15 min rozładunku i 30 min maksymalnego opóźnienia.
 5. Wybierz przycisk Przelicz harmonogram.
 6. Sprawdź, czy pojawia się zielony komunikat Przeliczenie zakończone.
 7. Zmień jedną z wartości na niepoprawną, np. pojemność gruszki na 0, i ponownie wybierz Przelicz harmonogram.

@@ -5,6 +5,7 @@
     zakresGlobalny.HarmonogramBetonowan || {};
 
   let elementy = null;
+  let obslugaZmianyCzasowBudowy = function () {};
 
   function pobierzWymaganyElement(identyfikator) {
     const znalezionyElement = document.getElementById(identyfikator);
@@ -21,6 +22,7 @@
       poczatekDnia: pobierzWymaganyElement("poczatek-dnia"),
       pojemnoscGruszki: pobierzWymaganyElement("pojemnosc-gruszki"),
       czasZaladunku: pobierzWymaganyElement("czas-zaladunku"),
+      czasRozladunku: pobierzWymaganyElement("czas-rozladunku"),
       maksymalneOpoznienie: pobierzWymaganyElement("maksymalne-opoznienie"),
       przyciskPrzelicz: pobierzWymaganyElement("przycisk-przelicz"),
       sekcjaStatusu: pobierzWymaganyElement("sekcja-statusu"),
@@ -30,6 +32,7 @@
       liczbaKursow: pobierzWymaganyElement("liczba-kursow"),
       liczbaKonfliktow: pobierzWymaganyElement("liczba-konfliktow"),
       wierszeHarmonogramu: pobierzWymaganyElement("wiersze-harmonogramu"),
+      wierszeKursow: pobierzWymaganyElement("wiersze-kursow"),
       polePlikuCsv: pobierzWymaganyElement("pole-pliku-csv"),
       przyciskWybierzCsv: pobierzWymaganyElement("przycisk-wybierz-csv"),
       poleUpuszczaniaCsv: pobierzWymaganyElement("pole-upuszczania-csv"),
@@ -47,6 +50,7 @@
     elementy.poczatekDnia.value = parametryDomyslne.poczatekDnia;
     elementy.pojemnoscGruszki.value = String(parametryDomyslne.pojemnoscGruszkiM3);
     elementy.czasZaladunku.value = String(parametryDomyslne.czasZaladunkuMinuty);
+    elementy.czasRozladunku.value = String(parametryDomyslne.czasRozladunkuMinuty);
     elementy.maksymalneOpoznienie.value = String(
       parametryDomyslne.maksymalneOpoznienieStartuMinuty
     );
@@ -82,6 +86,11 @@
         "Czas załadunku",
         1
       ),
+      czasRozladunkuMinuty: pobierzLiczbe(
+        elementy.czasRozladunku,
+        "Czas rozładunku",
+        1
+      ),
       maksymalneOpoznienieStartuMinuty: pobierzLiczbe(
         elementy.maksymalneOpoznienie,
         "Maksymalne opóźnienie startu",
@@ -115,7 +124,7 @@
     const opis = document.createElement("span");
 
     wiersz.className = "pusty-wiersz";
-    komorka.colSpan = 7;
+    komorka.colSpan = 11;
     ikona.className = "pusty-wiersz__ikona";
     ikona.setAttribute("aria-hidden", "true");
     ikona.textContent = "▦";
@@ -127,6 +136,60 @@
     wiersz.appendChild(komorka);
 
     return wiersz;
+  }
+
+  function utworzPoleCzasuBudowy(budowa, nazwaPola, etykieta) {
+    const pole = document.createElement("input");
+    const wartosc = budowa[nazwaPola];
+    const czyZrealizowana = budowa.statusRealizacji === "zrealizowana";
+
+    pole.className = "pole-czasu-budowy";
+    pole.type = "number";
+    pole.min = "0";
+    pole.step = "1";
+    pole.value = wartosc === null || wartosc === undefined ? "" : String(wartosc);
+    pole.disabled = czyZrealizowana;
+    pole.setAttribute("aria-label", etykieta + " dla budowy " + budowa.idBudowy);
+    pole.setAttribute("placeholder", czyZrealizowana ? "—" : "min");
+    pole.addEventListener("change", function () {
+      obslugaZmianyCzasowBudowy(budowa.idBudowy, nazwaPola, pole.value);
+    });
+
+    return pole;
+  }
+
+  function utworzKomorkeZCzasemBudowy(budowa, nazwaPola, etykieta) {
+    const komorka = document.createElement("td");
+    komorka.className = "komorka-czasu-budowy";
+    komorka.appendChild(utworzPoleCzasuBudowy(budowa, nazwaPola, etykieta));
+    return komorka;
+  }
+
+  function czyBudowaMaKompletCzasow(budowa) {
+    return budowa.czasDojazduRoboczyMinuty !== null &&
+      budowa.czasDojazduRoboczyMinuty !== undefined &&
+      budowa.czasPowrotuRoboczyMinuty !== null &&
+      budowa.czasPowrotuRoboczyMinuty !== undefined;
+  }
+
+  function czyBudowaWymagaCzasow(budowa) {
+    const iloscBetonuM3 = Number(budowa.iloscBetonuLiczbaM3);
+    return budowa.statusRealizacji !== "zrealizowana" &&
+      Number.isFinite(iloscBetonuM3) && iloscBetonuM3 > 0;
+  }
+
+  function opiszStatusBudowy(budowa) {
+    if (budowa.statusRealizacji === "zrealizowana") {
+      return { tresc: "Zrealizowana", klasa: "status-zrealizowany" };
+    }
+
+    if (!czyBudowaWymagaCzasow(budowa)) {
+      return { tresc: "Bez kursów", klasa: "status-danych" };
+    }
+
+    return czyBudowaMaKompletCzasow(budowa)
+      ? { tresc: "Czasy gotowe", klasa: "status-danych" }
+      : { tresc: "Uzupełnij czasy", klasa: "status-ostrzezenie" };
   }
 
   function opiszBeton(budowa) {
@@ -156,6 +219,7 @@
     const wiersz = document.createElement("tr");
     const etykietaZrodla = budowa.zrodlo === "reczna" ? "Ręczna" : "CSV";
     const czyZrealizowana = budowa.statusRealizacji === "zrealizowana";
+    const opisStatusu = opiszStatusBudowy(budowa);
 
     if (czyZrealizowana) {
       wiersz.className = "wiersz-zrealizowany";
@@ -164,14 +228,39 @@
     wiersz.appendChild(utworzKomorke(opiszOknoStartu(budowa), "wartosc-wazna"));
     wiersz.appendChild(utworzKomorke(budowa.firma));
     wiersz.appendChild(utworzKomorke(budowa.budowa));
+    wiersz.appendChild(
+      utworzKomorkeZCzasemBudowy(
+        budowa,
+        "czasDojazduRoboczyMinuty",
+        "Czas dojazdu"
+      )
+    );
+    wiersz.appendChild(
+      utworzKomorkeZCzasemBudowy(
+        budowa,
+        "czasPowrotuRoboczyMinuty",
+        "Czas powrotu"
+      )
+    );
+    wiersz.appendChild(
+      utworzKomorkeZCzasemBudowy(
+        budowa,
+        "dodatkowyCzasZaladunkuMinuty",
+        "Dodatkowy czas załadunku"
+      )
+    );
+    wiersz.appendChild(
+      utworzKomorkeZCzasemBudowy(
+        budowa,
+        "dodatkowyCzasRozladunkuMinuty",
+        "Dodatkowy czas rozładunku"
+      )
+    );
     wiersz.appendChild(utworzKomorke(opiszBeton(budowa)));
     wiersz.appendChild(utworzKomorke(budowa.idBudowy, "identyfikator-budowy"));
     wiersz.appendChild(utworzKomorke(etykietaZrodla));
     wiersz.appendChild(
-      utworzKomorke(
-        czyZrealizowana ? "Zrealizowana" : "Dane gotowe",
-        czyZrealizowana ? "status-zrealizowany" : "status-danych"
-      )
+      utworzKomorke(opisStatusu.tresc, opisStatusu.klasa)
     );
 
     return wiersz;
@@ -192,6 +281,108 @@
     elementy.liczbaBudow.textContent = String(listaBudow.length);
   }
 
+  function utworzPustyWierszKursow() {
+    const wiersz = document.createElement("tr");
+    const komorka = document.createElement("td");
+    const ikona = document.createElement("span");
+    const tytul = document.createElement("strong");
+    const opis = document.createElement("span");
+
+    wiersz.className = "pusty-wiersz pusty-wiersz--kursy";
+    komorka.colSpan = 8;
+    ikona.className = "pusty-wiersz__ikona";
+    ikona.setAttribute("aria-hidden", "true");
+    ikona.textContent = "◷";
+    tytul.textContent = "Godziny kursów pojawią się po przeliczeniu";
+    opis.textContent = "Najpierw uzupełnij czasy przejazdu przy budowach.";
+    komorka.appendChild(ikona);
+    komorka.appendChild(tytul);
+    komorka.appendChild(opis);
+    wiersz.appendChild(komorka);
+
+    return wiersz;
+  }
+
+  function opiszZakresCzasu(godzinaPoczatku, godzinaKonca) {
+    return godzinaPoczatku + "–" + godzinaKonca;
+  }
+
+  function utworzWierszKursu(kurs, budowa) {
+    const wiersz = document.createElement("tr");
+    const nazwaBudowy = budowa ? budowa.budowa : kurs.idBudowy;
+
+    wiersz.appendChild(
+      utworzKomorke(
+        String(kurs.numerKursu) + "/" + String(kurs.liczbaKursowBudowy),
+        "wartosc-wazna"
+      )
+    );
+    wiersz.appendChild(utworzKomorke(nazwaBudowy));
+    wiersz.appendChild(utworzKomorke(String(kurs.iloscBetonuM3) + " m³"));
+    wiersz.appendChild(
+      utworzKomorke(
+        opiszZakresCzasu(
+          kurs.godzinaRozpoczeciaZaladunku,
+          kurs.godzinaWyjazduZBetoniarni
+        ),
+        "czas-kursu"
+      )
+    );
+    wiersz.appendChild(
+      utworzKomorke(
+        opiszZakresCzasu(
+          kurs.godzinaWyjazduZBetoniarni,
+          kurs.godzinaPrzyjazduNaBudowe
+        ),
+        "czas-kursu"
+      )
+    );
+    wiersz.appendChild(
+      utworzKomorke(
+        opiszZakresCzasu(
+          kurs.godzinaRozpoczeciaRozladunku,
+          kurs.godzinaZakonczeniaRozladunku
+        ),
+        "czas-kursu"
+      )
+    );
+    wiersz.appendChild(
+      utworzKomorke(
+        opiszZakresCzasu(
+          kurs.godzinaZakonczeniaRozladunku,
+          kurs.godzinaPowrotuDoBetoniarni
+        ),
+        "czas-kursu"
+      )
+    );
+    wiersz.appendChild(
+      utworzKomorke(kurs.godzinaGotowosciDoKolejnegoKursu, "wartosc-wazna")
+    );
+
+    return wiersz;
+  }
+
+  function pokazListeKursow(listaKursow, listaBudow) {
+    const fragment = document.createDocumentFragment();
+    const budowyWedlugId = new Map();
+
+    listaBudow.forEach(function (budowa) {
+      budowyWedlugId.set(String(budowa.idBudowy), budowa);
+    });
+
+    if (!listaKursow.length) {
+      fragment.appendChild(utworzPustyWierszKursow());
+    } else {
+      listaKursow.forEach(function (kurs) {
+        fragment.appendChild(
+          utworzWierszKursu(kurs, budowyWedlugId.get(String(kurs.idBudowy)))
+        );
+      });
+    }
+
+    elementy.wierszeKursow.replaceChildren(fragment);
+  }
+
   function pokazTrwajacePrzeliczenie() {
     elementy.przyciskPrzelicz.disabled = true;
     ustawStatus("praca", "Trwa przeliczanie", "Program przygotowuje nowy wynik od początku.");
@@ -199,6 +390,7 @@
 
   function pokazWynik(wynik) {
     pokazListeBudow(wynik.budowy);
+    pokazListeKursow(wynik.kursy, wynik.budowy);
     elementy.liczbaKursow.textContent = String(wynik.kursy.length);
     elementy.liczbaKonfliktow.textContent = String(wynik.konflikty.length);
     ustawStatus("sukces", "Przeliczenie zakończone", wynik.komunikaty[0]);
@@ -212,6 +404,11 @@
   function pokazBladDanych(blad) {
     const trescBledu = blad instanceof Error ? blad.message : "Wystąpił nieznany błąd.";
     ustawStatus("blad", "Nie można dodać budowy", trescBledu);
+  }
+
+  function pokazBladCzasow(blad) {
+    const trescBledu = blad instanceof Error ? blad.message : "Nie udało się zapisać czasów.";
+    ustawStatus("blad", "Nie można zapisać czasów budowy", trescBledu);
   }
 
   function zakonczPrzeliczenie() {
@@ -242,20 +439,24 @@
       ? podsumowanieImportu + " " + ostrzezenia.join(" ")
       : podsumowanieImportu;
     pokazListeBudow(listaBudow);
+    pokazListeKursow([], []);
+    elementy.liczbaKursow.textContent = "0";
+    elementy.liczbaKonfliktow.textContent = "0";
 
     if (czySaOstrzezenia) {
       ustawStatus(
         "ostrzezenie",
         "CSV wczytany z ostrzeżeniem",
-        ostrzezenia.join(" ")
+        ostrzezenia.join(" ") +
+          " Uzupełnij czas dojazdu i powrotu dla aktywnych budów."
       );
       return;
     }
 
     ustawStatus(
-      "sukces",
+      "ostrzezenie",
       "CSV wczytany",
-      "Dane źródłowe zachowano, a lista robocza jest gotowa do przeliczenia."
+      "Dane źródłowe zachowano. Uzupełnij czas dojazdu i powrotu dla aktywnych budów."
     );
   }
 
@@ -270,6 +471,9 @@
   function pokazDodanaBudowe(budowa, listaBudow) {
     elementy.formularzBudowyRecznej.reset();
     pokazListeBudow(listaBudow);
+    pokazListeKursow([], []);
+    elementy.liczbaKursow.textContent = "0";
+    elementy.liczbaKonfliktow.textContent = "0";
     ustawStatus(
       "sukces",
       "Dodano budowę ręcznie",
@@ -341,9 +545,13 @@
     parametryDomyslne,
     obslugaPrzeliczenia,
     obslugaImportu,
-    obslugaDodaniaBudowy
+    obslugaDodaniaBudowy,
+    obslugaZmianyCzasow
   ) {
     znajdzElementyInterfejsu();
+    obslugaZmianyCzasowBudowy = typeof obslugaZmianyCzasow === "function"
+      ? obslugaZmianyCzasow
+      : function () {};
     ustawParametryDomyslne(parametryDomyslne);
     elementy.przyciskPrzelicz.addEventListener("click", obslugaPrzeliczenia);
     podlaczImportPliku(obslugaImportu);
@@ -355,8 +563,10 @@
     pobierzParametryZFormularza: pobierzParametryZFormularza,
     pokazTrwajacePrzeliczenie: pokazTrwajacePrzeliczenie,
     pokazWynik: pokazWynik,
+    pokazListeBudow: pokazListeBudow,
     pokazBlad: pokazBlad,
     pokazBladDanych: pokazBladDanych,
+    pokazBladCzasow: pokazBladCzasow,
     zakonczPrzeliczenie: zakonczPrzeliczenie,
     pokazTrwajacyImport: pokazTrwajacyImport,
     pokazUdanyImport: pokazUdanyImport,

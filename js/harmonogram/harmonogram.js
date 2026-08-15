@@ -21,14 +21,19 @@
       stanImportu.budowy,
       aktualneDane.budowyReczne
     );
-    const kursy = aplikacja.gruszki.generujKursy(
+    const wygenerowaneKursy = aplikacja.gruszki.generujKursy(
       listaBudow,
       parametry.pojemnoscGruszkiM3
     );
+    const kursy = aplikacja.gruszki.obliczCzasyKursow(
+      wygenerowaneKursy,
+      listaBudow,
+      parametry
+    );
     const komunikatKursow = kursy.length
       ? "Wygenerowano " + kursy.length +
-        " kursów. Przydział gruszek i czasy przejazdów zostaną dodane " +
-        "w kolejnych punktach Etapu 3."
+        " kursów z godzinami załadunku, dojazdu, rozładunku i powrotu. " +
+        "Przydział numerów gruszek zostanie dodany w punkcie 3C."
       : "Nie wygenerowano kursów. Pozycje z 0 m³ są już zrealizowane, " +
         "a pozycje bez ilości wymagają uzupełnienia danych.";
 

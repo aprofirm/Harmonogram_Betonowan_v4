@@ -45,7 +45,7 @@
               <p class="etykieta-sekcji">USTAWIENIA</p>
               <h2 id="tytul-parametrow">Parametry planu</h2>
             </div>
-            <span class="znacznik-etapu">Etap 3A</span>
+            <span class="znacznik-etapu">Etap 3B.1</span>
           </div>
 
           <section class="sekcja-danych" aria-labelledby="tytul-importu">
@@ -127,6 +127,14 @@
               </span>
             </label>
 
+            <label class="pole-formularza" for="czas-rozladunku">
+              <span>Czas rozładunku</span>
+              <span class="pole-z-jednostka">
+                <input id="czas-rozladunku" name="czasRozladunkuMinuty" type="number" min="1" step="1" required>
+                <span>min</span>
+              </span>
+            </label>
+
             <label class="pole-formularza" for="maksymalne-opoznienie">
               <span>Maksymalne opóźnienie startu</span>
               <span class="pole-z-jednostka">
@@ -137,8 +145,8 @@
           </form>
 
           <p class="informacja-etapu">
-            Etap 3A tworzy kursy z pozostałej ilości betonu. Przydział gruszek
-            i czasy przejazdów dojdą w kolejnych punktach.
+            Etap 3B.1 liczy pełny cykl kursu. Uzupełnij przy budowach czas
+            dojazdu i powrotu; dodatkowe czasy wpisuj tylko dla wyjątków.
           </p>
 
           <details class="diagnostyka">
@@ -201,6 +209,10 @@
                     <th>Start planowany</th>
                     <th>Firma</th>
                     <th>Budowa</th>
+                    <th>Dojazd</th>
+                    <th>Powrót</th>
+                    <th>+ załadunek</th>
+                    <th>+ rozładunek</th>
                     <th>Beton</th>
                     <th>ID budowy</th>
                     <th>Źródło</th>
@@ -209,10 +221,48 @@
                 </thead>
                 <tbody id="wiersze-harmonogramu">
                   <tr class="pusty-wiersz">
-                    <td colspan="7">
+                    <td colspan="11">
                       <span class="pusty-wiersz__ikona" aria-hidden="true">▦</span>
                       <strong>Brak danych do wyświetlenia</strong>
                       <span>Wczytaj CSV albo dodaj budowę ręcznie.</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel panel-kursow">
+            <div class="panel__naglowek panel__naglowek--harmonogram">
+              <div>
+                <p class="etykieta-sekcji">PEŁNY CYKL GRUSZKI</p>
+                <h2>Godziny kursów</h2>
+              </div>
+              <p class="opis-panelu">
+                Bez numerów gruszek — ich przydział nastąpi w punkcie 3C.
+              </p>
+            </div>
+
+            <div class="tabela-przewijana">
+              <table class="tabela-kursow">
+                <thead>
+                  <tr>
+                    <th>Kurs</th>
+                    <th>Budowa</th>
+                    <th>Ilość</th>
+                    <th>Załadunek</th>
+                    <th>Dojazd</th>
+                    <th>Rozładunek</th>
+                    <th>Powrót</th>
+                    <th>Gotowa ponownie</th>
+                  </tr>
+                </thead>
+                <tbody id="wiersze-kursow">
+                  <tr class="pusty-wiersz pusty-wiersz--kursy">
+                    <td colspan="8">
+                      <span class="pusty-wiersz__ikona" aria-hidden="true">◷</span>
+                      <strong>Godziny kursów pojawią się po przeliczeniu</strong>
+                      <span>Najpierw uzupełnij czasy przejazdu przy budowach.</span>
                     </td>
                   </tr>
                 </tbody>
@@ -224,7 +274,7 @@
 
       <footer class="stopka">
         <span>Harmonogram Betonowań v4</span>
-        <span>Etap 3A · generowanie kursów</span>
+        <span>Etap 3B.1 · podstawowe czasy kursów</span>
       </footer>
     </div>
 

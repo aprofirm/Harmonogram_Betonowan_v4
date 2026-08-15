@@ -594,11 +594,24 @@ h3 {
   overflow: hidden;
 }
 
+.panel-kursow {
+  overflow: hidden;
+}
+
 .panel__naglowek--harmonogram {
   align-items: center;
   margin-bottom: 0;
   padding: 24px 26px;
   border-bottom: 1px solid var(--kolor-obramowania);
+}
+
+.opis-panelu {
+  max-width: 320px;
+  margin-bottom: 0;
+  color: var(--kolor-tekstu-pomocniczego);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  text-align: right;
 }
 
 .podsumowanie {
@@ -634,6 +647,14 @@ table {
   width: 100%;
   min-width: 790px;
   border-collapse: collapse;
+}
+
+.panel-harmonogramu table {
+  min-width: 1330px;
+}
+
+.tabela-kursow {
+  min-width: 1120px;
 }
 
 th,
@@ -672,6 +693,44 @@ td {
   font-weight: 800;
 }
 
+.status-ostrzezenie {
+  color: #a65e1e;
+  font-weight: 800;
+}
+
+.komorka-czasu-budowy {
+  min-width: 104px;
+}
+
+.pole-czasu-budowy {
+  width: 78px;
+  min-height: 36px;
+  padding: 0 8px;
+  border: 1px solid #cbd7df;
+  border-radius: 8px;
+  outline: none;
+  color: var(--kolor-granatowy-ciemny);
+  background: #fbfcfd;
+  font-weight: 700;
+}
+
+.pole-czasu-budowy:focus {
+  border-color: var(--kolor-niebieski);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(29, 111, 159, 0.13);
+}
+
+.pole-czasu-budowy:disabled {
+  color: #8b989f;
+  background: #edf1f3;
+}
+
+.czas-kursu {
+  color: #344b5a;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 .pusty-wiersz td {
   height: 310px;
   color: var(--kolor-tekstu-pomocniczego);
@@ -691,6 +750,10 @@ td {
 .pusty-wiersz__ikona {
   color: #97a9b5;
   font-size: 2.3rem;
+}
+
+.pusty-wiersz--kursy td {
+  height: 220px;
 }
 
 .stopka {
@@ -729,6 +792,11 @@ td {
   .stopka {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .opis-panelu {
+    max-width: none;
+    text-align: left;
   }
 
   .naglowek {
