@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku, 3B.1 zakończony; następny krok: 3B.2**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; przed 3B.2 realizowany jest krok przekrojowy KP-1**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -62,6 +62,37 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Obsługa awaryjnej pamięci bieżącej strony, gdy przeglądarka blokuje trwały zapis.
 
 Wdrożenie diagnostyki nie zmienia statusu Etapu 2 ani nie rozpoczyna logiki Etapu 3.
+
+## Aktywny krok przekrojowy KP-1 — pamięć planu dnia
+
+KP-1 zabezpiecza bieżącą pracę operatora przed utratą po odświeżeniu strony.
+Nie jest podpunktem 3B i nie zmienia kolejności Etapu 3. Po zamknięciu KP-1
+wracamy do kroku 3B.2.
+
+- [x] **KP-1.1 — plan i decyzje:** zapisanie pełnego podziału, zasad prywatności,
+  zakresu danych oraz instrukcji testu operatorskiego.
+- [ ] **KP-1.2 — moduł pamięci planu:** wersjonowany zapis i odczyt z bezpieczną
+  obsługą braku, blokady albo uszkodzenia pamięci przeglądarki.
+- [ ] **KP-1.3 — automatyczny zapis zmian:** import, budowy ręczne, parametry,
+  czasy robocze i informacja o wykonanym przeliczeniu.
+- [ ] **KP-1.4 — odtworzenie po odświeżeniu:** przywrócenie danych i ponowne
+  obliczenie harmonogramu tylko wtedy, gdy był wcześniej przeliczony.
+- [ ] **KP-1.5 — bezpieczne czyszczenie:** czerwony przycisk **Wyczyść plan dnia**,
+  potwierdzenie operacji, reset planu bez usuwania diagnostyki.
+- [ ] **KP-1.6 — testy automatyczne i pełna regresja:** sprawdzenie całego KP-1
+  oraz wcześniejszych funkcji przed publikacją wersji do testu operatorskiego.
+- [ ] **KP-1.7 — test operatora i zamknięcie:** odświeżenie, odtworzenie,
+  anulowanie czyszczenia, potwierdzenie czyszczenia i ponowna kontrola planu.
+
+Kryteria zamknięcia KP-1:
+
+- [ ] odświeżenie nie usuwa poprawnego planu;
+- [ ] nieprzeliczony, częściowo uzupełniony plan również jest odtwarzany;
+- [ ] wcześniej przeliczony harmonogram jest po odświeżeniu liczony ponownie;
+- [ ] uszkodzony albo niedostępny zapis nie powoduje awarii;
+- [ ] anulowanie czyszczenia nie zmienia danych;
+- [ ] potwierdzone czyszczenie usuwa plan, ale pozostawia logi diagnostyczne;
+- [ ] aplikacja nadal działa offline i przechodzi pełną regresję.
 
 ## Stan testów po zakończeniu kroku 3B.1 — 2026-08-15
 
@@ -509,10 +540,10 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Rozpisać szczegółowy zakres i wykonać **krok 3B.2 — rytm dostaw**. Celem jest
-oddzielenie odstępu pomiędzy kolejnymi dostawami od fizycznego czasu cyklu
-gruszki. Punkt 3C może rozpocząć się dopiero po implementacji, teście
-automatycznym, regresji i potwierdzeniu testu operatora dla 3B.2.
+Wykonać **KP-1.2 — moduł pamięci planu** zgodnie z zapisanym podziałem KP-1.
+Po każdym podetapie KP-1 uruchomić jego test, regresję i ponownie przejrzeć ten
+dokument. Po zamknięciu KP-1 wrócić do **3B.2 — rytm dostaw**. Punkt 3C pozostaje
+zablokowany do czasu zakończenia i przetestowania całego punktu 3B.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -557,3 +588,19 @@ godziny cyklu są dokładane w kroku 3B.1, nadal bez przydziału konkretnych gru
 Krok 3B.1 jest zakończony. Punkt 3B pozostaje otwarty, ponieważ następny jest
 krok 3B.2 — oddzielenie rytmu dostaw od fizycznego czasu cyklu. Dopiero po jego
 zakończeniu można rozpocząć punkt 3C dotyczący przydziału gruszek.
+
+## KP-1.1 — plan trwałej pamięci dnia — 2026-08-15
+
+- [x] potwierdzono, że obowiązkowa kontrola podetapów jest już zapisana w
+  `AGENTS.md`, `ZASADY_KODU.md` i `ETAPY_ROZWOJU.md`;
+- [x] zapisano wszystkie znane podetapy KP-1 przed rozpoczęciem kodowania;
+- [x] zapisano zatwierdzone zasady lokalnego przechowywania i prywatności danych;
+- [x] ustalono, że wynik po odświeżeniu będzie obliczany ponownie z odtworzonych
+  danych zamiast przechowywania starego wyniku jako źródła prawdy;
+- [x] przygotowano osobną instrukcję testu operatorskiego KP-1;
+- [x] nie zmieniono jeszcze logiki aplikacji ani interfejsu;
+- [x] pełna regresja sześciu dotychczasowych zestawów testów przechodzi.
+
+KP-1.1 jest zakończony. KP-1 pozostaje otwarty, a następnym podetapem jest
+KP-1.2 — wersjonowany moduł pamięci planu. Po całkowitym zamknięciu KP-1 wracamy
+do 3B.2; punkt 3C nadal pozostaje zablokowany.

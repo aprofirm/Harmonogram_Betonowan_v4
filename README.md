@@ -87,7 +87,7 @@ Plik `logo.png` jest oficjalnym źródłem znaku aplikacji: pomarańczowo-granat
 
 Ten sam znak jest używany jako favicon na karcie przeglądarki. Plik `favicon.png` jest kwadratowym wariantem przygotowanym z `logo.png` bez rozciągania grafiki. Oba pliki są przechowywane lokalnie i nie wymagają internetu.
 
-## Testy etapów 1–3B.1
+## Testy etapów i funkcji przekrojowych
 
 Instrukcje testów ręcznych znajdują się w plikach:
 
@@ -95,6 +95,7 @@ Instrukcje testów ręcznych znajdują się w plikach:
 - [testy/TESTY_ETAP_2.md](testy/TESTY_ETAP_2.md),
 - [testy/TESTY_ETAP_3A.md](testy/TESTY_ETAP_3A.md),
 - [testy/TESTY_ETAP_3B_1.md](testy/TESTY_ETAP_3B_1.md),
+- [testy/TESTY_KP_1.md](testy/TESTY_KP_1.md) — plan testu pamięci dnia,
 - [testy/TESTY_DIAGNOSTYKA.md](testy/TESTY_DIAGNOSTYKA.md).
 
 Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczny:
@@ -110,4 +111,4 @@ Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
 ## Aktualny stan
 
-**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów** oraz krok **3B.1 — podstawowe czasy kursów** są zakończone i sprawdzone automatycznie oraz przez operatora. Program liczy załadunek, dojazd, rozładunek, powrót i ponowną gotowość, przyjmuje ręczne czasy przejazdu oraz dodatkowe czasy dla budowy. Pierwszy wpisany czas dojazdu lub powrotu jest kopiowany do drugiego pustego pola, a później oba pola można zmieniać niezależnie. Cały punkt 3B pozostaje otwarty; następny krok to **3B.2 — oddzielenie rytmu dostaw od czasu cyklu gruszki**.
+**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów** oraz krok **3B.1 — podstawowe czasy kursów** są zakończone i sprawdzone automatycznie oraz przez operatora. Przed 3B.2 realizujemy zatwierdzony krok przekrojowy **KP-1 — pamięć planu dnia**. Podetap **KP-1.1 — plan i decyzje** jest zakończony, a następny jest **KP-1.2 — wersjonowany moduł pamięci planu**. Po zamknięciu całego KP-1 wracamy do **3B.2 — rytm dostaw**; punkt 3C nadal pozostaje zablokowany.

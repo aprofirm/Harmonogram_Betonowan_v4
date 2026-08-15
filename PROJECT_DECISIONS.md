@@ -1154,6 +1154,43 @@ i kontrola nakładania ich kursów należą do punktu 3C.
 
 ---
 
+## 70. Trwała pamięć planu dnia — krok przekrojowy KP-1
+
+Program ma automatycznie zachowywać bieżący plan dnia w lokalnej pamięci
+przeglądarki, aby zwykłe odświeżenie strony nie powodowało utraty pracy operatora.
+
+Obowiązują następujące zasady:
+
+- zapis odbywa się wyłącznie lokalnie w danej przeglądarce i nie jest wysyłany
+  do internetu;
+- zapis obejmuje przetworzone budowy z importu, budowy ręczne, parametry,
+  ręczne czasy i korekty oraz informację, czy harmonogram został przeliczony;
+- nie zapisujemy pełnej surowej treści wierszy CSV, jeżeli nie jest potrzebna
+  do odtworzenia pracy;
+- po odświeżeniu program odtwarza dane, a wcześniej przeliczony harmonogram
+  oblicza ponownie na podstawie przywróconego stanu zamiast ufać staremu
+  zapisanemu wynikowi;
+- zapis ma numer wersji, aby przyszłe zmiany formatu można było obsłużyć
+  świadomie;
+- brak, uszkodzenie albo niezgodna wersja zapisu nie mogą zablokować
+  uruchomienia aplikacji;
+- jeżeli przeglądarka blokuje trwałą pamięć, program nadal działa w bieżącej
+  sesji i pokazuje operatorowi czytelną informację;
+- bezpośrednio pod przyciskiem **Przelicz harmonogram** ma znajdować się czerwony
+  przycisk **Wyczyść plan dnia**;
+- wyczyszczenie wymaga potwierdzenia i usuwa budowy, ustawienia robocze oraz
+  wynik harmonogramu, przywracając wartości domyślne;
+- przycisk **Wyczyść plan dnia** nie usuwa logów diagnostycznych, ponieważ służy
+  do tego osobna funkcja **Wyczyść logi**.
+
+Trwały zapis dotyczy konkretnego urządzenia i profilu przeglądarki. Usunięcie
+danych witryny w przeglądarce usuwa również zapisany plan.
+
+KP-1 jest krokiem przekrojowym wykonywanym przed 3B.2. Nie zamyka ani nie
+zastępuje punktu 3B; po pozytywnym teście KP-1 następnym podetapem pozostaje 3B.2.
+
+---
+
 # Powiązane tematy otwarte
 
 Pomysły, warianty i pytania, które nie są jeszcze obowiązującymi decyzjami, są prowadzone w `POMYSLY_I_BACKLOG.md`. Dzięki temu ten dokument pozostaje jednoznacznym źródłem zatwierdzonych ustaleń.
