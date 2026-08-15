@@ -8,10 +8,12 @@ const vm = require("node:vm");
 const katalogProjektu = path.resolve(__dirname, "..");
 const kluczPlanu = "harmonogramBetonowan.planDnia.v1";
 const kluczHistorii = "harmonogramBetonowan.historiaPlanu.v1";
+const kluczPamieciTras = "harmonogramBetonowan.pamiecTras.v1";
 const plikiJavaScript = [
   "js/konfiguracja/konfiguracja.js",
   "js/diagnostyka/diagnostyka.js",
   "js/pamiec/pamiec_planu.js",
+  "js/pamiec/pamiec_tras.js",
   "js/import/import_csv.js",
   "js/budowy/budowy.js",
   "js/pompy/pompy.js",
@@ -120,6 +122,8 @@ function utworzDokumentTestowy() {
     "przycisk-historia-planow",
     "liczba-zapisow-historycznych",
     "stan-pamieci-planu",
+    "liczba-znanych-tras",
+    "stan-pamieci-tras",
     "okno-historii-planow",
     "przycisk-zamknij-historie",
     "lista-zapisow-historycznych"
@@ -272,6 +276,24 @@ async function uruchomTest() {
   danePlanu = odczytajDanePlanu(pamiecLokalna);
   assert.equal(danePlanu.budowyZImportu[0].czasDojazduRoboczyMinuty, 25);
   assert.equal(danePlanu.budowyZImportu[0].czasPowrotuRoboczyMinuty, 25);
+  assert.equal(JSON.parse(pamiecLokalna.getItem(kluczPamieciTras)).trasy.length, 1);
+
+  await wczytajCsv(pierwszaStrona);
+  const poleDojazduZPamieci = znajdzPierwszePoleDojazdu(pierwszaStrona);
+  assert.equal(poleDojazduZPamieci.value, "25");
+  assert.equal(
+    odczytajDanePlanu(pamiecLokalna).budowyZImportu[0].zrodloCzasuDojazdu,
+    "pamiec"
+  );
+  assert.equal(
+    pierwszaStrona.dokument.elementy["liczba-znanych-tras"].textContent,
+    "1"
+  );
+  assert.equal(
+    pierwszaStrona.dokument.elementy["wiersze-harmonogramu"]
+      .children[0].children[3].children[1].textContent,
+    "Z pamięci"
+  );
 
   const polePojemnosci = pierwszaStrona.dokument.elementy["pojemnosc-gruszki"];
   polePojemnosci.value = "9";
@@ -312,6 +334,7 @@ async function uruchomTest() {
   assert.equal(stronaPoOdswiezeniu.dokument.elementy["liczba-budow"].textContent, "0");
   assert.equal(pamiecLokalna.getItem(kluczPlanu), null);
   assert.equal(odczytajHistorie(pamiecLokalna).zapisy.length, 1);
+  assert.equal(JSON.parse(pamiecLokalna.getItem(kluczPamieciTras)).trasy.length, 1);
 
   stronaPoOdswiezeniu.dokument.elementy["przycisk-historia-planow"].zdarzenia.click();
   const listaHistorii = stronaPoOdswiezeniu.dokument.elementy[

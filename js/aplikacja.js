@@ -102,6 +102,16 @@
     return historia;
   }
 
+  function odswiezStanPamieciTras() {
+    if (!aplikacja.pamiecTras) {
+      return null;
+    }
+
+    const stanPamieciTras = aplikacja.pamiecTras.pobierzStanPamieci();
+    aplikacja.interfejs.pokazStanPamieciTras(stanPamieciTras);
+    return stanPamieciTras;
+  }
+
   function zapiszBiezacyPlan() {
     const wynikZapisu = aplikacja.pamiecPlanu.zapiszPlan(
       utworzDanePlanuDoZapisu()
@@ -149,12 +159,26 @@
       }
 
       aplikacja.budowy.zmienCzasRoboczyBudowy(budowa, nazwaPola, wartosc);
+      const czyZmienionoCzasTrasy =
+        nazwaPola === "czasDojazduRoboczyMinuty" ||
+        nazwaPola === "czasPowrotuRoboczyMinuty";
+      const wynikPamieciTrasy = czyZmienionoCzasTrasy
+        ? aplikacja.lokalizacje.zapiszCzasyBudowyWPamieci(budowa)
+        : null;
       oznaczPlanJakoNieprzeliczony(true);
+      aplikacja.interfejs.pokazListeBudow(pobierzAktualnaListeBudow());
+      odswiezStanPamieciTras();
       zapiszZdarzenieDiagnostyczne(
         "informacja",
         "zmiana-czasow-budowy",
         "Zmieniono robocze czasy budowy.",
-        { idBudowy: budowa.idBudowy, pole: nazwaPola }
+        {
+          idBudowy: budowa.idBudowy,
+          pole: nazwaPola,
+          statusPamieciTrasy: wynikPamieciTrasy
+            ? wynikPamieciTrasy.status
+            : "bez-zmiany-trasy"
+        }
       );
       return budowa;
     } catch (blad) {
@@ -299,10 +323,15 @@
         );
       }
 
+      const wynikPamieciTras = aplikacja.lokalizacje.uzupelnijListeBudowZPamieci(
+        nowyStanImportu.budowy
+      );
+
       // Nowy plik zastępuje poprzedni import. Budowy ręczne pozostają osobną listą.
       stanImportu = nowyStanImportu;
       const listaBudow = pobierzAktualnaListeBudow();
       aplikacja.interfejs.pokazUdanyImport(stanImportu, listaBudow);
+      odswiezStanPamieciTras();
       czyOstatniPlanPrzeliczony = false;
       zapiszBiezacyPlan();
       zapiszZdarzenieDiagnostyczne(
@@ -315,6 +344,7 @@
           czasTrwaniaMs: Date.now() - czasRozpoczecia,
           separator: stanImportu.separator,
           liczbaBudow: stanImportu.budowy.length,
+          liczbaTrasZPamieci: wynikPamieciTras.liczbaUzupelnionych,
           liczbaOstrzezen: stanImportu.ostrzezenia.length,
           naglowkiKolumn: pobierzNaglowkiPliku(stanImportu)
         })
@@ -346,8 +376,10 @@
         daneBudowy,
         pobierzAktualnaListeBudow()
       );
+      aplikacja.lokalizacje.uzupelnijBudoweZPamieci(budowaReczna);
       budowyReczne = budowyReczne.concat([budowaReczna]);
       aplikacja.interfejs.pokazDodanaBudowe(budowaReczna, pobierzAktualnaListeBudow());
+      odswiezStanPamieciTras();
       czyOstatniPlanPrzeliczony = false;
       zapiszBiezacyPlan();
       zapiszZdarzenieDiagnostyczne(
@@ -566,6 +598,8 @@
         obsluzWyczyszczeniePlanu,
         obsluzOtwarcieHistorii
       );
+      aplikacja.pamiecTras.uruchomPamiecTras();
+      odswiezStanPamieciTras();
       uruchomIOdtworzPamiecPlanu();
       zapiszZdarzenieDiagnostyczne(
         "informacja",

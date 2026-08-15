@@ -97,6 +97,23 @@ potwierdzeniu. Nie usuwa zapisów historycznych ani diagnostyki. Dane pozostają
 lokalne — aplikacja nie zapisuje w pamięci surowych wierszy CSV i nie wysyła
 planu do internetu.
 
+## Pamięć znanych tras
+
+Kompletne czasy dojazdu i powrotu wpisane ręcznie są zapisywane w osobnej,
+lokalnej książce tras. Po ponownym imporcie dokładnie tej samej firmy i budowy
+program uzupełnia oba czasy bez ponownego wpisywania. Przy polach pokazuje
+źródło: **Ręcznie**, **Z pamięci** albo — po przyszłym podłączeniu map —
+**OpenMap**.
+
+Pamięć tras ma osobny klucz, limit 1000 lokalizacji i około 1 MB. Kolejny zapis
+tej samej lokalizacji aktualizuje wcześniejszy wpis. **Wyczyść plan dnia** nie
+usuwa książki tras. Dane pozostają w konkretnym profilu przeglądarki; jeśli
+trwały zapis jest zablokowany, aplikacja przechodzi na pamięć bieżącej sesji.
+
+Obecny krok przygotowuje pamięć oraz zasadę „najpierw cache, potem mapa”. Nie
+uruchamia jeszcze zewnętrznej usługi OpenStreetMap — jej wybór i podłączenie
+pozostają zakresem Etapu 6.
+
 ## Logo aplikacji
 
 Plik `logo.png` jest oficjalnym źródłem znaku aplikacji: pomarańczowo-granatowej betonomieszarki na tle zegara. Logo jest wyświetlane u góry strony, na środku nad nazwą programu, i działa również po lokalnym otwarciu `index.html`.
@@ -112,6 +129,7 @@ Instrukcje testów ręcznych znajdują się w plikach:
 - [testy/TESTY_ETAP_3A.md](testy/TESTY_ETAP_3A.md),
 - [testy/TESTY_ETAP_3B_1.md](testy/TESTY_ETAP_3B_1.md),
 - [testy/TESTY_KP_1.md](testy/TESTY_KP_1.md) — plan testu pamięci dnia,
+- [testy/TESTY_KP_2.md](testy/TESTY_KP_2.md) — plan testu pamięci tras,
 - [testy/TESTY_DIAGNOSTYKA.md](testy/TESTY_DIAGNOSTYKA.md).
 
 Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczny:
@@ -124,9 +142,11 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_3b_1.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
+    node testy/pamiec_tras.test.js
+    node testy/pamiec_tras_integracja.test.js
 
 Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
 ## Aktualny stan
 
-**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów** oraz krok **3B.1 — podstawowe czasy kursów** są zakończone i sprawdzone automatycznie oraz przez operatora. Przed 3B.2 realizujemy zatwierdzony krok przekrojowy **KP-1 — pamięć planu dnia**. Podetapy **KP-1.1–KP-1.8** są zakończone, a pełna regresja ośmiu zestawów testów przechodzi. Następny jest **KP-1.9 — test operatora i zamknięcie**. Po zamknięciu całego KP-1 wracamy do **3B.2 — rytm dostaw**; punkt 3C nadal pozostaje zablokowany.
+**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów** oraz krok **3B.1 — podstawowe czasy kursów** są zakończone i sprawdzone automatycznie oraz przez operatora. Przed 3B.2 kończymy dwa kroki przekrojowe: **KP-1 — pamięć planu dnia** oraz **KP-2 — pamięć znanych tras**. Podetapy **KP-1.1–KP-1.8** i **KP-2.1–KP-2.6** są zakończone, a pełna regresja dziesięciu zestawów testów przechodzi. Następne są testy operatora **KP-1.9** i **KP-2.7**. Po zamknięciu obu punktów wracamy do **3B.2 — rytm dostaw**; punkt 3C nadal pozostaje zablokowany.

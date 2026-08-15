@@ -1208,6 +1208,52 @@ zastępuje punktu 3B; po pozytywnym teście KP-1 następnym podetapem pozostaje 
 
 ---
 
+## 71. Lokalna pamięć znanych tras — krok przekrojowy KP-2
+
+Program ma prowadzić osobną lokalną książkę znanych tras. Jej celem jest
+ponowne wykorzystanie czasu dojazdu i powrotu dla miejsca, które pojawiło się
+już wcześniej, również wtedy, gdy niepełne dane uniemożliwiają automatyczne
+wyszukanie lokalizacji.
+
+Obowiązują następujące zasady:
+
+- pamięć tras jest oddzielona od bieżącego planu dnia, historii przeliczeń i
+  diagnostyki;
+- jeden wpis opisuje najnowsze zatwierdzone czasy dla pary `węzeł + dokładnie
+  znormalizowane oznaczenie lokalizacji`;
+- do czasu wydzielenia osobnego pola adresu w Etapie 6 bieżące dopasowanie
+  wykorzystuje bezpieczne połączenie nazwy firmy i pola `Budowa`;
+- normalizacja może usuwać różnice wielkości liter, polskich znaków,
+  interpunkcji i wielokrotnych odstępów, ale nie może stosować podobieństwa
+  tekstowego ani zgadywać, że dwa różne opisy oznaczają to samo miejsce;
+- dojazd i powrót są przechowywane osobno, ponieważ trasa powrotna może zostać
+  ręcznie zmieniona niezależnie;
+- zapis przechowuje źródło wartości: ręczne, mapowe albo odczytane z pamięci,
+  oraz datę utworzenia, aktualizacji i ostatniego użycia;
+- kompletna ręczna korekta czasów jest zapisywana w książce tras i może zostać
+  użyta przy kolejnym imporcie tej samej lokalizacji;
+- przyszły wynik usługi mapowej będzie zapisywany w tym samym formacie;
+- kolejność wyboru czasu to: wartość już obecna w bieżącym lub odtworzonym
+  planie, dokładne trafienie w pamięci tras, przyszłe zapytanie do usługi
+  mapowej, a przy braku wyniku ręczna decyzja operatora;
+- dokładne trafienie w pamięci nie może wykonywać ponownego zapytania do usługi
+  mapowej; świadome odświeżenie trasy będzie osobną operacją w Etapie 6;
+- zwykłe przeliczenie i ponowny import nie mogą automatycznie nadpisywać
+  ręcznej korekty wynikiem mapowym;
+- przycisk **Wyczyść plan dnia** nie usuwa książki tras;
+- pamięć jest wersjonowana i działa wyłącznie lokalnie w profilu przeglądarki;
+- limit wynosi maksymalnie 1000 różnych lokalizacji i około 1 MB; po osiągnięciu
+  limitu najdawniej używany wpis jest zastępowany nowym;
+- uszkodzenie, brak miejsca albo blokada `localStorage` nie mogą zatrzymać
+  harmonogramu; aplikacja przechodzi wtedy na pamięć bieżącej sesji i informuje
+  o tym operatora.
+
+KP-2 przygotowuje pamięć i wspólny przepływ źródeł czasu. Nie oznacza jeszcze
+uruchomienia OpenStreetMap — wybór i podłączenie konkretnej usługi geokodowania
+oraz routingu pozostają zakresem Etapu 6.
+
+---
+
 # Powiązane tematy otwarte
 
 Pomysły, warianty i pytania, które nie są jeszcze obowiązującymi decyzjami, są prowadzone w `POMYSLY_I_BACKLOG.md`. Dzięki temu ten dokument pozostaje jednoznacznym źródłem zatwierdzonych ustaleń.

@@ -93,6 +93,15 @@
     return liczba === null ? 0 : liczba;
   }
 
+  function pobierzZrodloCzasu(wartosc, czyJestCzas) {
+    if (!czyJestCzas) {
+      return "brak";
+    }
+
+    const zrodlo = String(wartosc || "reczny").trim().toLowerCase();
+    return ["reczny", "pamiec", "mapa"].includes(zrodlo) ? zrodlo : "reczny";
+  }
+
   function utworzBudoweZImportu(daneBudowy, numerWiersza) {
     const opisStartu = przetworzStartPlanowany(daneBudowy.startPlanowany, numerWiersza);
     const iloscBetonuLiczbaM3 = pobierzIloscBetonuLiczbaM3(daneBudowy.iloscBetonuM3);
@@ -187,8 +196,14 @@
       noweCzasy.dodatkowyCzasRozladunkuMinuty,
       "Dodatkowy czas rozładunku"
     );
-    budowa.zrodloCzasuDojazdu = czasDojazdu === null ? "brak" : "reczny";
-    budowa.zrodloCzasuPowrotu = czasPowrotu === null ? "brak" : "reczny";
+    budowa.zrodloCzasuDojazdu = pobierzZrodloCzasu(
+      noweCzasy.zrodloCzasuDojazdu,
+      czasDojazdu !== null
+    );
+    budowa.zrodloCzasuPowrotu = pobierzZrodloCzasu(
+      noweCzasy.zrodloCzasuPowrotu,
+      czasPowrotu !== null
+    );
 
     return budowa;
   }
@@ -220,9 +235,23 @@
       czasDojazduRoboczyMinuty: budowa.czasDojazduRoboczyMinuty,
       czasPowrotuRoboczyMinuty: budowa.czasPowrotuRoboczyMinuty,
       dodatkowyCzasZaladunkuMinuty: budowa.dodatkowyCzasZaladunkuMinuty,
-      dodatkowyCzasRozladunkuMinuty: budowa.dodatkowyCzasRozladunkuMinuty
+      dodatkowyCzasRozladunkuMinuty: budowa.dodatkowyCzasRozladunkuMinuty,
+      zrodloCzasuDojazdu: budowa.zrodloCzasuDojazdu,
+      zrodloCzasuPowrotu: budowa.zrodloCzasuPowrotu
     };
     noweCzasy[nazwaPola] = wartosc;
+
+    if (nazwaPola === "czasDojazduRoboczyMinuty") {
+      noweCzasy.zrodloCzasuDojazdu = czyBrakWartosci(wartosc)
+        ? "brak"
+        : "reczny";
+    }
+
+    if (nazwaPola === "czasPowrotuRoboczyMinuty") {
+      noweCzasy.zrodloCzasuPowrotu = czyBrakWartosci(wartosc)
+        ? "brak"
+        : "reczny";
+    }
 
     if (
       nazwaPola === "czasDojazduRoboczyMinuty" &&
@@ -230,6 +259,7 @@
       !czyBrakWartosci(wartosc)
     ) {
       noweCzasy.czasPowrotuRoboczyMinuty = wartosc;
+      noweCzasy.zrodloCzasuPowrotu = "reczny";
     }
 
     if (
@@ -238,6 +268,7 @@
       !czyBrakWartosci(wartosc)
     ) {
       noweCzasy.czasDojazduRoboczyMinuty = wartosc;
+      noweCzasy.zrodloCzasuDojazdu = "reczny";
     }
 
     return ustawCzasyRobocze(budowa, noweCzasy);

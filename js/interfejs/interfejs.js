@@ -51,6 +51,8 @@
         "liczba-zapisow-historycznych"
       ),
       stanPamieciPlanu: pobierzWymaganyElement("stan-pamieci-planu"),
+      liczbaZnanychTras: pobierzWymaganyElement("liczba-znanych-tras"),
+      stanPamieciTras: pobierzWymaganyElement("stan-pamieci-tras"),
       oknoHistoriiPlanow: pobierzWymaganyElement("okno-historii-planow"),
       przyciskZamknijHistorie: pobierzWymaganyElement("przycisk-zamknij-historie"),
       listaZapisowHistorycznych: pobierzWymaganyElement(
@@ -222,10 +224,31 @@
     return pole;
   }
 
-  function utworzKomorkeZPolemCzasu(pole) {
+  function opiszZrodloCzasu(zrodlo) {
+    const opisy = {
+      pamiec: "Z pamięci",
+      reczny: "Ręcznie",
+      mapa: "OpenMap"
+    };
+
+    return opisy[zrodlo] || "";
+  }
+
+  function utworzKomorkeZPolemCzasu(pole, zrodlo) {
     const komorka = document.createElement("td");
     komorka.className = "komorka-czasu-budowy";
     komorka.appendChild(pole);
+
+    const opisZrodla = opiszZrodloCzasu(zrodlo);
+
+    if (opisZrodla) {
+      const znacznikZrodla = document.createElement("small");
+      znacznikZrodla.className = "znacznik-zrodla-czasu";
+      znacznikZrodla.dataset.zrodlo = zrodlo;
+      znacznikZrodla.textContent = opisZrodla;
+      komorka.appendChild(znacznikZrodla);
+    }
+
     return komorka;
   }
 
@@ -316,8 +339,12 @@
     wiersz.appendChild(utworzKomorke(opiszOknoStartu(budowa), "wartosc-wazna"));
     wiersz.appendChild(utworzKomorke(budowa.firma));
     wiersz.appendChild(utworzKomorke(budowa.budowa));
-    wiersz.appendChild(utworzKomorkeZPolemCzasu(poleDojazdu));
-    wiersz.appendChild(utworzKomorkeZPolemCzasu(polePowrotu));
+    wiersz.appendChild(
+      utworzKomorkeZPolemCzasu(poleDojazdu, budowa.zrodloCzasuDojazdu)
+    );
+    wiersz.appendChild(
+      utworzKomorkeZPolemCzasu(polePowrotu, budowa.zrodloCzasuPowrotu)
+    );
     wiersz.appendChild(
       utworzKomorkeZPolemCzasu(
         utworzPoleCzasuBudowy(
@@ -656,6 +683,28 @@
       "Zapis trwały jest niedostępny. Dane pozostaną tylko do zamknięcia strony.";
   }
 
+  function pokazStanPamieciTras(stanPamieci) {
+    const stan = stanPamieci || {};
+    const liczbaTras = Number.isFinite(Number(stan.liczbaTras))
+      ? Number(stan.liczbaTras)
+      : 0;
+    const limitTras = Number.isFinite(Number(stan.maksymalnaLiczbaTras))
+      ? Number(stan.maksymalnaLiczbaTras)
+      : 1000;
+
+    elementy.liczbaZnanychTras.textContent = String(liczbaTras);
+
+    if (stan.trybPamieci === "trwala") {
+      elementy.stanPamieciTras.textContent =
+        "Czasy są przechowywane w tej przeglądarce: " +
+        liczbaTras + "/" + limitTras + ".";
+      return;
+    }
+
+    elementy.stanPamieciTras.textContent =
+      "Pamięć trwała jest niedostępna. Trasy pozostaną tylko do zamknięcia strony.";
+  }
+
   function formatujDateZapisu(znacznikCzasu) {
     const data = new Date(znacznikCzasu);
 
@@ -878,6 +927,7 @@
     pokazDodanaBudowe: pokazDodanaBudowe,
     wyczyscWyborPliku: wyczyscWyborPliku,
     pokazStanPamieciPlanu: pokazStanPamieciPlanu,
+    pokazStanPamieciTras: pokazStanPamieciTras,
     pokazHistoriePlanow: pokazHistoriePlanow,
     zamknijOknoHistorii: zamknijOknoHistorii
   };

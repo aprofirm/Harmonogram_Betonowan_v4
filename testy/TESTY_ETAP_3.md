@@ -2,7 +2,7 @@
 
 ## Status
 
-Etap 3 jest w toku. **Punkt 3A — generowanie kursów** oraz krok **3B.1 — podstawowe czasy kursów** są zakończone i sprawdzone. Przed 3B.2 realizowany jest krok przekrojowy **KP-1 — pamięć planu dnia**; po jego zamknięciu wracamy do **3B.2 — rytm dostaw**, który ma oddzielić odstęp pomiędzy kolejnymi dostawami od fizycznego czasu zajęcia gruszki. Przydział i dostępność konkretnych gruszek pozostają zakresem punktów 3C–3E i nie mogą rozpocząć się przed zamknięciem całego punktu 3B.
+Etap 3 jest w toku. **Punkt 3A — generowanie kursów** oraz krok **3B.1 — podstawowe czasy kursów** są zakończone i sprawdzone. Przed 3B.2 kończone są kroki przekrojowe **KP-1 — pamięć planu dnia** i **KP-2 — pamięć znanych tras**. Implementacje automatyczne obu pamięci są gotowe, lecz ich punkty nadrzędne pozostają otwarte do zakończenia testów operatora. Następnie wracamy do **3B.2 — rytm dostaw**, który ma oddzielić odstęp pomiędzy kolejnymi dostawami od fizycznego czasu zajęcia gruszki. Przydział i dostępność konkretnych gruszek pozostają zakresem punktów 3C–3E i nie mogą rozpocząć się przed zamknięciem całego punktu 3B.
 
 ## Cel
 

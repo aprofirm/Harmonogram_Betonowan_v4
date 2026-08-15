@@ -604,6 +604,37 @@ h3 {
   line-height: 1.45;
 }
 
+.pamiec-tras {
+  margin-top: 12px;
+  padding: 14px 13px;
+  border: 1px solid #d8e6dd;
+  border-radius: 10px;
+  background: #f4faf7;
+}
+
+.pamiec-tras .etykieta-sekcji {
+  margin-bottom: 4px;
+  color: var(--kolor-zielony);
+}
+
+.pamiec-tras__naglowek {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pamiec-tras__naglowek .licznik-historii {
+  background: var(--kolor-zielony);
+}
+
+.pamiec-tras__stan {
+  margin: 9px 0 0;
+  color: var(--kolor-tekstu-pomocniczego);
+  font-size: 0.7rem;
+  line-height: 1.45;
+}
+
 .okno-historii {
   position: fixed;
   z-index: 50;
@@ -890,6 +921,28 @@ td {
 
 .komorka-czasu-budowy {
   min-width: 104px;
+}
+
+.znacznik-zrodla-czasu {
+  display: block;
+  margin-top: 4px;
+  color: #72838f;
+  font-size: 0.62rem;
+  font-weight: 750;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.znacznik-zrodla-czasu[data-zrodlo="pamiec"] {
+  color: var(--kolor-zielony);
+}
+
+.znacznik-zrodla-czasu[data-zrodlo="mapa"] {
+  color: var(--kolor-niebieski);
+}
+
+.znacznik-zrodla-czasu[data-zrodlo="reczny"] {
+  color: #a65e1e;
 }
 
 .pole-czasu-budowy {

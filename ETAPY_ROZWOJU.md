@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; przed 3B.2 realizowany jest krok przekrojowy KP-1**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; przed 3B.2 kończymy KP-1 i realizujemy zatwierdzony krok przekrojowy KP-2**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -104,6 +104,49 @@ Kryteria zamknięcia KP-1:
 - [x] potwierdzone czyszczenie usuwa bieżący plan, ale pozostawia historię i
   logi diagnostyczne;
 - [x] aplikacja nadal działa offline i przechodzi pełną regresję automatyczną.
+
+Test operatora KP-1.9 jest częściowo potwierdzony: odświeżenie strony zachowało
+plan oraz ponownie pokazało dane. Historia i oba warianty czyszczenia nadal
+wymagają sprawdzenia przed zamknięciem KP-1.
+
+## Aktywny krok przekrojowy KP-2 — pamięć znanych tras
+
+KP-2 przygotowuje lokalną książkę tras przed pełną integracją mapową Etapu 6.
+Został świadomie zlecony przed 3B.2. Nie uruchamia jeszcze zewnętrznej usługi
+OpenStreetMap, lecz zapewnia wspólną pamięć dla wartości ręcznych i przyszłych
+wyników mapowych.
+
+- [x] **KP-2.1 — plan i decyzje:** zapisanie pełnego podziału, reguł
+  rozpoznawania lokalizacji, kolejności źródeł i limitów pamięci.
+- [x] **KP-2.2 — moduł pamięci tras:** wersjonowany lokalny zapis, normalizacja
+  oznaczenia miejsca, osobne czasy dojazdu i powrotu, bezpieczny limit oraz tryb
+  bieżącej sesji przy blokadzie pamięci.
+- [x] **KP-2.3 — integracja z budowami:** zapis kompletnych ręcznych czasów,
+  automatyczne uzupełnienie znanej trasy po ponownym imporcie lub dodaniu budowy
+  ręcznej oraz brak nadpisywania wartości odtworzonych z planu dnia.
+- [x] **KP-2.4 — pierwszeństwo cache przed mapą:** wspólny przepływ, który przy
+  dokładnym trafieniu korzysta z pamięci bez wywoływania usługi mapowej, a wynik
+  przyszłego wywołania mapy potrafi zapisać w tej samej bazie.
+- [x] **KP-2.5 — widoczność źródła i stanu pamięci:** oznaczenia **Z pamięci**,
+  **Ręcznie** i **OpenMap** przy czasach oraz licznik znanych tras.
+- [x] **KP-2.6 — testy automatyczne i pełna regresja:** test modułu, integracji,
+  pomijania zapytania sieciowego przy trafieniu oraz wcześniejszych funkcji.
+- [ ] **KP-2.7 — test operatora i zamknięcie:** ponowny import tej samej budowy,
+  odtworzenie osobnych czasów oraz potwierdzenie, że czyszczenie planu nie usuwa
+  książki tras.
+
+Kryteria zamknięcia KP-2:
+
+- [x] kompletne czasy ręczne są zapisywane pod dokładnym kluczem lokalizacji;
+- [x] ponowny import dokładnie tej samej lokalizacji uzupełnia dojazd i powrót;
+- [x] trafienie w cache nie wywołuje funkcji usługi mapowej;
+- [x] wynik przyszłej usługi mapowej może zostać zapisany w tym samym formacie;
+- [x] ręcznie zmieniony czas nie jest automatycznie nadpisywany;
+- [x] podobne, ale różne oznaczenie miejsca nie jest dopasowywane bezpiecznym
+  „zgadywaniem”;
+- [x] czyszczenie planu dnia nie usuwa pamięci tras;
+- [x] brak lub uszkodzenie pamięci tras nie blokuje harmonogramu;
+- [x] aplikacja pozostaje możliwa do uruchomienia całkowicie offline.
 
 ## Stan testów po zakończeniu kroku 3B.1 — 2026-08-15
 
@@ -551,10 +594,10 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **KP-1.9 — test operatora i zamknięcie** według
-`testy/TESTY_KP_1.md`. Po pozytywnym teście zamknąć KP-1 i wrócić do
-**3B.2 — rytm dostaw**. Punkt 3C pozostaje zablokowany do czasu zakończenia i
-przetestowania całego punktu 3B.
+Opublikować wersję do **KP-2.7 — testu operatora pamięci tras** i równolegle
+dokończyć otwarte próby KP-1.9 dotyczące historii oraz czyszczenia. Po
+zamknięciu KP-1 i KP-2 wracamy do **3B.2 — rytm dostaw**. Punkt 3C pozostaje
+zablokowany do czasu zakończenia i przetestowania całego punktu 3B.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -672,3 +715,112 @@ KP-1.8 — pełna regresja wszystkich zestawów testów i kontrola dokumentacji.
 KP-1.8 jest zakończony. KP-1 nadal pozostaje otwarty. Następny i ostatni
 podetap to KP-1.9 — test operatora na GitHub Pages. Dopiero po jego pozytywnym
 wyniku wracamy do 3B.2; punkt 3C pozostaje zablokowany.
+
+## KP-2.1 — plan pamięci znanych tras — 2026-08-15
+
+- [x] zapisano wszystkie znane podetapy KP-2 przed rozpoczęciem implementacji;
+- [x] rozdzielono książkę tras od bieżącego planu i historii przeliczeń;
+- [x] ustalono pierwszeństwo: wartości bieżącego planu, dokładne trafienie w
+  pamięci, przyszła usługa mapowa, a następnie decyzja ręczna operatora;
+- [x] ustalono, że dokładne trafienie nie wykonuje ponownego zapytania do sieci;
+- [x] dojazd i powrót pozostają osobnymi wartościami;
+- [x] podobne lub niepełne oznaczenia nie będą dopasowywane „na oko” bez
+  potwierdzenia operatora;
+- [x] zapisano limity i zasady działania awaryjnego bez trwałej pamięci.
+
+KP-2.1 jest zakończony. KP-2 pozostaje otwarty, a następnym podetapem jest
+KP-2.2 — wersjonowany moduł pamięci tras. KP-1 nadal czeka na dokończenie testu
+operatora; po obu krokach wracamy do 3B.2, a punkt 3C pozostaje zablokowany.
+
+## KP-2.2 — wersjonowany moduł pamięci tras — 2026-08-15
+
+- [x] dodano niezależny moduł `js/pamiec/pamiec_tras.js`;
+- [x] książka tras używa osobnego klucza i wersji formatu;
+- [x] dokładny klucz uwzględnia węzeł oraz znormalizowany opis lokalizacji;
+- [x] normalizacja obsługuje wielkość liter, polskie znaki, interpunkcję i
+  nadmiarowe odstępy bez zgadywania podobnych nazw;
+- [x] dojazd i powrót są przechowywane osobno razem ze źródłem i czasem zapisu;
+- [x] kolejny zapis tego samego klucza aktualizuje wpis zamiast tworzyć duplikat;
+- [x] limit wynosi 1000 tras i 1 MB, a najstarsze wpisy są zastępowane;
+- [x] uszkodzony zapis jest pomijany, a blokada trwałej pamięci uruchamia tryb
+  bieżącej sesji;
+- [x] osobny test modułu i kontrola składni przechodzą.
+
+KP-2.2 jest zakończony. KP-2 pozostaje otwarty, a następnym podetapem jest
+KP-2.3 — zapis ręcznych czasów i ich automatyczne odtworzenie dla tej samej
+budowy. KP-1.9 pozostaje częściowo otwarty; 3C nadal jest zablokowany.
+
+## KP-2.3 — integracja pamięci tras z budowami — 2026-08-15
+
+- [x] kompletne czasy dojazdu i powrotu wpisane ręcznie są automatycznie
+  zapisywane w książce tras;
+- [x] pierwszy wpisany czas nadal może uzupełnić drugi, a późniejsze zmiany
+  pozostają niezależne;
+- [x] ponowny import tej samej firmy i budowy uzupełnia oba czasy z pamięci;
+- [x] budowa dodana ręcznie korzysta z tego samego mechanizmu odczytu;
+- [x] wartości już obecne w bieżącym lub historycznym planie mają pierwszeństwo
+  i nie są nadpisywane przez książkę tras;
+- [x] podobna, ale różna nazwa nie otrzymuje automatycznie cudzych czasów;
+- [x] źródła dojazdu i powrotu są zachowywane niezależnie podczas ręcznej edycji;
+- [x] test integracji modułów, test całej aplikacji i regresja 3B.1 przechodzą.
+
+KP-2.3 jest zakończony. KP-2 pozostaje otwarty, a następnym podetapem jest
+KP-2.4 — wspólny przepływ cache → przyszła usługa mapowa. KP-1.9 nadal czeka na
+dokończenie testu operatora; 3C pozostaje zablokowany.
+
+## KP-2.4 — pierwszeństwo cache przed mapą — 2026-08-15
+
+- [x] dodano jeden przepływ wyboru czasu: bieżąca wartość → pamięć tras →
+  funkcja przyszłej usługi mapowej;
+- [x] kompletne czasy bieżącego planu kończą przepływ bez wywołania mapy;
+- [x] dokładne trafienie w książce tras kończy przepływ bez wywołania mapy;
+- [x] brak wpisu pozwala wywołać wymienną funkcję mapową;
+- [x] poprawny wynik mapowy uzupełnia dojazd i powrót oraz trafia do tej samej
+  książki tras ze źródłem `mapa`;
+- [x] błąd lub pusty wynik mapy zwraca kontrolowany status zamiast powodować
+  awarię harmonogramu;
+- [x] test licznikiem wywołań potwierdza, że znana trasa nie odpytuje mapy.
+
+KP-2.4 jest zakończony. KP-2 pozostaje otwarty, a następnym podetapem jest
+KP-2.5 — pokazanie operatorowi źródła czasu i liczby znanych tras. KP-1.9 nadal
+pozostaje częściowo otwarty; 3C jest zablokowany.
+
+## KP-2.5 — widoczność źródła i stanu pamięci — 2026-08-15
+
+- [x] przy dojeździe i powrocie wyświetlane są etykiety **Ręcznie**,
+  **Z pamięci** albo **OpenMap**;
+- [x] ręczna zmiana jednego czasu aktualizuje jego źródło bez zmiany drugiego;
+- [x] na dole lewego panelu znajduje się osobna sekcja **Pamięć tras**;
+- [x] licznik pokazuje liczbę zapisanych lokalizacji, a opis wskazuje limit 1000;
+- [x] blokada trwałego zapisu powoduje czytelny komunikat o pamięci tylko do
+  zamknięcia strony;
+- [x] dodano instrukcję operatorską `testy/TESTY_KP_2.md`;
+- [x] test aplikacji potwierdza etykietę **Z pamięci**, licznik oraz zachowanie
+  książki tras po wyczyszczeniu planu.
+
+KP-2.5 jest zakończony. KP-2 pozostaje otwarty, a następnym podetapem jest
+KP-2.6 — pełna regresja i końcowa kontrola dokumentacji przed publikacją.
+KP-1.9 nadal pozostaje częściowo otwarty; 3C jest zablokowany.
+
+## KP-2.6 — testy automatyczne i pełna regresja — 2026-08-15
+
+- [x] kontrola składni wszystkich plików JavaScript przechodzi;
+- [x] test szkieletu i działania offline Etapu 1 przechodzi;
+- [x] test importu i modelu budów Etapu 2 przechodzi;
+- [x] test zmiennych kolumn KDX przechodzi;
+- [x] test diagnostyki przechodzi;
+- [x] test generowania kursów 3A przechodzi;
+- [x] test podstawowych czasów 3B.1 przechodzi;
+- [x] oba testy pamięci planu KP-1 przechodzą;
+- [x] test wersjonowanej książki 1000 tras i limitu 1 MB przechodzi;
+- [x] test integracji ręcznych czasów, cache przed mapą i zapisu wyniku mapy
+  przechodzi;
+- [x] test najdawniej używanego wpisu potwierdza, że często używana trasa nie
+  jest zastępowana tylko dlatego, że została utworzona wcześniej;
+- [x] test aplikacji potwierdza, że czyszczenie planu nie usuwa pamięci tras;
+- [x] dokumentacja i instrukcja operatorska odpowiadają wdrożonemu zakresowi.
+
+KP-2.6 jest zakończony. KP-2 pozostaje otwarty. Następny i ostatni podetap to
+KP-2.7 — test operatora na GitHub Pages. KP-1.9 nadal wymaga prób historii i
+czyszczenia; po zamknięciu obu punktów wracamy do 3B.2. Punkt 3C pozostaje
+zablokowany.
