@@ -2,9 +2,10 @@
 
 ## Status
 
-Implementacja KP-2.1–KP-2.6 oraz pełna regresja automatyczna są zakończone.
-Poniższy test operatorski jest ostatnim podetapem KP-2.7. Pełne połączenie z
-OpenStreetMap nie jest jeszcze aktywne — pozostaje zakresem Etapu 6.
+Implementacja KP-2.1–KP-2.6 oraz poprawka automatycznej archiwizacji KP-2.7.1
+są zakończone. Poniższy test operatorski jest ostatnim podetapem KP-2.7.2.
+Pełne połączenie z OpenStreetMap nie jest jeszcze aktywne — pozostaje zakresem
+Etapu 6.
 
 ## Cel
 
@@ -14,10 +15,21 @@ po ponownym imporcie tej samej budowy i nie są usuwane razem z planem dnia.
 ## Przygotowanie
 
 1. Otwórz najnowszą wersję aplikacji na GitHub Pages i wykonaj `Ctrl+F5`.
-2. Wczytaj sprawdzony plik KDX.
-3. Wybierz jedną aktywną budowę, dla której łatwo rozpoznasz nazwę firmy i
+2. Jeżeli strona odtworzy starszy plan z kompletnymi czasami, sprawdź, czy
+   licznik **Pamięć tras** od razu uwzględnił wszystkie takie budowy.
+3. Wczytaj sprawdzony plik KDX.
+4. Wybierz jedną aktywną budowę, dla której łatwo rozpoznasz nazwę firmy i
    miejsce budowy.
-4. Zapamiętaj liczbę widoczną w sekcji **Pamięć tras** na dole lewego panelu.
+5. Zapamiętaj liczbę widoczną w sekcji **Pamięć tras** na dole lewego panelu.
+
+## Test 0 — zbiorczy zapis przy przeliczeniu
+
+1. Uzupełnij dojazd i powrót przy kilku budowach, pozostawiając co najmniej
+   jedną budowę bez kompletu czasów.
+2. Wybierz **Przelicz harmonogram**.
+3. Licznik **Pamięć tras** powinien uwzględnić wszystkie budowy mające komplet
+   dojazd + powrót. Pusta albo niekompletna budowa nie powinna być zapisana.
+4. Nie trzeba zmieniać ponownie każdego wcześniej wpisanego pola.
 
 ## Test 1 — zapis ręcznych czasów
 

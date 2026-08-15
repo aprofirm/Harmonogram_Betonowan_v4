@@ -131,13 +131,20 @@ wyników mapowych.
   **Ręcznie** i **OpenMap** przy czasach oraz licznik znanych tras.
 - [x] **KP-2.6 — testy automatyczne i pełna regresja:** test modułu, integracji,
   pomijania zapytania sieciowego przy trafieniu oraz wcześniejszych funkcji.
-- [ ] **KP-2.7 — test operatora i zamknięcie:** ponowny import tej samej budowy,
-  odtworzenie osobnych czasów oraz potwierdzenie, że czyszczenie planu nie usuwa
-  książki tras.
+- [ ] **KP-2.7 — test operatora i zamknięcie:** poprawka oraz ponowne sprawdzenie
+  pełnego przepływu ujawnionego podczas pierwszej próby operatorskiej:
+  - [x] **KP-2.7.1 — automatyczna archiwizacja kompletnych tras:** zapisanie
+    wszystkich budów z dojazdem i powrotem podczas przeliczenia oraz bezpieczne
+    uzupełnienie brakujących wpisów ze starszego odtworzonego planu;
+  - [ ] **KP-2.7.2 — powtórny test operatora:** ponowny import tych samych budów,
+    odtworzenie osobnych czasów oraz potwierdzenie, że czyszczenie planu nie
+    usuwa książki tras.
 
 Kryteria zamknięcia KP-2:
 
 - [x] kompletne czasy ręczne są zapisywane pod dokładnym kluczem lokalizacji;
+- [x] wszystkie kompletne trasy z bieżącego planu są archiwizowane podczas
+  przeliczenia, bez konieczności ponownej edycji każdego pola;
 - [x] ponowny import dokładnie tej samej lokalizacji uzupełnia dojazd i powrót;
 - [x] trafienie w cache nie wywołuje funkcji usługi mapowej;
 - [x] wynik przyszłej usługi mapowej może zostać zapisany w tym samym formacie;
@@ -824,3 +831,25 @@ KP-2.6 jest zakończony. KP-2 pozostaje otwarty. Następny i ostatni podetap to
 KP-2.7 — test operatora na GitHub Pages. KP-1.9 nadal wymaga prób historii i
 czyszczenia; po zamknięciu obu punktów wracamy do 3B.2. Punkt 3C pozostaje
 zablokowany.
+
+## KP-2.7.1 — automatyczna archiwizacja kompletnych tras — 2026-08-15
+
+- [x] pierwsza próba operatorska ujawniła, że starszy odtworzony plan zachowuje
+  czasy, ale nie przenosi ich automatycznie do nowej książki tras;
+- [x] wszystkie budowy z kompletnym dojazdem i powrotem są archiwizowane przed
+  zwykłym przeliczeniem, bez konieczności ponownej edycji każdego pola;
+- [x] odtworzenie bieżącego albo historycznego planu uzupełnia brakujące wpisy
+  w książce tras;
+- [x] migracja starszego planu nie nadpisuje trasy, która już istnieje w
+  książce, dzięki czemu stary zapis historyczny nie cofa nowszej korekty;
+- [x] budowy bez kompletu dojazd + powrót są bezpiecznie pomijane;
+- [x] test integracyjny listy budów oraz test odtworzenia starszego planu
+  przechodzą;
+- [x] kontrola składni i pełna regresja dziesięciu zestawów testów przechodzą;
+- [x] dokumentacja decyzji, plan etapów i instrukcja operatora odpowiadają
+  poprawionemu zachowaniu.
+
+KP-2.7.1 jest zakończony. KP-2 oraz KP-2.7 pozostają otwarte. Następny i ostatni
+podetap to KP-2.7.2 — powtórny test operatora na GitHub Pages. KP-1.9 nadal
+wymaga prób historii i czyszczenia; po obu testach wracamy do 3B.2, a punkt 3C
+pozostaje zablokowany.

@@ -74,6 +74,54 @@
     });
   }
 
+  function zapiszKompletneTrasyBudowWPamieci(listaBudow, opcje) {
+    const budowy = Array.isArray(listaBudow) ? listaBudow : [];
+    const ustawienia = opcje || {};
+    let liczbaKompletnych = 0;
+    let liczbaZapisanych = 0;
+    let liczbaPominietychIstniejacych = 0;
+
+    budowy.forEach(function (budowa) {
+      const opisLokalizacji = utworzOpisLokalizacjiBudowy(budowa);
+      const czyKompletna = Boolean(opisLokalizacji) &&
+        czyJestCzas(budowa && budowa.czasDojazduRoboczyMinuty) &&
+        czyJestCzas(budowa && budowa.czasPowrotuRoboczyMinuty);
+
+      if (!czyKompletna) {
+        return;
+      }
+
+      liczbaKompletnych += 1;
+
+      if (ustawienia.tylkoBrakujace) {
+        const istniejacaTrasa = aplikacja.pamiecTras.pobierzTrase(
+          opisLokalizacji,
+          DOMYSLNY_ID_WEZLA
+        );
+
+        if (istniejacaTrasa.trasa) {
+          liczbaPominietychIstniejacych += 1;
+          return;
+        }
+      }
+
+      const wynikZapisu = zapiszCzasyBudowyWPamieci(budowa);
+
+      if (wynikZapisu.status === "zapisano-trwale" ||
+          wynikZapisu.status === "zapisano-w-sesji") {
+        liczbaZapisanych += 1;
+      }
+    });
+
+    return {
+      liczbaBudow: budowy.length,
+      liczbaKompletnych: liczbaKompletnych,
+      liczbaZapisanych: liczbaZapisanych,
+      liczbaPominietychNiekompletnych: budowy.length - liczbaKompletnych,
+      liczbaPominietychIstniejacych: liczbaPominietychIstniejacych
+    };
+  }
+
   function uzupelnijBudoweZPamieci(budowa) {
     if (!budowa || !aplikacja.pamiecTras) {
       return { status: "brak-modulu-pamieci-tras", czyUzupelniono: false };
@@ -224,6 +272,7 @@
     utworzPustyStanLokalizacji: utworzPustyStanLokalizacji,
     utworzOpisLokalizacjiBudowy: utworzOpisLokalizacjiBudowy,
     zapiszCzasyBudowyWPamieci: zapiszCzasyBudowyWPamieci,
+    zapiszKompletneTrasyBudowWPamieci: zapiszKompletneTrasyBudowWPamieci,
     uzupelnijBudoweZPamieci: uzupelnijBudoweZPamieci,
     uzupelnijListeBudowZPamieci: uzupelnijListeBudowZPamieci,
     pobierzLubUstalTrase: pobierzLubUstalTrase

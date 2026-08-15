@@ -1232,6 +1232,10 @@ Obowiązują następujące zasady:
   oraz datę utworzenia, aktualizacji i ostatniego użycia;
 - kompletna ręczna korekta czasów jest zapisywana w książce tras i może zostać
   użyta przy kolejnym imporcie tej samej lokalizacji;
+- zwykłe przeliczenie archiwizuje wszystkie budowy mające kompletny dojazd i
+  powrót, dlatego nie trzeba ponownie edytować tras zapisanych w starszym planie;
+- przy odtwarzaniu bieżącego lub historycznego planu program dopisuje wyłącznie
+  brakujące trasy i nie cofa istniejącej, nowszej wartości ze starego zapisu;
 - przyszły wynik usługi mapowej będzie zapisywany w tym samym formacie;
 - kolejność wyboru czasu to: wartość już obecna w bieżącym lub odtworzonym
   planie, dokładne trafienie w pamięci tras, przyszłe zapytanie do usługi

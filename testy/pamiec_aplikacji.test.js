@@ -246,6 +246,95 @@ function znajdzPierwszePoleDojazdu(srodowisko) {
   return wiersze[0].children[3].children[0];
 }
 
+function sprawdzMigracjeTrasZeStarszegoPlanu() {
+  const pamiecLokalna = utworzPamiecLokalna();
+  const ustawieniaPotwierdzenia = { wynik: true };
+  const srodowiskoPrzygotowawcze = uruchomAplikacje(
+    pamiecLokalna,
+    ustawieniaPotwierdzenia
+  );
+  const pierwszaBudowa = srodowiskoPrzygotowawcze.aplikacja.budowy
+    .utworzBudoweZImportu({
+      idBudowy: "PLAN-001",
+      firma: "Firma starszego planu A",
+      budowa: "Budowa starszego planu A",
+      startPlanowany: "08:00",
+      iloscBetonuM3: "8"
+    }, 2);
+  const drugaBudowa = srodowiskoPrzygotowawcze.aplikacja.budowy
+    .utworzBudoweZImportu({
+      idBudowy: "PLAN-002",
+      firma: "Firma starszego planu B",
+      budowa: "Budowa starszego planu B",
+      startPlanowany: "09:00",
+      iloscBetonuM3: "8"
+    }, 3);
+  const niekompletnaBudowa = srodowiskoPrzygotowawcze.aplikacja.budowy
+    .utworzBudoweZImportu({
+      idBudowy: "PLAN-003",
+      firma: "Firma bez powrotu",
+      budowa: "Budowa bez powrotu",
+      startPlanowany: "10:00",
+      iloscBetonuM3: "8"
+    }, 4);
+
+  srodowiskoPrzygotowawcze.aplikacja.budowy.ustawCzasyRobocze(
+    pierwszaBudowa,
+    {
+      czasDojazduRoboczyMinuty: 14,
+      czasPowrotuRoboczyMinuty: 16,
+      zrodloCzasuDojazdu: "reczny",
+      zrodloCzasuPowrotu: "reczny"
+    }
+  );
+  srodowiskoPrzygotowawcze.aplikacja.budowy.ustawCzasyRobocze(
+    drugaBudowa,
+    {
+      czasDojazduRoboczyMinuty: 22,
+      czasPowrotuRoboczyMinuty: 25,
+      zrodloCzasuDojazdu: "mapa",
+      zrodloCzasuPowrotu: "mapa"
+    }
+  );
+  niekompletnaBudowa.czasDojazduRoboczyMinuty = 11;
+
+  pamiecLokalna.removeItem(kluczPamieciTras);
+  pamiecLokalna.setItem(kluczPlanu, JSON.stringify({
+    wersja: 1,
+    zapisano: "2026-08-15T12:00:00.000Z",
+    danePlanu: {
+      wersjaStanuAplikacji: 1,
+      nazwaPliku: "starszy-plan.csv",
+      separator: ";",
+      ostrzezeniaImportu: [],
+      budowyZImportu: [pierwszaBudowa, drugaBudowa, niekompletnaBudowa],
+      budowyReczne: [],
+      parametry: {},
+      czyHarmonogramPrzeliczony: false
+    }
+  }));
+
+  const stronaPoAktualizacji = uruchomAplikacje(
+    pamiecLokalna,
+    ustawieniaPotwierdzenia
+  );
+  const ksiazkaTras = JSON.parse(
+    pamiecLokalna.getItem(kluczPamieciTras)
+  );
+
+  assert.equal(ksiazkaTras.trasy.length, 2);
+  assert.equal(
+    stronaPoAktualizacji.dokument.elementy["liczba-znanych-tras"].textContent,
+    "2"
+  );
+  assert.deepEqual(
+    ksiazkaTras.trasy.map(function (trasa) {
+      return [trasa.czasDojazduMinuty, trasa.czasPowrotuMinuty];
+    }),
+    [[14, 16], [22, 25]]
+  );
+}
+
 async function uruchomTest() {
   const pamiecLokalna = utworzPamiecLokalna();
   const ustawieniaPotwierdzenia = { wynik: true };
@@ -349,10 +438,11 @@ async function uruchomTest() {
   assert.equal(odczytajHistorie(pamiecLokalna).zapisy.length, 1);
 
   console.log(
-    "✓ KP-1.3–KP-1.7: zapis automatyczny, odświeżenie, historia i czyszczenie działają."
+    "✓ KP-1 i KP-2.7.1: plan, historia, czyszczenie i migracja tras działają."
   );
 }
 
+sprawdzMigracjeTrasZeStarszegoPlanu();
 uruchomTest().catch(function (blad) {
   console.error(blad);
   process.exitCode = 1;

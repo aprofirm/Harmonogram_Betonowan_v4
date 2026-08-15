@@ -112,6 +112,16 @@
     return stanPamieciTras;
   }
 
+  function archiwizujKompletneTrasy(opcje) {
+    const wynik = aplikacja.lokalizacje.zapiszKompletneTrasyBudowWPamieci(
+      pobierzAktualnaListeBudow(),
+      opcje
+    );
+
+    odswiezStanPamieciTras();
+    return wynik;
+  }
+
   function zapiszBiezacyPlan() {
     const wynikZapisu = aplikacja.pamiecPlanu.zapiszPlan(
       utworzDanePlanuDoZapisu()
@@ -218,6 +228,10 @@
     try {
       czyOstatniPlanPrzeliczony = false;
       const parametry = aplikacja.interfejs.pobierzParametryZFormularza();
+      const wynikArchiwizacjiTras =
+        ustawieniaPrzeliczenia.czyArchiwizowacTrasy === false
+          ? null
+          : archiwizujKompletneTrasy();
       const wynik = aplikacja.harmonogram.przeliczCalyHarmonogram({
         parametry: parametry,
         stanImportu: stanImportu,
@@ -249,7 +263,10 @@
           liczbaKursow: wynik.kursy.length,
           liczbaKonfliktow: wynik.konflikty.length,
           statusZapisuPlanu: wynikZapisu ? wynikZapisu.status : "bez-zapisu",
-          statusHistorii: wynikHistorii ? wynikHistorii.status : "bez-nowego-zapisu"
+          statusHistorii: wynikHistorii ? wynikHistorii.status : "bez-nowego-zapisu",
+          liczbaZarchiwizowanychTras: wynikArchiwizacjiTras
+            ? wynikArchiwizacjiTras.liczbaZapisanych
+            : 0
         }
       );
     } catch (blad) {
@@ -430,6 +447,9 @@
     stanImportu = utworzStanImportuZPamieci(danePlanu);
     budowyReczne = skopiujListeBudowDoPamieci(danePlanu.budowyReczne);
     czyOstatniPlanPrzeliczony = Boolean(danePlanu.czyHarmonogramPrzeliczony);
+    const wynikMigracjiTras = archiwizujKompletneTrasy({
+      tylkoBrakujace: true
+    });
 
     aplikacja.interfejs.pokazPrzywroconyPlan(
       stanImportu,
@@ -441,9 +461,12 @@
     if (czyPrzeliczycPonownie && czyOstatniPlanPrzeliczony) {
       wykonajPrzeliczenie({
         czyZapisacBiezacy: false,
-        czyDodacDoHistorii: false
+        czyDodacDoHistorii: false,
+        czyArchiwizowacTrasy: false
       });
     }
+
+    return wynikMigracjiTras;
   }
 
   function obsluzWczytanieZapisuHistorycznego(idZapisu) {
@@ -488,7 +511,8 @@
       if (czyOstatniPlanPrzeliczony) {
         wykonajPrzeliczenie({
           czyZapisacBiezacy: false,
-          czyDodacDoHistorii: false
+          czyDodacDoHistorii: false,
+          czyArchiwizowacTrasy: false
         });
       }
 

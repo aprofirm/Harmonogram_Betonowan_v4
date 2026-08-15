@@ -99,11 +99,13 @@ planu do internetu.
 
 ## Pamięć znanych tras
 
-Kompletne czasy dojazdu i powrotu wpisane ręcznie są zapisywane w osobnej,
-lokalnej książce tras. Po ponownym imporcie dokładnie tej samej firmy i budowy
-program uzupełnia oba czasy bez ponownego wpisywania. Przy polach pokazuje
-źródło: **Ręcznie**, **Z pamięci** albo — po przyszłym podłączeniu map —
-**OpenMap**.
+Wszystkie budowy z kompletnym czasem dojazdu i powrotu są zapisywane w osobnej,
+lokalnej książce tras. Zapis następuje po ręcznej zmianie i zbiorczo podczas
+przeliczenia. Po aktualizacji programu brakujące trasy są również bezpiecznie
+przenoszone z odtworzonego starszego planu, bez nadpisywania nowszego wpisu.
+Po ponownym imporcie dokładnie tej samej firmy i budowy program uzupełnia oba
+czasy bez ponownego wpisywania. Przy polach pokazuje źródło: **Ręcznie**,
+**Z pamięci** albo — po przyszłym podłączeniu map — **OpenMap**.
 
 Pamięć tras ma osobny klucz, limit 1000 lokalizacji i około 1 MB. Kolejny zapis
 tej samej lokalizacji aktualizuje wcześniejszy wpis. **Wyczyść plan dnia** nie
@@ -149,4 +151,4 @@ Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
 ## Aktualny stan
 
-**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów** oraz krok **3B.1 — podstawowe czasy kursów** są zakończone i sprawdzone automatycznie oraz przez operatora. Przed 3B.2 kończymy dwa kroki przekrojowe: **KP-1 — pamięć planu dnia** oraz **KP-2 — pamięć znanych tras**. Podetapy **KP-1.1–KP-1.8** i **KP-2.1–KP-2.6** są zakończone, a pełna regresja dziesięciu zestawów testów przechodzi. Następne są testy operatora **KP-1.9** i **KP-2.7**. Po zamknięciu obu punktów wracamy do **3B.2 — rytm dostaw**; punkt 3C nadal pozostaje zablokowany.
+**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów** oraz krok **3B.1 — podstawowe czasy kursów** są zakończone i sprawdzone automatycznie oraz przez operatora. Przed 3B.2 kończymy dwa kroki przekrojowe: **KP-1 — pamięć planu dnia** oraz **KP-2 — pamięć znanych tras**. Podetapy **KP-1.1–KP-1.8**, **KP-2.1–KP-2.6** oraz poprawka **KP-2.7.1** są zakończone. Następne są testy operatora **KP-1.9** i **KP-2.7.2**. Po zamknięciu obu punktów wracamy do **3B.2 — rytm dostaw**; punkt 3C nadal pozostaje zablokowany.

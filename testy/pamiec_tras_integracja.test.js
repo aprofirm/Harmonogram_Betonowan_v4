@@ -179,8 +179,67 @@ async function uruchomTest() {
   assert.equal(ponownieNowaBudowa.czasDojazduRoboczyMinuty, 34);
   assert.equal(ponownieNowaBudowa.czasPowrotuRoboczyMinuty, 38);
 
+  const pierwszaTrasaZeStarszegoPlanu = utworzBudowe(
+    aplikacja,
+    "Firma Plan A",
+    "Plac budowy A"
+  );
+  aplikacja.budowy.ustawCzasyRobocze(pierwszaTrasaZeStarszegoPlanu, {
+    czasDojazduRoboczyMinuty: 15,
+    czasPowrotuRoboczyMinuty: 18,
+    zrodloCzasuDojazdu: "reczny",
+    zrodloCzasuPowrotu: "reczny"
+  });
+  const drugaTrasaZeStarszegoPlanu = utworzBudowe(
+    aplikacja,
+    "Firma Plan B",
+    "Plac budowy B"
+  );
+  aplikacja.budowy.ustawCzasyRobocze(drugaTrasaZeStarszegoPlanu, {
+    czasDojazduRoboczyMinuty: 21,
+    czasPowrotuRoboczyMinuty: 24,
+    zrodloCzasuDojazdu: "mapa",
+    zrodloCzasuPowrotu: "mapa"
+  });
+  const budowaBezKompletuCzasow = utworzBudowe(
+    aplikacja,
+    "Firma Plan C",
+    "Plac budowy C"
+  );
+  budowaBezKompletuCzasow.czasDojazduRoboczyMinuty = 12;
+
+  const wynikZapisuListy =
+    aplikacja.lokalizacje.zapiszKompletneTrasyBudowWPamieci([
+      pierwszaTrasaZeStarszegoPlanu,
+      drugaTrasaZeStarszegoPlanu,
+      budowaBezKompletuCzasow
+    ]);
+
+  assert.deepEqual(JSON.parse(JSON.stringify(wynikZapisuListy)), {
+    liczbaBudow: 3,
+    liczbaKompletnych: 2,
+    liczbaZapisanych: 2,
+    liczbaPominietychNiekompletnych: 1,
+    liczbaPominietychIstniejacych: 0
+  });
+
+  pierwszaTrasaZeStarszegoPlanu.czasDojazduRoboczyMinuty = 99;
+  const wynikBezNadpisania =
+    aplikacja.lokalizacje.zapiszKompletneTrasyBudowWPamieci(
+      [pierwszaTrasaZeStarszegoPlanu, drugaTrasaZeStarszegoPlanu],
+      { tylkoBrakujace: true }
+    );
+  const zachowanaTrasa = aplikacja.pamiecTras.pobierzTrase(
+    "Firma Plan A | Plac budowy A",
+    "wezel-domyslny"
+  );
+
+  assert.equal(wynikBezNadpisania.liczbaZapisanych, 0);
+  assert.equal(wynikBezNadpisania.liczbaPominietychIstniejacych, 2);
+  assert.equal(zachowanaTrasa.trasa.czasDojazduMinuty, 15);
+
   console.log(
-    "✓ KP-2.3–KP-2.4: znana trasa omija mapę, a nowy wynik mapy trafia do pamięci."
+    "✓ KP-2.3–KP-2.7.1: cache omija mapę i archiwizuje wszystkie kompletne trasy."
   );
 }
 
