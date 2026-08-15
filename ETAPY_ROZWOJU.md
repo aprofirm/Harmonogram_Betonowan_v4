@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono 3B.1 oraz kroki przekrojowe KP-1–KP-3, następny punkt to 3B.2 — rytm dostaw**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; podetapy 3B.2 są rozpisane, następny jest 3B.2.1 — reguła rytmu i granice zakresu**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -334,6 +334,31 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
       domyślną, ręczną zmianę i przywrócenie.
   - [ ] **3B.2 — rytm dostaw:** oddzielenie odstępu pomiędzy kolejnymi
     dostawami od fizycznego czasu zajęcia gruszki.
+    - [ ] **3B.2.1 — reguła rytmu i granice zakresu:** potwierdzenie formuły
+      `rytm = dokładny czas rozładunku + dodatkowy odstęp`, zachowanie
+      `StartRoboczy` jako początku pierwszego rozładunku oraz zapisanie, że
+      przydział gruszek, konflikty i automatyczne przesunięcia nie należą do
+      3B.2.
+    - [ ] **3B.2.2 — model danych i walidacja:** osobny nieujemny odstęp dla
+      każdej budowy, bezpieczna wartość domyślna `0 min`, zgodność starszych
+      danych oraz czytelny błąd dla wartości nieprawidłowej.
+    - [ ] **3B.2.3 — obliczenia rytmu pojedynczej budowy:** wyznaczenie startów
+      kolejnych rozładunków według rytmu bez dodawania odstępu do fizycznego
+      cyklu kursu i bez zmiany liczby ani ilości kursów.
+    - [ ] **3B.2.4 — wspólna kolejność kursów:** stabilne ułożenie kursów
+      wszystkich budów według planowanego rozpoczęcia załadunku, tak aby kursy
+      różnych budów mogły się przeplatać bez przydziału konkretnych gruszek.
+    - [ ] **3B.2.5 — interfejs i pamięć:** edytowalne pole odstępu przy każdej
+      budowie, zapis w bieżącym planie i historii, odtworzenie po odświeżeniu
+      oraz oznaczenie wyniku jako wymagającego ponownego przeliczenia po zmianie.
+    - [ ] **3B.2.6 — testy, regresja i dokumentacja:** osobny test 3B.2 dla
+      rytmu `0` i większego od zera, różnych czasów rozładunku, wydłużonego
+      załadunku, przeplatania budów, pamięci i przypadków błędnych, a następnie
+      pełna regresja wcześniejszych funkcji i aktualizacja dokumentacji.
+    - [ ] **3B.2.7 — publikacja i test operatora:** publikacja na `main`, kontrola
+      GitHub Pages oraz ręczne potwierdzenie rytmu, pełnego cyklu, kolejności
+      kursów i odtworzenia po odświeżeniu; dopiero wtedy zamknięcie 3B.2 i
+      całego punktu 3B.
 - [ ] **3C — przydział gruszek:** brak nakładania kursów jednej gruszki.
 - [ ] **3D — minimalna liczba gruszek.**
 - [ ] **3E — tryb „mam X gruszek” i ponowne przeliczenie zasobów.**
@@ -658,10 +683,9 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Przed rozpoczęciem rozpisać wszystkie znane podetapy, a następnie wykonać
-**3B.2 — rytm dostaw**, czyli oddzielić odstęp pomiędzy kolejnymi dostawami od
-fizycznego czasu zajęcia gruszki. Punkt 3B pozostaje otwarty, a 3C jest
-zablokowany do czasu zakończenia i przetestowania całego punktu 3B.
+Wykonać **3B.2.1 — reguła rytmu i granice zakresu**. Wszystkie znane podetapy
+3B.2 są już zapisane. Punkt 3B pozostaje otwarty, a 3C jest zablokowany do czasu
+zakończenia i przetestowania podetapów 3B.2.1–3B.2.7.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1063,3 +1087,21 @@ Zakończone podetapy: 3B.1.4, KP-1.9 i KP-3.3.4. Zakończone punkty nadrzędne:
 3B.1, KP-1 i KP-3. Punkt 3B nadal pozostaje otwarty. Następny niezakończony
 punkt to 3B.2 — rytm dostaw; przed jego rozpoczęciem trzeba rozpisać wszystkie
 znane podetapy. Punkt 3C pozostaje zablokowany do zamknięcia całego 3B.
+
+## Plan punktu 3B.2 — rytm dostaw — 2026-08-15
+
+- [x] przejrzano istniejące decyzje o cyklu gruszki, rytmie dostaw,
+  `StartPlanowany`, `StartRoboczy` i pełnym przeliczeniu;
+- [x] sprawdzono bieżące obliczenia 3B.1 oraz zależności modelu budowy,
+  harmonogramu, interfejsu i pamięci planu;
+- [x] rozpisano podetapy 3B.2.1–3B.2.7 obejmujące regułę biznesową, model,
+  obliczenia, wspólną kolejność, interfejs, pamięć, testy, publikację i próbę
+  operatora;
+- [x] zapisano granicę zakresu: 3B.2 tworzy planowane godziny i rytm, ale nie
+  przydziela numerów gruszek, nie rozwiązuje konfliktów i nie przesuwa jeszcze
+  kursów z powodu ograniczonej liczby pojazdów;
+- [x] punkt 3C pozostaje zablokowany do zakończenia całego 3B.
+
+Planowanie 3B.2 jest zakończone, ale żaden podetap wykonawczy 3B.2 nie jest
+jeszcze zamknięty. Punkt 3B pozostaje otwarty. Następny podetap to 3B.2.1 —
+reguła rytmu i granice zakresu.

@@ -2,7 +2,7 @@
 
 ## Status
 
-Etap 3 jest w toku. **Punkt 3A — generowanie kursów**, krok **3B.1 — podstawowe czasy kursów** oraz krok przekrojowy **KP-2 — pamięć znanych tras** są zakończone i sprawdzone. Przed 3B.2 pozostało dokończenie testu operatora **KP-1.9 — pamięć planu dnia**. Następnie wracamy do **3B.2 — rytm dostaw**, który ma oddzielić odstęp pomiędzy kolejnymi dostawami od fizycznego czasu zajęcia gruszki. Przydział i dostępność konkretnych gruszek pozostają zakresem punktów 3C–3E i nie mogą rozpocząć się przed zamknięciem całego punktu 3B.
+Etap 3 jest w toku. **Punkt 3A — generowanie kursów**, krok **3B.1 — podstawowe czasy kursów** oraz kroki przekrojowe **KP-1–KP-3** są zakończone i sprawdzone. Punkt **3B.2 — rytm dostaw** został rozpisany na podetapy 3B.2.1–3B.2.7; następny jest 3B.2.1. Przydział i dostępność konkretnych gruszek pozostają zakresem punktów 3C–3E i nie mogą rozpocząć się przed zamknięciem całego punktu 3B.
 
 ## Cel
 
@@ -16,7 +16,10 @@ Silnik ma pozostać niezależny od interfejsu HTML oraz od sposobu pozyskania cz
 - domyślny czas załadunku: `10 min`,
 - domyślny czas rozładunku każdego kursu: `15 min`,
 - czas dojazdu i powrotu jest w 3B.1 podawany ręcznie dla budowy,
-- budowa może posiadać dodatkowy czas załadunku i rozładunku,
+- budowa może posiadać dodatkowy czas załadunku oraz dokładny ręczny czas
+  rozładunku zastępujący wartość z ustawień,
+- w 3B.2 rytm kolejnych dostaw będzie liczony niezależnie od fizycznego cyklu
+  kursu,
 - gruszka jest zajęta przez cały cykl: załadunek → dojazd → rozładunek → powrót,
 - godzina startu budowy oznacza przyjazd pierwszej gruszki / rozpoczęcie betonowania,
 - `StartPlanowany` nie może być nadpisywany,
