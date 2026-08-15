@@ -185,4 +185,4 @@ Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
 ## Aktualny stan
 
-**Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są: **3A — generowanie kursów**, **3B.1 — podstawowe czasy kursów** oraz kroki przekrojowe **KP-1 — pamięć planu dnia**, **KP-2 — pamięć znanych tras** i **KP-3 — budowa ręczna oraz kompaktowy widok**. Punkt **3B.2 — rytm dostaw** został podzielony na siedem podetapów; następny jest **3B.2.1 — reguła rytmu i granice zakresu**. Punkt 3C pozostaje zablokowany do zakończenia i przetestowania całego 3B.
+**Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są: **3A — generowanie kursów**, **3B.1 — podstawowe czasy kursów** oraz kroki przekrojowe **KP-1 — pamięć planu dnia**, **KP-2 — pamięć znanych tras** i **KP-3 — budowa ręczna oraz kompaktowy widok**. W punkcie **3B.2 — rytm dostaw** zakończono **3B.2.1 — regułę rytmu i granice zakresu**; następny jest **3B.2.2 — model danych i walidacja**. Punkt 3C pozostaje zablokowany do zakończenia i przetestowania całego 3B.

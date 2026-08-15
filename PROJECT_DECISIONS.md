@@ -1304,6 +1304,48 @@ dostaw.
 
 ---
 
+## 73. Reguła rytmu dostaw i granice kroku 3B.2
+
+W kroku 3B.2 rytm określa planowany odstęp pomiędzy rozpoczęciem rozładunku
+kolejnych kursów tej samej budowy.
+
+Obowiązuje zależność:
+
+`rytm dostaw = dokładny czas rozładunku + dodatkowy odstęp`
+
+Przykład: dokładny czas rozładunku `15 min` i dodatkowy odstęp `5 min` dają
+rytm `20 min`.
+
+Pierwszy kurs rozpoczyna rozładunek o `StartRoboczy`. Dla kolejnych kursów:
+
+`start rozładunku = StartRoboczy + (numer kursu - 1) × rytm dostaw`
+
+Dodatkowy odstęp oznacza planowaną przerwę od zakończenia rozładunku
+poprzedniego kursu do rozpoczęcia rozładunku następnego kursu. Wartość `0 min`
+oznacza, że następny rozładunek zaczyna się bezpośrednio po poprzednim i
+zachowuje dotychczasowy wynik 3B.1.
+
+Rytm nie zmienia fizycznego cyklu pojedynczej gruszki. Do czasu jej zajęcia
+nadal należą wyłącznie:
+
+`załadunek + dojazd + rozładunek + powrót`
+
+Dodatkowego odstępu nie wolno dodawać do czasu powrotu ani ponownej gotowości
+pojazdu. Wydłużony czas załadunku wpływa na godzinę rozpoczęcia załadunku
+konkretnego kursu, ale nie zmienia założonego rytmu przyjazdów na budowę.
+
+`StartPlanowany` pozostaje niezmienioną wartością źródłową. Krok 3B.2 oblicza
+planowane godziny względem `StartRoboczy`, ale nie przydziela numerów gruszek,
+nie sprawdza dostępności konkretnego pojazdu i nie przesuwa kursów z powodu
+ograniczonej liczby gruszek. Te obowiązki należą do punktów 3C–3E oraz
+późniejszej logiki konfliktów i korekt.
+
+Dodatkowy odstęp rytmu nie jest tym samym parametrem co maksymalny dopuszczalny
+przestój. Maksymalny przestój służy późniejszej ocenie ciągłości betonowania i
+pozostaje osobną regułą.
+
+---
+
 # Powiązane tematy otwarte
 
 Pomysły, warianty i pytania, które nie są jeszcze obowiązującymi decyzjami, są prowadzone w `POMYSLY_I_BACKLOG.md`. Dzięki temu ten dokument pozostaje jednoznacznym źródłem zatwierdzonych ustaleń.

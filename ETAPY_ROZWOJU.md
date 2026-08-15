@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; podetapy 3B.2 są rozpisane, następny jest 3B.2.1 — reguła rytmu i granice zakresu**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono 3B.2.1, następny jest 3B.2.2 — model danych i walidacja**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -334,7 +334,7 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
       domyślną, ręczną zmianę i przywrócenie.
   - [ ] **3B.2 — rytm dostaw:** oddzielenie odstępu pomiędzy kolejnymi
     dostawami od fizycznego czasu zajęcia gruszki.
-    - [ ] **3B.2.1 — reguła rytmu i granice zakresu:** potwierdzenie formuły
+    - [x] **3B.2.1 — reguła rytmu i granice zakresu:** potwierdzenie formuły
       `rytm = dokładny czas rozładunku + dodatkowy odstęp`, zachowanie
       `StartRoboczy` jako początku pierwszego rozładunku oraz zapisanie, że
       przydział gruszek, konflikty i automatyczne przesunięcia nie należą do
@@ -683,9 +683,10 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **3B.2.1 — reguła rytmu i granice zakresu**. Wszystkie znane podetapy
-3B.2 są już zapisane. Punkt 3B pozostaje otwarty, a 3C jest zablokowany do czasu
-zakończenia i przetestowania podetapów 3B.2.1–3B.2.7.
+Wykonać **3B.2.2 — model danych i walidacja**: dodać do modelu budowy osobny
+nieujemny odstęp pomiędzy dostawami, bezpieczną wartość domyślną `0 min`,
+zgodność starszych danych i czytelną walidację. Punkt 3B pozostaje otwarty, a
+3C jest zablokowany do zakończenia i przetestowania całego 3B.2.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1105,3 +1106,22 @@ znane podetapy. Punkt 3C pozostaje zablokowany do zamknięcia całego 3B.
 Planowanie 3B.2 jest zakończone, ale żaden podetap wykonawczy 3B.2 nie jest
 jeszcze zamknięty. Punkt 3B pozostaje otwarty. Następny podetap to 3B.2.1 —
 reguła rytmu i granice zakresu.
+
+## Kontrola po 3B.2.1 — reguła rytmu i granice zakresu — 2026-08-15
+
+- [x] zapisano formułę `rytm = dokładny czas rozładunku + dodatkowy odstęp`;
+- [x] potwierdzono, że pierwszy rozładunek zaczyna się o `StartRoboczy`, a
+  `StartPlanowany` nie jest nadpisywany;
+- [x] dodatkowy odstęp został oddzielony od fizycznego czasu zajęcia gruszki i
+  nie wydłuża powrotu ani ponownej gotowości pojazdu;
+- [x] wydłużony załadunek przesuwa początek załadunku danego kursu, ale nie
+  zmienia rytmu planowanych przyjazdów;
+- [x] oddzielono dodatkowy odstęp rytmu od maksymalnego dopuszczalnego przestoju;
+- [x] zapisano granicę zakresu: bez numerów gruszek, kontroli ich dostępności,
+  automatycznych przesunięć i rozwiązywania konfliktów w 3B.2;
+- [x] spójność dokumentacji i pełna regresja jedenastu zestawów testów
+  przechodzą poprawnie.
+
+Podetap 3B.2.1 jest zakończony. Punkt 3B.2 i punkt nadrzędny 3B pozostają
+otwarte. Następny podetap to 3B.2.2 — model danych i walidacja. Punkt 3C nadal
+pozostaje zablokowany.
