@@ -660,8 +660,8 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **3B.1.4 — publikacja i test operatora**. Równolegle nadal otwarte są
-KP-3.3.4 i KP-1.9. Dopiero po
+Wykonać test operatora w **3B.1.4** na opublikowanej stronie. Równolegle nadal
+otwarte są KP-3.3.4 i KP-1.9. Dopiero po
 zamknięciu tych punktów wracamy do **3B.2 — rytm dostaw**.
 Punkt 3C pozostaje zablokowany do czasu zakończenia i przetestowania całego
 punktu 3B.
@@ -1032,3 +1032,18 @@ Zaktualizowano `README.md`, `PROJECT_DECISIONS.md` i instrukcję testu ręcznego
 Pełna regresja 11 zestawów testów zakończyła się poprawnie. Podetap 3B.1.3 jest
 zakończony. Punkt 3B.1 pozostaje otwarty. Następny podetap to 3B.1.4 —
 publikacja i test operatora; 3B.2 czeka, a 3C pozostaje zablokowany.
+
+## 3B.1.4 — publikacja wykonana, test operatora otwarty — 2026-08-15
+
+- [x] zmiany opublikowano na `main` w commicie
+  `c83cbdc102b20dbe2b5d49b1db6c930a205d60c0`;
+- [x] odczyt plików z `main` potwierdził kolumnę **Rozładunek**, model dokładnej
+  wartości, przycisk `↺`, pamięć i migrację;
+- [x] GitHub Pages zakończył budowę ze statusem `built`, bez błędu i dokładnie
+  z tego commitu;
+- [ ] operator potwierdza na stronie wartość z ustawień, ręczną zmianę,
+  zachowanie po odświeżeniu oraz przywrócenie przyciskiem `↺`.
+
+Publikacyjna część 3B.1.4 jest zakończona, ale cały podetap i punkt 3B.1
+pozostają otwarte do testu operatora. Następny krok to test na GitHub Pages;
+3B.2 czeka, a 3C pozostaje zablokowany.
