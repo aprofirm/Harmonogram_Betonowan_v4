@@ -130,10 +130,71 @@ function sprawdzRoboczeCzasyBudowy(aplikacja) {
   assert.equal(budowa.zrodloCzasuPowrotu, "reczny");
 }
 
+function sprawdzDomyslnaRownoscDojazduIPowrotu(aplikacja) {
+  const budowa = utworzBudowe({
+    czasDojazduRoboczyMinuty: null,
+    czasPowrotuRoboczyMinuty: null
+  });
+
+  aplikacja.budowy.zmienCzasRoboczyBudowy(
+    budowa,
+    "czasDojazduRoboczyMinuty",
+    25
+  );
+  assert.equal(budowa.czasDojazduRoboczyMinuty, 25);
+  assert.equal(budowa.czasPowrotuRoboczyMinuty, 25);
+
+  aplikacja.budowy.zmienCzasRoboczyBudowy(
+    budowa,
+    "czasDojazduRoboczyMinuty",
+    30
+  );
+  assert.equal(budowa.czasDojazduRoboczyMinuty, 30);
+  assert.equal(budowa.czasPowrotuRoboczyMinuty, 25);
+
+  aplikacja.budowy.zmienCzasRoboczyBudowy(
+    budowa,
+    "czasPowrotuRoboczyMinuty",
+    20
+  );
+  assert.equal(budowa.czasDojazduRoboczyMinuty, 30);
+  assert.equal(budowa.czasPowrotuRoboczyMinuty, 20);
+
+  const budowaZPowrotemWpisanymNajpierw = utworzBudowe({
+    czasDojazduRoboczyMinuty: null,
+    czasPowrotuRoboczyMinuty: null
+  });
+
+  aplikacja.budowy.zmienCzasRoboczyBudowy(
+    budowaZPowrotemWpisanymNajpierw,
+    "czasPowrotuRoboczyMinuty",
+    15
+  );
+  assert.equal(budowaZPowrotemWpisanymNajpierw.czasDojazduRoboczyMinuty, 15);
+  assert.equal(budowaZPowrotemWpisanymNajpierw.czasPowrotuRoboczyMinuty, 15);
+
+  aplikacja.budowy.zmienCzasRoboczyBudowy(
+    budowaZPowrotemWpisanymNajpierw,
+    "czasPowrotuRoboczyMinuty",
+    ""
+  );
+  assert.equal(budowaZPowrotemWpisanymNajpierw.czasDojazduRoboczyMinuty, 15);
+  assert.equal(budowaZPowrotemWpisanymNajpierw.czasPowrotuRoboczyMinuty, null);
+
+  aplikacja.budowy.zmienCzasRoboczyBudowy(
+    budowaZPowrotemWpisanymNajpierw,
+    "czasDojazduRoboczyMinuty",
+    18
+  );
+  assert.equal(budowaZPowrotemWpisanymNajpierw.czasDojazduRoboczyMinuty, 18);
+  assert.equal(budowaZPowrotemWpisanymNajpierw.czasPowrotuRoboczyMinuty, null);
+}
+
 const aplikacja = wczytajAplikacje();
 sprawdzPodstawowyCykl(aplikacja);
 sprawdzWydluzoneCzasy(aplikacja);
 sprawdzBrakCzasuPrzejazdu(aplikacja);
 sprawdzRoboczeCzasyBudowy(aplikacja);
+sprawdzDomyslnaRownoscDojazduIPowrotu(aplikacja);
 
 console.log("✓ Etap 3B.1: pełne czasy kursów są obliczane poprawnie.");

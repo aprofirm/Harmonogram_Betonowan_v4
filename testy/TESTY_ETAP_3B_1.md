@@ -11,7 +11,7 @@ konkretnych numerów gruszek.
 - czas załadunku: `10 min`,
 - czas rozładunku: `15 min`,
 - czas dojazdu przy każdej aktywnej budowie: `25 min`,
-- czas powrotu przy każdej aktywnej budowie: `25 min`,
+- czas powrotu automatycznie przyjmie początkowo tę samą wartość,
 - dodatkowy czas załadunku i rozładunku: `0 min`.
 
 Pozycji zrealizowanych `0,0 m³` nie trzeba uzupełniać.
@@ -20,16 +20,24 @@ Pozycji zrealizowanych `0,0 m³` nie trzeba uzupełniać.
 
 1. Otwórz najnowszą wersję na GitHub Pages i odśwież stronę.
 2. Wczytaj ten sam sprawdzony plik KDX zawierający 6 aktywnych budów.
-3. Uzupełnij po `25` minut dojazdu i powrotu przy każdej budowie.
-4. Zostaw dodatkowe czasy jako `0`.
-5. Wybierz **Przelicz harmonogram**.
-6. Licznik powinien nadal pokazywać `16 kursów`.
-7. Dla budowy rozpoczynającej się o `08:00` pierwszy kurs powinien mieć:
+3. Wpisz po `25` minut tylko w kolumnie **Dojazd** przy każdej budowie.
+4. Sprawdź, czy program automatycznie wpisał `25` również w kolumnie **Powrót**.
+5. Zostaw dodatkowe czasy jako `0`.
+6. Wybierz **Przelicz harmonogram**.
+7. Licznik powinien nadal pokazywać `16 kursów`.
+8. Dla budowy rozpoczynającej się o `08:00` pierwszy kurs powinien mieć:
    - załadunek `07:25–07:35`,
    - dojazd `07:35–08:00`,
    - rozładunek `08:00–08:15`,
    - powrót `08:15–08:40`,
    - ponowną gotowość `08:40`.
+
+## Test niezależnej zmiany powrotu
+
+1. Przy jednej budowie zmień czas powrotu z `25` na `30 min`.
+2. Sprawdź, czy czas dojazdu przy tej budowie pozostał równy `25 min`.
+3. Przelicz harmonogram i sprawdź, czy czas powrotu tego kursu wydłużył się
+   o `5 min`, bez zmiany odcinka dojazdu.
 
 ## Test wydłużenia
 

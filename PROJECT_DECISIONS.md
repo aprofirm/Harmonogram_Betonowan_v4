@@ -1130,6 +1130,10 @@ W kroku 3B.1 obowiązuje następujący model:
 - dodatkowy czas rozładunku wpływa na odstęp pomiędzy kolejnymi dostawami tej
   budowy;
 - czas dojazdu i czas powrotu są osobnymi wartościami roboczymi dla budowy;
+- jeżeli oba czasy są puste, pierwsze wpisanie dojazdu albo powrotu kopiuje tę
+  samą wartość do drugiego pola, zgodnie z domyślnym założeniem równej trasy;
+- po uzupełnieniu obu pól ich dalsza edycja jest niezależna: zmiana jednego
+  czasu nie nadpisuje drugiego, dzięki czemu można uwzględnić inną trasę powrotną;
 - w kroku 3B.1 operator podaje je ręcznie, a przyszły moduł mapowy będzie mógł
   dostarczyć te same wartości bez zmiany silnika kursów;
 - brak czasu dojazdu lub powrotu dla budowy generującej kursy zatrzymuje

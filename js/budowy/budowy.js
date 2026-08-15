@@ -193,6 +193,56 @@
     return budowa;
   }
 
+  function czyBrakWartosci(wartosc) {
+    return wartosc === null || wartosc === undefined || wartosc === "";
+  }
+
+  function zmienCzasRoboczyBudowy(budowa, nazwaPola, wartosc) {
+    const dozwolonePola = [
+      "czasDojazduRoboczyMinuty",
+      "czasPowrotuRoboczyMinuty",
+      "dodatkowyCzasZaladunkuMinuty",
+      "dodatkowyCzasRozladunkuMinuty"
+    ];
+
+    if (!budowa) {
+      throw new Error("Nie znaleziono budowy, dla której mają zostać zapisane czasy.");
+    }
+
+    if (!dozwolonePola.includes(nazwaPola)) {
+      throw new Error("Nie rozpoznano zmienianego pola czasu budowy.");
+    }
+
+    const czyObaCzasyPrzejazduSaPuste =
+      czyBrakWartosci(budowa.czasDojazduRoboczyMinuty) &&
+      czyBrakWartosci(budowa.czasPowrotuRoboczyMinuty);
+    const noweCzasy = {
+      czasDojazduRoboczyMinuty: budowa.czasDojazduRoboczyMinuty,
+      czasPowrotuRoboczyMinuty: budowa.czasPowrotuRoboczyMinuty,
+      dodatkowyCzasZaladunkuMinuty: budowa.dodatkowyCzasZaladunkuMinuty,
+      dodatkowyCzasRozladunkuMinuty: budowa.dodatkowyCzasRozladunkuMinuty
+    };
+    noweCzasy[nazwaPola] = wartosc;
+
+    if (
+      nazwaPola === "czasDojazduRoboczyMinuty" &&
+      czyObaCzasyPrzejazduSaPuste &&
+      !czyBrakWartosci(wartosc)
+    ) {
+      noweCzasy.czasPowrotuRoboczyMinuty = wartosc;
+    }
+
+    if (
+      nazwaPola === "czasPowrotuRoboczyMinuty" &&
+      czyObaCzasyPrzejazduSaPuste &&
+      !czyBrakWartosci(wartosc)
+    ) {
+      noweCzasy.czasDojazduRoboczyMinuty = wartosc;
+    }
+
+    return ustawCzasyRobocze(budowa, noweCzasy);
+  }
+
   function utworzListeRobocza(budowyZImportu, budowyReczne) {
     const listaZImportu = Array.isArray(budowyZImportu) ? budowyZImportu : [];
     const listaReczna = Array.isArray(budowyReczne) ? budowyReczne : [];
@@ -206,6 +256,7 @@
     utworzBudoweZImportu: utworzBudoweZImportu,
     utworzBudoweReczna: utworzBudoweReczna,
     utworzListeRobocza: utworzListeRobocza,
-    ustawCzasyRobocze: ustawCzasyRobocze
+    ustawCzasyRobocze: ustawCzasyRobocze,
+    zmienCzasRoboczyBudowy: zmienCzasRoboczyBudowy
   };
 })(window);

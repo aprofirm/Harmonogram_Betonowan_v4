@@ -138,7 +138,7 @@
     return wiersz;
   }
 
-  function utworzPoleCzasuBudowy(budowa, nazwaPola, etykieta) {
+  function utworzPoleCzasuBudowy(budowa, nazwaPola, etykieta, obslugaPoZmianie) {
     const pole = document.createElement("input");
     const wartosc = budowa[nazwaPola];
     const czyZrealizowana = budowa.statusRealizacji === "zrealizowana";
@@ -152,16 +152,24 @@
     pole.setAttribute("aria-label", etykieta + " dla budowy " + budowa.idBudowy);
     pole.setAttribute("placeholder", czyZrealizowana ? "—" : "min");
     pole.addEventListener("change", function () {
-      obslugaZmianyCzasowBudowy(budowa.idBudowy, nazwaPola, pole.value);
+      const zaktualizowanaBudowa = obslugaZmianyCzasowBudowy(
+        budowa.idBudowy,
+        nazwaPola,
+        pole.value
+      );
+
+      if (zaktualizowanaBudowa && obslugaPoZmianie) {
+        obslugaPoZmianie(zaktualizowanaBudowa);
+      }
     });
 
     return pole;
   }
 
-  function utworzKomorkeZCzasemBudowy(budowa, nazwaPola, etykieta) {
+  function utworzKomorkeZPolemCzasu(pole) {
     const komorka = document.createElement("td");
     komorka.className = "komorka-czasu-budowy";
-    komorka.appendChild(utworzPoleCzasuBudowy(budowa, nazwaPola, etykieta));
+    komorka.appendChild(pole);
     return komorka;
   }
 
@@ -220,6 +228,30 @@
     const etykietaZrodla = budowa.zrodlo === "reczna" ? "Ręczna" : "CSV";
     const czyZrealizowana = budowa.statusRealizacji === "zrealizowana";
     const opisStatusu = opiszStatusBudowy(budowa);
+    let poleDojazdu;
+    let polePowrotu;
+
+    function ustawWartoscPola(pole, wartosc) {
+      pole.value = wartosc === null || wartosc === undefined ? "" : String(wartosc);
+    }
+
+    function odswiezPolaPrzejazdu(zaktualizowanaBudowa) {
+      ustawWartoscPola(poleDojazdu, zaktualizowanaBudowa.czasDojazduRoboczyMinuty);
+      ustawWartoscPola(polePowrotu, zaktualizowanaBudowa.czasPowrotuRoboczyMinuty);
+    }
+
+    poleDojazdu = utworzPoleCzasuBudowy(
+      budowa,
+      "czasDojazduRoboczyMinuty",
+      "Czas dojazdu",
+      odswiezPolaPrzejazdu
+    );
+    polePowrotu = utworzPoleCzasuBudowy(
+      budowa,
+      "czasPowrotuRoboczyMinuty",
+      "Czas powrotu",
+      odswiezPolaPrzejazdu
+    );
 
     if (czyZrealizowana) {
       wiersz.className = "wiersz-zrealizowany";
@@ -228,32 +260,24 @@
     wiersz.appendChild(utworzKomorke(opiszOknoStartu(budowa), "wartosc-wazna"));
     wiersz.appendChild(utworzKomorke(budowa.firma));
     wiersz.appendChild(utworzKomorke(budowa.budowa));
+    wiersz.appendChild(utworzKomorkeZPolemCzasu(poleDojazdu));
+    wiersz.appendChild(utworzKomorkeZPolemCzasu(polePowrotu));
     wiersz.appendChild(
-      utworzKomorkeZCzasemBudowy(
-        budowa,
-        "czasDojazduRoboczyMinuty",
-        "Czas dojazdu"
+      utworzKomorkeZPolemCzasu(
+        utworzPoleCzasuBudowy(
+          budowa,
+          "dodatkowyCzasZaladunkuMinuty",
+          "Dodatkowy czas załadunku"
+        )
       )
     );
     wiersz.appendChild(
-      utworzKomorkeZCzasemBudowy(
-        budowa,
-        "czasPowrotuRoboczyMinuty",
-        "Czas powrotu"
-      )
-    );
-    wiersz.appendChild(
-      utworzKomorkeZCzasemBudowy(
-        budowa,
-        "dodatkowyCzasZaladunkuMinuty",
-        "Dodatkowy czas załadunku"
-      )
-    );
-    wiersz.appendChild(
-      utworzKomorkeZCzasemBudowy(
-        budowa,
-        "dodatkowyCzasRozladunkuMinuty",
-        "Dodatkowy czas rozładunku"
+      utworzKomorkeZPolemCzasu(
+        utworzPoleCzasuBudowy(
+          budowa,
+          "dodatkowyCzasRozladunkuMinuty",
+          "Dodatkowy czas rozładunku"
+        )
       )
     );
     wiersz.appendChild(utworzKomorke(opiszBeton(budowa)));

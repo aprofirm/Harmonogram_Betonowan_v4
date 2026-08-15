@@ -521,6 +521,8 @@ godziny cyklu są dokładane w kroku 3B.1, nadal bez przydziału konkretnych gru
 - [x] domyślny czas załadunku wynosi `10 min` i pozostaje parametrem;
 - [x] domyślny czas rozładunku wynosi `15 min` dla każdego kursu;
 - [x] czas dojazdu i powrotu jest przechowywany osobno dla każdej budowy;
+- [x] pierwsze wpisanie jednego czasu przejazdu uzupełnia drugi taką samą
+  wartością, a późniejsze zmiany obu pól pozostają niezależne;
 - [x] brak wymaganego czasu przejazdu daje czytelny komunikat z ID budowy;
 - [x] operator może dodać osobny dodatkowy czas załadunku i rozładunku dla budowy;
 - [x] każdy kurs ma godzinę rozpoczęcia i zakończenia załadunku, dojazdu, rozładunku oraz powrotu;

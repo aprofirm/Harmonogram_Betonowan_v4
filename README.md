@@ -106,4 +106,4 @@ Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
 ## Aktualny stan
 
-**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów** jest zakończony i sprawdzony. Pierwszy krok **3B.1 — podstawowe czasy kursów** został zaimplementowany: program liczy załadunek, dojazd, rozładunek, powrót i ponowną gotowość, przyjmuje ręczne czasy przejazdu oraz dodatkowe czasy dla budowy. Automatyczny test i pełna regresja przechodzą, a następny krok to ręczny test 3B.1 na GitHub Pages.
+**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów** jest zakończony i sprawdzony. Pierwszy krok **3B.1 — podstawowe czasy kursów** został zaimplementowany: program liczy załadunek, dojazd, rozładunek, powrót i ponowną gotowość, przyjmuje ręczne czasy przejazdu oraz dodatkowe czasy dla budowy. Pierwszy wpisany czas dojazdu lub powrotu jest kopiowany do drugiego pustego pola, a później oba pola można zmieniać niezależnie. Automatyczny test i pełna regresja przechodzą, a następny krok to ręczny test 3B.1 na GitHub Pages.
