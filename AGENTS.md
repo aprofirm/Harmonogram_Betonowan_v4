@@ -18,6 +18,26 @@ Ten plik opisuje obowiązkowy sposób pracy z projektem `Harmonogram_Betonowan_v
 
 Nie zakładaj, że danej funkcji albo decyzji nie ma, dopóki nie sprawdzisz aktualnego repozytorium.
 
+### 1.1. Obowiązkowa kontrola podetapów
+
+1. Przed rozpoczęciem większego punktu rozpisz w `ETAPY_ROZWOJU.md` wszystkie
+   znane podetapy potrzebne do jego zamknięcia.
+2. Nie oznaczaj punktu nadrzędnego jako zakończonego, dopóki każdy jego podetap
+   nie ma zakończonej implementacji, testów automatycznych i wymaganego testu
+   operatora albo jawnie zapisanego wyjątku.
+3. Po zakończeniu i przetestowaniu każdego podetapu ponownie otwórz
+   `ETAPY_ROZWOJU.md`, porównaj wykonany zakres z pełną listą oraz wskaż
+   użytkownikowi dokładnie:
+   - który podetap został zamknięty,
+   - który punkt nadrzędny pozostaje otwarty,
+   - jaki jest następny niezakończony podetap.
+4. Przed zaproponowaniem przejścia do kolejnego punktu sprawdź również zakres
+   i kryteria zakończenia całego etapu. Sformułowanie „pierwszy krok” albo numer
+   typu `3B.1` zawsze wymaga sprawdzenia, czy istnieją lub powinny zostać
+   doprecyzowane dalsze podetapy.
+5. Jeżeli podział punktu nie jest jeszcze kompletny, najpierw doprecyzuj i zapisz
+   podetapy. Nie przechodź dalej na podstawie samego zakończenia pierwszego kroku.
+
 ## 2. Gdzie zapisywać pamięć projektu
 
 | Rodzaj informacji | Plik |

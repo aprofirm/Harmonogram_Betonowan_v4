@@ -194,6 +194,11 @@ Każdy etap powinien mieć jasny cel, tak aby po czasie było wiadomo:
 
 Komunikaty commitów powinny być krótkie, ale konkretne.
 
+Przed rozpoczęciem większego punktu jego znane podetapy zapisujemy w
+`ETAPY_ROZWOJU.md`. Po każdym podetapie wykonujemy jego test i regresję, a potem
+ponownie sprawdzamy ten dokument. Punkt nadrzędny można zamknąć dopiero wtedy,
+gdy nie pozostał w nim żaden niezakończony podetap.
+
 ## 16. Struktura plików ma wynikać z odpowiedzialności
 
 Pliki powinny mieć proste, opisowe nazwy i grupować powiązaną logikę.

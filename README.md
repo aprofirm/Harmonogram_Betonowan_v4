@@ -25,6 +25,10 @@ Na końcu każdej rozmowy projektowej należy sprawdzić, czy pojawiły się:
 
 Nie dodajemy pustych wpisów, jeżeli rozmowa nie wniosła nic nowego. Luźnego pomysłu nie wolno przedstawiać jako zatwierdzonej decyzji. Dokładna procedura znajduje się w `AGENTS.md`.
 
+Przed przejściem do kolejnego punktu należy ponownie sprawdzić listę podetapów
+w `ETAPY_ROZWOJU.md`. Zakończenie pierwszego kroku, np. `3B.1`, nie zamyka
+automatycznie całego punktu `3B`.
+
 ## Uruchomienie
 
 1. Pobierz całe repozytorium na komputer.
@@ -106,4 +110,4 @@ Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
 ## Aktualny stan
 
-**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów** jest zakończony i sprawdzony. Pierwszy krok **3B.1 — podstawowe czasy kursów** został zaimplementowany: program liczy załadunek, dojazd, rozładunek, powrót i ponowną gotowość, przyjmuje ręczne czasy przejazdu oraz dodatkowe czasy dla budowy. Pierwszy wpisany czas dojazdu lub powrotu jest kopiowany do drugiego pustego pola, a później oba pola można zmieniać niezależnie. Automatyczny test i pełna regresja przechodzą, a następny krok to ręczny test 3B.1 na GitHub Pages.
+**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów** oraz krok **3B.1 — podstawowe czasy kursów** są zakończone i sprawdzone automatycznie oraz przez operatora. Program liczy załadunek, dojazd, rozładunek, powrót i ponowną gotowość, przyjmuje ręczne czasy przejazdu oraz dodatkowe czasy dla budowy. Pierwszy wpisany czas dojazdu lub powrotu jest kopiowany do drugiego pustego pola, a później oba pola można zmieniać niezależnie. Cały punkt 3B pozostaje otwarty; następny krok to **3B.2 — oddzielenie rytmu dostaw od czasu cyklu gruszki**.

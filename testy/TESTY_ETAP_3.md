@@ -2,7 +2,7 @@
 
 ## Status
 
-Etap 3 jest w toku. **Punkt 3A — generowanie kursów** jest zakończony. Pierwszy krok **3B.1 — podstawowe czasy kursów** został zaimplementowany i ma osobny test automatyczny oraz instrukcję w `TESTY_ETAP_3B_1.md`. Przydział i dostępność konkretnych gruszek pozostają zakresem punktów 3C–3E.
+Etap 3 jest w toku. **Punkt 3A — generowanie kursów** oraz krok **3B.1 — podstawowe czasy kursów** są zakończone i sprawdzone. Następny krok to **3B.2 — rytm dostaw**, który ma oddzielić odstęp pomiędzy kolejnymi dostawami od fizycznego czasu zajęcia gruszki. Przydział i dostępność konkretnych gruszek pozostają zakresem punktów 3C–3E i nie mogą rozpocząć się przed zamknięciem całego punktu 3B.
 
 ## Cel
 

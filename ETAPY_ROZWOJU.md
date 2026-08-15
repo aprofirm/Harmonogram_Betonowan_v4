@@ -29,13 +29,26 @@ Do następnego etapu przechodzimy dopiero wtedy, gdy testy bieżącego etapu prz
 
 Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześniejszych etapów.
 
+## Obowiązkowa kontrola podetapów
+
+- Przed rozpoczęciem większego punktu zapisujemy tutaj jego znane podetapy.
+- Po implementacji i teście każdego podetapu ponownie przeglądamy cały bieżący
+  punkt oraz kryteria zakończenia etapu.
+- Punkt nadrzędny pozostaje otwarty, dopóki wszystkie jego podetapy nie są
+  zakończone i sprawdzone.
+- W podsumowaniu zawsze podajemy numer zamkniętego podetapu oraz numer
+  następnego niezakończonego podetapu.
+- Jeżeli lista podetapów nie jest jeszcze pełna, najpierw ją doprecyzowujemy.
+  Nie przechodzimy do kolejnego punktu tylko dlatego, że zakończył się pierwszy
+  zapisany krok.
+
 ---
 
 # Status projektu
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku, krok 3B.1 czeka na test ręczny**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku, 3B.1 zakończony; następny krok: 3B.2**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -50,7 +63,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 Wdrożenie diagnostyki nie zmienia statusu Etapu 2 ani nie rozpoczyna logiki Etapu 3.
 
-## Stan testów po implementacji kroku 3B.1 — 2026-08-15
+## Stan testów po zakończeniu kroku 3B.1 — 2026-08-15
 
 - [x] automatyczny test Etapu 1 przechodzi,
 - [x] automatyczny test Etapu 2 przechodzi,
@@ -60,7 +73,7 @@ Wdrożenie diagnostyki nie zmienia statusu Etapu 2 ani nie rozpoczyna logiki Eta
 - [x] ręczny test na GitHub Pages potwierdził poprawne działanie punktu 3A.
 - [x] automatyczny test kroku 3B.1 przechodzi,
 - [x] regresja Etapów 1–3A po zmianach 3B.1 przechodzi,
-- [ ] ręczny test kroku 3B.1 na GitHub Pages czeka na wykonanie przez operatora.
+- [x] ręczny test kroku 3B.1 na GitHub Pages potwierdził poprawne działanie.
 
 Statusy w tej sekcji powinny być aktualizowane w miarę postępu prac.
 
@@ -166,12 +179,19 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
 ## Postęp punktów Etapu 3
 
 - [x] **3A — generowanie kursów:** podział ilości betonu na pełne i niepełne kursy, pomijanie zrealizowanych pozycji i pełne tworzenie wyniku od nowa.
-- [ ] **3B — czasy cyklu:** krok **3B.1** oblicza załadunek, dojazd, rozładunek, powrót i ponowną gotowość; test automatyczny przechodzi, test ręczny jest następny.
+- [ ] **3B — czasy cyklu i rytm dostaw:**
+  - [x] **3B.1 — podstawowe czasy kursu:** załadunek, dojazd, rozładunek,
+    powrót, ponowna gotowość oraz ręczne korekty czasów; test automatyczny,
+    regresja i test operatora zakończone powodzeniem.
+  - [ ] **3B.2 — rytm dostaw:** oddzielenie odstępu pomiędzy kolejnymi
+    dostawami od fizycznego czasu zajęcia gruszki.
 - [ ] **3C — przydział gruszek:** brak nakładania kursów jednej gruszki.
 - [ ] **3D — minimalna liczba gruszek.**
 - [ ] **3E — tryb „mam X gruszek” i ponowne przeliczenie zasobów.**
 
-Po każdym punkcie wykonujemy jego osobny test oraz pełną regresję wcześniejszych funkcji. Dopiero potem zapisujemy opis wykonanej pracy, bieżący punkt i następny krok.
+Po każdym podetapie wykonujemy jego osobny test oraz pełną regresję wcześniejszych
+funkcji. Następnie ponownie przeglądamy tę listę i kryteria zakończenia całego
+Etapu 3. Dopiero potem zapisujemy opis wykonanej pracy, bieżący punkt i następny krok.
 
 ## Zakres
 
@@ -489,7 +509,10 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać ręczny test **kroku 3B.1 — podstawowe czasy kursów** zgodnie z `testy/TESTY_ETAP_3B_1.md`. Po potwierdzeniu zamknąć 3B.1 i dopiero wtedy przejść dalej.
+Rozpisać szczegółowy zakres i wykonać **krok 3B.2 — rytm dostaw**. Celem jest
+oddzielenie odstępu pomiędzy kolejnymi dostawami od fizycznego czasu cyklu
+gruszki. Punkt 3C może rozpocząć się dopiero po implementacji, teście
+automatycznym, regresji i potwierdzeniu testu operatora dla 3B.2.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -529,6 +552,8 @@ godziny cyklu są dokładane w kroku 3B.1, nadal bez przydziału konkretnych gru
 - [x] każdy kurs ma godzinę ponownej gotowości gruszki;
 - [x] liczba kursów nie zmienia się przez dodanie czasów;
 - [x] test automatyczny 3B.1 i pełna regresja przechodzą;
-- [ ] test ręczny na GitHub Pages czeka na potwierdzenie operatora.
+- [x] test ręczny na GitHub Pages potwierdził poprawne działanie.
 
-Krok 3B.1 nie przydziela jeszcze numerów gruszek i nie sprawdza nakładania ich kursów. Jest to zakres punktu 3C.
+Krok 3B.1 jest zakończony. Punkt 3B pozostaje otwarty, ponieważ następny jest
+krok 3B.2 — oddzielenie rytmu dostaw od fizycznego czasu cyklu. Dopiero po jego
+zakończeniu można rozpocząć punkt 3C dotyczący przydziału gruszek.
