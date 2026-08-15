@@ -9,6 +9,7 @@ const katalogProjektu = path.resolve(__dirname, "..");
 const plikiJavaScript = [
   "js/konfiguracja/konfiguracja.js",
   "js/diagnostyka/diagnostyka.js",
+  "js/pamiec/pamiec_planu.js",
   "js/import/import_csv.js",
   "js/budowy/budowy.js",
   "js/pompy/pompy.js",

@@ -71,7 +71,7 @@ wracamy do kroku 3B.2.
 
 - [x] **KP-1.1 — plan i decyzje:** zapisanie pełnego podziału, zasad prywatności,
   zakresu danych oraz instrukcji testu operatorskiego.
-- [ ] **KP-1.2 — moduł pamięci planu:** wersjonowany zapis i odczyt z bezpieczną
+- [x] **KP-1.2 — moduł pamięci planu:** wersjonowany zapis i odczyt z bezpieczną
   obsługą braku, blokady albo uszkodzenia pamięci przeglądarki.
 - [ ] **KP-1.3 — automatyczny zapis zmian:** import, budowy ręczne, parametry,
   czasy robocze i informacja o wykonanym przeliczeniu.
@@ -540,7 +540,7 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **KP-1.2 — moduł pamięci planu** zgodnie z zapisanym podziałem KP-1.
+Wykonać **KP-1.3 — automatyczny zapis zmian** zgodnie z zapisanym podziałem KP-1.
 Po każdym podetapie KP-1 uruchomić jego test, regresję i ponownie przejrzeć ten
 dokument. Po zamknięciu KP-1 wrócić do **3B.2 — rytm dostaw**. Punkt 3C pozostaje
 zablokowany do czasu zakończenia i przetestowania całego punktu 3B.
@@ -604,3 +604,21 @@ zakończeniu można rozpocząć punkt 3C dotyczący przydziału gruszek.
 KP-1.1 jest zakończony. KP-1 pozostaje otwarty, a następnym podetapem jest
 KP-1.2 — wersjonowany moduł pamięci planu. Po całkowitym zamknięciu KP-1 wracamy
 do 3B.2; punkt 3C nadal pozostaje zablokowany.
+
+## KP-1.2 — wersjonowany moduł pamięci planu — 2026-08-15
+
+- [x] dodano niezależny moduł `js/pamiec/pamiec_planu.js`;
+- [x] zapis otrzymuje numer wersji, czas zapisu i osobny klucz pamięci;
+- [x] poprawny plan można odczytać po utworzeniu nowej instancji strony;
+- [x] brak zapisu jest odróżniany od uszkodzonego zapisu;
+- [x] uszkodzony zapis jest bezpiecznie pomijany i usuwany;
+- [x] zapis z nieobsługiwanej wersji jest pomijany bez automatycznego usuwania;
+- [x] blokada lub błąd `localStorage` przełącza moduł na pamięć bieżącej sesji;
+- [x] moduł jest ładowany lokalnie przez `index.html` i nie wymaga internetu;
+- [x] osobny test KP-1.2 oraz pełna regresja siedmiu zestawów testów przechodzą;
+- [x] automatyczne zapisywanie danych aplikacji nie zostało jeszcze uruchomione.
+
+KP-1.2 jest zakończony. KP-1 pozostaje otwarty, a następnym podetapem jest
+KP-1.3 — podłączenie automatycznego zapisu importu, budów ręcznych, parametrów,
+czasów roboczych i informacji o wykonanym przeliczeniu. Po całkowitym zamknięciu
+KP-1 wracamy do 3B.2; punkt 3C nadal pozostaje zablokowany.

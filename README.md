@@ -106,9 +106,10 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/diagnostyka.test.js
     node testy/etap_3a.test.js
     node testy/etap_3b_1.test.js
+    node testy/pamiec_planu.test.js
 
 Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
 ## Aktualny stan
 
-**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów** oraz krok **3B.1 — podstawowe czasy kursów** są zakończone i sprawdzone automatycznie oraz przez operatora. Przed 3B.2 realizujemy zatwierdzony krok przekrojowy **KP-1 — pamięć planu dnia**. Podetap **KP-1.1 — plan i decyzje** jest zakończony, a następny jest **KP-1.2 — wersjonowany moduł pamięci planu**. Po zamknięciu całego KP-1 wracamy do **3B.2 — rytm dostaw**; punkt 3C nadal pozostaje zablokowany.
+**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów** oraz krok **3B.1 — podstawowe czasy kursów** są zakończone i sprawdzone automatycznie oraz przez operatora. Przed 3B.2 realizujemy zatwierdzony krok przekrojowy **KP-1 — pamięć planu dnia**. Podetapy **KP-1.1 — plan i decyzje** oraz **KP-1.2 — wersjonowany moduł pamięci planu** są zakończone. Następny jest **KP-1.3 — automatyczny zapis zmian**. Po zamknięciu całego KP-1 wracamy do **3B.2 — rytm dostaw**; punkt 3C nadal pozostaje zablokowany.

@@ -2,8 +2,9 @@
 
 ## Status
 
-Plan testu został przygotowany w KP-1.1. Test operatorski wykonujemy dopiero po
-zakończeniu implementacji i testów automatycznych KP-1.2–KP-1.6.
+Plan testu został przygotowany w KP-1.1, a test modułu pamięci dodano w KP-1.2.
+Test operatorski wykonujemy dopiero po zakończeniu implementacji i testów
+automatycznych KP-1.3–KP-1.6.
 
 ## Cel
 
@@ -61,6 +62,9 @@ potwierdzeniu operatora. Czyszczenie planu nie usuwa logów diagnostycznych.
 
 ## Testy automatyczne dla programisty
 
-Osobny test modułu pamięci zostanie dodany w KP-1.2 i rozszerzany przy kolejnych
-podetapach. Pełna regresja ma nadal obejmować Etapy 1–3B.1, import KDX oraz
-diagnostykę.
+Test wersjonowanego modułu pamięci:
+
+    node testy/pamiec_planu.test.js
+
+Test będzie rozszerzany przy kolejnych podetapach. Pełna regresja ma nadal
+obejmować Etapy 1–3B.1, import KDX oraz diagnostykę.
