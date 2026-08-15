@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; KP-2 zakończony, przed 3B.2 kończymy test operatora KP-1.9**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; KP-2 zakończony, przed 3B.2 realizujemy KP-3 i kończymy test operatora KP-1.9**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -156,6 +156,51 @@ Kryteria zamknięcia KP-2:
 - [x] czyszczenie planu dnia nie usuwa pamięci tras;
 - [x] brak lub uszkodzenie pamięci tras nie blokuje harmonogramu;
 - [x] aplikacja pozostaje możliwa do uruchomienia całkowicie offline.
+
+## Aktywny krok przekrojowy KP-3 — budowa ręczna i kompaktowy widok operatora
+
+KP-3 uzupełnia brak ujawniony podczas ręcznego dodawania budowy oraz lepiej
+wykorzystuje szerokość dużego monitora. Nie jest podpunktem 3B i nie zmienia
+logiki rytmu dostaw. Po jego zakończeniu i domknięciu KP-1.9 wracamy do 3B.2.
+
+- [x] **KP-3.1 — ilość betonu dla budowy ręcznej:** wymagane pole w m³,
+  walidacja dodatniej wartości, zapis w modelu i pamięci planu, prezentacja w
+  tabeli oraz generowanie kursów tak samo jak dla pozycji z CSV.
+  - [x] **KP-3.1.1 — wartość bazowa:** ilość z CSV albo formularza ręcznego jest
+    zapamiętywana jako niezmienny punkt odniesienia dla danej budowy.
+  - [x] **KP-3.1.2 — wariant roboczy:** ilość można zmienić bezpośrednio w
+    tabeli, zapisać w pamięci planu i uwzględnić przy następnym przeliczeniu.
+  - [x] **KP-3.1.3 — przywrócenie:** przycisk przy ilości przywraca wartość
+    bazową tylko dla wybranej budowy i oznacza wynik jako wymagający
+    ponownego przeliczenia.
+- [x] **KP-3.2 — szeroki, kompaktowy układ komputera:** prawie pełna szerokość
+  ekranu przy zoomie przeglądarki 100%, małe marginesy boczne, stały rozsądny
+  panel po lewej, rozszerzalny obszar tabel i mniejsza potrzeba przewijania
+  poziomego bez używania CSS `zoom` ani `transform: scale()`.
+- [ ] **KP-3.3 — regresja i test operatora:** pełna regresja automatyczna oraz
+  sprawdzenie na GitHub Pages dodania budowy z ilością, jej kursów, odświeżenia
+  strony i układu przy zoomie 100% na dużym ekranie.
+  - [x] **KP-3.3.1 — dokumentacja:** decyzje, instrukcja obsługi i osobny
+    scenariusz testu operatora odpowiadają wdrożonej funkcji.
+  - [x] **KP-3.3.2 — pełna regresja:** wszystkie zestawy testów, w tym nowy
+    test KP-3, przechodzą po ostatecznych zmianach.
+  - [ ] **KP-3.3.3 — publikacja:** kompletny pakiet trafia do `main`, a
+    wdrożona wersja GitHub Pages odpowiada najnowszemu commitowi.
+  - [ ] **KP-3.3.4 — test operatora i zamknięcie:** operator potwierdza ilość
+    ręczną, zmianę i przywrócenie wartości, odtworzenie po odświeżeniu oraz
+    szeroki układ przy zoomie Chrome 100%.
+
+Kryteria zamknięcia KP-3:
+
+- [x] budowy ręcznej bez dodatniej ilości betonu nie można dodać;
+- [x] poprawna ilość jest widoczna w tabeli, zapisywana i odtwarzana;
+- [x] przeliczenie tworzy z niej właściwą liczbę pełnych i niepełnych kursów;
+- [x] robocza zmiana ilości zmienia kursy, a przywrócenie odtwarza wartość
+  bazową z CSV albo formularza ręcznego;
+- [x] na dużym ekranie aplikacja wykorzystuje niemal całą dostępną szerokość;
+- [x] układ zachowuje techniczny breakpoint jednokolumnowy na węższych ekranach;
+- [x] aplikacja nie próbuje zmieniać zoomu przeglądarki;
+- [ ] pełna regresja automatyczna i test operatora przechodzą poprawnie.
 
 ## Stan testów po zakończeniu kroku 3B.1 — 2026-08-15
 
@@ -603,11 +648,11 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Dokończyć **KP-1.9 — test operatora pamięci planu dnia**: sprawdzić odtworzenie
-niepełnego planu, anulowanie czyszczenia oraz zachowanie historii i diagnostyki
-po potwierdzonym czyszczeniu i odświeżeniu strony. KP-2 jest zakończony. Po
-zamknięciu KP-1 wracamy do **3B.2 — rytm dostaw**. Punkt 3C pozostaje
-zablokowany do czasu zakończenia i przetestowania całego punktu 3B.
+Wykonać **KP-3.3 — regresja i test operatora**.
+Po zamknięciu KP-3 trzeba dokończyć **KP-1.9 — test operatora pamięci planu
+dnia**. Dopiero po zamknięciu obu punktów wracamy do **3B.2 — rytm dostaw**.
+Punkt 3C pozostaje zablokowany do czasu zakończenia i przetestowania całego
+punktu 3B.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -868,3 +913,49 @@ pozostaje zablokowany.
 KP-2.7.2 oraz cały punkt KP-2 są zakończone. Następny niezakończony punkt to
 KP-1.9 — dokończenie testu operatora pamięci planu dnia. Po jego zamknięciu
 wracamy do 3B.2 — rytm dostaw; punkt 3C nadal pozostaje zablokowany.
+
+## KP-3.1 — ilość betonu i wariant roboczy — 2026-08-15
+
+- [x] formularz budowy ręcznej wymaga dodatniej ilości betonu w m³;
+- [x] ilość źródłowa jest zachowywana jako wartość bazowa;
+- [x] ilość roboczą można zmienić w tabeli i zapisać wraz z planem;
+- [x] przycisk `↺` przywraca bazową ilość tylko wybranej budowy;
+- [x] zmiana ilości oznacza wynik jako nieaktualny, a kolejne przeliczenie
+  generuje odpowiednią liczbę kursów;
+- [x] kontrola składni oraz testy Etapu 1, Etapu 2 i pamięci aplikacji
+  przechodzą poprawnie.
+
+KP-3.1 wraz z podpunktami KP-3.1.1–KP-3.1.3 jest zakończony. Punkt KP-3
+pozostaje otwarty. Następny podetap to KP-3.2 — szeroki, kompaktowy układ
+komputera. KP-1.9 nadal wymaga dokończenia testu operatora; 3B.2 czeka na
+zamknięcie obu punktów, a 3C pozostaje zablokowany.
+
+## KP-3.2 — szeroki, kompaktowy układ komputera — 2026-08-15
+
+- [x] usunięto ograniczenie szerokości 1480 px i pozostawiono marginesy
+  16–24 px zależne od szerokości ekranu;
+- [x] panel operatora ma szerokość 280–304 px, a obszar harmonogramu wypełnia
+  pozostałe miejsce;
+- [x] zagęszczono nagłówek, formularze, status, panele i wiersze tabel;
+- [x] zmniejszono minimalną szerokość obu tabel, ograniczając przewijanie
+  poziome na dużych monitorach;
+- [x] przy szerokości do 920 px nadal działa układ jednokolumnowy;
+- [x] kod nie używa CSS `zoom` ani `transform: scale()`;
+- [x] test KP-3 i regresja Etapu 1, Etapu 2 oraz pamięci aplikacji przechodzą.
+
+KP-3.2 jest zakończony. Punkt KP-3 pozostaje otwarty. Następny podetap to
+KP-3.3 — pełna regresja, publikacja i test operatora na Chrome przy zoomie
+100%. KP-1.9 pozostaje częściowo otwarty; 3B.2 czeka, a 3C jest zablokowany.
+
+## KP-3.3.1–KP-3.3.2 — dokumentacja i pełna regresja — 2026-08-15
+
+- [x] zatwierdzone zachowanie zapisano w `PROJECT_DECISIONS.md`;
+- [x] instrukcję obsługi i aktualny stan uzupełniono w `README.md`;
+- [x] utworzono osobny scenariusz operatorski `testy/TESTY_KP_3.md`;
+- [x] kontrola składni wszystkich plików JavaScript przechodzi;
+- [x] pełna regresja jedenastu zestawów testów przechodzi poprawnie.
+
+KP-3.3.1 i KP-3.3.2 są zakończone. KP-3.3 oraz KP-3 pozostają otwarte.
+Następny podetap to KP-3.3.3 — publikacja na `main`; po niej pozostanie
+KP-3.3.4 — test operatora i zamknięcie. KP-1.9 nadal jest częściowo otwarty,
+3B.2 czeka, a 3C pozostaje zablokowany.

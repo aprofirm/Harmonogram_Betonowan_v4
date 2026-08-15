@@ -52,6 +52,8 @@ function sprawdzPoprawnyImport(aplikacja) {
   assert.equal(stanImportu.budowy[0].daneZrodlowe.ID_Budowy, "0012");
   assert.equal(stanImportu.budowy[0].rodzajBetonu, "C25/30");
   assert.equal(stanImportu.budowy[0].iloscBetonuM3, "16");
+  assert.equal(stanImportu.budowy[0].iloscBetonuBazowaM3, "16");
+  assert.equal(stanImportu.budowy[0].iloscBetonuBazowaLiczbaM3, 16);
 }
 
 function sprawdzAliasyINiektoreFormaty(aplikacja) {
@@ -195,11 +197,21 @@ function sprawdzBlednePliki(aplikacja) {
 
 function sprawdzBudowyReczne(aplikacja) {
   const pierwsza = aplikacja.budowy.utworzBudoweReczna(
-    { firma: "Firma A", budowa: "Budowa A", startPlanowany: "08:00" },
+    {
+      firma: "Firma A",
+      budowa: "Budowa A",
+      startPlanowany: "08:00",
+      iloscBetonuM3: "12.5"
+    },
     []
   );
   const druga = aplikacja.budowy.utworzBudoweReczna(
-    { firma: "Firma B", budowa: "Budowa B", startPlanowany: "09:00" },
+    {
+      firma: "Firma B",
+      budowa: "Budowa B",
+      startPlanowany: "09:00",
+      iloscBetonuM3: "8"
+    },
     [pierwsza]
   );
 
@@ -208,14 +220,62 @@ function sprawdzBudowyReczne(aplikacja) {
   assert.equal(druga.zrodlo, "reczna");
   assert.equal(druga.startRoboczy, druga.startPlanowany);
   assert.equal(druga.daneZrodlowe, null);
+  assert.equal(pierwsza.iloscBetonuM3, "12.5");
+  assert.equal(pierwsza.iloscBetonuLiczbaM3, 12.5);
+  assert.equal(pierwsza.iloscBetonuBazowaM3, "12.5");
+  assert.equal(pierwsza.iloscBetonuBazowaLiczbaM3, 12.5);
+  assert.deepEqual(
+    Array.from(
+      aplikacja.gruszki.generujKursyDlaBudowy(pierwsza, 8),
+      function (kurs) {
+        return kurs.iloscBetonuM3;
+      }
+    ),
+    [8, 4.5]
+  );
+
+  aplikacja.budowy.zmienIloscBetonuRoboczaBudowy(pierwsza, "20");
+  assert.equal(pierwsza.iloscBetonuLiczbaM3, 20);
+  assert.equal(pierwsza.iloscBetonuBazowaLiczbaM3, 12.5);
+  assert.equal(aplikacja.gruszki.generujKursyDlaBudowy(pierwsza, 8).length, 3);
+
+  aplikacja.budowy.przywrocBazowaIloscBetonuBudowy(pierwsza);
+  assert.equal(pierwsza.iloscBetonuM3, "12.5");
+  assert.equal(pierwsza.iloscBetonuLiczbaM3, 12.5);
+  assert.equal(aplikacja.gruszki.generujKursyDlaBudowy(pierwsza, 8).length, 2);
   assert.throws(
     function () {
       aplikacja.budowy.utworzBudoweReczna(
-        { firma: "", budowa: "Budowa C", startPlanowany: "10:00" },
+        {
+          firma: "",
+          budowa: "Budowa C",
+          startPlanowany: "10:00",
+          iloscBetonuM3: "8"
+        },
         []
       );
     },
     /Pole „Firma” nie może być puste/i
+  );
+  assert.throws(
+    function () {
+      aplikacja.budowy.utworzBudoweReczna(
+        {
+          firma: "Firma C",
+          budowa: "Budowa C",
+          startPlanowany: "10:00",
+          iloscBetonuM3: "0"
+        },
+        []
+      );
+    },
+    /Ilość betonu.*większą niż 0/i
+  );
+  assert.throws(
+    function () {
+      aplikacja.budowy.zmienIloscBetonuRoboczaBudowy(pierwsza, "-1");
+    },
+    /Ilość betonu.*nie mniejszą niż 0/i
   );
 }
 

@@ -1258,6 +1258,44 @@ oraz routingu pozostają zakresem Etapu 6.
 
 ---
 
+## 72. Budowa ręczna, robocza ilość betonu i kompaktowy widok — KP-3
+
+Budowa dodawana ręcznie musi zawierać dodatnią ilość betonu w m³. Bez niej
+pozycja nie może zostać dodana, ponieważ nie dałoby się utworzyć jej kursów.
+
+Dla każdej budowy obowiązują dwie wartości ilości:
+
+- **bazowa ilość betonu** pochodzi z CSV albo z formularza budowy ręcznej i
+  pozostaje punktem odniesienia;
+- **robocza ilość betonu** jest używana przez bieżące przeliczenie i może być
+  zmieniana przez operatora bezpośrednio w tabeli.
+
+Robocza ilość może wynosić `0 m³`, aby świadomie sprawdzić wariant bez dalszych
+kursów dla danej budowy. Taka pozycja jest traktowana jako zrealizowana.
+Zmiana robocza nie nadpisuje wartości bazowej. Przycisk `↺` przy polu ilości
+przywraca bazową wartość tylko wybranej budowy. Zmiana i przywrócenie oznaczają
+wynik jako nieaktualny, są zapisywane w pamięci planu i wymagają ponownego
+wybrania **Przelicz harmonogram**.
+
+Na komputerach aplikacja ma domyślnie wykorzystywać niemal całą szerokość
+okna przy zwykłym zoomie przeglądarki `100%`:
+
+- boczne marginesy wynoszą około 16–24 px;
+- lewy panel zachowuje szerokość 280–304 px;
+- obszar harmonogramu wypełnia pozostałą szerokość;
+- formularze, statusy i tabele mają zwarty układ odpowiedni do pracy operatora;
+- na węższych ekranach pozostaje układ responsywny, w tym jedna kolumna do
+  szerokości 920 px.
+
+Aplikacja nie wymusza zoomu Chrome i nie używa CSS `zoom` ani skalowania całej
+strony przez `transform: scale()`. Zagęszczenie i szerokość są realizowane
+zwykłym, responsywnym CSS.
+
+KP-3 jest krokiem przekrojowym wykonanym przed 3B.2 i nie zmienia logiki rytmu
+dostaw.
+
+---
+
 # Powiązane tematy otwarte
 
 Pomysły, warianty i pytania, które nie są jeszcze obowiązującymi decyzjami, są prowadzone w `POMYSLY_I_BACKLOG.md`. Dzięki temu ten dokument pozostaje jednoznacznym źródłem zatwierdzonych ustaleń.

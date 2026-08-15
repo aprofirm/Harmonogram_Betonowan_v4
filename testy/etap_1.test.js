@@ -82,6 +82,7 @@ function utworzDokumentTestowy() {
     "reczna-firma",
     "reczna-budowa",
     "reczny-start",
+    "reczna-ilosc-betonu",
     "przycisk-historia-planow",
     "liczba-zapisow-historycznych",
     "stan-pamieci-planu",

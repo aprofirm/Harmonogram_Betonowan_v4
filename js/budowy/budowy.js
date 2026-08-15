@@ -63,6 +63,49 @@
     return Number.isFinite(liczba) ? liczba : null;
   }
 
+  function pobierzDodatniaIloscBetonu(wartosc) {
+    const iloscBetonuLiczbaM3 = pobierzIloscBetonuLiczbaM3(wartosc);
+
+    if (iloscBetonuLiczbaM3 === null || iloscBetonuLiczbaM3 <= 0) {
+      throw new Error("Pole „Ilość betonu” musi zawierać liczbę większą niż 0.");
+    }
+
+    return iloscBetonuLiczbaM3;
+  }
+
+  function pobierzNieujemnaIloscBetonu(wartosc) {
+    const iloscBetonuLiczbaM3 = pobierzIloscBetonuLiczbaM3(wartosc);
+
+    if (iloscBetonuLiczbaM3 === null || iloscBetonuLiczbaM3 < 0) {
+      throw new Error(
+        "Pole „Ilość betonu” musi zawierać liczbę nie mniejszą niż 0."
+      );
+    }
+
+    return iloscBetonuLiczbaM3;
+  }
+
+  function uzupelnijBazowaIloscBetonu(budowa) {
+    if (!budowa || typeof budowa !== "object") {
+      throw new Error("Nie znaleziono budowy, dla której ma być zapisana ilość betonu.");
+    }
+
+    if (!Object.prototype.hasOwnProperty.call(budowa, "iloscBetonuBazowaM3")) {
+      budowa.iloscBetonuBazowaM3 = String(budowa.iloscBetonuM3 || "").trim();
+    }
+
+    if (!Object.prototype.hasOwnProperty.call(
+      budowa,
+      "iloscBetonuBazowaLiczbaM3"
+    )) {
+      budowa.iloscBetonuBazowaLiczbaM3 = pobierzIloscBetonuLiczbaM3(
+        budowa.iloscBetonuBazowaM3
+      );
+    }
+
+    return budowa;
+  }
+
   function utworzPoczatkoweCzasyRobocze() {
     return {
       czasDojazduRoboczyMinuty: null,
@@ -105,6 +148,7 @@
   function utworzBudoweZImportu(daneBudowy, numerWiersza) {
     const opisStartu = przetworzStartPlanowany(daneBudowy.startPlanowany, numerWiersza);
     const iloscBetonuLiczbaM3 = pobierzIloscBetonuLiczbaM3(daneBudowy.iloscBetonuM3);
+    const iloscBetonuM3 = String(daneBudowy.iloscBetonuM3 || "").trim();
 
     return Object.assign({
       idBudowy: pobierzWymaganyTekst(daneBudowy.idBudowy, "ID_Budowy", numerWiersza),
@@ -116,8 +160,10 @@
       tolerancjaStartuMinuty: opisStartu.tolerancjaStartuMinuty,
       najpozniejszyStart: opisStartu.najpozniejszyStart,
       rodzajBetonu: String(daneBudowy.rodzajBetonu || "").trim(),
-      iloscBetonuM3: String(daneBudowy.iloscBetonuM3 || "").trim(),
+      iloscBetonuM3: iloscBetonuM3,
       iloscBetonuLiczbaM3: iloscBetonuLiczbaM3,
+      iloscBetonuBazowaM3: iloscBetonuM3,
+      iloscBetonuBazowaLiczbaM3: iloscBetonuLiczbaM3,
       statusRealizacji: iloscBetonuLiczbaM3 === 0 ? "zrealizowana" : "do-realizacji",
       dataPlanowana: String(daneBudowy.dataPlanowana || "").trim(),
       rodzajRozladunku: String(daneBudowy.rodzajRozladunku || "").trim(),
@@ -150,6 +196,11 @@
       daneBudowy && daneBudowy.startPlanowany,
       "Start planowany"
     );
+    const iloscBetonuM3 = pobierzWymaganyTekst(
+      daneBudowy && daneBudowy.iloscBetonuM3,
+      "Ilość betonu"
+    );
+    const iloscBetonuLiczbaM3 = pobierzDodatniaIloscBetonu(iloscBetonuM3);
 
     return Object.assign({
       idBudowy: "RECZNE-" + String(numer).padStart(3, "0"),
@@ -161,8 +212,10 @@
       tolerancjaStartuMinuty: 0,
       najpozniejszyStart: startPlanowany,
       rodzajBetonu: "",
-      iloscBetonuM3: "",
-      iloscBetonuLiczbaM3: null,
+      iloscBetonuM3: iloscBetonuM3,
+      iloscBetonuLiczbaM3: iloscBetonuLiczbaM3,
+      iloscBetonuBazowaM3: iloscBetonuM3,
+      iloscBetonuBazowaLiczbaM3: iloscBetonuLiczbaM3,
       statusRealizacji: "do-realizacji",
       dataPlanowana: "",
       rodzajRozladunku: "",
@@ -205,6 +258,33 @@
       czasPowrotu !== null
     );
 
+    return budowa;
+  }
+
+  function zmienIloscBetonuRoboczaBudowy(budowa, wartosc) {
+    const iloscBetonuLiczbaM3 = pobierzNieujemnaIloscBetonu(wartosc);
+
+    uzupelnijBazowaIloscBetonu(budowa);
+    budowa.iloscBetonuM3 = String(wartosc).trim();
+    budowa.iloscBetonuLiczbaM3 = iloscBetonuLiczbaM3;
+    budowa.statusRealizacji = iloscBetonuLiczbaM3 === 0
+      ? "zrealizowana"
+      : "do-realizacji";
+    return budowa;
+  }
+
+  function przywrocBazowaIloscBetonuBudowy(budowa) {
+    uzupelnijBazowaIloscBetonu(budowa);
+
+    if (budowa.iloscBetonuBazowaLiczbaM3 === null) {
+      throw new Error("Ta budowa nie ma zapisanej bazowej ilości betonu.");
+    }
+
+    budowa.iloscBetonuM3 = budowa.iloscBetonuBazowaM3;
+    budowa.iloscBetonuLiczbaM3 = budowa.iloscBetonuBazowaLiczbaM3;
+    budowa.statusRealizacji = budowa.iloscBetonuBazowaLiczbaM3 === 0
+      ? "zrealizowana"
+      : "do-realizacji";
     return budowa;
   }
 
@@ -287,7 +367,10 @@
     utworzBudoweZImportu: utworzBudoweZImportu,
     utworzBudoweReczna: utworzBudoweReczna,
     utworzListeRobocza: utworzListeRobocza,
+    uzupelnijBazowaIloscBetonu: uzupelnijBazowaIloscBetonu,
     ustawCzasyRobocze: ustawCzasyRobocze,
-    zmienCzasRoboczyBudowy: zmienCzasRoboczyBudowy
+    zmienCzasRoboczyBudowy: zmienCzasRoboczyBudowy,
+    zmienIloscBetonuRoboczaBudowy: zmienIloscBetonuRoboczaBudowy,
+    przywrocBazowaIloscBetonuBudowy: przywrocBazowaIloscBetonuBudowy
   };
 })(window);

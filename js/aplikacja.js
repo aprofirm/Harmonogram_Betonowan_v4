@@ -20,6 +20,8 @@
     "rodzajBetonu",
     "iloscBetonuM3",
     "iloscBetonuLiczbaM3",
+    "iloscBetonuBazowaM3",
+    "iloscBetonuBazowaLiczbaM3",
     "statusRealizacji",
     "dataPlanowana",
     "rodzajRozladunku",
@@ -198,6 +200,49 @@
         blad,
         "blad-zmiany-czasow-budowy",
         "Nie udało się zapisać roboczych czasów budowy."
+      );
+      return null;
+    }
+  }
+
+  function obsluzZmianeIlosciBetonuBudowy(
+    idBudowy,
+    wartosc,
+    czyPrzywrocicBazowa
+  ) {
+    try {
+      const budowa = znajdzBudoweDoZmiany(idBudowy);
+
+      if (!budowa) {
+        throw new Error("Nie znaleziono budowy o ID „" + idBudowy + "”.");
+      }
+
+      if (czyPrzywrocicBazowa) {
+        aplikacja.budowy.przywrocBazowaIloscBetonuBudowy(budowa);
+      } else {
+        aplikacja.budowy.zmienIloscBetonuRoboczaBudowy(budowa, wartosc);
+      }
+
+      oznaczPlanJakoNieprzeliczony(true);
+      aplikacja.interfejs.pokazListeBudow(pobierzAktualnaListeBudow());
+      zapiszZdarzenieDiagnostyczne(
+        "informacja",
+        czyPrzywrocicBazowa
+          ? "przywrocenie-bazowej-ilosci-betonu"
+          : "zmiana-roboczej-ilosci-betonu",
+        czyPrzywrocicBazowa
+          ? "Przywrócono bazową ilość betonu budowy."
+          : "Zmieniono roboczą ilość betonu budowy.",
+        { idBudowy: budowa.idBudowy, iloscBetonuM3: budowa.iloscBetonuLiczbaM3 }
+      );
+      return budowa;
+    } catch (blad) {
+      aplikacja.interfejs.pokazBladIlosciBetonu(blad);
+      aplikacja.interfejs.pokazListeBudow(pobierzAktualnaListeBudow());
+      zapiszBladDiagnostyczny(
+        blad,
+        "blad-zmiany-ilosci-betonu",
+        "Nie udało się zmienić roboczej ilości betonu budowy."
       );
       return null;
     }
@@ -446,6 +491,8 @@
     numerOstatniegoImportu += 1;
     stanImportu = utworzStanImportuZPamieci(danePlanu);
     budowyReczne = skopiujListeBudowDoPamieci(danePlanu.budowyReczne);
+    stanImportu.budowy.forEach(aplikacja.budowy.uzupelnijBazowaIloscBetonu);
+    budowyReczne.forEach(aplikacja.budowy.uzupelnijBazowaIloscBetonu);
     czyOstatniPlanPrzeliczony = Boolean(danePlanu.czyHarmonogramPrzeliczony);
     const wynikMigracjiTras = archiwizujKompletneTrasy({
       tylkoBrakujace: true
@@ -618,6 +665,7 @@
         obsluzImportPliku,
         obsluzDodanieBudowyRecznej,
         obsluzZmianeCzasowBudowy,
+        obsluzZmianeIlosciBetonuBudowy,
         obsluzZmianeParametrow,
         obsluzWyczyszczeniePlanu,
         obsluzOtwarcieHistorii

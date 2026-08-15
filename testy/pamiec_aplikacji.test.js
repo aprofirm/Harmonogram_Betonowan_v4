@@ -115,6 +115,7 @@ function utworzDokumentTestowy() {
     "reczna-firma",
     "reczna-budowa",
     "reczny-start",
+    "reczna-ilosc-betonu",
     "stan-diagnostyki",
     "podglad-logow",
     "przycisk-pobierz-raport",
@@ -215,6 +216,7 @@ function dodajBudoweReczna(srodowisko) {
   elementy["reczna-firma"].value = "Firma ręczna";
   elementy["reczna-budowa"].value = "Plac ręczny";
   elementy["reczny-start"].value = "10:00";
+  elementy["reczna-ilosc-betonu"].value = "8";
   elementy["formularz-budowy-recznej"].zdarzenia.submit({
     preventDefault: function () {}
   });
@@ -354,6 +356,8 @@ async function uruchomTest() {
   assert.equal(danePlanu.nazwaPliku, "plan-testowy.csv");
   assert.equal(danePlanu.budowyZImportu.length, 1);
   assert.equal(danePlanu.budowyReczne.length, 1);
+  assert.equal(danePlanu.budowyReczne[0].iloscBetonuLiczbaM3, 8);
+  assert.equal(danePlanu.budowyReczne[0].iloscBetonuBazowaLiczbaM3, 8);
   assert.equal(danePlanu.czyHarmonogramPrzeliczony, false);
   assert.equal(Object.prototype.hasOwnProperty.call(danePlanu, "wierszeZrodlowe"), false);
   assert.doesNotMatch(tekstDanychPlanu, /daneZrodlowe/);
@@ -384,6 +388,33 @@ async function uruchomTest() {
     "Z pamięci"
   );
 
+  let wierszBudowyRecznej = pierwszaStrona.dokument.elementy[
+    "wiersze-harmonogramu"
+  ].children[1];
+  let kontrolkiIlosci = wierszBudowyRecznej.children[7].children[0];
+  kontrolkiIlosci.children[0].value = "12";
+  kontrolkiIlosci.children[0].zdarzenia.change();
+  assert.equal(odczytajDanePlanu(pamiecLokalna).budowyReczne[0].iloscBetonuLiczbaM3, 12);
+  assert.equal(
+    odczytajDanePlanu(pamiecLokalna).budowyReczne[0].iloscBetonuBazowaLiczbaM3,
+    8
+  );
+
+  wierszBudowyRecznej = pierwszaStrona.dokument.elementy[
+    "wiersze-harmonogramu"
+  ].children[1];
+  kontrolkiIlosci = wierszBudowyRecznej.children[7].children[0];
+  assert.equal(kontrolkiIlosci.children[2].disabled, false);
+  kontrolkiIlosci.children[2].zdarzenia.click();
+  assert.equal(odczytajDanePlanu(pamiecLokalna).budowyReczne[0].iloscBetonuLiczbaM3, 8);
+
+  wierszBudowyRecznej = pierwszaStrona.dokument.elementy[
+    "wiersze-harmonogramu"
+  ].children[1];
+  const poleDojazduBudowyRecznej = wierszBudowyRecznej.children[3].children[0];
+  poleDojazduBudowyRecznej.value = "10";
+  poleDojazduBudowyRecznej.zdarzenia.change();
+
   const polePojemnosci = pierwszaStrona.dokument.elementy["pojemnosc-gruszki"];
   polePojemnosci.value = "9";
   polePojemnosci.zdarzenia.change();
@@ -396,7 +427,7 @@ async function uruchomTest() {
   danePlanu = odczytajDanePlanu(pamiecLokalna);
   assert.equal(danePlanu.czyHarmonogramPrzeliczony, true);
   assert.equal(odczytajHistorie(pamiecLokalna).zapisy.length, 1);
-  assert.equal(pierwszaStrona.dokument.elementy["liczba-kursow"].textContent, "2");
+  assert.equal(pierwszaStrona.dokument.elementy["liczba-kursow"].textContent, "3");
 
   pierwszaStrona.dokument.elementy["przycisk-przelicz"].zdarzenia.click();
   assert.equal(odczytajHistorie(pamiecLokalna).zapisy.length, 1);
@@ -407,7 +438,7 @@ async function uruchomTest() {
   );
 
   assert.equal(stronaPoOdswiezeniu.dokument.elementy["liczba-budow"].textContent, "2");
-  assert.equal(stronaPoOdswiezeniu.dokument.elementy["liczba-kursow"].textContent, "2");
+  assert.equal(stronaPoOdswiezeniu.dokument.elementy["liczba-kursow"].textContent, "3");
   assert.equal(
     stronaPoOdswiezeniu.dokument.elementy["nazwa-pliku-csv"].textContent,
     "plan-testowy.csv"
@@ -423,7 +454,7 @@ async function uruchomTest() {
   assert.equal(stronaPoOdswiezeniu.dokument.elementy["liczba-budow"].textContent, "0");
   assert.equal(pamiecLokalna.getItem(kluczPlanu), null);
   assert.equal(odczytajHistorie(pamiecLokalna).zapisy.length, 1);
-  assert.equal(JSON.parse(pamiecLokalna.getItem(kluczPamieciTras)).trasy.length, 1);
+  assert.equal(JSON.parse(pamiecLokalna.getItem(kluczPamieciTras)).trasy.length, 2);
 
   stronaPoOdswiezeniu.dokument.elementy["przycisk-historia-planow"].zdarzenia.click();
   const listaHistorii = stronaPoOdswiezeniu.dokument.elementy[
@@ -433,7 +464,7 @@ async function uruchomTest() {
   listaHistorii.children[0].children[1].zdarzenia.click();
 
   assert.equal(stronaPoOdswiezeniu.dokument.elementy["liczba-budow"].textContent, "2");
-  assert.equal(stronaPoOdswiezeniu.dokument.elementy["liczba-kursow"].textContent, "2");
+  assert.equal(stronaPoOdswiezeniu.dokument.elementy["liczba-kursow"].textContent, "3");
   assert.notEqual(pamiecLokalna.getItem(kluczPlanu), null);
   assert.equal(odczytajHistorie(pamiecLokalna).zapisy.length, 1);
 

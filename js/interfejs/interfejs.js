@@ -6,6 +6,7 @@
 
   let elementy = null;
   let obslugaZmianyCzasowBudowy = function () {};
+  let obslugaZmianyIlosciBetonuBudowy = function () {};
   let obslugaZmianyParametrowAplikacji = function () {};
   let parametryDomyslneInterfejsu = {};
 
@@ -46,6 +47,7 @@
       recznaFirma: pobierzWymaganyElement("reczna-firma"),
       recznaBudowa: pobierzWymaganyElement("reczna-budowa"),
       recznyStart: pobierzWymaganyElement("reczny-start"),
+      recznaIloscBetonu: pobierzWymaganyElement("reczna-ilosc-betonu"),
       przyciskHistoriaPlanow: pobierzWymaganyElement("przycisk-historia-planow"),
       liczbaZapisowHistorycznych: pobierzWymaganyElement(
         "liczba-zapisow-historycznych"
@@ -279,19 +281,68 @@
       : { tresc: "Uzupełnij czasy", klasa: "status-ostrzezenie" };
   }
 
-  function opiszBeton(budowa) {
-    const opis = [];
+  function utworzKomorkeIlosciBetonu(budowa) {
+    const komorka = document.createElement("td");
+    const pole = document.createElement("input");
+    const jednostka = document.createElement("span");
+    const przyciskPrzywroc = document.createElement("button");
+    const kontrolki = document.createElement("span");
+    const iloscRobocza = Number(budowa.iloscBetonuLiczbaM3);
+    const iloscBazowa = Number(budowa.iloscBetonuBazowaLiczbaM3);
+    const czyJestIloscRobocza = Number.isFinite(iloscRobocza);
+    const czyJestIloscBazowa = Number.isFinite(iloscBazowa);
+    const czyIloscZmieniona = czyJestIloscBazowa &&
+      (!czyJestIloscRobocza || iloscRobocza !== iloscBazowa);
+
+    komorka.className = "komorka-betonu";
 
     if (budowa.rodzajBetonu) {
-      opis.push(budowa.rodzajBetonu);
+      const rodzajBetonu = document.createElement("span");
+      rodzajBetonu.className = "rodzaj-betonu";
+      rodzajBetonu.textContent = budowa.rodzajBetonu;
+      komorka.appendChild(rodzajBetonu);
     }
 
-    if (budowa.iloscBetonuM3) {
-      const ilosc = String(budowa.iloscBetonuM3).trim();
-      opis.push(/m(?:3|³)\s*$/i.test(ilosc) ? ilosc.replace(/m3\s*$/i, "m³") : ilosc + " m³");
-    }
+    kontrolki.className = "kontrolki-ilosci-betonu";
+    pole.className = "pole-ilosci-betonu";
+    pole.type = "number";
+    pole.min = "0";
+    pole.step = "0.1";
+    pole.value = czyJestIloscRobocza ? String(iloscRobocza) : "";
+    pole.setAttribute(
+      "aria-label",
+      "Ilość betonu dla budowy " + budowa.budowa + " w metrach sześciennych"
+    );
+    pole.addEventListener("change", function () {
+      obslugaZmianyIlosciBetonuBudowy(budowa.idBudowy, pole.value, false);
+    });
 
-    return opis.length ? opis.join(" · ") : "—";
+    jednostka.className = "jednostka-ilosci-betonu";
+    jednostka.textContent = "m³";
+
+    przyciskPrzywroc.className = "przycisk-przywroc-ilosc";
+    przyciskPrzywroc.type = "button";
+    przyciskPrzywroc.textContent = "↺";
+    przyciskPrzywroc.disabled = !czyIloscZmieniona;
+    przyciskPrzywroc.title = czyJestIloscBazowa
+      ? "Przywróć bazową ilość " + String(iloscBazowa) + " m³"
+      : "Brak bazowej ilości do przywrócenia";
+    przyciskPrzywroc.setAttribute(
+      "aria-label",
+      czyJestIloscBazowa
+        ? "Przywróć bazową ilość " + String(iloscBazowa) + " m³ dla budowy " +
+          budowa.budowa
+        : "Brak bazowej ilości do przywrócenia"
+    );
+    przyciskPrzywroc.addEventListener("click", function () {
+      obslugaZmianyIlosciBetonuBudowy(budowa.idBudowy, null, true);
+    });
+
+    kontrolki.appendChild(pole);
+    kontrolki.appendChild(jednostka);
+    kontrolki.appendChild(przyciskPrzywroc);
+    komorka.appendChild(kontrolki);
+    return komorka;
   }
 
   function opiszOknoStartu(budowa) {
@@ -363,7 +414,7 @@
         )
       )
     );
-    wiersz.appendChild(utworzKomorke(opiszBeton(budowa)));
+    wiersz.appendChild(utworzKomorkeIlosciBetonu(budowa));
     wiersz.appendChild(utworzKomorke(budowa.idBudowy, "identyfikator-budowy"));
     wiersz.appendChild(utworzKomorke(etykietaZrodla));
     wiersz.appendChild(
@@ -573,6 +624,11 @@
   function pokazBladDanych(blad) {
     const trescBledu = blad instanceof Error ? blad.message : "Wystąpił nieznany błąd.";
     ustawStatus("blad", "Nie można dodać budowy", trescBledu);
+  }
+
+  function pokazBladIlosciBetonu(blad) {
+    const trescBledu = blad instanceof Error ? blad.message : "Wystąpił nieznany błąd.";
+    ustawStatus("blad", "Nie można zmienić ilości betonu", trescBledu);
   }
 
   function pokazBladCzasow(blad) {
@@ -788,7 +844,8 @@
     return {
       firma: elementy.recznaFirma.value,
       budowa: elementy.recznaBudowa.value,
-      startPlanowany: elementy.recznyStart.value
+      startPlanowany: elementy.recznyStart.value,
+      iloscBetonuM3: elementy.recznaIloscBetonu.value
     };
   }
 
@@ -878,6 +935,7 @@
     obslugaImportu,
     obslugaDodaniaBudowy,
     obslugaZmianyCzasow,
+    obslugaZmianyIlosciBetonu,
     obslugaZmianyParametrow,
     obslugaWyczyszczeniaPlanu,
     obslugaOtwarciaHistorii
@@ -887,6 +945,10 @@
     obslugaZmianyCzasowBudowy = typeof obslugaZmianyCzasow === "function"
       ? obslugaZmianyCzasow
       : function () {};
+    obslugaZmianyIlosciBetonuBudowy =
+      typeof obslugaZmianyIlosciBetonu === "function"
+        ? obslugaZmianyIlosciBetonu
+        : function () {};
     obslugaZmianyParametrowAplikacji =
       typeof obslugaZmianyParametrow === "function"
         ? obslugaZmianyParametrow
@@ -919,6 +981,7 @@
     pokazListeBudow: pokazListeBudow,
     pokazBlad: pokazBlad,
     pokazBladDanych: pokazBladDanych,
+    pokazBladIlosciBetonu: pokazBladIlosciBetonu,
     pokazBladCzasow: pokazBladCzasow,
     zakonczPrzeliczenie: zakonczPrzeliczenie,
     pokazTrwajacyImport: pokazTrwajacyImport,

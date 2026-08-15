@@ -34,7 +34,7 @@ automatycznie całego punktu `3B`.
 1. Pobierz całe repozytorium na komputer.
 2. Otwórz plik [index.html](index.html) dwukrotnym kliknięciem.
 3. Wczytaj plik CSV, przeciągając go na pole importu albo wybierając z komputera.
-4. W razie potrzeby dodaj budowę ręcznie.
+4. W razie potrzeby dodaj budowę ręcznie, podając również ilość betonu w m³.
 5. Uzupełnij czas dojazdu i powrotu przy aktywnych budowach.
 6. Ustaw parametry i wybierz przycisk **Przelicz harmonogram**.
 
@@ -68,6 +68,26 @@ Aktualnie rozpoznawane są m.in. rzeczywiste nagłówki KDX:
 Dodatkowe, puste kolumny oraz zmiana kolejności kolumn nie powinny wpływać na import. Techniczny wiersz KDX bez danych budowy, np. `Normal`, jest pomijany. Nowe warianty nazw nagłówków należy dopisywać jako aliasy w module importu zamiast tworzyć osobne importery dla każdego układu.
 
 Program obsługuje wybór pliku i przeciąganie CSV. Kolejny poprawny import zastępuje dane z poprzedniego pliku, natomiast budowy dodane ręcznie pozostają osobną listą.
+
+## Ilość betonu i wariant roboczy
+
+Formularz budowy ręcznej wymaga dodatniej ilości betonu. Po dodaniu budowy
+ilość jest widoczna w kolumnie **Beton** i generuje kursy na tych samych zasadach
+co ilość wczytana z CSV.
+
+Ilość każdej budowy można tymczasowo zmienić bezpośrednio w tabeli, aby
+porównać inny wariant planu. Po zmianie wybierz ponownie **Przelicz
+harmonogram**. Przycisk `↺` obok pola przywraca ilość bazową z CSV albo z
+formularza ręcznego. Wariant roboczy i wartość bazowa są zachowywane po
+odświeżeniu strony.
+
+## Szeroki, kompaktowy widok
+
+Na komputerze aplikacja jest przygotowana do pracy przy zwykłym zoomie
+przeglądarki `100%`. Wykorzystuje niemal całą szerokość okna z małymi marginesami,
+utrzymuje zwarty panel operatora po lewej i rozszerza obszar harmonogramu.
+Nie ustawia i nie symuluje zoomu Chrome. Na węższych ekranach układ pozostaje
+responsywny i przechodzi do jednej kolumny.
 
 ## Diagnostyka i raport błędów
 
@@ -132,6 +152,7 @@ Instrukcje testów ręcznych znajdują się w plikach:
 - [testy/TESTY_ETAP_3B_1.md](testy/TESTY_ETAP_3B_1.md),
 - [testy/TESTY_KP_1.md](testy/TESTY_KP_1.md) — plan testu pamięci dnia,
 - [testy/TESTY_KP_2.md](testy/TESTY_KP_2.md) — plan testu pamięci tras,
+- [testy/TESTY_KP_3.md](testy/TESTY_KP_3.md) — ilość ręczna, wariant i szeroki widok,
 - [testy/TESTY_DIAGNOSTYKA.md](testy/TESTY_DIAGNOSTYKA.md).
 
 Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczny:
@@ -146,9 +167,10 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
     node testy/pamiec_tras_integracja.test.js
+    node testy/kp_3.test.js
 
 Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
 ## Aktualny stan
 
-**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów**, krok **3B.1 — podstawowe czasy kursów** oraz cały krok przekrojowy **KP-2 — pamięć znanych tras** są zakończone i sprawdzone automatycznie oraz przez operatora. Przed 3B.2 pozostało dokończenie testu operatora **KP-1.9 — pamięć planu dnia**. Po zamknięciu KP-1 wracamy do **3B.2 — rytm dostaw**; punkt 3C nadal pozostaje zablokowany.
+**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów**, krok **3B.1 — podstawowe czasy kursów** oraz cały krok przekrojowy **KP-2 — pamięć znanych tras** są zakończone. W KP-3 zakończono implementację ilości budowy ręcznej, wariantu roboczego i kompaktowego widoku; do zamknięcia pozostaje test operatora na opublikowanej stronie. Przed 3B.2 trzeba również dokończyć **KP-1.9 — pamięć planu dnia**. Punkt 3C nadal pozostaje zablokowany.
