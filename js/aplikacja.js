@@ -6,6 +6,31 @@
   let stanImportu = aplikacja.importCsv.utworzPustyStanImportu();
   let budowyReczne = [];
   let numerOstatniegoImportu = 0;
+  let czyOstatniPlanPrzeliczony = false;
+
+  const POLA_BUDOWY_DO_PAMIECI = Object.freeze([
+    "idBudowy",
+    "firma",
+    "budowa",
+    "startPlanowanyZrodlowy",
+    "startPlanowany",
+    "startRoboczy",
+    "tolerancjaStartuMinuty",
+    "najpozniejszyStart",
+    "rodzajBetonu",
+    "iloscBetonuM3",
+    "iloscBetonuLiczbaM3",
+    "statusRealizacji",
+    "dataPlanowana",
+    "rodzajRozladunku",
+    "zrodlo",
+    "czasDojazduRoboczyMinuty",
+    "czasPowrotuRoboczyMinuty",
+    "dodatkowyCzasZaladunkuMinuty",
+    "dodatkowyCzasRozladunkuMinuty",
+    "zrodloCzasuDojazdu",
+    "zrodloCzasuPowrotu"
+  ]);
 
   function zapiszZdarzenieDiagnostyczne(poziom, kod, opis, szczegoly) {
     if (aplikacja.diagnostyka) {
@@ -27,6 +52,84 @@
     return Object.keys(stan.wierszeZrodlowe[0]);
   }
 
+  function skopiujBudoweDoPamieci(budowa) {
+    return POLA_BUDOWY_DO_PAMIECI.reduce(function (kopia, nazwaPola) {
+      if (Object.prototype.hasOwnProperty.call(budowa, nazwaPola)) {
+        kopia[nazwaPola] = budowa[nazwaPola];
+      }
+
+      return kopia;
+    }, {});
+  }
+
+  function skopiujListeBudowDoPamieci(listaBudow) {
+    return (Array.isArray(listaBudow) ? listaBudow : []).map(
+      skopiujBudoweDoPamieci
+    );
+  }
+
+  function utworzDanePlanuDoZapisu() {
+    return {
+      wersjaStanuAplikacji: 1,
+      nazwaPliku: stanImportu.nazwaPliku || null,
+      separator: stanImportu.separator || null,
+      ostrzezeniaImportu: Array.isArray(stanImportu.ostrzezenia)
+        ? stanImportu.ostrzezenia.slice()
+        : [],
+      budowyZImportu: skopiujListeBudowDoPamieci(stanImportu.budowy),
+      budowyReczne: skopiujListeBudowDoPamieci(budowyReczne),
+      parametry: aplikacja.interfejs.pobierzWartosciParametrowDoZapisu(),
+      czyHarmonogramPrzeliczony: czyOstatniPlanPrzeliczony
+    };
+  }
+
+  function czyPlanZawieraBudowy(danePlanu) {
+    return Boolean(
+      danePlanu &&
+      ((Array.isArray(danePlanu.budowyZImportu) && danePlanu.budowyZImportu.length) ||
+        (Array.isArray(danePlanu.budowyReczne) && danePlanu.budowyReczne.length))
+    );
+  }
+
+  function pobierzHistorieIOdswiezStan(wynikOstatniejOperacji) {
+    const historia = aplikacja.pamiecPlanu.pobierzHistoriePlanow();
+    const wynikPamieci = wynikOstatniejOperacji || historia;
+
+    aplikacja.interfejs.pokazStanPamieciPlanu(
+      wynikPamieci,
+      historia.liczbaZapisow
+    );
+    return historia;
+  }
+
+  function zapiszBiezacyPlan() {
+    const wynikZapisu = aplikacja.pamiecPlanu.zapiszPlan(
+      utworzDanePlanuDoZapisu()
+    );
+
+    pobierzHistorieIOdswiezStan(wynikZapisu);
+
+    if (wynikZapisu.status === "blad-zapisu") {
+      zapiszZdarzenieDiagnostyczne(
+        "ostrzezenie",
+        "blad-automatycznego-zapisu-planu",
+        "Nie udało się automatycznie zapisać bieżącego planu."
+      );
+    }
+
+    return wynikZapisu;
+  }
+
+  function oznaczPlanJakoNieprzeliczony(czyOdswiezycWidok) {
+    czyOstatniPlanPrzeliczony = false;
+
+    if (czyOdswiezycWidok) {
+      aplikacja.interfejs.oznaczWynikJakoNieaktualny();
+    }
+
+    return zapiszBiezacyPlan();
+  }
+
   function pobierzAktualnaListeBudow() {
     return aplikacja.budowy.utworzListeRobocza(stanImportu.budowy, budowyReczne);
   }
@@ -46,6 +149,7 @@
       }
 
       aplikacja.budowy.zmienCzasRoboczyBudowy(budowa, nazwaPola, wartosc);
+      oznaczPlanJakoNieprzeliczony(true);
       zapiszZdarzenieDiagnostyczne(
         "informacja",
         "zmiana-czasow-budowy",
@@ -65,7 +169,9 @@
     }
   }
 
-  function obsluzPrzeliczenie() {
+  function wykonajPrzeliczenie(opcje) {
+    const ustawieniaPrzeliczenia = opcje || {};
+
     if (czyTrwaPrzeliczanie) {
       zapiszZdarzenieDiagnostyczne(
         "ostrzezenie",
@@ -86,6 +192,7 @@
     );
 
     try {
+      czyOstatniPlanPrzeliczony = false;
       const parametry = aplikacja.interfejs.pobierzParametryZFormularza();
       const wynik = aplikacja.harmonogram.przeliczCalyHarmonogram({
         parametry: parametry,
@@ -93,7 +200,21 @@
         budowyReczne: budowyReczne
       });
 
+      czyOstatniPlanPrzeliczony = true;
       aplikacja.interfejs.pokazWynik(wynik);
+      const danePlanu = utworzDanePlanuDoZapisu();
+      let wynikZapisu = null;
+      let wynikHistorii = null;
+
+      if (ustawieniaPrzeliczenia.czyZapisacBiezacy !== false) {
+        wynikZapisu = aplikacja.pamiecPlanu.zapiszPlan(danePlanu);
+      }
+
+      if (ustawieniaPrzeliczenia.czyDodacDoHistorii !== false) {
+        wynikHistorii = aplikacja.pamiecPlanu.zapiszPlanHistoryczny(danePlanu);
+      }
+
+      pobierzHistorieIOdswiezStan(wynikZapisu || wynikHistorii);
       zapiszZdarzenieDiagnostyczne(
         "informacja",
         "zakonczenie-przeliczania",
@@ -102,11 +223,19 @@
           czasTrwaniaMs: Date.now() - czasRozpoczecia,
           liczbaBudow: wynik.budowy.length,
           liczbaKursow: wynik.kursy.length,
-          liczbaKonfliktow: wynik.konflikty.length
+          liczbaKonfliktow: wynik.konflikty.length,
+          statusZapisuPlanu: wynikZapisu ? wynikZapisu.status : "bez-zapisu",
+          statusHistorii: wynikHistorii ? wynikHistorii.status : "bez-nowego-zapisu"
         }
       );
     } catch (blad) {
+      czyOstatniPlanPrzeliczony = false;
       aplikacja.interfejs.pokazBlad(blad);
+
+      if (ustawieniaPrzeliczenia.czyZapisacBiezacy !== false) {
+        zapiszBiezacyPlan();
+      }
+
       zapiszBladDiagnostyczny(
         blad,
         "blad-przeliczania",
@@ -117,6 +246,13 @@
       czyTrwaPrzeliczanie = false;
       aplikacja.interfejs.zakonczPrzeliczenie();
     }
+  }
+
+  function obsluzPrzeliczenie() {
+    wykonajPrzeliczenie({
+      czyZapisacBiezacy: true,
+      czyDodacDoHistorii: true
+    });
   }
 
   function obsluzImportPliku(plik) {
@@ -167,6 +303,8 @@
       stanImportu = nowyStanImportu;
       const listaBudow = pobierzAktualnaListeBudow();
       aplikacja.interfejs.pokazUdanyImport(stanImportu, listaBudow);
+      czyOstatniPlanPrzeliczony = false;
+      zapiszBiezacyPlan();
       zapiszZdarzenieDiagnostyczne(
         stanImportu.ostrzezenia.length ? "ostrzezenie" : "informacja",
         "zakonczenie-importu",
@@ -210,6 +348,8 @@
       );
       budowyReczne = budowyReczne.concat([budowaReczna]);
       aplikacja.interfejs.pokazDodanaBudowe(budowaReczna, pobierzAktualnaListeBudow());
+      czyOstatniPlanPrzeliczony = false;
+      zapiszBiezacyPlan();
       zapiszZdarzenieDiagnostyczne(
         "informacja",
         "dodanie-budowy-recznej",
@@ -228,6 +368,192 @@
     }
   }
 
+  function obsluzZmianeParametrow() {
+    oznaczPlanJakoNieprzeliczony(true);
+    zapiszZdarzenieDiagnostyczne(
+      "informacja",
+      "zmiana-parametrow-planu",
+      "Zmieniono parametry planu."
+    );
+  }
+
+  function utworzStanImportuZPamieci(danePlanu) {
+    return {
+      nazwaPliku: danePlanu.nazwaPliku || null,
+      separator: danePlanu.separator || null,
+      wierszeZrodlowe: [],
+      budowy: skopiujListeBudowDoPamieci(danePlanu.budowyZImportu),
+      ostrzezenia: Array.isArray(danePlanu.ostrzezeniaImportu)
+        ? danePlanu.ostrzezeniaImportu.slice()
+        : []
+    };
+  }
+
+  function przywrocDanePlanu(danePlanu, czyPrzeliczycPonownie) {
+    if (!danePlanu || typeof danePlanu !== "object" || Array.isArray(danePlanu)) {
+      throw new Error("Zapisany plan nie zawiera poprawnego stanu aplikacji.");
+    }
+
+    numerOstatniegoImportu += 1;
+    stanImportu = utworzStanImportuZPamieci(danePlanu);
+    budowyReczne = skopiujListeBudowDoPamieci(danePlanu.budowyReczne);
+    czyOstatniPlanPrzeliczony = Boolean(danePlanu.czyHarmonogramPrzeliczony);
+
+    aplikacja.interfejs.pokazPrzywroconyPlan(
+      stanImportu,
+      pobierzAktualnaListeBudow(),
+      danePlanu.parametry || {},
+      czyOstatniPlanPrzeliczony
+    );
+
+    if (czyPrzeliczycPonownie && czyOstatniPlanPrzeliczony) {
+      wykonajPrzeliczenie({
+        czyZapisacBiezacy: false,
+        czyDodacDoHistorii: false
+      });
+    }
+  }
+
+  function obsluzWczytanieZapisuHistorycznego(idZapisu) {
+    const wynikOdczytu = aplikacja.pamiecPlanu.odczytajPlanHistoryczny(idZapisu);
+
+    if (!wynikOdczytu.danePlanu) {
+      zapiszZdarzenieDiagnostyczne(
+        "ostrzezenie",
+        "brak-zapisu-historycznego",
+        "Nie udało się odczytać wybranego zapisu historycznego.",
+        { idZapisu: idZapisu, status: wynikOdczytu.status }
+      );
+      return;
+    }
+
+    const czyPotwierdzono = typeof zakresGlobalny.confirm === "function" &&
+      zakresGlobalny.confirm(
+        "Wczytać wybrany zapis historyczny? Bieżący plan zostanie wcześniej " +
+        "zabezpieczony, jeżeli różni się od wybranej wersji."
+      );
+
+    if (!czyPotwierdzono) {
+      return;
+    }
+
+    try {
+      const biezacyPlan = utworzDanePlanuDoZapisu();
+      const czyBiezacyJestInny =
+        JSON.stringify(biezacyPlan) !== JSON.stringify(wynikOdczytu.danePlanu);
+
+      if (czyPlanZawieraBudowy(biezacyPlan) && czyBiezacyJestInny) {
+        aplikacja.pamiecPlanu.zapiszPlanHistoryczny(biezacyPlan);
+      }
+
+      przywrocDanePlanu(wynikOdczytu.danePlanu, false);
+      const wynikZapisu = aplikacja.pamiecPlanu.zapiszPlan(
+        utworzDanePlanuDoZapisu()
+      );
+      aplikacja.interfejs.zamknijOknoHistorii();
+      pobierzHistorieIOdswiezStan(wynikZapisu);
+
+      if (czyOstatniPlanPrzeliczony) {
+        wykonajPrzeliczenie({
+          czyZapisacBiezacy: false,
+          czyDodacDoHistorii: false
+        });
+      }
+
+      zapiszZdarzenieDiagnostyczne(
+        "informacja",
+        "wczytanie-zapisu-historycznego",
+        "Wczytano historyczny zapis planu.",
+        { idZapisu: idZapisu, zapisano: wynikOdczytu.zapisano }
+      );
+    } catch (blad) {
+      aplikacja.interfejs.pokazBlad(blad);
+      zapiszBladDiagnostyczny(
+        blad,
+        "blad-wczytania-historii",
+        "Nie udało się przywrócić historycznego planu."
+      );
+    }
+  }
+
+  function obsluzOtwarcieHistorii() {
+    const historia = aplikacja.pamiecPlanu.pobierzHistoriePlanow();
+
+    aplikacja.interfejs.pokazHistoriePlanow(
+      historia.zapisy,
+      obsluzWczytanieZapisuHistorycznego
+    );
+    aplikacja.interfejs.pokazStanPamieciPlanu(historia, historia.liczbaZapisow);
+  }
+
+  function obsluzWyczyszczeniePlanu() {
+    const czyPotwierdzono = typeof zakresGlobalny.confirm === "function" &&
+      zakresGlobalny.confirm(
+        "Wyczyścić bieżący plan dnia? Historia zapisów i diagnostyka pozostaną."
+      );
+
+    if (!czyPotwierdzono) {
+      return;
+    }
+
+    numerOstatniegoImportu += 1;
+    stanImportu = aplikacja.importCsv.utworzPustyStanImportu();
+    budowyReczne = [];
+    czyOstatniPlanPrzeliczony = false;
+
+    const wynikUsuniecia = aplikacja.pamiecPlanu.usunBiezacyPlan();
+    aplikacja.interfejs.wyczyscPlan(aplikacja.konfiguracja.parametryDomyslne);
+    pobierzHistorieIOdswiezStan(wynikUsuniecia);
+    zapiszZdarzenieDiagnostyczne(
+      "informacja",
+      "wyczyszczenie-planu-dnia",
+      "Wyczyszczono bieżący plan dnia bez usuwania historii i diagnostyki."
+    );
+  }
+
+  function uruchomIOdtworzPamiecPlanu() {
+    const stanPamieci = aplikacja.pamiecPlanu.uruchomPamiecPlanu();
+    const historia = pobierzHistorieIOdswiezStan(stanPamieci);
+    const zapisanyPlan = aplikacja.pamiecPlanu.odczytajPlan();
+
+    if (zapisanyPlan.status !== "odczytano") {
+      if (zapisanyPlan.status !== "brak-zapisu") {
+        zapiszZdarzenieDiagnostyczne(
+          "ostrzezenie",
+          "pominiety-zapis-planu",
+          "Nie przywrócono bieżącego planu z pamięci.",
+          { status: zapisanyPlan.status }
+        );
+      }
+
+      aplikacja.interfejs.pokazStanPamieciPlanu(
+        zapisanyPlan.status === "brak-zapisu" ? stanPamieci : zapisanyPlan,
+        historia.liczbaZapisow
+      );
+      return;
+    }
+
+    try {
+      przywrocDanePlanu(zapisanyPlan.danePlanu, true);
+      zapiszZdarzenieDiagnostyczne(
+        "informacja",
+        "odtworzenie-planu-po-uruchomieniu",
+        "Przywrócono bieżący plan z pamięci przeglądarki.",
+        {
+          zapisano: zapisanyPlan.zapisano,
+          czyHarmonogramPrzeliczony: czyOstatniPlanPrzeliczony
+        }
+      );
+    } catch (blad) {
+      aplikacja.pamiecPlanu.usunBiezacyPlan();
+      zapiszBladDiagnostyczny(
+        blad,
+        "blad-odtworzenia-planu",
+        "Zapisany plan został pominięty, ponieważ nie można go odtworzyć."
+      );
+    }
+  }
+
   function uruchomAplikacje() {
     try {
       aplikacja.interfejs.uruchomInterfejs(
@@ -235,8 +561,12 @@
         obsluzPrzeliczenie,
         obsluzImportPliku,
         obsluzDodanieBudowyRecznej,
-        obsluzZmianeCzasowBudowy
+        obsluzZmianeCzasowBudowy,
+        obsluzZmianeParametrow,
+        obsluzWyczyszczeniePlanu,
+        obsluzOtwarcieHistorii
       );
+      uruchomIOdtworzPamiecPlanu();
       zapiszZdarzenieDiagnostyczne(
         "informacja",
         "interfejs-gotowy",

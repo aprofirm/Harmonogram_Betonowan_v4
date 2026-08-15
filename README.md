@@ -81,6 +81,22 @@ Sekcja **Diagnostyka programu** pozwala:
 
 Logi są przechowywane wyłącznie lokalnie w pamięci przeglądarki i nie są nigdzie wysyłane. Raport nie zawiera treści wierszy CSV ani nazw firm i budów. Jeżeli przeglądarka blokuje trwałą pamięć dla lokalnego `index.html`, aplikacja przechowuje logi do czasu zamknięcia strony i pokazuje tę informację w sekcji diagnostyki.
 
+## Pamięć planu dnia
+
+Aplikacja automatycznie zachowuje bieżący plan w pamięci danej przeglądarki.
+Po odświeżeniu przywraca budowy, parametry i ręczne czasy, a wcześniej
+przeliczony harmonogram oblicza ponownie.
+
+Historia przechowuje maksymalnie 100 różnych przeliczeń z datą i godziną.
+Identyczne kolejne przeliczenie nie tworzy duplikatu, a po osiągnięciu limitu
+najstarszy wpis jest nadpisywany. Dodatkowy limit bezpieczeństwa historii wynosi
+3 MB. Na dole lewego panelu znajduje się przycisk **Wczytaj zapis historyczny**.
+
+Czerwony przycisk **Wyczyść plan dnia** usuwa wyłącznie bieżący plan po
+potwierdzeniu. Nie usuwa zapisów historycznych ani diagnostyki. Dane pozostają
+lokalne — aplikacja nie zapisuje w pamięci surowych wierszy CSV i nie wysyła
+planu do internetu.
+
 ## Logo aplikacji
 
 Plik `logo.png` jest oficjalnym źródłem znaku aplikacji: pomarańczowo-granatowej betonomieszarki na tle zegara. Logo jest wyświetlane u góry strony, na środku nad nazwą programu, i działa również po lokalnym otwarciu `index.html`.
@@ -107,9 +123,10 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_3a.test.js
     node testy/etap_3b_1.test.js
     node testy/pamiec_planu.test.js
+    node testy/pamiec_aplikacji.test.js
 
 Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
 ## Aktualny stan
 
-**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów** oraz krok **3B.1 — podstawowe czasy kursów** są zakończone i sprawdzone automatycznie oraz przez operatora. Przed 3B.2 realizujemy zatwierdzony krok przekrojowy **KP-1 — pamięć planu dnia**. Podetapy **KP-1.1 — plan i decyzje** oraz **KP-1.2 — wersjonowany moduł pamięci planu** są zakończone. Następny jest **KP-1.3 — automatyczny zapis zmian**. Po zamknięciu całego KP-1 wracamy do **3B.2 — rytm dostaw**; punkt 3C nadal pozostaje zablokowany.
+**Etap 3 — podstawowy silnik gruszek** jest w toku. Punkt **3A — generowanie kursów** oraz krok **3B.1 — podstawowe czasy kursów** są zakończone i sprawdzone automatycznie oraz przez operatora. Przed 3B.2 realizujemy zatwierdzony krok przekrojowy **KP-1 — pamięć planu dnia**. Podetapy **KP-1.1–KP-1.8** są zakończone, a pełna regresja ośmiu zestawów testów przechodzi. Następny jest **KP-1.9 — test operatora i zamknięcie**. Po zamknięciu całego KP-1 wracamy do **3B.2 — rytm dostaw**; punkt 3C nadal pozostaje zablokowany.

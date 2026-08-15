@@ -1172,14 +1172,31 @@ Obowiązują następujące zasady:
   zapisanemu wynikowi;
 - zapis ma numer wersji, aby przyszłe zmiany formatu można było obsłużyć
   świadomie;
+- pamięć składa się z jednego bieżącego zapisu roboczego oraz osobnej historii
+  skutecznie przeliczonych harmonogramów;
+- bieżący zapis roboczy jest nadpisywany po imporcie, dodaniu budowy ręcznej,
+  zmianie parametrów albo czasów i po przeliczeniu;
+- historia zachowuje maksymalnie 100 różnych zapisów; identyczne ponowne
+  przeliczenie nie tworzy duplikatu;
+- każdy zapis historyczny zawiera dokładną datę i godzinę, nazwę źródłowego
+  pliku, liczbę budów oraz informację, czy plan był przeliczony;
+- po przekroczeniu 100 pozycji najstarszy zapis zostaje nadpisany;
+- historia ma dodatkowy limit bezpieczeństwa 3 MB; jeżeli jest on osiągnięty,
+  w pierwszej kolejności zwalniane jest miejsce zajmowane przez najstarsze
+  zapisy;
 - brak, uszkodzenie albo niezgodna wersja zapisu nie mogą zablokować
   uruchomienia aplikacji;
 - jeżeli przeglądarka blokuje trwałą pamięć, program nadal działa w bieżącej
   sesji i pokazuje operatorowi czytelną informację;
 - bezpośrednio pod przyciskiem **Przelicz harmonogram** ma znajdować się czerwony
   przycisk **Wyczyść plan dnia**;
+- na dole panelu ma znajdować się przycisk **Wczytaj zapis historyczny** z
+  liczbą dostępnych zapisów; lista jest pokazywana od najnowszego do najstarszego;
+- wczytanie historycznego planu wymaga potwierdzenia, a różniący się bieżący
+  plan jest wcześniej zabezpieczany w historii;
 - wyczyszczenie wymaga potwierdzenia i usuwa budowy, ustawienia robocze oraz
   wynik harmonogramu, przywracając wartości domyślne;
+- przycisk **Wyczyść plan dnia** nie usuwa historii zapisów;
 - przycisk **Wyczyść plan dnia** nie usuwa logów diagnostycznych, ponieważ służy
   do tego osobna funkcja **Wyczyść logi**.
 

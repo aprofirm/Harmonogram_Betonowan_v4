@@ -40,6 +40,10 @@
             <span aria-hidden="true">→</span>
           </button>
 
+          <button id="przycisk-wyczysc-plan" class="przycisk-niebezpieczny" type="button">
+            Wyczyść plan dnia
+          </button>
+
           <div class="panel__naglowek">
             <div>
               <p class="etykieta-sekcji">USTAWIENIA</p>
@@ -169,6 +173,18 @@
               </p>
             </div>
           </details>
+
+          <section class="historia-planu" aria-labelledby="tytul-historii-planu">
+            <p class="etykieta-sekcji">PAMIĘĆ PLANU</p>
+            <h3 id="tytul-historii-planu">Zapisy historyczne</h3>
+            <button id="przycisk-historia-planow" class="przycisk-historii" type="button">
+              <span>Wczytaj zapis historyczny</span>
+              <span id="liczba-zapisow-historycznych" class="licznik-historii">0</span>
+            </button>
+            <p id="stan-pamieci-planu" class="historia-planu__stan" aria-live="polite">
+              Przygotowywanie pamięci planu…
+            </p>
+          </section>
         </aside>
 
         <section class="obszar-roboczy" aria-labelledby="tytul-harmonogramu">
@@ -271,6 +287,35 @@
           </div>
         </section>
       </main>
+
+      <div id="okno-historii-planow" class="okno-historii" hidden>
+        <section
+          class="okno-historii__panel"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="tytul-okna-historii"
+        >
+          <div class="okno-historii__naglowek">
+            <div>
+              <p class="etykieta-sekcji">PAMIĘĆ PLANU</p>
+              <h2 id="tytul-okna-historii">Wczytaj zapis historyczny</h2>
+            </div>
+            <button
+              id="przycisk-zamknij-historie"
+              class="przycisk-zamknij"
+              type="button"
+              aria-label="Zamknij historię zapisów"
+            >
+              ×
+            </button>
+          </div>
+          <p class="okno-historii__opis">
+            Zapisy są ułożone od najnowszego. Wczytanie wybranej wersji wymaga
+            potwierdzenia i nie usuwa pozostałej historii.
+          </p>
+          <div id="lista-zapisow-historycznych" class="lista-historii"></div>
+        </section>
+      </div>
 
       <footer class="stopka">
         <span>Harmonogram Betonowań v4</span>

@@ -6,6 +6,8 @@
 
   let elementy = null;
   let obslugaZmianyCzasowBudowy = function () {};
+  let obslugaZmianyParametrowAplikacji = function () {};
+  let parametryDomyslneInterfejsu = {};
 
   function pobierzWymaganyElement(identyfikator) {
     const znalezionyElement = document.getElementById(identyfikator);
@@ -25,6 +27,7 @@
       czasRozladunku: pobierzWymaganyElement("czas-rozladunku"),
       maksymalneOpoznienie: pobierzWymaganyElement("maksymalne-opoznienie"),
       przyciskPrzelicz: pobierzWymaganyElement("przycisk-przelicz"),
+      przyciskWyczyscPlan: pobierzWymaganyElement("przycisk-wyczysc-plan"),
       sekcjaStatusu: pobierzWymaganyElement("sekcja-statusu"),
       tytulStatusu: pobierzWymaganyElement("tytul-statusu"),
       trescStatusu: pobierzWymaganyElement("tresc-statusu"),
@@ -42,7 +45,17 @@
       formularzBudowyRecznej: pobierzWymaganyElement("formularz-budowy-recznej"),
       recznaFirma: pobierzWymaganyElement("reczna-firma"),
       recznaBudowa: pobierzWymaganyElement("reczna-budowa"),
-      recznyStart: pobierzWymaganyElement("reczny-start")
+      recznyStart: pobierzWymaganyElement("reczny-start"),
+      przyciskHistoriaPlanow: pobierzWymaganyElement("przycisk-historia-planow"),
+      liczbaZapisowHistorycznych: pobierzWymaganyElement(
+        "liczba-zapisow-historycznych"
+      ),
+      stanPamieciPlanu: pobierzWymaganyElement("stan-pamieci-planu"),
+      oknoHistoriiPlanow: pobierzWymaganyElement("okno-historii-planow"),
+      przyciskZamknijHistorie: pobierzWymaganyElement("przycisk-zamknij-historie"),
+      listaZapisowHistorycznych: pobierzWymaganyElement(
+        "lista-zapisow-historycznych"
+      )
     };
   }
 
@@ -53,6 +66,49 @@
     elementy.czasRozladunku.value = String(parametryDomyslne.czasRozladunkuMinuty);
     elementy.maksymalneOpoznienie.value = String(
       parametryDomyslne.maksymalneOpoznienieStartuMinuty
+    );
+  }
+
+  function pobierzWartosciParametrowDoZapisu() {
+    return {
+      poczatekDnia: elementy.poczatekDnia.value,
+      pojemnoscGruszkiM3: elementy.pojemnoscGruszki.value,
+      czasZaladunkuMinuty: elementy.czasZaladunku.value,
+      czasRozladunkuMinuty: elementy.czasRozladunku.value,
+      maksymalneOpoznienieStartuMinuty: elementy.maksymalneOpoznienie.value
+    };
+  }
+
+  function pobierzWartoscLubDomyslna(parametry, nazwaPola) {
+    if (parametry && Object.prototype.hasOwnProperty.call(parametry, nazwaPola)) {
+      return parametry[nazwaPola];
+    }
+
+    return parametryDomyslneInterfejsu[nazwaPola];
+  }
+
+  function formatujWartoscPola(wartosc) {
+    return wartosc === null || wartosc === undefined ? "" : String(wartosc);
+  }
+
+  function ustawParametryZPamieci(parametry) {
+    elementy.poczatekDnia.value = formatujWartoscPola(
+      pobierzWartoscLubDomyslna(parametry, "poczatekDnia")
+    );
+    elementy.pojemnoscGruszki.value = formatujWartoscPola(
+      pobierzWartoscLubDomyslna(parametry, "pojemnoscGruszkiM3")
+    );
+    elementy.czasZaladunku.value = formatujWartoscPola(
+      pobierzWartoscLubDomyslna(parametry, "czasZaladunkuMinuty")
+    );
+    elementy.czasRozladunku.value = formatujWartoscPola(
+      pobierzWartoscLubDomyslna(parametry, "czasRozladunkuMinuty")
+    );
+    elementy.maksymalneOpoznienie.value = formatujWartoscPola(
+      pobierzWartoscLubDomyslna(
+        parametry,
+        "maksymalneOpoznienieStartuMinuty"
+      )
     );
   }
 
@@ -420,6 +476,68 @@
     ustawStatus("sukces", "Przeliczenie zakończone", wynik.komunikaty[0]);
   }
 
+  function wyczyscWidokWyniku() {
+    pokazListeKursow([], []);
+    elementy.liczbaKursow.textContent = "0";
+    elementy.liczbaKonfliktow.textContent = "0";
+  }
+
+  function oznaczWynikJakoNieaktualny() {
+    wyczyscWidokWyniku();
+    ustawStatus(
+      "ostrzezenie",
+      "Dane planu zostały zmienione",
+      "Wybierz „Przelicz harmonogram”, aby przygotować aktualny wynik."
+    );
+  }
+
+  function pokazPrzywroconyPlan(stanImportu, listaBudow, parametry, czyPrzeliczony) {
+    const liczbaZPliku = Array.isArray(stanImportu.budowy)
+      ? stanImportu.budowy.length
+      : 0;
+
+    ustawParametryZPamieci(parametry);
+    pokazListeBudow(listaBudow);
+    wyczyscWidokWyniku();
+
+    if (stanImportu.nazwaPliku) {
+      elementy.informacjaOImporcie.dataset.rodzaj = "sukces";
+      elementy.nazwaPlikuCsv.textContent = stanImportu.nazwaPliku;
+      elementy.szczegolyPlikuCsv.textContent =
+        "Przywrócono " + liczbaZPliku +
+        (liczbaZPliku === 1 ? " budowę z pamięci." : " budów z pamięci.");
+    } else {
+      elementy.informacjaOImporcie.dataset.rodzaj = "brak";
+      elementy.nazwaPlikuCsv.textContent = "Nie wczytano pliku";
+      elementy.szczegolyPlikuCsv.textContent = listaBudow.length
+        ? "Przywrócono budowy dodane ręcznie."
+        : "Lista budów jest pusta.";
+    }
+
+    ustawStatus(
+      czyPrzeliczony ? "praca" : "sukces",
+      "Przywrócono zapisany plan",
+      czyPrzeliczony
+        ? "Program ponownie oblicza zapisany harmonogram."
+        : "Plan nie był wcześniej przeliczony. Możesz kontynuować uzupełnianie danych."
+    );
+  }
+
+  function wyczyscPlan(parametryDomyslne) {
+    ustawParametryDomyslne(parametryDomyslne);
+    elementy.formularzBudowyRecznej.reset();
+    elementy.informacjaOImporcie.dataset.rodzaj = "brak";
+    elementy.nazwaPlikuCsv.textContent = "Nie wczytano pliku";
+    elementy.szczegolyPlikuCsv.textContent = "Lista budów jest pusta.";
+    pokazListeBudow([]);
+    wyczyscWidokWyniku();
+    ustawStatus(
+      "gotowosc",
+      "Plan dnia został wyczyszczony",
+      "Historia zapisów i diagnostyka pozostały bez zmian."
+    );
+  }
+
   function pokazBlad(blad) {
     const trescBledu = blad instanceof Error ? blad.message : "Wystąpił nieznany błąd.";
     ustawStatus("blad", "Nie można przeliczyć harmonogramu", trescBledu);
@@ -510,6 +628,113 @@
     elementy.polePlikuCsv.value = "";
   }
 
+  function ustawLiczbeZapisowHistorycznych(liczbaZapisow) {
+    const liczba = Number.isFinite(Number(liczbaZapisow))
+      ? Number(liczbaZapisow)
+      : 0;
+
+    elementy.liczbaZapisowHistorycznych.textContent = String(liczba);
+    elementy.przyciskHistoriaPlanow.disabled = liczba === 0;
+  }
+
+  function pokazStanPamieciPlanu(wynikPamieci, liczbaZapisow) {
+    const wynik = wynikPamieci || {};
+    const liczba = Number.isFinite(Number(liczbaZapisow))
+      ? Number(liczbaZapisow)
+      : 0;
+
+    ustawLiczbeZapisowHistorycznych(liczba);
+
+    if (wynik.trybPamieci === "trwala") {
+      elementy.stanPamieciPlanu.textContent =
+        "Plan jest zapisywany w tej przeglądarce. Historia: " +
+        liczba + "/100.";
+      return;
+    }
+
+    elementy.stanPamieciPlanu.textContent =
+      "Zapis trwały jest niedostępny. Dane pozostaną tylko do zamknięcia strony.";
+  }
+
+  function formatujDateZapisu(znacznikCzasu) {
+    const data = new Date(znacznikCzasu);
+
+    if (Number.isNaN(data.getTime())) {
+      return "Nieznana data zapisu";
+    }
+
+    return data.toLocaleString("pl-PL", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    });
+  }
+
+  function zamknijOknoHistorii() {
+    elementy.oknoHistoriiPlanow.hidden = true;
+  }
+
+  function otworzOknoHistorii() {
+    elementy.oknoHistoriiPlanow.hidden = false;
+  }
+
+  function utworzPustyOpisHistorii() {
+    const opis = document.createElement("p");
+    opis.className = "pusta-historia";
+    opis.textContent = "Nie ma jeszcze żadnych historycznych przeliczeń.";
+    return opis;
+  }
+
+  function utworzWpisHistorii(zapis, obslugaWczytania) {
+    const wpis = document.createElement("article");
+    const opis = document.createElement("div");
+    const dataZapisu = document.createElement("strong");
+    const szczegoly = document.createElement("p");
+    const przyciskWczytaj = document.createElement("button");
+    const podsumowanie = zapis.podsumowanie || {};
+    const liczbaBudow = Number(podsumowanie.liczbaBudow) || 0;
+
+    wpis.className = "wpis-historii";
+    dataZapisu.className = "wpis-historii__data";
+    dataZapisu.textContent = formatujDateZapisu(zapis.zapisano);
+    szczegoly.className = "wpis-historii__opis";
+    szczegoly.textContent =
+      (podsumowanie.nazwaPliku || "Plan bez pliku CSV") + " · " +
+      liczbaBudow + (liczbaBudow === 1 ? " budowa" : " budów");
+    przyciskWczytaj.className = "przycisk-wczytaj-zapis";
+    przyciskWczytaj.type = "button";
+    przyciskWczytaj.textContent = "Wczytaj";
+    przyciskWczytaj.addEventListener("click", function () {
+      obslugaWczytania(zapis.idZapisu);
+    });
+
+    opis.appendChild(dataZapisu);
+    opis.appendChild(szczegoly);
+    wpis.appendChild(opis);
+    wpis.appendChild(przyciskWczytaj);
+    return wpis;
+  }
+
+  function pokazHistoriePlanow(zapisy, obslugaWczytania) {
+    const lista = Array.isArray(zapisy) ? zapisy : [];
+    const fragment = document.createDocumentFragment();
+
+    if (!lista.length) {
+      fragment.appendChild(utworzPustyOpisHistorii());
+    } else {
+      lista.forEach(function (zapis) {
+        fragment.appendChild(utworzWpisHistorii(zapis, obslugaWczytania));
+      });
+    }
+
+    elementy.listaZapisowHistorycznych.replaceChildren(fragment);
+    ustawLiczbeZapisowHistorycznych(lista.length);
+    otworzOknoHistorii();
+  }
+
   function pobierzDaneBudowyRecznej() {
     return {
       firma: elementy.recznaFirma.value,
@@ -565,28 +790,83 @@
     });
   }
 
+  function podlaczZmianyParametrow() {
+    [
+      elementy.poczatekDnia,
+      elementy.pojemnoscGruszki,
+      elementy.czasZaladunku,
+      elementy.czasRozladunku,
+      elementy.maksymalneOpoznienie
+    ].forEach(function (pole) {
+      pole.addEventListener("change", function () {
+        obslugaZmianyParametrowAplikacji(pobierzWartosciParametrowDoZapisu());
+      });
+    });
+  }
+
+  function podlaczPamiecPlanu(obslugaWyczyszczenia, obslugaOtwarciaHistorii) {
+    elementy.przyciskWyczyscPlan.addEventListener("click", obslugaWyczyszczenia);
+    elementy.przyciskHistoriaPlanow.addEventListener("click", obslugaOtwarciaHistorii);
+    elementy.przyciskZamknijHistorie.addEventListener("click", zamknijOknoHistorii);
+    elementy.oknoHistoriiPlanow.addEventListener("click", function (zdarzenie) {
+      if (zdarzenie.target === elementy.oknoHistoriiPlanow) {
+        zamknijOknoHistorii();
+      }
+    });
+
+    if (typeof zakresGlobalny.addEventListener === "function") {
+      zakresGlobalny.addEventListener("keydown", function (zdarzenie) {
+        if (zdarzenie.key === "Escape" && !elementy.oknoHistoriiPlanow.hidden) {
+          zamknijOknoHistorii();
+        }
+      });
+    }
+  }
+
   function uruchomInterfejs(
     parametryDomyslne,
     obslugaPrzeliczenia,
     obslugaImportu,
     obslugaDodaniaBudowy,
-    obslugaZmianyCzasow
+    obslugaZmianyCzasow,
+    obslugaZmianyParametrow,
+    obslugaWyczyszczeniaPlanu,
+    obslugaOtwarciaHistorii
   ) {
     znajdzElementyInterfejsu();
+    parametryDomyslneInterfejsu = Object.assign({}, parametryDomyslne);
     obslugaZmianyCzasowBudowy = typeof obslugaZmianyCzasow === "function"
       ? obslugaZmianyCzasow
       : function () {};
+    obslugaZmianyParametrowAplikacji =
+      typeof obslugaZmianyParametrow === "function"
+        ? obslugaZmianyParametrow
+        : function () {};
     ustawParametryDomyslne(parametryDomyslne);
     elementy.przyciskPrzelicz.addEventListener("click", obslugaPrzeliczenia);
     podlaczImportPliku(obslugaImportu);
     podlaczBudoweReczna(obslugaDodaniaBudowy);
+    podlaczZmianyParametrow();
+    podlaczPamiecPlanu(
+      typeof obslugaWyczyszczeniaPlanu === "function"
+        ? obslugaWyczyszczeniaPlanu
+        : function () {},
+      typeof obslugaOtwarciaHistorii === "function"
+        ? obslugaOtwarciaHistorii
+        : function () {}
+    );
   }
 
   aplikacja.interfejs = {
     uruchomInterfejs: uruchomInterfejs,
     pobierzParametryZFormularza: pobierzParametryZFormularza,
+    pobierzWartosciParametrowDoZapisu: pobierzWartosciParametrowDoZapisu,
+    ustawParametryZPamieci: ustawParametryZPamieci,
     pokazTrwajacePrzeliczenie: pokazTrwajacePrzeliczenie,
     pokazWynik: pokazWynik,
+    oznaczWynikJakoNieaktualny: oznaczWynikJakoNieaktualny,
+    pokazPrzywroconyPlan: pokazPrzywroconyPlan,
+    wyczyscPlan: wyczyscPlan,
     pokazListeBudow: pokazListeBudow,
     pokazBlad: pokazBlad,
     pokazBladDanych: pokazBladDanych,
@@ -596,6 +876,9 @@
     pokazUdanyImport: pokazUdanyImport,
     pokazBladImportu: pokazBladImportu,
     pokazDodanaBudowe: pokazDodanaBudowe,
-    wyczyscWyborPliku: wyczyscWyborPliku
+    wyczyscWyborPliku: wyczyscWyborPliku,
+    pokazStanPamieciPlanu: pokazStanPamieciPlanu,
+    pokazHistoriePlanow: pokazHistoriePlanow,
+    zamknijOknoHistorii: zamknijOknoHistorii
   };
 })(window);

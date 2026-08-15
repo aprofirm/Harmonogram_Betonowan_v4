@@ -73,26 +73,37 @@ wracamy do kroku 3B.2.
   zakresu danych oraz instrukcji testu operatorskiego.
 - [x] **KP-1.2 — moduł pamięci planu:** wersjonowany zapis i odczyt z bezpieczną
   obsługą braku, blokady albo uszkodzenia pamięci przeglądarki.
-- [ ] **KP-1.3 — automatyczny zapis zmian:** import, budowy ręczne, parametry,
-  czasy robocze i informacja o wykonanym przeliczeniu.
-- [ ] **KP-1.4 — odtworzenie po odświeżeniu:** przywrócenie danych i ponowne
-  obliczenie harmonogramu tylko wtedy, gdy był wcześniej przeliczony.
-- [ ] **KP-1.5 — bezpieczne czyszczenie:** czerwony przycisk **Wyczyść plan dnia**,
-  potwierdzenie operacji, reset planu bez usuwania diagnostyki.
-- [ ] **KP-1.6 — testy automatyczne i pełna regresja:** sprawdzenie całego KP-1
+- [x] **KP-1.3 — automatyczny zapis roboczy:** import, budowy ręczne, parametry,
+  czasy robocze i informacja o wykonanym przeliczeniu są zapisywane w jednym
+  bieżącym rekordzie bez surowych wierszy CSV.
+- [x] **KP-1.4 — historia przeliczeń:** maksymalnie 100 różnych zapisów po
+  skutecznym przeliczeniu, każdy z datą i godziną; najstarszy zapis jest
+  nadpisywany po przekroczeniu limitu, a całość ma limit bezpieczeństwa 3 MB.
+- [x] **KP-1.5 — odtworzenie po odświeżeniu:** przywrócenie bieżących danych i
+  ponowne obliczenie harmonogramu tylko wtedy, gdy był wcześniej przeliczony.
+- [x] **KP-1.6 — wczytywanie historii:** przycisk **Wczytaj zapis historyczny**
+  na dole panelu, lista od najnowszego zapisu i potwierdzenie przywrócenia.
+- [x] **KP-1.7 — bezpieczne czyszczenie:** czerwony przycisk **Wyczyść plan dnia**,
+  potwierdzenie operacji i reset bieżącego planu bez usuwania historii ani
+  diagnostyki.
+- [x] **KP-1.8 — testy automatyczne i pełna regresja:** sprawdzenie całego KP-1
   oraz wcześniejszych funkcji przed publikacją wersji do testu operatorskiego.
-- [ ] **KP-1.7 — test operatora i zamknięcie:** odświeżenie, odtworzenie,
-  anulowanie czyszczenia, potwierdzenie czyszczenia i ponowna kontrola planu.
+- [ ] **KP-1.9 — test operatora i zamknięcie:** odświeżenie, odtworzenie,
+  historia, anulowanie czyszczenia, potwierdzenie czyszczenia i ponowna kontrola
+  planu.
 
 Kryteria zamknięcia KP-1:
 
-- [ ] odświeżenie nie usuwa poprawnego planu;
-- [ ] nieprzeliczony, częściowo uzupełniony plan również jest odtwarzany;
-- [ ] wcześniej przeliczony harmonogram jest po odświeżeniu liczony ponownie;
-- [ ] uszkodzony albo niedostępny zapis nie powoduje awarii;
-- [ ] anulowanie czyszczenia nie zmienia danych;
-- [ ] potwierdzone czyszczenie usuwa plan, ale pozostawia logi diagnostyczne;
-- [ ] aplikacja nadal działa offline i przechodzi pełną regresję.
+- [x] odświeżenie nie usuwa poprawnego planu w teście automatycznym;
+- [x] nieprzeliczony, częściowo uzupełniony plan również jest odtwarzany;
+- [x] wcześniej przeliczony harmonogram jest po odświeżeniu liczony ponownie;
+- [x] uszkodzony albo niedostępny zapis nie powoduje awarii;
+- [x] historia zachowuje maksymalnie 100 różnych przeliczeń z datą i godziną;
+- [x] operator może przywrócić wybrany historyczny zapis;
+- [x] anulowanie czyszczenia nie zmienia danych;
+- [x] potwierdzone czyszczenie usuwa bieżący plan, ale pozostawia historię i
+  logi diagnostyczne;
+- [x] aplikacja nadal działa offline i przechodzi pełną regresję automatyczną.
 
 ## Stan testów po zakończeniu kroku 3B.1 — 2026-08-15
 
@@ -540,10 +551,10 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **KP-1.3 — automatyczny zapis zmian** zgodnie z zapisanym podziałem KP-1.
-Po każdym podetapie KP-1 uruchomić jego test, regresję i ponownie przejrzeć ten
-dokument. Po zamknięciu KP-1 wrócić do **3B.2 — rytm dostaw**. Punkt 3C pozostaje
-zablokowany do czasu zakończenia i przetestowania całego punktu 3B.
+Wykonać **KP-1.9 — test operatora i zamknięcie** według
+`testy/TESTY_KP_1.md`. Po pozytywnym teście zamknąć KP-1 i wrócić do
+**3B.2 — rytm dostaw**. Punkt 3C pozostaje zablokowany do czasu zakończenia i
+przetestowania całego punktu 3B.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -622,3 +633,42 @@ KP-1.2 jest zakończony. KP-1 pozostaje otwarty, a następnym podetapem jest
 KP-1.3 — podłączenie automatycznego zapisu importu, budów ręcznych, parametrów,
 czasów roboczych i informacji o wykonanym przeliczeniu. Po całkowitym zamknięciu
 KP-1 wracamy do 3B.2; punkt 3C nadal pozostaje zablokowany.
+
+## KP-1.3–KP-1.7 — zapis, historia, odtwarzanie i czyszczenie — 2026-08-15
+
+- [x] bieżący plan jest nadpisywany po imporcie, dodaniu budowy ręcznej,
+  zmianie parametrów i zmianie czasów roboczych;
+- [x] zapis nie zawiera `wierszeZrodlowe` ani pól `daneZrodlowe` z surowego CSV;
+- [x] skuteczne przeliczenie tworzy zapis historyczny z datą i godziną;
+- [x] identyczne kolejne przeliczenie nie tworzy duplikatu;
+- [x] historia przechowuje maksymalnie 100 zapisów i ma limit bezpieczeństwa
+  3 MB;
+- [x] po odświeżeniu odtwarzany jest plan roboczy, a przeliczony wynik powstaje
+  ponownie z zapisanych danych;
+- [x] przycisk na dole panelu otwiera historię od najnowszego zapisu;
+- [x] wczytanie historycznego planu wymaga potwierdzenia;
+- [x] anulowanie czyszczenia nie zmienia danych;
+- [x] potwierdzone czyszczenie usuwa tylko bieżący plan, pozostawiając historię
+  i diagnostykę;
+- [x] test modułu pamięci oraz test pełnego przepływu aplikacji przechodzą.
+
+Podetapy KP-1.3–KP-1.7 są zakończone. KP-1 pozostaje otwarty. Następny jest
+KP-1.8 — pełna regresja wszystkich zestawów testów i kontrola dokumentacji.
+
+## KP-1.8 — testy automatyczne i pełna regresja — 2026-08-15
+
+- [x] test szkieletu i działania offline Etapu 1 przechodzi;
+- [x] test importu i modelu budów Etapu 2 przechodzi;
+- [x] test zmiennych kolumn KDX przechodzi;
+- [x] test diagnostyki przechodzi;
+- [x] test generowania kursów 3A przechodzi;
+- [x] test podstawowych czasów 3B.1 przechodzi;
+- [x] test modułu pamięci, limitu 100 wpisów i ochrony historii przechodzi;
+- [x] test integracyjny automatycznego zapisu, odświeżenia, historii i
+  czyszczenia przechodzi;
+- [x] dokumentacja decyzji, instrukcja operatorska i lista etapów odpowiadają
+  wdrożonemu zachowaniu.
+
+KP-1.8 jest zakończony. KP-1 nadal pozostaje otwarty. Następny i ostatni
+podetap to KP-1.9 — test operatora na GitHub Pages. Dopiero po jego pozytywnym
+wyniku wracamy do 3B.2; punkt 3C pozostaje zablokowany.

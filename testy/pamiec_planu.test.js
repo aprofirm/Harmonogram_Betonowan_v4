@@ -8,6 +8,7 @@ const vm = require("node:vm");
 const katalogProjektu = path.resolve(__dirname, "..");
 const sciezkaModulu = "js/pamiec/pamiec_planu.js";
 const kluczPamieci = "harmonogramBetonowan.planDnia.v1";
+const kluczHistorii = "harmonogramBetonowan.historiaPlanu.v1";
 
 function utworzPamiecLokalna() {
   const dane = new Map();
@@ -92,7 +93,10 @@ function sprawdzTrwalyZapisIOdczyt() {
   assert.deepEqual(uproscDane(modulPierwszejStrony.pobierzStanPamieci()), {
     trybPamieci: "trwala",
     wersjaFormatu: 1,
-    kluczPamieci: kluczPamieci
+    kluczPamieci: kluczPamieci,
+    kluczHistorii: kluczHistorii,
+    maksymalnaLiczbaZapisowHistorycznych: 100,
+    maksymalnyRozmiarHistoriiBajty: 3 * 1024 * 1024
   });
 
   const wynikZapisu = modulPierwszejStrony.zapiszPlan(danePlanu);
@@ -168,11 +172,90 @@ function sprawdzNiepoprawneDaneDoZapisu() {
   assert.equal(modul.odczytajPlan().status, "brak-zapisu");
 }
 
+function sprawdzHistorieBezDuplikatow() {
+  const pamiecLokalna = utworzPamiecLokalna();
+  const modul = uruchomModul(pamiecLokalna, false);
+  const danePlanu = {
+    nazwaPliku: "plan-dnia.csv",
+    budowyZImportu: [{ idBudowy: "B-001" }],
+    budowyReczne: [],
+    czyHarmonogramPrzeliczony: true
+  };
+
+  const pierwszyZapis = modul.zapiszPlanHistoryczny(danePlanu);
+  const duplikat = modul.zapiszPlanHistoryczny(danePlanu);
+  const historia = modul.pobierzHistoriePlanow();
+  const odczytanyZapis = modul.odczytajPlanHistoryczny(pierwszyZapis.idZapisu);
+
+  assert.equal(pierwszyZapis.status, "zapisano-historie-trwale");
+  assert.equal(duplikat.status, "pominieto-duplikat");
+  assert.equal(historia.liczbaZapisow, 1);
+  assert.equal(historia.zapisy[0].podsumowanie.nazwaPliku, "plan-dnia.csv");
+  assert.equal(historia.zapisy[0].podsumowanie.liczbaBudow, 1);
+  assert.match(historia.zapisy[0].zapisano, /^\d{4}-\d{2}-\d{2}T/);
+  assert.equal(odczytanyZapis.status, "odczytano-zapis-historyczny");
+  assert.equal(odczytanyZapis.danePlanu.budowyZImportu[0].idBudowy, "B-001");
+}
+
+function sprawdzLimitStuZapisow() {
+  const pamiecLokalna = utworzPamiecLokalna();
+  const modul = uruchomModul(pamiecLokalna, false);
+
+  for (let numerZapisu = 0; numerZapisu < 105; numerZapisu += 1) {
+    const wynik = modul.zapiszPlanHistoryczny({
+      nazwaPliku: "plan-" + numerZapisu + ".csv",
+      numerZapisu: numerZapisu,
+      budowyZImportu: [],
+      budowyReczne: []
+    });
+    assert.match(wynik.status, /^zapisano-historie-/);
+  }
+
+  const surowaHistoria = JSON.parse(pamiecLokalna.getItem(kluczHistorii));
+
+  assert.equal(surowaHistoria.zapisy.length, 100);
+  assert.equal(surowaHistoria.zapisy[0].danePlanu.numerZapisu, 5);
+  assert.equal(surowaHistoria.zapisy[99].danePlanu.numerZapisu, 104);
+}
+
+function sprawdzCzyszczenieTylkoBiezacegoPlanu() {
+  const pamiecLokalna = utworzPamiecLokalna();
+  const modul = uruchomModul(pamiecLokalna, false);
+
+  modul.zapiszPlan({ budowyZImportu: [{ idBudowy: "B-PLAN" }] });
+  modul.zapiszPlanHistoryczny({
+    budowyZImportu: [{ idBudowy: "B-HISTORIA" }],
+    czyHarmonogramPrzeliczony: true
+  });
+  const wynikUsuniecia = modul.usunBiezacyPlan();
+
+  assert.equal(wynikUsuniecia.status, "usunieto-biezacy-plan");
+  assert.equal(modul.odczytajPlan().status, "brak-zapisu");
+  assert.equal(modul.pobierzHistoriePlanow().liczbaZapisow, 1);
+  assert.notEqual(pamiecLokalna.getItem(kluczHistorii), null);
+}
+
+function sprawdzUszkodzonaHistorie() {
+  const pamiecLokalna = utworzPamiecLokalna();
+  pamiecLokalna.ustawSurowaWartosc(kluczHistorii, "{niepoprawna-historia");
+
+  const modul = uruchomModul(pamiecLokalna, false);
+  const wynik = modul.pobierzHistoriePlanow();
+
+  assert.equal(wynik.status, "uszkodzona-historia");
+  assert.equal(wynik.liczbaZapisow, 0);
+  assert.equal(pamiecLokalna.getItem(kluczHistorii), null);
+}
+
 sprawdzTrwalyZapisIOdczyt();
 sprawdzBrakIUszkodzenieZapisu();
 sprawdzNiezgodnaWersje();
 sprawdzPamiecBiezacejSesji();
 sprawdzAwaryjnyTrybPoBledzieZapisu();
 sprawdzNiepoprawneDaneDoZapisu();
+sprawdzHistorieBezDuplikatow();
+sprawdzLimitStuZapisow();
+sprawdzCzyszczenieTylkoBiezacegoPlanu();
+sprawdzUszkodzonaHistorie();
 
-console.log("✓ KP-1.2: wersjonowany moduł pamięci planu działa poprawnie.");
+console.log("✓ KP-1.2–KP-1.4: pamięć planu i historia 100 zapisów działają poprawnie.");
