@@ -184,7 +184,7 @@ logiki rytmu dostaw. Po jego zakończeniu i domknięciu KP-1.9 wracamy do 3B.2.
     scenariusz testu operatora odpowiadają wdrożonej funkcji.
   - [x] **KP-3.3.2 — pełna regresja:** wszystkie zestawy testów, w tym nowy
     test KP-3, przechodzą po ostatecznych zmianach.
-  - [ ] **KP-3.3.3 — publikacja:** kompletny pakiet trafia do `main`, a
+  - [x] **KP-3.3.3 — publikacja:** kompletny pakiet trafia do `main`, a
     wdrożona wersja GitHub Pages odpowiada najnowszemu commitowi.
   - [ ] **KP-3.3.4 — test operatora i zamknięcie:** operator potwierdza ilość
     ręczną, zmianę i przywrócenie wartości, odtworzenie po odświeżeniu oraz
@@ -648,7 +648,7 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **KP-3.3 — regresja i test operatora**.
+Wykonać **KP-3.3.4 — test operatora i zamknięcie KP-3**.
 Po zamknięciu KP-3 trzeba dokończyć **KP-1.9 — test operatora pamięci planu
 dnia**. Dopiero po zamknięciu obu punktów wracamy do **3B.2 — rytm dostaw**.
 Punkt 3C pozostaje zablokowany do czasu zakończenia i przetestowania całego
@@ -959,3 +959,16 @@ KP-3.3.1 i KP-3.3.2 są zakończone. KP-3.3 oraz KP-3 pozostają otwarte.
 Następny podetap to KP-3.3.3 — publikacja na `main`; po niej pozostanie
 KP-3.3.4 — test operatora i zamknięcie. KP-1.9 nadal jest częściowo otwarty,
 3B.2 czeka, a 3C pozostaje zablokowany.
+
+## KP-3.3.3 — publikacja — 2026-08-15
+
+- [x] pełny pakiet kodu, CSS, testów i dokumentacji opublikowano na `main` w
+  commicie `5953cff3d7d88a508349a374afd4499fda00119a`;
+- [x] odczyt plików z `main` potwierdził nowe pole ilości, przywracanie
+  wartości bazowej i szeroki układ bez sztucznego zoomu;
+- [x] GitHub Pages zakończył budowę ze statusem `built`, bez błędu i dokładnie
+  z commitu `5953cff3d7d88a508349a374afd4499fda00119a`.
+
+KP-3.3.3 jest zakończony. KP-3.3 oraz KP-3 pozostają otwarte. Następny i
+ostatni podetap to KP-3.3.4 — test operatora na GitHub Pages przy zoomie 100%.
+KP-1.9 nadal jest częściowo otwarty; 3B.2 czeka, a 3C pozostaje zablokowany.
