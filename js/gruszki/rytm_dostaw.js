@@ -293,6 +293,22 @@
       "Dodatkowy odstęp dostaw dla budowy " + idBudowy
     );
     pole.addEventListener("change", function () {
+      let nowyOdstep;
+
+      try {
+        nowyOdstep = pobierzNieujemnyOdstep(pole.value, idBudowy);
+      } catch (bladWalidacji) {
+        obslugaZmianyCzasowBudowy(
+          idBudowy,
+          "dodatkowyOdstepDostawMinuty",
+          pole.value
+        );
+        return;
+      }
+
+      // Handler aplikacji zapisuje plan jeszcze przed ponownym narysowaniem tabeli,
+      // dlatego nowa wartość musi być dostępna dla warstwy pamięci już teraz.
+      odstepyAktywneWedlugId.set(idBudowy, nowyOdstep);
       const zaktualizowanaBudowa = obslugaZmianyCzasowBudowy(
         idBudowy,
         "dodatkowyOdstepDostawMinuty",
@@ -301,6 +317,8 @@
 
       if (zaktualizowanaBudowa) {
         zapamietajOdstepBudowy(zaktualizowanaBudowa);
+      } else {
+        zapamietajOdstepBudowy(budowa);
       }
     });
 
