@@ -49,7 +49,7 @@
               <p class="etykieta-sekcji">USTAWIENIA</p>
               <h2 id="tytul-parametrow">Parametry planu</h2>
             </div>
-            <span class="znacznik-etapu">Etap 3B.1</span>
+            <span class="znacznik-etapu">Etap 3B.2</span>
           </div>
 
           <section class="sekcja-danych" aria-labelledby="tytul-importu">
@@ -157,8 +157,9 @@
           </form>
 
           <p class="informacja-etapu">
-            Etap 3B.1 liczy pełny cykl kursu. Uzupełnij przy budowach czas
-            dojazdu i powrotu; dodatkowe czasy wpisuj tylko dla wyjątków.
+            Etap 3B.2 uwzględnia rytm dostaw. Pole „Odstęp dostaw” oznacza
+            dodatkową przerwę po rozładunku; 0 min oznacza kolejną dostawę
+            bezpośrednio po zakończeniu poprzedniego rozładunku.
           </p>
 
           <details class="diagnostyka">
@@ -274,7 +275,8 @@
                 <h2>Godziny kursów</h2>
               </div>
               <p class="opis-panelu">
-                Bez numerów gruszek — ich przydział nastąpi w punkcie 3C.
+                Kursy są ułożone według planowanego startu załadunku. Przydział
+                numerów gruszek nastąpi dopiero w punkcie 3C.
               </p>
             </div>
 
@@ -338,7 +340,7 @@
 
       <footer class="stopka">
         <span>Harmonogram Betonowań v4</span>
-        <span>Etap 3B.1 · podstawowe czasy kursów</span>
+        <span>Etap 3B.2 · rytm dostaw</span>
       </footer>
     </div>
 
@@ -353,6 +355,7 @@
     <script defer src="js/lokalizacje/lokalizacje.js"></script>
     <script defer src="js/harmonogram/harmonogram.js"></script>
     <script defer src="js/interfejs/interfejs.js"></script>
+    <script defer src="js/gruszki/rytm_dostaw.js"></script>
     <script defer src="js/aplikacja.js"></script>
   </body>
 </html>
