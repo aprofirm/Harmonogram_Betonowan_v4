@@ -12,6 +12,42 @@
     );
   }
 
+  function policzOdbioryWlasne(listaBudow) {
+    if (!aplikacja.budowy ||
+        typeof aplikacja.budowy.czyOdbiorWlasny !== "function") {
+      return 0;
+    }
+
+    return (Array.isArray(listaBudow) ? listaBudow : []).filter(function (budowa) {
+      return aplikacja.budowy.czyOdbiorWlasny(budowa) &&
+        budowa.statusRealizacji !== "zrealizowana" &&
+        Number(budowa.iloscBetonuLiczbaM3) > 0;
+    }).length;
+  }
+
+  function utworzKomunikatKursow(kursy, listaBudow) {
+    const liczbaOdbiorowWlasnych = policzOdbioryWlasne(listaBudow);
+    const dopisekOdbiorow = liczbaOdbiorowWlasnych
+      ? " Odbiory własne poza harmonogramem: " + liczbaOdbiorowWlasnych + "."
+      : "";
+
+    if (kursy.length) {
+      return "Wygenerowano " + kursy.length +
+        " kursów z godzinami załadunku, dojazdu, rozładunku i powrotu. " +
+        "Przydział numerów gruszek zostanie dodany w punkcie 3C." +
+        dopisekOdbiorow;
+    }
+
+    if (liczbaOdbiorowWlasnych) {
+      return "Nie wygenerowano kursów planowanych. Odbiory własne pozostają " +
+        "widoczne na liście dnia, ale są realizowane poza automatycznym " +
+        "harmonogramem. Odbiory własne: " + liczbaOdbiorowWlasnych + ".";
+    }
+
+    return "Nie wygenerowano kursów. Pozycje z 0 m³ są już zrealizowane, " +
+      "a pozycje bez ilości wymagają uzupełnienia danych.";
+  }
+
   function przeliczCalyHarmonogram(daneWejsciowe) {
     const aktualneDane = daneWejsciowe || {};
     const parametry = polaczParametry(aktualneDane.parametry);
@@ -30,12 +66,7 @@
       listaBudow,
       parametry
     );
-    const komunikatKursow = kursy.length
-      ? "Wygenerowano " + kursy.length +
-        " kursów z godzinami załadunku, dojazdu, rozładunku i powrotu. " +
-        "Przydział numerów gruszek zostanie dodany w punkcie 3C."
-      : "Nie wygenerowano kursów. Pozycje z 0 m³ są już zrealizowane, " +
-        "a pozycje bez ilości wymagają uzupełnienia danych.";
+    const komunikatKursow = utworzKomunikatKursow(kursy, listaBudow);
 
     return {
       etap: aplikacja.konfiguracja.numerEtapu,
