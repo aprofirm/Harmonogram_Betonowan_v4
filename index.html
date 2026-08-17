@@ -201,6 +201,10 @@
               <h3 id="tytul-pamieci-tras">Znane lokalizacje</h3>
               <span id="liczba-znanych-tras" class="licznik-historii">0</span>
             </div>
+            <button id="przycisk-podglad-tras" class="przycisk-historii" type="button" disabled>
+              <span>Pokaż zapisane trasy</span>
+              <span aria-hidden="true">→</span>
+            </button>
             <p id="stan-pamieci-tras" class="pamiec-tras__stan" aria-live="polite">
               Przygotowywanie pamięci tras…
             </p>
@@ -339,6 +343,38 @@
         </section>
       </div>
 
+      <div id="okno-pamieci-tras" class="okno-historii" hidden>
+        <section
+          class="okno-historii__panel"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="tytul-okna-pamieci-tras"
+        >
+          <div class="okno-historii__naglowek">
+            <div>
+              <p class="etykieta-sekcji">PAMIĘĆ TRAS</p>
+              <h2 id="tytul-okna-pamieci-tras">Zapisane trasy</h2>
+            </div>
+            <button
+              id="przycisk-zamknij-pamiec-tras"
+              class="przycisk-zamknij"
+              type="button"
+              aria-label="Zamknij podgląd zapisanych tras"
+            >
+              ×
+            </button>
+          </div>
+          <p class="okno-historii__opis">
+            Lista pokazuje dokładny opis lokalizacji, pod którym program szuka
+            zapisanej trasy, oraz przechowywane czasy. Pojedynczy wpis można
+            usunąć po potwierdzeniu. Usunięcie nie zmienia bieżącego planu;
+            kompletna trasa obecna w planie może zostać ponownie zapisana przy
+            kolejnym przeliczeniu.
+          </p>
+          <div id="lista-zapisanych-tras"></div>
+        </section>
+      </div>
+
       <footer class="stopka">
         <span>Harmonogram Betonowań v4</span>
         <span>Etap 3B.2 · rytm dostaw</span>
@@ -357,6 +393,7 @@
     <script defer src="js/harmonogram/harmonogram.js"></script>
     <script defer src="js/interfejs/interfejs.js"></script>
     <script defer src="js/interfejs/odstep_dostaw.js"></script>
+    <script defer src="js/interfejs/podglad_tras.js"></script>
     <script defer src="js/aplikacja.js"></script>
   </body>
 </html>
