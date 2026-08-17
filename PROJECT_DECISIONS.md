@@ -1346,6 +1346,46 @@ pozostaje osobną regułą.
 
 ---
 
+## 74. Rodzaj rozładunku i odbiory własne
+
+Rzeczywisty eksport KDX może zawierać kolumnę **Rodzaj rozładunku**. Program
+rozpoznaje obecnie wartości:
+
+- `Odbiór własny`,
+- `Lej`,
+- `Pompa`,
+- `Wywrotka`,
+- `Taczka`.
+
+Jeżeli kolumna **Rodzaj rozładunku** istnieje, ale komórka danej pozycji jest
+pusta, oznacza to **Odbiór własny**. Jeżeli starszy plik w ogóle nie zawiera tej
+kolumny, program nie może automatycznie uznać wszystkich pozycji za odbiory
+własne — zachowuje wcześniejsze działanie i planuje je normalnie.
+
+Odbiór własny jest zamówieniem dnia, ale nie jest dostawą wykonywaną gruszką z
+betoniarni do budowy. Dlatego:
+
+- nie wymaga czasu dojazdu ani czasu powrotu,
+- nie tworzy kursów gruszek,
+- nie jest zapisywany do książki znanych tras,
+- nie rezerwuje gruszki w automatycznym harmonogramie,
+- operator realizuje go w wolnym oknie załadunkowym.
+
+Dla czytelności odbiory własne nie są pokazywane w głównej tabeli dostaw
+planowanych. Trafiają do osobnej, domyślnie zwiniętej sekcji **Odbiory własne**
+poniżej głównego harmonogramu.
+
+Budowa dodawana ręcznie musi posiadać jawnie wybrany rodzaj rozładunku. Pozostałe
+rodzaje (`Lej`, `Pompa`, `Wywrotka`, `Taczka`) pozostają zwykłymi dostawami
+planowanymi. Wartość `Pompa` jest już zachowywana w modelu, ale pełny przydział,
+dostępność i zajętość pomp należą dopiero do Etapu 4.
+
+Zasada została potwierdzona przez operatora 2026-08-17 na rzeczywistym eksporcie
+KDX i wersji opublikowanej przez GitHub Pages. Pełna regresja automatyczna tej
+funkcji jest wykonywana razem z krokiem 3B.2.6 i nie zamyka jeszcze 3B.2 ani 3B.
+
+---
+
 # Powiązane tematy otwarte
 
 Pomysły, warianty i pytania, które nie są jeszcze obowiązującymi decyzjami, są prowadzone w `POMYSLY_I_BACKLOG.md`. Dzięki temu ten dokument pozostaje jednoznacznym źródłem zatwierdzonych ustaleń.
