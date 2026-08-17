@@ -7,6 +7,7 @@ const vm = require("node:vm");
 
 const katalogProjektu = path.resolve(__dirname, "..");
 const sciezkaModulu = "js/pamiec/pamiec_tras.js";
+const sciezkaPodgladu = "js/interfejs/podglad_tras.js";
 const kluczPamieci = "harmonogramBetonowan.pamiecTras.v1";
 
 function utworzPamiecLokalna() {
@@ -50,6 +51,24 @@ function uruchomModul(pamiecLokalna, czyDostepBlokowany) {
   const kod = fs.readFileSync(path.join(katalogProjektu, sciezkaModulu), "utf8");
   new vm.Script(kod, { filename: sciezkaModulu }).runInContext(kontekst);
   return zakresOkna.HarmonogramBetonowan.pamiecTras;
+}
+
+function uruchomFiltryPodgladu() {
+  const zakresOkna = {
+    HarmonogramBetonowan: {}
+  };
+  zakresOkna.window = zakresOkna;
+  const kontekst = {
+    window: zakresOkna,
+    Date: Date,
+    JSON: JSON,
+    Error: Error
+  };
+  vm.createContext(kontekst);
+
+  const kod = fs.readFileSync(path.join(katalogProjektu, sciezkaPodgladu), "utf8");
+  new vm.Script(kod, { filename: sciezkaPodgladu }).runInContext(kontekst);
+  return zakresOkna.HarmonogramBetonowan.podgladTras;
 }
 
 function zapiszTrase(modul, opis, dojazd, powrot) {
@@ -128,8 +147,75 @@ function sprawdzPodgladWTrybieSesji() {
   assert.equal(modul.pobierzListeTras().liczbaTras, 0);
 }
 
+function sprawdzWyszukiwanieISortowanie() {
+  const podglad = uruchomFiltryPodgladu();
+  const trasy = [
+    { opisLokalizacji: "Volt | Ciernie 52" },
+    { opisLokalizacji: "Żary | Centrum" },
+    { opisLokalizacji: "Adbud.eu | POLST Jachimowicza 2" },
+    { opisLokalizacji: "Świebodzice | Rynek 8" }
+  ];
+  const kolejnoscPoczatkowa = trasy.map(function (trasa) {
+    return trasa.opisLokalizacji;
+  });
+
+  assert.deepEqual(
+    Array.from(podglad.filtrujISortujTrasy(trasy, "", "nazwa-az"), function (trasa) {
+      return trasa.opisLokalizacji;
+    }),
+    [
+      "Adbud.eu | POLST Jachimowicza 2",
+      "Świebodzice | Rynek 8",
+      "Volt | Ciernie 52",
+      "Żary | Centrum"
+    ]
+  );
+
+  assert.deepEqual(
+    Array.from(podglad.filtrujISortujTrasy(trasy, "", "nazwa-za"), function (trasa) {
+      return trasa.opisLokalizacji;
+    }),
+    [
+      "Żary | Centrum",
+      "Volt | Ciernie 52",
+      "Świebodzice | Rynek 8",
+      "Adbud.eu | POLST Jachimowicza 2"
+    ]
+  );
+
+  assert.deepEqual(
+    Array.from(
+      podglad.filtrujISortujTrasy(trasy, "swiebodzice", "nazwa-az"),
+      function (trasa) {
+        return trasa.opisLokalizacji;
+      }
+    ),
+    ["Świebodzice | Rynek 8"]
+  );
+
+  assert.deepEqual(
+    Array.from(
+      podglad.filtrujISortujTrasy(trasy, "POLST jachimowicza", "nazwa-az"),
+      function (trasa) {
+        return trasa.opisLokalizacji;
+      }
+    ),
+    ["Adbud.eu | POLST Jachimowicza 2"]
+  );
+
+  assert.deepEqual(
+    trasy.map(function (trasa) {
+      return trasa.opisLokalizacji;
+    }),
+    kolejnoscPoczatkowa
+  );
+}
+
 sprawdzListeBezZmianyDatyUzycia();
 sprawdzUsuwanieJednegoWpisu();
 sprawdzPodgladWTrybieSesji();
+sprawdzWyszukiwanieISortowanie();
 
-console.log("✓ KP-2: podgląd i usuwanie zapisanych tras działa poprawnie.");
+console.log(
+  "✓ KP-2: podgląd, wyszukiwanie, sortowanie i usuwanie zapisanych tras działa poprawnie."
+);
