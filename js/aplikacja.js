@@ -31,6 +31,7 @@
     "dodatkowyCzasZaladunkuMinuty",
     "czasRozladunkuRoboczyMinuty",
     "dodatkowyCzasRozladunkuMinuty",
+    "dodatkowyOdstepDostawMinuty",
     "zrodloCzasuDojazdu",
     "zrodloCzasuPowrotu"
   ]);
