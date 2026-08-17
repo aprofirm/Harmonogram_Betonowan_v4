@@ -233,10 +233,15 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
 
 Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
+Repozytorium ma również workflow **Testy automatyczne** w GitHub Actions. Po
+zmianach na `main` uruchamia on pełną regresję wszystkich plików
+`testy/*.test.js` na Node.js 20, dzięki czemu wynik testów jest zapisany razem z
+historią repozytorium.
+
 ## Aktualny stan
 
-**Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są: **3A — generowanie kursów**, **3B.1 — podstawowe czasy kursów** oraz kroki przekrojowe **KP-1 — pamięć planu dnia**, **KP-2 — pamięć znanych tras** i **KP-3 — budowa ręczna oraz kompaktowy widok**. W punkcie **3B.2 — rytm dostaw** wdrożono **3B.2.1–3B.2.5**: regułę rytmu, model odstępu, obliczenia pojedynczej budowy, wspólną kolejność kursów oraz interfejs i pamięć odstępu.
+**Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są: **3A — generowanie kursów**, **3B.1 — podstawowe czasy kursów** oraz kroki przekrojowe **KP-1 — pamięć planu dnia**, **KP-2 — pamięć znanych tras** i **KP-3 — budowa ręczna oraz kompaktowy widok**. W punkcie **3B.2 — rytm dostaw** zakończono **3B.2.1–3B.2.6**: regułę rytmu, model odstępu, obliczenia, wspólną kolejność kursów, interfejs i pamięć oraz pełne testy i regresję.
 
-Dodatkowo na rzeczywistym eksporcie KDX operator potwierdził obsługę **Rodzaju rozładunku**: pusta wartość oznacza odbiór własny, odbiory własne są oddzielone od dostaw planowanych i nie wymagają trasy ani kursów, a budowy ręczne mają wybór rodzaju rozładunku. GitHub Pages opublikował działającą wersję tej poprawki 2026-08-17.
+W 3B.2.6 uporządkowano moduły po poprawkach operatorskich: interfejs odstępu dostaw i interfejs rodzaju rozładunku znów mają osobne odpowiedzialności, a logika biznesowa odbiorów własnych pozostaje w module budów. Rozszerzony test 3B.2 obejmuje rzeczywiste obliczenia rytmu, a GitHub Actions automatycznie uruchamia wszystkie testy `testy/*.test.js`. Pełna regresja 2026-08-17 zakończyła się statusem `success`.
 
-Następny formalny krok pozostaje bez zmian: **3B.2.6 — testy, regresja i dokumentacja**. W tym kroku trzeba rozszerzyć test 3B.2 poza sam model odstępu, ujednolicić testy rodzaju rozładunku z aktualnym punktem integracji oraz uporządkować odpowiedzialności modułów po awaryjnych poprawkach UI. Po 3B.2.6 pozostaje **3B.2.7 — końcowa publikacja i test operatora**. Dopiero wtedy można zamknąć **3B.2** i cały **3B** oraz rozpocząć **3C — przydział gruszek**.
+**Następny krok: 3B.2.7 — publikacja i test operatora.** Trzeba sprawdzić najnowszą wersję na GitHub Pages i ręcznie potwierdzić rytm dostaw, brak wpływu dodatkowego odstępu na fizyczny cykl gruszki, przeplatanie kursów różnych budów oraz odtworzenie po odświeżeniu. Dopiero wtedy można zamknąć **3B.2** i cały **3B** oraz rozpocząć **3C — przydział gruszek**.

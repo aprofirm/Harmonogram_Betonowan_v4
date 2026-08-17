@@ -2,11 +2,11 @@
 
 ## Status
 
-Etap 3 jest w toku. **Punkt 3A — generowanie kursów**, krok **3B.1 — podstawowe czasy kursów** oraz kroki przekrojowe **KP-1–KP-3** są zakończone i sprawdzone. W punkcie **3B.2 — rytm dostaw** wdrożono **3B.2.1–3B.2.5**: regułę rytmu, model odstępu, obliczenia pojedynczej budowy, wspólną kolejność kursów oraz interfejs i pamięć odstępu.
+Etap 3 jest w toku. **Punkt 3A — generowanie kursów**, krok **3B.1 — podstawowe czasy kursów** oraz kroki przekrojowe **KP-1–KP-3** są zakończone i sprawdzone. W punkcie **3B.2 — rytm dostaw** zakończono **3B.2.1–3B.2.6**. Rozszerzone testy rytmu i pełna regresja automatyczna przeszły poprawnie.
 
 Dodatkowo 2026-08-17 operator potwierdził na rzeczywistym eksporcie KDX obsługę pola **Rodzaj rozładunku** oraz oddzielenie **Odbiorów własnych** od dostaw planowanych. Odbiory własne nie wymagają trasy i nie generują kursów.
 
-**Następny krok: 3B.2.6 — testy, regresja i dokumentacja.** Przydział i dostępność konkretnych gruszek pozostają zakresem punktów 3C–3E i nie mogą rozpocząć się przed zamknięciem całego punktu 3B.
+**Następny krok: 3B.2.7 — publikacja i test operatora.** Przydział i dostępność konkretnych gruszek pozostają zakresem punktów 3C–3E i nie mogą rozpocząć się przed zamknięciem całego punktu 3B.
 
 ## Cel
 
@@ -40,26 +40,20 @@ Silnik ma pozostać niezależny od interfejsu HTML oraz od sposobu pozyskania cz
 - pełne przeliczenie ma tworzyć kursy od nowa,
 - zmiana liczby dostępnych gruszek ma powodować nowe rzeczywiste wyliczenie.
 
-## Zakres 3B.2.6 — obowiązkowa kontrola przed zamknięciem
+## Wynik 3B.2.6 — testy i regresja
 
-Przed przejściem do 3B.2.7 trzeba:
+- [x] test rytmu dla dodatkowego odstępu `0`;
+- [x] test rytmu dla odstępu większego od zera;
+- [x] różne dokładne czasy rozładunku;
+- [x] wydłużony czas załadunku bez zmiany godziny dostawy;
+- [x] stabilne przeplatanie kursów różnych budów według początku załadunku;
+- [x] walidacja błędnych wartości odstępu i zgodność starszych danych;
+- [x] zapis pola odstępu w warstwie pamięci aplikacji;
+- [x] testy rodzaju rozładunku i odbiorów własnych dopasowane do aktualnej architektury;
+- [x] interfejs odstępu i interfejs rodzaju rozładunku rozdzielone na osobne moduły;
+- [x] pełna regresja wszystkich `testy/*.test.js` uruchomiona przez GitHub Actions i zakończona statusem `success` 2026-08-17.
 
-1. rozszerzyć `testy/etap_3b_2.test.js`, który obecnie sprawdza głównie model
-   odstępu z 3B.2.2, o rzeczywiste obliczenia 3B.2.3–3B.2.5;
-2. sprawdzić rytm dla odstępu `0` oraz wartości większej od zera;
-3. sprawdzić różne dokładne czasy rozładunku i wydłużony czas załadunku;
-4. sprawdzić stabilne przeplatanie kursów różnych budów według planowanego
-   początku załadunku;
-5. sprawdzić zapis i odtworzenie odstępu w bieżącym planie oraz historii;
-6. sprawdzić błędne i brzegowe wartości odstępu;
-7. ujednolicić `rodzaj_rozladunku.test.js` i `odbior_wlasny_tabela.test.js` z
-   aktualnym punktem integracji — pierwszy z tych testów nadal odwołuje się do
-   wcześniejszej warstwy interfejsu;
-8. uporządkować odpowiedzialności modułów po awaryjnych poprawkach UI, tak aby
-   logika rodzaju rozładunku nie pozostawała niepotrzebnie wymieszana z modułem
-   odstępu dostaw;
-9. uruchomić pełną regresję wcześniejszych etapów i funkcji przekrojowych;
-10. dopiero po przejściu testów zaktualizować dokumentację wyniku 3B.2.6.
+3B.2.6 jest zakończony. Pozostaje 3B.2.7 — publikacja i ręczny test operatora.
 
 ## Test 1 — liczba kursów dla pełnych ładunków
 
@@ -227,13 +221,14 @@ Zaimplementowane części Etapu 3 sprawdzają osobne pliki:
 
 - `testy/etap_3a.test.js` — liczby i ilości kursów,
 - `testy/etap_3b_1.test.js` — godziny pełnego cyklu i wydłużenia,
-- `testy/etap_3b_2.test.js` — obecnie model odstępu, wartość domyślna, walidacja
-  i zgodność starszych danych; do rozszerzenia w 3B.2.6,
-- `testy/rodzaj_rozladunku.test.js` — logika rodzaju rozładunku; wymaga
-  ujednolicenia z aktualnym punktem integracji,
+- `testy/etap_3b_2.test.js` — model odstępu, rytm `0` i większy od zera,
+  różne czasy rozładunku, wydłużony załadunek, przeplatanie budów, walidacja i
+  kontrola pamięci,
+- `testy/rodzaj_rozladunku.test.js` — logika rodzaju rozładunku i kontrola
+  podziału odpowiedzialności modułów,
 - `testy/odbior_wlasny_tabela.test.js` — rzeczywisty wariant KDX i osobna tabela
   odbiorów własnych.
 
-3B.2.6 kończy się dopiero po uruchomieniu powyższych testów oraz pełnej regresji
-wcześniejszych modułów. Zwykłe działanie aplikacji nie wymaga Node.js ani
-połączenia z internetem.
+Workflow `.github/workflows/testy.yml` uruchamia wszystkie testy `testy/*.test.js`
+na GitHub Actions. Regresja 3B.2.6 przeszła poprawnie. Zwykłe działanie aplikacji
+nie wymaga Node.js ani połączenia z internetem.

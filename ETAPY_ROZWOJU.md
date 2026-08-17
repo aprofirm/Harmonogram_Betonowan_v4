@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; wdrożono 3B.2.1–3B.2.5, następny jest 3B.2.6 — testy, regresja i dokumentacja**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; wdrożono 3B.2.1–3B.2.6, następny jest 3B.2.7 — publikacja i test operatora**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -351,7 +351,7 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
     - [x] **3B.2.5 — interfejs i pamięć:** edytowalne pole odstępu przy każdej
       budowie, zapis w bieżącym planie i historii, odtworzenie po odświeżeniu
       oraz oznaczenie wyniku jako wymagającego ponownego przeliczenia po zmianie.
-    - [ ] **3B.2.6 — testy, regresja i dokumentacja:** osobny test 3B.2 dla
+    - [x] **3B.2.6 — testy, regresja i dokumentacja:** osobny test 3B.2 dla
       rytmu `0` i większego od zera, różnych czasów rozładunku, wydłużonego
       załadunku, przeplatania budów, pamięci i przypadków błędnych, a następnie
       pełna regresja wcześniejszych funkcji i aktualizacja dokumentacji.
@@ -1169,3 +1169,30 @@ Podetapy 3B.2.3, 3B.2.4 i 3B.2.5 są wdrożone i oznaczone jako zakończone na
 poziomie implementacji. Testy pełnego zakresu zostały świadomie odłożone do
 3B.2.6. Punkt 3B.2 i cały 3B pozostają otwarte. Następny podetap to 3B.2.6 —
 testy, pełna regresja i kontrola dokumentacji; 3C pozostaje zablokowany.
+
+
+## Kontrola po 3B.2.6 — testy, regresja i dokumentacja — 2026-08-17
+
+- [x] `js/interfejs/odstep_dostaw.js` ponownie odpowiada wyłącznie za pole
+  **Odstęp dostaw**, bez logiki rodzaju rozładunku i odbiorów własnych;
+- [x] `js/interfejs/rodzaj_rozladunku.js` jest osobnym modułem interfejsu dla
+  wyboru rodzaju rozładunku, etykiet i rozwijanej tabeli odbiorów własnych;
+- [x] logika biznesowa rodzaju rozładunku pozostaje w
+  `js/budowy/rodzaj_rozladunku.js`, dzięki czemu silnik i interfejs są
+  rozdzielone zgodnie z zasadami projektu;
+- [x] `testy/etap_3b_2.test.js` sprawdza rytm dla odstępu `0` i większego od
+  zera, różne czasy rozładunku, wydłużony załadunek, przeplatanie budów,
+  walidację oraz zapis pola w pamięci;
+- [x] testy `rodzaj_rozladunku.test.js` i `odbior_wlasny_tabela.test.js`
+  odpowiadają aktualnemu podziałowi modułów i rzeczywistemu wariantowi KDX;
+- [x] dodano workflow `.github/workflows/testy.yml`, który na `main` i w pull
+  requestach uruchamia wszystkie pliki `testy/*.test.js` na Node.js 20;
+- [x] pełna regresja automatyczna w GitHub Actions zakończyła się statusem
+  `success` 2026-08-17; przeszły wszystkie aktualne zestawy testów;
+- [x] dokumentacja testów i aktualny stan projektu zostały ujednolicone.
+
+Podetap 3B.2.6 jest zakończony. Punkt 3B.2 i punkt nadrzędny 3B pozostają
+otwarte. Następny i ostatni podetap to **3B.2.7 — publikacja i test operatora**:
+kontrola GitHub Pages oraz ręczne potwierdzenie rytmu, pełnego cyklu,
+przeplatania kursów i odtworzenia po odświeżeniu. Punkt 3C pozostaje
+zablokowany do zamknięcia całego 3B.
