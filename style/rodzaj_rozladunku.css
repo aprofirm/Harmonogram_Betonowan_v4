@@ -26,16 +26,78 @@
   font-weight: 750;
 }
 
-.wiersz-odbior-wlasny {
-  background: #f5faf7;
-}
-
-.wartosc-poza-harmonogramem {
-  color: #8b989f;
-  font-weight: 700;
-}
-
 .status-poza-harmonogramem {
   color: var(--kolor-zielony);
   font-weight: 800;
+}
+
+.panel-odbiorow-wlasnych {
+  padding: 0;
+  overflow: hidden;
+}
+
+.panel-odbiorow-wlasnych[hidden] {
+  display: none;
+}
+
+.panel-odbiorow-wlasnych__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  cursor: pointer;
+  list-style-position: inside;
+  user-select: none;
+}
+
+.panel-odbiorow-wlasnych__summary:hover {
+  background: #f8fbfc;
+}
+
+.panel-odbiorow-wlasnych__tytul {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.panel-odbiorow-wlasnych__tytul strong {
+  color: var(--kolor-granatowy-ciemny);
+  font-size: 1rem;
+}
+
+.licznik-odbiorow-wlasnych {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: #eaf5ef;
+  color: var(--kolor-zielony);
+  font-weight: 850;
+}
+
+.panel-odbiorow-wlasnych__opis {
+  margin: 0;
+  padding: 0 20px 14px;
+  color: #60717d;
+}
+
+.tabela-przewijana--odbiory {
+  border-top: 1px solid #dce5ea;
+}
+
+.tabela-odbiorow-wlasnych {
+  min-width: 820px;
+}
+
+.tabela-odbiorow-wlasnych th,
+.tabela-odbiorow-wlasnych td {
+  vertical-align: middle;
+}
+
+.tabela-odbiorow-wlasnych td:last-child {
+  white-space: nowrap;
 }
