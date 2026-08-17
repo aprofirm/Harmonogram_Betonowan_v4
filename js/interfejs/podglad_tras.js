@@ -84,7 +84,7 @@
     );
   }
 
-  function utworzPrzyciskUsuniecia(trasa, odswiezListe) {
+  function utworzPrzyciskUsuniecia(trasa) {
     const przycisk = document.createElement("button");
     przycisk.className = "przycisk-tekstowy";
     przycisk.type = "button";
@@ -97,7 +97,8 @@
     przycisk.addEventListener("click", function () {
       const czyPotwierdzono = zakresGlobalny.confirm(
         "Usunąć zapamiętaną trasę „" + trasa.opisLokalizacji + "”?\n\n" +
-        "Ta operacja nie usuwa budowy z bieżącego planu."
+        "Ta operacja nie usuwa budowy z bieżącego planu. Jeżeli budowa nadal " +
+        "ma komplet czasów, kolejne przeliczenie może ponownie zapisać tę trasę."
       );
 
       if (!czyPotwierdzono) {
@@ -116,13 +117,12 @@
 
       zapiszUsuniecieWDiagnostyce(wynikUsuniecia);
       odswiezStanLicznika();
-      odswiezListe();
     });
 
     return przycisk;
   }
 
-  function utworzTabeleTras(trasy, odswiezListe) {
+  function utworzTabeleTras(trasy) {
     const przewijanie = document.createElement("div");
     const tabela = document.createElement("table");
     const naglowek = document.createElement("thead");
@@ -158,7 +158,7 @@
       wiersz.appendChild(utworzKomorke(opiszZrodlaTrasy(trasa)));
       wiersz.appendChild(utworzKomorke(formatujDate(trasa.zaktualizowano)));
       wiersz.appendChild(utworzKomorke(formatujDate(trasa.ostatnioUzyto)));
-      komorkaAkcji.appendChild(utworzPrzyciskUsuniecia(trasa, odswiezListe));
+      komorkaAkcji.appendChild(utworzPrzyciskUsuniecia(trasa));
       wiersz.appendChild(komorkaAkcji);
       cialo.appendChild(wiersz);
     });
@@ -195,7 +195,7 @@
         return;
       }
 
-      lista.replaceChildren(utworzTabeleTras(trasy, odswiezListe));
+      lista.replaceChildren(utworzTabeleTras(trasy));
     }
 
     function otworzOkno() {
