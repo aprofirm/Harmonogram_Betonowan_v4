@@ -3,6 +3,9 @@
 
   const aplikacja = zakresGlobalny.HarmonogramBetonowan =
     zakresGlobalny.HarmonogramBetonowan || {};
+  let sekcjaOdbiorowWlasnych = null;
+  let licznikOdbiorowWlasnych = null;
+  let wierszeOdbiorowWlasnych = null;
 
   function utworzOpcjeRodzajuRozladunku(pole) {
     [
@@ -58,6 +61,148 @@
     return pole;
   }
 
+  function utworzNaglowekTabeliOdbiorow() {
+    const thead = document.createElement("thead");
+    const wiersz = document.createElement("tr");
+
+    ["Start", "Firma", "Odbiór / miejsce", "Beton", "ID", "Status"].forEach(
+      function (naglowek) {
+        const komorka = document.createElement("th");
+        komorka.textContent = naglowek;
+        wiersz.appendChild(komorka);
+      }
+    );
+
+    thead.appendChild(wiersz);
+    return thead;
+  }
+
+  function zapewnijSekcjeOdbiorowWlasnych() {
+    if (sekcjaOdbiorowWlasnych && sekcjaOdbiorowWlasnych.isConnected) {
+      return sekcjaOdbiorowWlasnych;
+    }
+
+    const panelHarmonogramu = document.querySelector(".panel-harmonogramu");
+
+    if (!panelHarmonogramu) {
+      throw new Error("Nie znaleziono panelu harmonogramu dla odbiorów własnych.");
+    }
+
+    const sekcja = document.createElement("details");
+    const podsumowanie = document.createElement("summary");
+    const grupaTytulu = document.createElement("span");
+    const etykieta = document.createElement("span");
+    const tytul = document.createElement("strong");
+    const licznik = document.createElement("span");
+    const opis = document.createElement("p");
+    const przewijanie = document.createElement("div");
+    const tabela = document.createElement("table");
+    const tbody = document.createElement("tbody");
+
+    sekcja.className = "panel panel-odbiorow-wlasnych";
+    sekcja.hidden = true;
+    podsumowanie.className = "panel-odbiorow-wlasnych__summary";
+    grupaTytulu.className = "panel-odbiorow-wlasnych__tytul";
+    etykieta.className = "etykieta-sekcji";
+    etykieta.textContent = "POZA AUTOMATYCZNYM HARMONOGRAMEM";
+    tytul.textContent = "Odbiory własne";
+    licznik.className = "licznik-odbiorow-wlasnych";
+    licznik.textContent = "0";
+    opis.className = "opis-panelu panel-odbiorow-wlasnych__opis";
+    opis.textContent =
+      "Pozycje z pustym polem „Rodzaj rozładunku” w KDX. Nie wymagają dojazdu ani powrotu, nie tworzą kursów i są realizowane wtedy, gdy operator ma wolne okno załadunkowe.";
+    przewijanie.className = "tabela-przewijana tabela-przewijana--odbiory";
+    tabela.className = "tabela-odbiorow-wlasnych";
+    tbody.id = "wiersze-odbiorow-wlasnych";
+
+    grupaTytulu.appendChild(etykieta);
+    grupaTytulu.appendChild(tytul);
+    podsumowanie.appendChild(grupaTytulu);
+    podsumowanie.appendChild(licznik);
+    tabela.appendChild(utworzNaglowekTabeliOdbiorow());
+    tabela.appendChild(tbody);
+    przewijanie.appendChild(tabela);
+    sekcja.appendChild(podsumowanie);
+    sekcja.appendChild(opis);
+    sekcja.appendChild(przewijanie);
+    panelHarmonogramu.insertAdjacentElement("afterend", sekcja);
+
+    sekcjaOdbiorowWlasnych = sekcja;
+    licznikOdbiorowWlasnych = licznik;
+    wierszeOdbiorowWlasnych = tbody;
+    return sekcja;
+  }
+
+  function utworzKomorke(tresc, nazwaKlasy) {
+    const komorka = document.createElement("td");
+    komorka.textContent = tresc;
+
+    if (nazwaKlasy) {
+      komorka.className = nazwaKlasy;
+    }
+
+    return komorka;
+  }
+
+  function opiszStart(budowa) {
+    if (Number(budowa && budowa.tolerancjaStartuMinuty) > 0 && budowa.najpozniejszyStart) {
+      return String(budowa.startPlanowany || "") + "–" + String(budowa.najpozniejszyStart);
+    }
+
+    return String(budowa && budowa.startPlanowany || "—");
+  }
+
+  function opiszBeton(budowa) {
+    const rodzaj = String(budowa && budowa.rodzajBetonu || "").trim();
+    const ilosc = Number(budowa && budowa.iloscBetonuLiczbaM3);
+    const opisIlosci = Number.isFinite(ilosc) ? String(ilosc).replace(".", ",") + " m³" : "—";
+
+    return rodzaj ? rodzaj + " · " + opisIlosci : opisIlosci;
+  }
+
+  function utworzWierszOdbioruWlasnego(budowa) {
+    const wiersz = document.createElement("tr");
+    const czyZrealizowany = budowa.statusRealizacji === "zrealizowana" ||
+      Number(budowa.iloscBetonuLiczbaM3) === 0;
+
+    if (czyZrealizowany) {
+      wiersz.className = "wiersz-zrealizowany";
+    }
+
+    wiersz.appendChild(utworzKomorke(opiszStart(budowa), "wartosc-wazna"));
+    wiersz.appendChild(utworzKomorke(String(budowa.firma || "")));
+    wiersz.appendChild(utworzKomorke(String(budowa.budowa || "")));
+    wiersz.appendChild(utworzKomorke(opiszBeton(budowa)));
+    wiersz.appendChild(utworzKomorke(String(budowa.idBudowy || ""), "identyfikator-budowy"));
+    wiersz.appendChild(
+      utworzKomorke(
+        czyZrealizowany ? "Zrealizowany" : "Do wydania — poza harmonogramem",
+        czyZrealizowany ? "status-zrealizowany" : "status-poza-harmonogramem"
+      )
+    );
+    return wiersz;
+  }
+
+  function renderujOdbioryWlasne(listaBudow) {
+    zapewnijSekcjeOdbiorowWlasnych();
+    const odbiory = (Array.isArray(listaBudow) ? listaBudow : []).filter(function (budowa) {
+      return aplikacja.budowy.czyOdbiorWlasny(budowa);
+    });
+    const fragment = document.createDocumentFragment();
+
+    odbiory.forEach(function (budowa) {
+      fragment.appendChild(utworzWierszOdbioruWlasnego(budowa));
+    });
+
+    wierszeOdbiorowWlasnych.replaceChildren(fragment);
+    licznikOdbiorowWlasnych.textContent = String(odbiory.length);
+    sekcjaOdbiorowWlasnych.hidden = odbiory.length === 0;
+
+    if (!odbiory.length) {
+      sekcjaOdbiorowWlasnych.open = false;
+    }
+  }
+
   function dodajEtykieteRodzajuRozladunku(wiersz, budowa) {
     const komorkaBudowy = wiersz && wiersz.children[2];
     const opisRodzaju = aplikacja.budowy.opiszRodzajRozladunku(
@@ -75,44 +220,18 @@
     komorkaBudowy.appendChild(etykieta);
   }
 
-  function oznaczOdbiorWlasny(wiersz, budowa) {
-    if (!wiersz || !aplikacja.budowy.czyOdbiorWlasny(budowa) ||
-        budowa.statusRealizacji === "zrealizowana") {
-      return;
-    }
-
-    wiersz.classList.add("wiersz-odbior-wlasny");
-
-    [3, 4, 5, 6, 7].forEach(function (indeksKomorki) {
-      const komorka = wiersz.children[indeksKomorki];
-
-      if (!komorka) {
-        return;
-      }
-
-      const wartosc = document.createElement("span");
-      wartosc.className = "wartosc-poza-harmonogramem";
-      wartosc.textContent = "—";
-      komorka.replaceChildren(wartosc);
-    });
-
-    const komorkaStatusu = wiersz.lastElementChild;
-
-    if (komorkaStatusu) {
-      komorkaStatusu.className = "status-poza-harmonogramem";
-      komorkaStatusu.textContent = "Odbiór własny — poza harmonogramem";
-    }
-  }
-
-  function uzupelnijWierszeBudow(listaBudow) {
+  function rozdzielWidokBudow(listaBudow) {
     const kontener = document.getElementById("wiersze-harmonogramu");
     const budowy = Array.isArray(listaBudow) ? listaBudow : [];
+
+    renderujOdbioryWlasne(budowy);
 
     if (!kontener || !budowy.length) {
       return;
     }
 
     const wiersze = Array.from(kontener.querySelectorAll("tr"));
+    let liczbaDostawPlanowanych = 0;
 
     budowy.forEach(function (budowa, indeksBudowy) {
       const wiersz = wiersze[indeksBudowy];
@@ -121,9 +240,20 @@
         return;
       }
 
+      if (aplikacja.budowy.czyOdbiorWlasny(budowa)) {
+        wiersz.remove();
+        return;
+      }
+
+      liczbaDostawPlanowanych += 1;
       dodajEtykieteRodzajuRozladunku(wiersz, budowa);
-      oznaczOdbiorWlasny(wiersz, budowa);
     });
+
+    const licznikBudow = document.getElementById("liczba-budow");
+
+    if (licznikBudow) {
+      licznikBudow.textContent = String(liczbaDostawPlanowanych);
+    }
   }
 
   function poprawKomunikatImportu(listaBudow) {
@@ -145,7 +275,7 @@
 
     trescStatusu.textContent = trescStatusu.textContent
       .replace("dla aktywnych budów", "dla dostaw planowanych") +
-      " Odbiory własne są widoczne na liście, ale nie tworzą kursów i nie wymagają czasów przejazdu.";
+      " Odbiory własne przeniesiono do osobnej rozwijanej tabeli i nie wymagają czasów przejazdu.";
   }
 
   function opakujPokazanieListy(nazwaFunkcji, pobierzListeBudow, czyPoprawicImport) {
@@ -159,7 +289,7 @@
       const argumenty = Array.from(arguments);
       const wynik = funkcjaPodstawowa.apply(null, argumenty);
       const listaBudow = pobierzListeBudow(argumenty) || [];
-      uzupelnijWierszeBudow(listaBudow);
+      rozdzielWidokBudow(listaBudow);
 
       if (czyPoprawicImport) {
         poprawKomunikatImportu(listaBudow);
@@ -176,6 +306,7 @@
     }
 
     const poleRodzaju = zapewnijPoleRodzajuRozladunku();
+    zapewnijSekcjeOdbiorowWlasnych();
     const uruchomInterfejsPodstawowy = aplikacja.interfejs.uruchomInterfejs;
 
     aplikacja.interfejs.uruchomInterfejs = function () {
@@ -206,6 +337,9 @@
     }, true);
     opakujPokazanieListy("pokazDodanaBudowe", function (argumenty) {
       return argumenty[1];
+    }, false);
+    opakujPokazanieListy("wyczyscPlan", function () {
+      return [];
     }, false);
   }
 
