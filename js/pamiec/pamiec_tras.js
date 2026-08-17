@@ -414,6 +414,68 @@
     });
   }
 
+  function pobierzListeTras() {
+    zapewnijUruchomienie();
+    const wynikOdczytu = odczytajKsiazke();
+
+    if (!wynikOdczytu.ksiazka) {
+      return utworzWynik(wynikOdczytu.status, {
+        trasy: [],
+        liczbaTras: 0,
+        wersjaZapisu: wynikOdczytu.wersjaZapisu || null
+      });
+    }
+
+    const trasyOdNajnowszej = wynikOdczytu.ksiazka.trasy
+      .slice()
+      .reverse();
+
+    return utworzWynik("odczytano-liste-tras", {
+      trasy: skopiujDane(trasyOdNajnowszej),
+      liczbaTras: trasyOdNajnowszej.length
+    });
+  }
+
+  function usunTrase(kluczTrasy) {
+    zapewnijUruchomienie();
+    const klucz = String(kluczTrasy || "").trim();
+
+    if (!klucz) {
+      return utworzWynik("blad-usuwania", {
+        komunikat: "Nie wskazano trasy do usunięcia."
+      });
+    }
+
+    const wynikOdczytu = odczytajKsiazke();
+
+    if (!wynikOdczytu.ksiazka) {
+      return utworzWynik(wynikOdczytu.status, {
+        wersjaZapisu: wynikOdczytu.wersjaZapisu || null
+      });
+    }
+
+    const indeksTrasy = wynikOdczytu.ksiazka.trasy.findIndex(function (trasa) {
+      return trasa.kluczTrasy === klucz;
+    });
+
+    if (indeksTrasy === -1) {
+      return utworzWynik("brak-trasy", {
+        liczbaTras: wynikOdczytu.ksiazka.trasy.length
+      });
+    }
+
+    const usunietaTrasa = wynikOdczytu.ksiazka.trasy.splice(indeksTrasy, 1)[0];
+    const tekstPamieci = JSON.stringify(wynikOdczytu.ksiazka);
+    const statusZapisu = zapiszTekstPamieci(tekstPamieci);
+
+    return utworzWynik("usunieto-trase", {
+      trasa: skopiujDane(usunietaTrasa),
+      liczbaTras: wynikOdczytu.ksiazka.trasy.length,
+      statusZapisu: statusZapisu,
+      rozmiarBajtow: policzPrzyblizonyRozmiarBajtow(tekstPamieci)
+    });
+  }
+
   function pobierzStanPamieci() {
     zapewnijUruchomienie();
     const wynikOdczytu = odczytajKsiazke();
@@ -439,6 +501,8 @@
     normalizujOpisLokalizacji: normalizujOpisLokalizacji,
     utworzKluczTrasy: utworzKluczTrasy,
     zapiszTrase: zapiszTrase,
-    pobierzTrase: pobierzTrase
+    pobierzTrase: pobierzTrase,
+    pobierzListeTras: pobierzListeTras,
+    usunTrase: usunTrase
   };
 })(window);
