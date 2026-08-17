@@ -43,17 +43,29 @@
     return mapowanie[klucz] || tekst;
   }
 
+  function czyNazwaKolumnyOznaczaRodzajRozladunku(nazwaKolumny) {
+    const nazwa = normalizujTekst(nazwaKolumny);
+
+    if (nazwa === "rodzajrozladunku" ||
+        nazwa === "sposobrozladunku" ||
+        nazwa === "rozladunek") {
+      return true;
+    }
+
+    // Eksport KDX może różnić się detalami zapisu nagłówka albo kodowaniem.
+    // Wystarczy jednak jednoznaczne połączenie słów opisujących rodzaj/sposób
+    // oraz rozładunek. Nie zgadujemy na podstawie wartości innych kolumn.
+    const czyRodzajLubSposob = nazwa.includes("rodzaj") || nazwa.includes("sposob");
+    const czyRozladunek = nazwa.includes("rozladunk") || nazwa.includes("ladunk");
+    return czyRodzajLubSposob && czyRozladunek;
+  }
+
   function czyDaneZrodloweMajaRodzajRozladunku(daneZrodlowe) {
     if (!daneZrodlowe || typeof daneZrodlowe !== "object") {
       return false;
     }
 
-    return Object.keys(daneZrodlowe).some(function (nazwaKolumny) {
-      const nazwa = normalizujTekst(nazwaKolumny);
-      return nazwa === "rodzajrozladunku" ||
-        nazwa === "sposobrozladunku" ||
-        nazwa === "rozladunek";
-    });
+    return Object.keys(daneZrodlowe).some(czyNazwaKolumnyOznaczaRodzajRozladunku);
   }
 
   function pobierzRodzajRozladunkuReczny(wartosc) {
