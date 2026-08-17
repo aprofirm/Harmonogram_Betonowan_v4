@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono 3B.2.2, następny jest 3B.2.3 — obliczenia rytmu pojedynczej budowy**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; wdrożono 3B.2.1–3B.2.5, następny jest 3B.2.6 — testy, regresja i dokumentacja**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -342,13 +342,13 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
     - [x] **3B.2.2 — model danych i walidacja:** osobny nieujemny odstęp dla
       każdej budowy, bezpieczna wartość domyślna `0 min`, zgodność starszych
       danych oraz czytelny błąd dla wartości nieprawidłowej.
-    - [ ] **3B.2.3 — obliczenia rytmu pojedynczej budowy:** wyznaczenie startów
+    - [x] **3B.2.3 — obliczenia rytmu pojedynczej budowy:** wyznaczenie startów
       kolejnych rozładunków według rytmu bez dodawania odstępu do fizycznego
       cyklu kursu i bez zmiany liczby ani ilości kursów.
-    - [ ] **3B.2.4 — wspólna kolejność kursów:** stabilne ułożenie kursów
+    - [x] **3B.2.4 — wspólna kolejność kursów:** stabilne ułożenie kursów
       wszystkich budów według planowanego rozpoczęcia załadunku, tak aby kursy
       różnych budów mogły się przeplatać bez przydziału konkretnych gruszek.
-    - [ ] **3B.2.5 — interfejs i pamięć:** edytowalne pole odstępu przy każdej
+    - [x] **3B.2.5 — interfejs i pamięć:** edytowalne pole odstępu przy każdej
       budowie, zapis w bieżącym planie i historii, odtworzenie po odświeżeniu
       oraz oznaczenie wyniku jako wymagającego ponownego przeliczenia po zmianie.
     - [ ] **3B.2.6 — testy, regresja i dokumentacja:** osobny test 3B.2 dla
@@ -683,11 +683,11 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **3B.2.3 — obliczenia rytmu pojedynczej budowy**: wyznaczyć początek
-rozładunku kolejnych kursów według dokładnego czasu rozładunku i dodatkowego
-odstępu, bez wydłużania fizycznego cyklu gruszki oraz bez zmiany liczby i
-ilości kursów. Punkt 3B pozostaje otwarty, a 3C jest zablokowany do zakończenia
-i przetestowania całego 3B.2.
+Wykonać **3B.2.6 — testy, regresję i dokumentację**: dodać pełny zestaw prób
+rytmu `0` i większego od zera, różnych czasów rozładunku, wydłużonego
+załadunku, przeplatania budów, pamięci i danych błędnych, a następnie uruchomić
+pełną regresję wcześniejszych funkcji. Punkt 3B pozostaje otwarty, a 3C jest
+zablokowany do zakończenia i przetestowania całego 3B.2.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1146,3 +1146,26 @@ pozostaje zablokowany.
 Podetap 3B.2.2 jest zakończony. Punkt 3B.2 i punkt nadrzędny 3B pozostają
 otwarte. Następny podetap to 3B.2.3 — obliczenia rytmu pojedynczej budowy.
 Punkt 3C nadal pozostaje zablokowany.
+
+## Kontrola po 3B.2.3–3B.2.5 — wdrożenie rytmu, kolejności, interfejsu i pamięci — 2026-08-17
+
+- [x] kolejne rozładunki jednej budowy są wyznaczane według formuły
+  `czas rozładunku + dodatkowy odstęp dostaw`;
+- [x] dodatkowy odstęp nie jest doliczany do fizycznego czasu zajęcia gruszki;
+- [x] liczba i ilości kursów pozostają bez zmian względem 3A;
+- [x] kursy wszystkich budów są stabilnie układane według planowanego
+  rozpoczęcia załadunku, dzięki czemu mogą się przeplatać;
+- [x] w tabeli budów dodano edytowalną kolumnę **Odstęp dostaw** z domyślną
+  wartością `0 min`;
+- [x] zmiana odstępu korzysta z istniejącej walidacji modelu i oznacza wynik
+  jako wymagający ponownego przeliczenia;
+- [x] pole `dodatkowyOdstepDostawMinuty` jest zapisywane w bieżącym planie i
+  historii oraz odtwarzane po odświeżeniu;
+- [x] logika obliczeniowa pozostaje w module gruszek, zapis w warstwie aplikacji,
+  a obsługa kolumny w osobnym module interfejsu;
+- [x] prowizoryjny moduł łączący kilka odpowiedzialności został usunięty.
+
+Podetapy 3B.2.3, 3B.2.4 i 3B.2.5 są wdrożone i oznaczone jako zakończone na
+poziomie implementacji. Testy pełnego zakresu zostały świadomie odłożone do
+3B.2.6. Punkt 3B.2 i cały 3B pozostają otwarte. Następny podetap to 3B.2.6 —
+testy, pełna regresja i kontrola dokumentacji; 3C pozostaje zablokowany.
