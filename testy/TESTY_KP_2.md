@@ -4,10 +4,10 @@
 
 Implementacja KP-2.1–KP-2.6, poprawka KP-2.7.1 i powtórny test operatora
 KP-2.7.2 są zakończone. Cały punkt KP-2 został zamknięty 2026-08-15. Dnia
-2026-08-17 dodano uzupełniający podgląd zapisanych tras i możliwość usunięcia
-pojedynczego wpisu. Kontrolę tej funkcji wykonujemy razem z najbliższą regresją
-w 3B.2.6. Pełne połączenie z OpenStreetMap nie jest jeszcze aktywne — pozostaje
-zakresem Etapu 6.
+2026-08-17 dodano uzupełniający podgląd zapisanych tras, wyszukiwanie,
+sortowanie po nazwie i możliwość usunięcia pojedynczego wpisu. Kontrolę tej
+funkcji wykonujemy razem z najbliższą regresją w 3B.2.6. Pełne połączenie z
+OpenStreetMap nie jest jeszcze aktywne — pozostaje zakresem Etapu 6.
 
 ## Cel
 
@@ -71,7 +71,7 @@ po ponownym imporcie tej samej budowy i nie są usuwane razem z planem dnia.
 4. Wyczyść plan i ponownie wczytaj ten sam plik — powinny wrócić wartości
    `27 min` oraz `30 min`.
 
-## Test 5 — podgląd i usunięcie pojedynczej trasy
+## Test 5 — podgląd, wyszukiwanie, sortowanie i usunięcie trasy
 
 1. Przy co najmniej jednej zapamiętanej trasie wybierz **Pokaż zapisane trasy**.
 2. Sprawdź, czy otwiera się okno w aplikacji i pokazuje dla każdej pozycji:
@@ -81,25 +81,34 @@ po ponownym imporcie tej samej budowy i nie są usuwane razem z planem dnia.
    - źródło wartości,
    - datę aktualizacji,
    - datę ostatniego użycia.
-3. Porównaj jedną pozycję z budową widoczną w planie. Opis powinien pokazywać
+3. Lista powinna domyślnie być ułożona alfabetycznie **Nazwa A–Z**. Wybierz
+   **Nazwa Z–A** i potwierdź odwrócenie kolejności, a następnie wróć do A–Z.
+4. W polu **Szukaj lokalizacji** wpisz fragment nazwy firmy, budowy, ulicy lub
+   miejscowości. Lista powinna filtrować się od razu podczas pisania.
+5. Wyszukiwanie powinno ignorować wielkość liter i polskie znaki, np.
+   `swiebodzice` powinno znaleźć wpis zawierający `Świebodzice`.
+6. Wyczyść pole wyszukiwania i sprawdź, czy wracają wszystkie zapisane trasy.
+7. Porównaj jedną pozycję z budową widoczną w planie. Opis powinien pokazywać
    dokładnie, pod jaką nazwą program przechowuje i wyszukuje tę trasę.
-4. Zamknij okno przyciskiem `×`, klawiszem `Esc` i kliknięciem poza oknem —
+8. Zamknij okno przyciskiem `×`, klawiszem `Esc` i kliknięciem poza oknem —
    każda z tych metod powinna działać bez zmiany danych.
-5. Otwórz podgląd ponownie, wybierz **Usuń** przy jednej trasie i anuluj
+9. Otwórz podgląd ponownie, wybierz **Usuń** przy jednej trasie i anuluj
    potwierdzenie. Wpis oraz licznik nie mogą się zmienić.
-6. Wybierz **Usuń** ponownie i potwierdź. Wpis powinien zniknąć, a licznik
-   **Pamięć tras** powinien zmniejszyć się o jeden.
-7. Pamiętaj, że usunięcie wpisu nie usuwa budowy ani jej bieżących czasów z
-   planu. Jeżeli budowa nadal ma komplet czasów, kolejne przeliczenie może
-   ponownie zapisać tę trasę do pamięci.
+10. Wybierz **Usuń** ponownie i potwierdź. Wpis powinien zniknąć, a licznik
+    **Pamięć tras** powinien zmniejszyć się o jeden. Jeżeli aktywne jest
+    wyszukiwanie, lista powinna po usunięciu zachować bieżący filtr.
+11. Pamiętaj, że usunięcie wpisu nie usuwa budowy ani jej bieżących czasów z
+    planu. Jeżeli budowa nadal ma komplet czasów, kolejne przeliczenie może
+    ponownie zapisać tę trasę do pamięci.
 
 ## Oczekiwany wynik
 
 Książka tras jest niezależna od bieżącego planu i historii. Dokładnie ta sama
 firma oraz budowa otrzymują zapisane czasy bez kolejnego wpisywania, dojazd i
 powrót pozostają osobne, a program działa także bez internetu. Operator może
-również sprawdzić, jakie dokładnie wpisy znajdują się w pamięci, i usunąć
-pojedynczy błędny wpis bez czyszczenia całej książki.
+również szybko znaleźć wpis po fragmencie nazwy, sortować listę A–Z lub Z–A,
+sprawdzić dokładne dane w pamięci i usunąć pojedynczy błędny wpis bez czyszczenia
+całej książki.
 
 ## Testy automatyczne dla programisty
 
@@ -111,4 +120,5 @@ pojedynczy błędny wpis bez czyszczenia całej książki.
 Test integracji używa zastępczej funkcji mapowej. Sprawdza, że przy trafieniu w
 cache funkcja mapowa nie jest wywoływana, a nowy wynik mapowy jest zapisywany na
 przyszłość. Test podglądu sprawdza odczyt listy bez zmiany daty ostatniego użycia,
-kolejność od najnowszego wpisu, usunięcie pojedynczej trasy i tryb pamięci sesji.
+usunięcie pojedynczej trasy, tryb pamięci sesji oraz filtrowanie bez rozróżniania
+wielkości liter i polskich znaków i sortowanie nazw A–Z/Z–A.
