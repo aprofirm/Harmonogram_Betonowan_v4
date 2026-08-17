@@ -57,7 +57,7 @@ function sprawdzRzeczywistyUkladKdx(aplikacja) {
 
 function sprawdzOsobnaTabele() {
   const interfejs = fs.readFileSync(
-    path.join(katalogProjektu, "js/interfejs/rodzaj_rozladunku.js"),
+    path.join(katalogProjektu, "js/interfejs/odstep_dostaw.js"),
     "utf8"
   );
   const css = fs.readFileSync(
@@ -68,10 +68,10 @@ function sprawdzOsobnaTabele() {
   assert.match(interfejs, /Odbiory własne/);
   assert.match(interfejs, /POZA AUTOMATYCZNYM HARMONOGRAMEM/);
   assert.match(interfejs, /wiersze-odbiorow-wlasnych/);
-  assert.match(interfejs, /wiersz\.remove\(\)/);
+  assert.match(interfejs, /czyDaneZrodloweMajaKolumneRozladunku/);
+  assert.match(interfejs, /pominieto-odbior-wlasny/);
   assert.match(interfejs, /nie wymagają czasów przejazdu/i);
   assert.match(interfejs, /closest\("\.pole-formularza"\)/);
-  assert.match(interfejs, /insertBefore\(etykieta, etykietaIlosci\)/);
   assert.match(css, /\.panel-odbiorow-wlasnych/);
   assert.match(css, /\.tabela-odbiorow-wlasnych/);
 }
