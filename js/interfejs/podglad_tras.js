@@ -5,6 +5,65 @@
     zakresGlobalny.HarmonogramBetonowan || {};
   let ostatnioAktywnyElement = null;
 
+  function normalizujTekstWyszukiwania(wartosc) {
+    return String(wartosc || "")
+      .trim()
+      .toLowerCase()
+      .replace(/ł/g, "l")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim()
+      .replace(/\s+/g, " ");
+  }
+
+  function porownajNazwyTras(trasaPierwsza, trasaDruga) {
+    const nazwaPierwsza = normalizujTekstWyszukiwania(
+      trasaPierwsza && trasaPierwsza.opisLokalizacji
+    );
+    const nazwaDruga = normalizujTekstWyszukiwania(
+      trasaDruga && trasaDruga.opisLokalizacji
+    );
+
+    return nazwaPierwsza.localeCompare(nazwaDruga, "pl");
+  }
+
+  function filtrujISortujTrasy(trasy, fraza, kierunekSortowania) {
+    const listaTras = Array.isArray(trasy) ? trasy.slice() : [];
+    const szukanaFraza = normalizujTekstWyszukiwania(fraza);
+    const kierunek = kierunekSortowania === "nazwa-za" ? "nazwa-za" : "nazwa-az";
+    const przefiltrowaneTrasy = szukanaFraza
+      ? listaTras.filter(function (trasa) {
+          return normalizujTekstWyszukiwania(
+            trasa && trasa.opisLokalizacji
+          ).includes(szukanaFraza);
+        })
+      : listaTras;
+
+    return przefiltrowaneTrasy
+      .map(function (trasa, indeksPoczatkowy) {
+        return {
+          trasa: trasa,
+          indeksPoczatkowy: indeksPoczatkowy
+        };
+      })
+      .sort(function (elementPierwszy, elementDrugi) {
+        const porownanieNazw = porownajNazwyTras(
+          elementPierwszy.trasa,
+          elementDrugi.trasa
+        );
+        const porownanie = kierunek === "nazwa-za"
+          ? -porownanieNazw
+          : porownanieNazw;
+
+        return porownanie ||
+          (elementPierwszy.indeksPoczatkowy - elementDrugi.indeksPoczatkowy);
+      })
+      .map(function (element) {
+        return element.trasa;
+      });
+  }
+
   function pobierzWymaganyElement(identyfikator) {
     const element = document.getElementById(identyfikator);
 
@@ -58,6 +117,84 @@
     informacja.className = "pusta-historia";
     informacja.textContent = tresc;
     kontener.replaceChildren(informacja);
+  }
+
+  function utworzNarzedziaListy(obslugaZmiany) {
+    const narzedzia = document.createElement("div");
+    const etykietaWyszukiwania = document.createElement("label");
+    const opisWyszukiwania = document.createElement("span");
+    const poleWyszukiwania = document.createElement("input");
+    const przyciskiSortowania = document.createElement("div");
+    const przyciskAZ = document.createElement("button");
+    const przyciskZA = document.createElement("button");
+    const stanWynikow = document.createElement("p");
+    let kierunekSortowania = "nazwa-az";
+
+    narzedzia.className = "lista-historii";
+    narzedzia.setAttribute("aria-label", "Wyszukiwanie i sortowanie zapisanych tras");
+
+    etykietaWyszukiwania.className = "pole-formularza";
+    opisWyszukiwania.textContent = "Szukaj lokalizacji";
+    poleWyszukiwania.type = "search";
+    poleWyszukiwania.autocomplete = "off";
+    poleWyszukiwania.placeholder = "np. Świebodzice, POLST, Jachimowicza";
+    poleWyszukiwania.setAttribute("aria-label", "Szukaj w zapisanych trasach");
+    etykietaWyszukiwania.appendChild(opisWyszukiwania);
+    etykietaWyszukiwania.appendChild(poleWyszukiwania);
+
+    przyciskiSortowania.className = "diagnostyka__przyciski";
+    przyciskAZ.className = "przycisk-drugoplanowy";
+    przyciskAZ.type = "button";
+    przyciskAZ.textContent = "Nazwa A–Z";
+    przyciskAZ.setAttribute("aria-pressed", "true");
+    przyciskZA.className = "przycisk-drugoplanowy";
+    przyciskZA.type = "button";
+    przyciskZA.textContent = "Nazwa Z–A";
+    przyciskZA.setAttribute("aria-pressed", "false");
+    przyciskiSortowania.appendChild(przyciskAZ);
+    przyciskiSortowania.appendChild(przyciskZA);
+
+    stanWynikow.className = "pamiec-tras__stan";
+    stanWynikow.setAttribute("aria-live", "polite");
+
+    function ustawKierunekSortowania(nowyKierunek) {
+      kierunekSortowania = nowyKierunek === "nazwa-za"
+        ? "nazwa-za"
+        : "nazwa-az";
+      przyciskAZ.setAttribute(
+        "aria-pressed",
+        kierunekSortowania === "nazwa-az" ? "true" : "false"
+      );
+      przyciskZA.setAttribute(
+        "aria-pressed",
+        kierunekSortowania === "nazwa-za" ? "true" : "false"
+      );
+      obslugaZmiany();
+    }
+
+    poleWyszukiwania.addEventListener("input", obslugaZmiany);
+    przyciskAZ.addEventListener("click", function () {
+      ustawKierunekSortowania("nazwa-az");
+    });
+    przyciskZA.addEventListener("click", function () {
+      ustawKierunekSortowania("nazwa-za");
+    });
+
+    narzedzia.appendChild(etykietaWyszukiwania);
+    narzedzia.appendChild(przyciskiSortowania);
+    narzedzia.appendChild(stanWynikow);
+
+    return {
+      element: narzedzia,
+      poleWyszukiwania: poleWyszukiwania,
+      stanWynikow: stanWynikow,
+      pobierzFraze: function () {
+        return poleWyszukiwania.value;
+      },
+      pobierzKierunekSortowania: function () {
+        return kierunekSortowania;
+      }
+    };
   }
 
   function zapiszUsuniecieWDiagnostyce(wynikUsuniecia) {
@@ -185,24 +322,43 @@
     const przyciskZamknij = pobierzWymaganyElement("przycisk-zamknij-pamiec-tras");
     const lista = pobierzWymaganyElement("lista-zapisanych-tras");
     const pokazStanPamieciTrasPodstawowy = aplikacja.interfejs.pokazStanPamieciTras;
+    let narzedziaListy = null;
 
     function odswiezListe() {
       const wynik = aplikacja.pamiecTras.pobierzListeTras();
-      const trasy = Array.isArray(wynik.trasy) ? wynik.trasy : [];
+      const wszystkieTrasy = Array.isArray(wynik.trasy) ? wynik.trasy : [];
+      const widoczneTrasy = filtrujISortujTrasy(
+        wszystkieTrasy,
+        narzedziaListy ? narzedziaListy.pobierzFraze() : "",
+        narzedziaListy ? narzedziaListy.pobierzKierunekSortowania() : "nazwa-az"
+      );
 
-      if (!trasy.length) {
+      if (narzedziaListy) {
+        narzedziaListy.stanWynikow.textContent =
+          "Pokazano " + widoczneTrasy.length + " z " + wszystkieTrasy.length + " tras.";
+      }
+
+      if (!wszystkieTrasy.length) {
         pokazPustaListe(lista, "Pamięć tras jest pusta.");
         return;
       }
 
-      lista.replaceChildren(utworzTabeleTras(trasy));
+      if (!widoczneTrasy.length) {
+        pokazPustaListe(lista, "Brak tras pasujących do wyszukiwania.");
+        return;
+      }
+
+      lista.replaceChildren(utworzTabeleTras(widoczneTrasy));
     }
+
+    narzedziaListy = utworzNarzedziaListy(odswiezListe);
+    lista.parentNode.insertBefore(narzedziaListy.element, lista);
 
     function otworzOkno() {
       ostatnioAktywnyElement = document.activeElement;
       odswiezListe();
       okno.hidden = false;
-      przyciskZamknij.focus();
+      narzedziaListy.poleWyszukiwania.focus();
     }
 
     function zamknijOkno() {
@@ -243,5 +399,12 @@
     przyciskPodgladu.disabled = !stanPoczatkowy.liczbaTras;
   }
 
-  uruchomPodgladTras();
+  aplikacja.podgladTras = {
+    normalizujTekstWyszukiwania: normalizujTekstWyszukiwania,
+    filtrujISortujTrasy: filtrujISortujTrasy
+  };
+
+  if (typeof document !== "undefined") {
+    uruchomPodgladTras();
+  }
 })(window);
