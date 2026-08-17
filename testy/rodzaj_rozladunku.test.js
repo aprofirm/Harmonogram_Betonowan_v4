@@ -83,7 +83,11 @@ function sprawdzImportRodzajow(aplikacja) {
   ustawCzasyDostawPlanowanych(aplikacja, stanImportu.budowy);
   const wynik = aplikacja.harmonogram.przeliczCalyHarmonogram({
     stanImportu: stanImportu,
-    parametry: { pojemnoscGruszkiM3: 8 }
+    parametry: {
+      pojemnoscGruszkiM3: 8,
+      czasZaladunkuMinuty: 10,
+      czasRozladunkuMinuty: 15
+    }
   });
 
   assert.equal(wynik.budowy.length, 5);
@@ -130,42 +134,52 @@ function sprawdzBudowyReczne(aplikacja) {
   assert.equal(aplikacja.gruszki.generujKursyDlaBudowy(odbiorWlasny, 8).length, 0);
   assert.equal(aplikacja.gruszki.generujKursyDlaBudowy(taczka, 8).length, 1);
 
-  assert.throws(
-    function () {
-      aplikacja.budowy.utworzBudoweReczna({
-        firma: "Firma bez wyboru",
-        budowa: "Budowa",
-        startPlanowany: "14:00",
-        iloscBetonuM3: "8",
-        rodzajRozladunku: ""
-      }, []);
-    },
-    /Wybierz rodzaj rozładunku/i
-  );
+  assert.throws(function () {
+    aplikacja.budowy.utworzBudoweReczna({
+      firma: "Firma bez wyboru",
+      budowa: "Budowa",
+      startPlanowany: "14:00",
+      iloscBetonuM3: "8",
+      rodzajRozladunku: ""
+    }, []);
+  }, /Wybierz rodzaj rozładunku/i);
 }
 
-function sprawdzPodlaczenieInterfejsu() {
+function sprawdzPodzialOdpowiedzialnosci() {
   const html = fs.readFileSync(path.join(katalogProjektu, "index.html"), "utf8");
+  const model = fs.readFileSync(
+    path.join(katalogProjektu, "js/budowy/rodzaj_rozladunku.js"),
+    "utf8"
+  );
   const interfejs = fs.readFileSync(
     path.join(katalogProjektu, "js/interfejs/rodzaj_rozladunku.js"),
+    "utf8"
+  );
+  const odstep = fs.readFileSync(
+    path.join(katalogProjektu, "js/interfejs/odstep_dostaw.js"),
     "utf8"
   );
 
   assert.match(html, /style\/rodzaj_rozladunku\.css/);
   assert.match(html, /js\/budowy\/rodzaj_rozladunku\.js/);
   assert.match(html, /js\/interfejs\/rodzaj_rozladunku\.js/);
+  assert.match(model, /pominieto-odbior-wlasny/);
+  assert.match(model, /czyOdbiorWlasny/);
   assert.match(interfejs, /Odbiór własny/);
   assert.match(interfejs, /Lej/);
   assert.match(interfejs, /Pompa/);
   assert.match(interfejs, /Wywrotka/);
   assert.match(interfejs, /Taczka/);
-  assert.match(interfejs, /Odbiór własny — poza harmonogramem/);
+  assert.match(interfejs, /Odbiory własne/);
+  assert.match(interfejs, /Do wydania — poza harmonogramem/);
+  assert.doesNotMatch(odstep, /rodzajRozladunku/);
+  assert.doesNotMatch(odstep, /Odbiory własne/);
 }
 
 const aplikacja = wczytajAplikacje();
 sprawdzImportRodzajow(aplikacja);
 sprawdzZgodnoscCsvBezKolumny(aplikacja);
 sprawdzBudowyReczne(aplikacja);
-sprawdzPodlaczenieInterfejsu();
+sprawdzPodzialOdpowiedzialnosci();
 
-console.log("✓ Rodzaj rozładunku i odbiór własny są obsługiwane poprawnie.");
+console.log("✓ Rodzaj rozładunku i odbiór własny są obsługiwane poprawnie i modułowo.");
