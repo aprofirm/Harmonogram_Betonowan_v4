@@ -36,7 +36,7 @@ function wczytajAplikacje() {
 
 function sprawdzRzeczywistyUkladKdx(aplikacja) {
   const csv = [
-    "Normal;K.-Nazwa;Budowa;Czas rozładunku;Nazwa materiału;Zam-o (mój zakład);Rodzaj rozładunku",
+    ";K.-Nazwa;Budowa;Czas rozładunku;Nazwa materiału;Zam-o (mój zakład);Rodzaj rozładunku",
     "Normal;\"DUR-BUD\" Maciej Durko;odbiory własne WBT Świebodzice;06:20;C20/25 X0 Dmax8 Cl 1.0 V0;1,0 m3;",
     "Normal;Małgorzata Gabryańczyk;Dostawa Walim;07:30;C20/25 XC1 Dmax8 Cl 0.40 S4;3,0 m3;Pompa"
   ].join("\n");
@@ -70,6 +70,8 @@ function sprawdzOsobnaTabele() {
   assert.match(interfejs, /wiersze-odbiorow-wlasnych/);
   assert.match(interfejs, /wiersz\.remove\(\)/);
   assert.match(interfejs, /nie wymagają czasów przejazdu/i);
+  assert.match(interfejs, /closest\("\.pole-formularza"\)/);
+  assert.match(interfejs, /insertBefore\(etykieta, etykietaIlosci\)/);
   assert.match(css, /\.panel-odbiorow-wlasnych/);
   assert.match(css, /\.tabela-odbiorow-wlasnych/);
 }
