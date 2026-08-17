@@ -36,7 +36,8 @@ automatycznie całego punktu `3B`.
 3. Wczytaj plik CSV, przeciągając go na pole importu albo wybierając z komputera.
 4. W razie potrzeby dodaj budowę ręcznie, podając również ilość betonu w m³.
 5. Uzupełnij czas dojazdu i powrotu przy aktywnych budowach.
-6. Ustaw parametry i wybierz przycisk **Przelicz harmonogram**.
+6. W razie potrzeby ustaw przy budowie dodatkowy **Odstęp dostaw**.
+7. Ustaw parametry i wybierz przycisk **Przelicz harmonogram**.
 
 Podstawowy interfejs działa lokalnie, bez instalacji, logowania, serwera i połączenia z internetem.
 
@@ -101,16 +102,32 @@ oznaczone jako **Ręcznie** pozostają bez zmian. Przycisk `↺` przy polu usuwa
 wyjątek tylko dla wybranej budowy i przywraca bieżący czas z ustawień. Ręczne
 czasy są zachowywane po odświeżeniu strony i w zapisach historycznych.
 
-## Model odstępu pomiędzy dostawami
+## Rytm i odstęp pomiędzy dostawami
 
-Każda budowa ma osobny dodatkowy odstęp pomiędzy kolejnymi dostawami. Jego
-bezpieczna wartość domyślna wynosi `0 min`, dzięki czemu dotychczasowe plany i
-starsze zapisy zachowują wcześniejsze działanie. Wartość musi być liczbą
-nieujemną; błędne dane są odrzucane z czytelnym komunikatem.
+Każda budowa ma osobny **Odstęp dostaw**. Jego bezpieczna wartość domyślna
+wynosi `0 min`, dzięki czemu dotychczasowe plany i starsze zapisy zachowują
+wcześniejsze działanie. Wartość musi być liczbą nieujemną; błędne dane są
+odrzucane z czytelnym komunikatem.
 
-Na obecnym podetapie jest to element wewnętrznego modelu danych. Nie wpływa
-jeszcze na godziny kursów i nie ma pola w tabeli. Obliczenia zostaną podłączone
-w 3B.2.3, a interfejs i pamięć planu w 3B.2.5.
+Rytm kolejnych dostaw jest liczony jako:
+
+`dokładny czas rozładunku + dodatkowy odstęp dostaw`.
+
+Pierwszy kurs rozpoczyna rozładunek o `StartRoboczy`. Kolejne rozładunki są
+planowane zgodnie z rytmem danej budowy. Dodatkowy odstęp nie wydłuża fizycznego
+cyklu pojedynczej gruszki — jej cykl nadal obejmuje tylko załadunek, dojazd,
+rozładunek i powrót. Wydłużony załadunek przesuwa początek załadunku danego
+kursu wstecz, ale nie zmienia planowanej godziny jego dostawy.
+
+Po przeliczeniu kursy wszystkich budów są układane wspólnie według planowanego
+rozpoczęcia załadunku, dzięki czemu mogą się przeplatać. Na tym etapie program
+nie przydziela jeszcze numerów konkretnych gruszek i nie przesuwa dostaw z
+powodu ograniczonej liczby pojazdów — to pozostaje zakresem 3C i dalszych
+punktów.
+
+Zmiana pola **Odstęp dostaw** oznacza dotychczasowy wynik jako nieaktualny.
+Wartość jest zapisywana w bieżącym planie i zapisach historycznych oraz
+odtwarzana po odświeżeniu strony.
 
 ## Diagnostyka i raport błędów
 
@@ -197,4 +214,4 @@ Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
 ## Aktualny stan
 
-**Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są: **3A — generowanie kursów**, **3B.1 — podstawowe czasy kursów** oraz kroki przekrojowe **KP-1 — pamięć planu dnia**, **KP-2 — pamięć znanych tras** i **KP-3 — budowa ręczna oraz kompaktowy widok**. W punkcie **3B.2 — rytm dostaw** zakończono **3B.2.1 — regułę rytmu i granice zakresu** oraz **3B.2.2 — model danych i walidację**; następny jest **3B.2.3 — obliczenia rytmu pojedynczej budowy**. Punkt 3C pozostaje zablokowany do zakończenia i przetestowania całego 3B.
+**Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są: **3A — generowanie kursów**, **3B.1 — podstawowe czasy kursów** oraz kroki przekrojowe **KP-1 — pamięć planu dnia**, **KP-2 — pamięć znanych tras** i **KP-3 — budowa ręczna oraz kompaktowy widok**. W punkcie **3B.2 — rytm dostaw** wdrożono **3B.2.1–3B.2.5**: regułę rytmu, model odstępu, obliczenia pojedynczej budowy, wspólną kolejność kursów oraz interfejs i pamięć odstępu. Pełne testy, regresja i uporządkowanie dokumentacji pozostają jako **3B.2.6**; ich wykonanie zostało świadomie odłożone do następnej sesji. Punkt **3B.2** i cały **3B** pozostają otwarte do 3B.2.7. Punkt 3C pozostaje zablokowany do zakończenia i przetestowania całego 3B.
