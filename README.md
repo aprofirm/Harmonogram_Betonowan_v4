@@ -34,8 +34,8 @@ automatycznie całego punktu `3B`.
 1. Pobierz całe repozytorium na komputer.
 2. Otwórz plik [index.html](index.html) dwukrotnym kliknięciem.
 3. Wczytaj plik CSV, przeciągając go na pole importu albo wybierając z komputera.
-4. W razie potrzeby dodaj budowę ręcznie, podając również ilość betonu w m³.
-5. Uzupełnij czas dojazdu i powrotu przy aktywnych budowach.
+4. W razie potrzeby dodaj budowę ręcznie, podając ilość betonu i wybierając **Rodzaj rozładunku**.
+5. Uzupełnij czas dojazdu i powrotu przy dostawach planowanych. Odbiory własne nie wymagają tych czasów.
 6. W razie potrzeby ustaw przy budowie dodatkowy **Odstęp dostaw**.
 7. Ustaw parametry i wybierz przycisk **Przelicz harmonogram**.
 
@@ -69,6 +69,16 @@ Aktualnie rozpoznawane są m.in. rzeczywiste nagłówki KDX:
 Dodatkowe, puste kolumny oraz zmiana kolejności kolumn nie powinny wpływać na import. Techniczny wiersz KDX bez danych budowy, np. `Normal`, jest pomijany. Nowe warianty nazw nagłówków należy dopisywać jako aliasy w module importu zamiast tworzyć osobne importery dla każdego układu.
 
 Program obsługuje wybór pliku i przeciąganie CSV. Kolejny poprawny import zastępuje dane z poprzedniego pliku, natomiast budowy dodane ręcznie pozostają osobną listą.
+
+## Rodzaj rozładunku i odbiory własne
+
+Jeżeli rzeczywisty eksport KDX zawiera kolumnę **Rodzaj rozładunku**, program rozpoznaje wartości **Lej**, **Pompa**, **Wywrotka** i **Taczka**. Pusta wartość w istniejącej kolumnie oznacza **Odbiór własny**. Jeżeli starszy plik w ogóle nie ma tej kolumny, aplikacja nie zgaduje rodzaju i zachowuje wcześniejsze działanie.
+
+Odbiór własny jest zamówieniem dnia, ale nie jest automatycznie układany jako dostawa gruszką. Nie wymaga czasu dojazdu ani powrotu, nie tworzy kursów i nie jest zapisywany do książki tras. Operator wydaje taki beton w wolnym oknie załadunkowym.
+
+Dla czytelności odbiory własne są oddzielone od głównej tabeli dostaw planowanych i trafiają do osobnej, domyślnie zwiniętej sekcji **Odbiory własne** poniżej harmonogramu. Przy budowie dodawanej ręcznie wybór rodzaju rozładunku jest wymagany.
+
+Wartość **Pompa** jest na razie informacją o sposobie rozładunku. Pełna logika przydziału i dostępności pomp pozostaje zakresem Etapu 4.
 
 ## Ilość betonu i wariant roboczy
 
@@ -200,6 +210,7 @@ Instrukcje testów ręcznych znajdują się w plikach:
 - [testy/TESTY_KP_1.md](testy/TESTY_KP_1.md) — plan testu pamięci dnia,
 - [testy/TESTY_KP_2.md](testy/TESTY_KP_2.md) — plan testu pamięci tras,
 - [testy/TESTY_KP_3.md](testy/TESTY_KP_3.md) — ilość ręczna, wariant i szeroki widok,
+- [testy/TESTY_RODZAJ_ROZLADUNKU.md](testy/TESTY_RODZAJ_ROZLADUNKU.md) — rodzaje rozładunku i odbiory własne,
 - [testy/TESTY_DIAGNOSTYKA.md](testy/TESTY_DIAGNOSTYKA.md).
 
 Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczny:
@@ -217,9 +228,15 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/pamiec_tras_integracja.test.js
     node testy/pamiec_tras_podglad.test.js
     node testy/kp_3.test.js
+    node testy/rodzaj_rozladunku.test.js
+    node testy/odbior_wlasny_tabela.test.js
 
 Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
 ## Aktualny stan
 
-**Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są: **3A — generowanie kursów**, **3B.1 — podstawowe czasy kursów** oraz kroki przekrojowe **KP-1 — pamięć planu dnia**, **KP-2 — pamięć znanych tras** i **KP-3 — budowa ręczna oraz kompaktowy widok**. W punkcie **3B.2 — rytm dostaw** wdrożono **3B.2.1–3B.2.5**: regułę rytmu, model odstępu, obliczenia pojedynczej budowy, wspólną kolejność kursów oraz interfejs i pamięć odstępu. Pełne testy, regresja i uporządkowanie dokumentacji pozostają jako **3B.2.6**; ich wykonanie zostało świadomie odłożone do następnej sesji. Punkt **3B.2** i cały **3B** pozostają otwarte do 3B.2.7. Punkt 3C pozostaje zablokowany do zakończenia i przetestowania całego 3B.
+**Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są: **3A — generowanie kursów**, **3B.1 — podstawowe czasy kursów** oraz kroki przekrojowe **KP-1 — pamięć planu dnia**, **KP-2 — pamięć znanych tras** i **KP-3 — budowa ręczna oraz kompaktowy widok**. W punkcie **3B.2 — rytm dostaw** wdrożono **3B.2.1–3B.2.5**: regułę rytmu, model odstępu, obliczenia pojedynczej budowy, wspólną kolejność kursów oraz interfejs i pamięć odstępu.
+
+Dodatkowo na rzeczywistym eksporcie KDX operator potwierdził obsługę **Rodzaju rozładunku**: pusta wartość oznacza odbiór własny, odbiory własne są oddzielone od dostaw planowanych i nie wymagają trasy ani kursów, a budowy ręczne mają wybór rodzaju rozładunku. GitHub Pages opublikował działającą wersję tej poprawki 2026-08-17.
+
+Następny formalny krok pozostaje bez zmian: **3B.2.6 — testy, regresja i dokumentacja**. W tym kroku trzeba rozszerzyć test 3B.2 poza sam model odstępu, ujednolicić testy rodzaju rozładunku z aktualnym punktem integracji oraz uporządkować odpowiedzialności modułów po awaryjnych poprawkach UI. Po 3B.2.6 pozostaje **3B.2.7 — końcowa publikacja i test operatora**. Dopiero wtedy można zamknąć **3B.2** i cały **3B** oraz rozpocząć **3C — przydział gruszek**.
