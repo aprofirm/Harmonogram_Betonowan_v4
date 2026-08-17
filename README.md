@@ -240,8 +240,8 @@ historią repozytorium.
 
 ## Aktualny stan
 
-**Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są: **3A — generowanie kursów**, **3B.1 — podstawowe czasy kursów** oraz kroki przekrojowe **KP-1 — pamięć planu dnia**, **KP-2 — pamięć znanych tras** i **KP-3 — budowa ręczna oraz kompaktowy widok**. W punkcie **3B.2 — rytm dostaw** zakończono **3B.2.1–3B.2.6**: regułę rytmu, model odstępu, obliczenia, wspólną kolejność kursów, interfejs i pamięć oraz pełne testy i regresję.
+**Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są **3A — generowanie kursów** oraz cały **3B — czasy cyklu i rytm dostaw**, w tym **3B.1** i **3B.2.1–3B.2.7**. Zakończone pozostają również kroki przekrojowe **KP-1 — pamięć planu dnia**, **KP-2 — pamięć znanych tras** i **KP-3 — budowa ręczna oraz kompaktowy widok**.
 
-W 3B.2.6 uporządkowano moduły po poprawkach operatorskich: interfejs odstępu dostaw i interfejs rodzaju rozładunku znów mają osobne odpowiedzialności, a logika biznesowa odbiorów własnych pozostaje w module budów. Rozszerzony test 3B.2 obejmuje rzeczywiste obliczenia rytmu, a GitHub Actions automatycznie uruchamia wszystkie testy `testy/*.test.js`. Pełna regresja 2026-08-17 zakończyła się statusem `success`.
+Końcowy test operatorski 3B.2 potwierdził na rzeczywistym planie regułę `rytm = dokładny czas rozładunku + dodatkowy odstęp`. Dla rozładunku `15 min` i odstępu `5 min` kolejne rozładunki wystąpiły co `20 min`, a dodatkowy odstęp nie wydłużył fizycznego cyklu gruszki. GitHub Pages opublikował sprawdzoną wersję, a pełna regresja automatyczna przed próbą operatorską zakończyła się powodzeniem.
 
-**Następny krok: 3B.2.7 — publikacja i test operatora.** Trzeba sprawdzić najnowszą wersję na GitHub Pages i ręcznie potwierdzić rytm dostaw, brak wpływu dodatkowego odstępu na fizyczny cykl gruszki, przeplatanie kursów różnych budów oraz odtworzenie po odświeżeniu. Dopiero wtedy można zamknąć **3B.2** i cały **3B** oraz rozpocząć **3C — przydział gruszek**.
+**Następny punkt: 3C — przydział konkretnych gruszek do kursów.** Kod 3C nie został jeszcze rozpoczęty. Na początku następnego spotkania należy najpierw rozpisać jego kompletne podetapy zgodnie z `AGENTS.md`. Punkt 3D pozostaje odpowiedzialny za minimalną liczbę gruszek, a 3E za tryb „mam X gruszek”.

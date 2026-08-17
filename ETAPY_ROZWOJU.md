@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; wdrożono 3B.2.1–3B.2.6, następny jest 3B.2.7 — publikacja i test operatora**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono 3A i 3B, następny jest 3C — przydział gruszek**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -318,7 +318,7 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
 ## Postęp punktów Etapu 3
 
 - [x] **3A — generowanie kursów:** podział ilości betonu na pełne i niepełne kursy, pomijanie zrealizowanych pozycji i pełne tworzenie wyniku od nowa.
-- [ ] **3B — czasy cyklu i rytm dostaw:**
+- [x] **3B — czasy cyklu i rytm dostaw:**
   - [x] **3B.1 — podstawowe czasy kursu:** załadunek, dojazd, dokładny czas
     rozładunku, powrót i ponowna gotowość są wdrożone oraz przetestowane.
     - [x] **3B.1.1 — model wartości efektywnej:** ustawienie globalne jest
@@ -332,7 +332,7 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
     - [x] **3B.1.4 — publikacja i test operatora:** wersja trafia na `main`,
       GitHub Pages buduje się poprawnie, a operator potwierdza wartość
       domyślną, ręczną zmianę i przywrócenie.
-  - [ ] **3B.2 — rytm dostaw:** oddzielenie odstępu pomiędzy kolejnymi
+  - [x] **3B.2 — rytm dostaw:** oddzielenie odstępu pomiędzy kolejnymi
     dostawami od fizycznego czasu zajęcia gruszki.
     - [x] **3B.2.1 — reguła rytmu i granice zakresu:** potwierdzenie formuły
       `rytm = dokładny czas rozładunku + dodatkowy odstęp`, zachowanie
@@ -355,7 +355,7 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
       rytmu `0` i większego od zera, różnych czasów rozładunku, wydłużonego
       załadunku, przeplatania budów, pamięci i przypadków błędnych, a następnie
       pełna regresja wcześniejszych funkcji i aktualizacja dokumentacji.
-    - [ ] **3B.2.7 — publikacja i test operatora:** publikacja na `main`, kontrola
+    - [x] **3B.2.7 — publikacja i test operatora:** publikacja na `main`, kontrola
       GitHub Pages oraz ręczne potwierdzenie rytmu, pełnego cyklu, kolejności
       kursów i odtworzenia po odświeżeniu; dopiero wtedy zamknięcie 3B.2 i
       całego punktu 3B.
@@ -683,11 +683,12 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **3B.2.6 — testy, regresję i dokumentację**: dodać pełny zestaw prób
-rytmu `0` i większego od zera, różnych czasów rozładunku, wydłużonego
-załadunku, przeplatania budów, pamięci i danych błędnych, a następnie uruchomić
-pełną regresję wcześniejszych funkcji. Punkt 3B pozostaje otwarty, a 3C jest
-zablokowany do zakończenia i przetestowania całego 3B.2.
+Na następnym spotkaniu rozpocząć **3C — przydział konkretnych gruszek do
+kursów**. Przed pierwszą zmianą kodu trzeba zgodnie z `AGENTS.md` przejrzeć
+aktualny stan repozytorium i rozpisać wszystkie znane podetapy 3C. Zakres 3C ma
+zapewnić, że jedna gruszka nie otrzyma dwóch nakładających się kursów; 3D
+pozostaje osobnym punktem dotyczącym minimalnej liczby gruszek, a 3E osobnym
+trybem „mam X gruszek”.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1196,3 +1197,28 @@ otwarte. Następny i ostatni podetap to **3B.2.7 — publikacja i test operatora
 kontrola GitHub Pages oraz ręczne potwierdzenie rytmu, pełnego cyklu,
 przeplatania kursów i odtworzenia po odświeżeniu. Punkt 3C pozostaje
 zablokowany do zamknięcia całego 3B.
+
+
+## Zamknięcie 3B.2.7, 3B.2 i 3B — 2026-08-17
+
+- [x] najnowsza wersja została opublikowana przez GitHub Pages bez błędu;
+- [x] operator potwierdził na rzeczywistym planie poprawne przeliczenie kursów
+  oraz oddzielenie odbioru własnego od dostaw planowanych;
+- [x] dla budowy 30 m³ z dokładnym rozładunkiem `15 min` i dodatkowym odstępem
+  `5 min` początki rozładunku wyniosły `09:00`, `09:20`, `09:40`, `10:00`,
+  czyli rytm dokładnie `20 min`;
+- [x] początki załadunków tej samej budowy wyniosły odpowiednio `08:00`,
+  `08:20`, `08:40`, `09:00`, a gotowość po pełnym cyklu pozostała liczona z
+  załadunku, dojazdu, rozładunku i powrotu bez doliczania dodatkowego odstępu;
+- [x] kursy różnych budów pozostają wspólnie ułożone według planowanego
+  rozpoczęcia załadunku i mogą się przeplatać;
+- [x] zapis i odtworzenie pola odstępu są objęte testami automatycznymi 3B.2.6
+  oraz istniejącą pamięcią planu; operator zaakceptował zamknięcie 3B.2.7;
+- [x] pełna regresja automatyczna przed testem operatora zakończyła się
+  statusem `success`.
+
+Podetap **3B.2.7**, cały punkt **3B.2** oraz cały punkt **3B** są zakończone.
+Następny niezakończony punkt to **3C — przydział gruszek**. Implementacja 3C
+nie została jeszcze rozpoczęta; na początku następnego spotkania należy najpierw
+rozpisać jego kompletne podetapy i granice zakresu. Punkty 3D i 3E pozostają
+otwarte.

@@ -2,11 +2,11 @@
 
 ## Status
 
-Etap 3 jest w toku. **Punkt 3A — generowanie kursów**, krok **3B.1 — podstawowe czasy kursów** oraz kroki przekrojowe **KP-1–KP-3** są zakończone i sprawdzone. W punkcie **3B.2 — rytm dostaw** zakończono **3B.2.1–3B.2.6**. Rozszerzone testy rytmu i pełna regresja automatyczna przeszły poprawnie.
+Etap 3 jest w toku. **Punkt 3A — generowanie kursów** oraz cały **3B — czasy cyklu i rytm dostaw** są zakończone i sprawdzone. Zakończone pozostają również kroki przekrojowe **KP-1–KP-3**.
 
 Dodatkowo 2026-08-17 operator potwierdził na rzeczywistym eksporcie KDX obsługę pola **Rodzaj rozładunku** oraz oddzielenie **Odbiorów własnych** od dostaw planowanych. Odbiory własne nie wymagają trasy i nie generują kursów.
 
-**Następny krok: 3B.2.7 — publikacja i test operatora.** Przydział i dostępność konkretnych gruszek pozostają zakresem punktów 3C–3E i nie mogą rozpocząć się przed zamknięciem całego punktu 3B.
+**Następny punkt: 3C — przydział konkretnych gruszek do kursów.** Implementacja 3C nie została jeszcze rozpoczęta. Przed kodowaniem trzeba rozpisać jego pełne podetapy. Punkt 3D dotyczy minimalnej liczby gruszek, a 3E trybu „mam X gruszek”.
 
 ## Cel
 
@@ -53,7 +53,19 @@ Silnik ma pozostać niezależny od interfejsu HTML oraz od sposobu pozyskania cz
 - [x] interfejs odstępu i interfejs rodzaju rozładunku rozdzielone na osobne moduły;
 - [x] pełna regresja wszystkich `testy/*.test.js` uruchomiona przez GitHub Actions i zakończona statusem `success` 2026-08-17.
 
-3B.2.6 jest zakończony. Pozostaje 3B.2.7 — publikacja i ręczny test operatora.
+3B.2.6 jest zakończony.
+
+## Wynik 3B.2.7 — publikacja i test operatora
+
+- [x] GitHub Pages opublikował aktualną wersję bez błędu;
+- [x] rzeczywisty plan KDX przeliczył się poprawnie;
+- [x] dla rozładunku `15 min` i odstępu `5 min` uzyskano rytm `20 min`:
+  `09:00`, `09:20`, `09:40`, `10:00`;
+- [x] dodatkowy odstęp nie wydłużył fizycznego cyklu gruszki;
+- [x] wspólna kolejność kursów różnych budów pozostała poprawna;
+- [x] operator zaakceptował wynik i zamknięcie punktu 3B.2.7.
+
+3B.2.7, cały 3B.2 oraz cały 3B są zakończone. Następny punkt to 3C — przydział konkretnych gruszek do kursów. Testy dotyczące braku nakładania kursów jednej gruszki pozostają do wykonania w 3C; minimalna liczba gruszek należy do 3D, a tryb „mam X gruszek” do 3E.
 
 ## Test 1 — liczba kursów dla pełnych ładunków
 
