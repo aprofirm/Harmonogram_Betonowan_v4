@@ -1,0 +1,41 @@
+.pole-formularza select {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid #cbd7df;
+  border-radius: 10px;
+  outline: none;
+  color: var(--kolor-granatowy-ciemny);
+  background: #fbfcfd;
+  font: inherit;
+  font-weight: 650;
+  transition: border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+}
+
+.pole-formularza select:focus {
+  border-color: var(--kolor-niebieski);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(29, 111, 159, 0.13);
+}
+
+.rodzaj-rozladunku-budowy {
+  display: block;
+  margin-top: 4px;
+  color: #6b7d89;
+  font-size: 0.68rem;
+  font-weight: 750;
+}
+
+.wiersz-odbior-wlasny {
+  background: #f5faf7;
+}
+
+.wartosc-poza-harmonogramem {
+  color: #8b989f;
+  font-weight: 700;
+}
+
+.status-poza-harmonogramem {
+  color: var(--kolor-zielony);
+  font-weight: 800;
+}
