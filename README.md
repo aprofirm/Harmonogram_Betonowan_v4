@@ -101,6 +101,17 @@ oznaczone jako **Ręcznie** pozostają bez zmian. Przycisk `↺` przy polu usuwa
 wyjątek tylko dla wybranej budowy i przywraca bieżący czas z ustawień. Ręczne
 czasy są zachowywane po odświeżeniu strony i w zapisach historycznych.
 
+## Model odstępu pomiędzy dostawami
+
+Każda budowa ma osobny dodatkowy odstęp pomiędzy kolejnymi dostawami. Jego
+bezpieczna wartość domyślna wynosi `0 min`, dzięki czemu dotychczasowe plany i
+starsze zapisy zachowują wcześniejsze działanie. Wartość musi być liczbą
+nieujemną; błędne dane są odrzucane z czytelnym komunikatem.
+
+Na obecnym podetapie jest to element wewnętrznego modelu danych. Nie wpływa
+jeszcze na godziny kursów i nie ma pola w tabeli. Obliczenia zostaną podłączone
+w 3B.2.3, a interfejs i pamięć planu w 3B.2.5.
+
 ## Diagnostyka i raport błędów
 
 Aplikacja automatycznie zapisuje techniczne zdarzenia z maksymalnie 10 ostatnich uruchomień. Rejestrowane są m.in. uruchomienie programu, rozpoczęcie i wynik importu CSV, przeliczenie harmonogramu, ostrzeżenia oraz błędy z bezpiecznym wskazaniem miejsca w kodzie.
@@ -175,6 +186,7 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/diagnostyka.test.js
     node testy/etap_3a.test.js
     node testy/etap_3b_1.test.js
+    node testy/etap_3b_2.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
@@ -185,4 +197,4 @@ Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
 ## Aktualny stan
 
-**Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są: **3A — generowanie kursów**, **3B.1 — podstawowe czasy kursów** oraz kroki przekrojowe **KP-1 — pamięć planu dnia**, **KP-2 — pamięć znanych tras** i **KP-3 — budowa ręczna oraz kompaktowy widok**. W punkcie **3B.2 — rytm dostaw** zakończono **3B.2.1 — regułę rytmu i granice zakresu**; następny jest **3B.2.2 — model danych i walidacja**. Punkt 3C pozostaje zablokowany do zakończenia i przetestowania całego 3B.
+**Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są: **3A — generowanie kursów**, **3B.1 — podstawowe czasy kursów** oraz kroki przekrojowe **KP-1 — pamięć planu dnia**, **KP-2 — pamięć znanych tras** i **KP-3 — budowa ręczna oraz kompaktowy widok**. W punkcie **3B.2 — rytm dostaw** zakończono **3B.2.1 — regułę rytmu i granice zakresu** oraz **3B.2.2 — model danych i walidację**; następny jest **3B.2.3 — obliczenia rytmu pojedynczej budowy**. Punkt 3C pozostaje zablokowany do zakończenia i przetestowania całego 3B.

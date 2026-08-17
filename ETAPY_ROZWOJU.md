@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono 3B.2.1, następny jest 3B.2.2 — model danych i walidacja**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono 3B.2.2, następny jest 3B.2.3 — obliczenia rytmu pojedynczej budowy**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -339,7 +339,7 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
       `StartRoboczy` jako początku pierwszego rozładunku oraz zapisanie, że
       przydział gruszek, konflikty i automatyczne przesunięcia nie należą do
       3B.2.
-    - [ ] **3B.2.2 — model danych i walidacja:** osobny nieujemny odstęp dla
+    - [x] **3B.2.2 — model danych i walidacja:** osobny nieujemny odstęp dla
       każdej budowy, bezpieczna wartość domyślna `0 min`, zgodność starszych
       danych oraz czytelny błąd dla wartości nieprawidłowej.
     - [ ] **3B.2.3 — obliczenia rytmu pojedynczej budowy:** wyznaczenie startów
@@ -683,10 +683,11 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **3B.2.2 — model danych i walidacja**: dodać do modelu budowy osobny
-nieujemny odstęp pomiędzy dostawami, bezpieczną wartość domyślną `0 min`,
-zgodność starszych danych i czytelną walidację. Punkt 3B pozostaje otwarty, a
-3C jest zablokowany do zakończenia i przetestowania całego 3B.2.
+Wykonać **3B.2.3 — obliczenia rytmu pojedynczej budowy**: wyznaczyć początek
+rozładunku kolejnych kursów według dokładnego czasu rozładunku i dodatkowego
+odstępu, bez wydłużania fizycznego cyklu gruszki oraz bez zmiany liczby i
+ilości kursów. Punkt 3B pozostaje otwarty, a 3C jest zablokowany do zakończenia
+i przetestowania całego 3B.2.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1125,3 +1126,23 @@ reguła rytmu i granice zakresu.
 Podetap 3B.2.1 jest zakończony. Punkt 3B.2 i punkt nadrzędny 3B pozostają
 otwarte. Następny podetap to 3B.2.2 — model danych i walidacja. Punkt 3C nadal
 pozostaje zablokowany.
+
+## Kontrola po 3B.2.2 — model danych i walidacja — 2026-08-17
+
+- [x] każda nowa budowa z importu i dodana ręcznie otrzymuje osobny dodatkowy
+  odstęp dostaw z wartością domyślną `0 min`;
+- [x] starsza budowa bez nowego pola jest normalizowana do `0 min` bez zmiany
+  źródłowych danych;
+- [x] odstęp można zmienić w modelu, a zmiana pozostałych czasów budowy nie
+  zeruje zapisanej wartości;
+- [x] wartość pusta oznacza `0 min`, natomiast liczba ujemna i tekst powodują
+  czytelny błąd po polsku;
+- [x] osobny test `testy/etap_3b_2.test.js`, kontrola składni i pełna regresja
+  dwunastu zestawów testów przechodzą poprawnie;
+- [x] osobny test operatora nie jest wymagany w tym podetapie, ponieważ model
+  nie ma jeszcze pola w interfejsie i nie wpływa na godziny kursów; pełna próba
+  operatora pozostaje zaplanowana w 3B.2.7.
+
+Podetap 3B.2.2 jest zakończony. Punkt 3B.2 i punkt nadrzędny 3B pozostają
+otwarte. Następny podetap to 3B.2.3 — obliczenia rytmu pojedynczej budowy.
+Punkt 3C nadal pozostaje zablokowany.

@@ -113,6 +113,7 @@
       dodatkowyCzasZaladunkuMinuty: 0,
       czasRozladunkuRoboczyMinuty: null,
       dodatkowyCzasRozladunkuMinuty: 0,
+      dodatkowyOdstepDostawMinuty: 0,
       zrodloCzasuDojazdu: "brak",
       zrodloCzasuPowrotu: "brak"
     };
@@ -135,6 +136,18 @@
   function pobierzNieujemnaLiczbe(wartosc, nazwaPola) {
     const liczba = pobierzNieujemnaLiczbeLubBrak(wartosc, nazwaPola);
     return liczba === null ? 0 : liczba;
+  }
+
+  function uzupelnijDodatkowyOdstepDostawBudowy(budowa) {
+    if (!budowa || typeof budowa !== "object") {
+      throw new Error("Nie znaleziono budowy do uzupełnienia odstępu dostaw.");
+    }
+
+    budowa.dodatkowyOdstepDostawMinuty = pobierzNieujemnaLiczbe(
+      budowa.dodatkowyOdstepDostawMinuty,
+      "Dodatkowy odstęp dostaw"
+    );
+    return budowa;
   }
 
   function pobierzDodatniaLiczbeLubBrak(wartosc, nazwaPola) {
@@ -332,6 +345,15 @@
       noweCzasy.dodatkowyCzasRozladunkuMinuty,
       "Dodatkowy czas rozładunku"
     );
+    budowa.dodatkowyOdstepDostawMinuty = pobierzNieujemnaLiczbe(
+      Object.prototype.hasOwnProperty.call(
+        noweCzasy,
+        "dodatkowyOdstepDostawMinuty"
+      )
+        ? noweCzasy.dodatkowyOdstepDostawMinuty
+        : budowa.dodatkowyOdstepDostawMinuty,
+      "Dodatkowy odstęp dostaw"
+    );
     budowa.zrodloCzasuDojazdu = pobierzZrodloCzasu(
       noweCzasy.zrodloCzasuDojazdu,
       czasDojazdu !== null
@@ -381,7 +403,8 @@
       "czasPowrotuRoboczyMinuty",
       "dodatkowyCzasZaladunkuMinuty",
       "czasRozladunkuRoboczyMinuty",
-      "dodatkowyCzasRozladunkuMinuty"
+      "dodatkowyCzasRozladunkuMinuty",
+      "dodatkowyOdstepDostawMinuty"
     ];
 
     if (!budowa) {
@@ -401,6 +424,7 @@
       dodatkowyCzasZaladunkuMinuty: budowa.dodatkowyCzasZaladunkuMinuty,
       czasRozladunkuRoboczyMinuty: budowa.czasRozladunkuRoboczyMinuty,
       dodatkowyCzasRozladunkuMinuty: budowa.dodatkowyCzasRozladunkuMinuty,
+      dodatkowyOdstepDostawMinuty: budowa.dodatkowyOdstepDostawMinuty,
       zrodloCzasuDojazdu: budowa.zrodloCzasuDojazdu,
       zrodloCzasuPowrotu: budowa.zrodloCzasuPowrotu
     };
@@ -448,7 +472,8 @@
     const listaReczna = Array.isArray(budowyReczne) ? budowyReczne : [];
 
     return listaZImportu.concat(listaReczna).map(function (budowa) {
-      return Object.assign({}, budowa);
+      const kopiaBudowy = Object.assign({}, budowa);
+      return uzupelnijDodatkowyOdstepDostawBudowy(kopiaBudowy);
     });
   }
 
@@ -458,6 +483,8 @@
     utworzListeRobocza: utworzListeRobocza,
     uzupelnijBazowaIloscBetonu: uzupelnijBazowaIloscBetonu,
     ustawCzasyRobocze: ustawCzasyRobocze,
+    uzupelnijDodatkowyOdstepDostawBudowy:
+      uzupelnijDodatkowyOdstepDostawBudowy,
     pobierzEfektywnyCzasRozladunkuMinuty: pobierzEfektywnyCzasRozladunkuMinuty,
     migrujCzasRozladunkuBudowy: migrujCzasRozladunkuBudowy,
     zmienCzasRoboczyBudowy: zmienCzasRoboczyBudowy,

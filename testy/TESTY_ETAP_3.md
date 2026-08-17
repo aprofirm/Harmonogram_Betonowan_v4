@@ -2,7 +2,7 @@
 
 ## Status
 
-Etap 3 jest w toku. **Punkt 3A — generowanie kursów**, krok **3B.1 — podstawowe czasy kursów** oraz kroki przekrojowe **KP-1–KP-3** są zakończone i sprawdzone. W punkcie **3B.2 — rytm dostaw** zakończono 3B.2.1; następny jest 3B.2.2 — model danych i walidacja. Przydział i dostępność konkretnych gruszek pozostają zakresem punktów 3C–3E i nie mogą rozpocząć się przed zamknięciem całego punktu 3B.
+Etap 3 jest w toku. **Punkt 3A — generowanie kursów**, krok **3B.1 — podstawowe czasy kursów** oraz kroki przekrojowe **KP-1–KP-3** są zakończone i sprawdzone. W punkcie **3B.2 — rytm dostaw** zakończono 3B.2.1 i 3B.2.2; następny jest 3B.2.3 — obliczenia rytmu pojedynczej budowy. Przydział i dostępność konkretnych gruszek pozostają zakresem punktów 3C–3E i nie mogą rozpocząć się przed zamknięciem całego punktu 3B.
 
 ## Cel
 
@@ -18,6 +18,8 @@ Silnik ma pozostać niezależny od interfejsu HTML oraz od sposobu pozyskania cz
 - czas dojazdu i powrotu jest w 3B.1 podawany ręcznie dla budowy,
 - budowa może posiadać dodatkowy czas załadunku oraz dokładny ręczny czas
   rozładunku zastępujący wartość z ustawień,
+- budowa przechowuje osobny nieujemny dodatkowy odstęp dostaw, domyślnie
+  `0 min`; starsze dane bez tej wartości są traktowane jak `0 min`,
 - rytm dostaw jest równy dokładnemu czasowi rozładunku powiększonemu o osobny
   dodatkowy odstęp,
 - pierwszy rozładunek zaczyna się o `StartRoboczy`, a kolejne według rytmu,
@@ -194,6 +196,8 @@ Po wdrożeniu Etapu 3 nadal muszą działać:
 Zaimplementowane części Etapu 3 sprawdzają osobne pliki:
 
 - `testy/etap_3a.test.js` — liczby i ilości kursów,
-- `testy/etap_3b_1.test.js` — godziny pełnego cyklu i wydłużenia.
+- `testy/etap_3b_1.test.js` — godziny pełnego cyklu i wydłużenia,
+- `testy/etap_3b_2.test.js` — model odstępu, wartość domyślna, walidacja i
+  zgodność starszych danych.
 
 Testy sprawdzają czystą logikę modułu gruszek bez zależności od DOM i bez połączenia z internetem.
