@@ -38,8 +38,11 @@
 
     const formularz = document.getElementById("formularz-budowy-recznej");
     const poleIlosci = document.getElementById("reczna-ilosc-betonu");
+    const etykietaIlosci = poleIlosci && typeof poleIlosci.closest === "function"
+      ? poleIlosci.closest(".pole-formularza")
+      : null;
 
-    if (!formularz || !poleIlosci || !poleIlosci.parentElement) {
+    if (!formularz || !poleIlosci || !etykietaIlosci || etykietaIlosci.parentElement !== formularz) {
       throw new Error("Nie znaleziono formularza ręcznej budowy dla rodzaju rozładunku.");
     }
 
@@ -57,7 +60,7 @@
     utworzOpcjeRodzajuRozladunku(pole);
     etykieta.appendChild(opis);
     etykieta.appendChild(pole);
-    formularz.insertBefore(etykieta, poleIlosci.parentElement);
+    formularz.insertBefore(etykieta, etykietaIlosci);
     return pole;
   }
 
