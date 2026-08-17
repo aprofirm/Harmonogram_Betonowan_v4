@@ -202,6 +202,11 @@
       "Dodatkowy czas załadunku",
       budowa.idBudowy
     );
+    const dodatkowyOdstepDostawMinuty = pobierzDodatkowyCzas(
+      budowa.dodatkowyOdstepDostawMinuty,
+      "Dodatkowy odstęp dostaw",
+      budowa.idBudowy
+    );
     const czasRozladunkuMinuty =
       aplikacja.budowy.pobierzEfektywnyCzasRozladunkuMinuty(
         budowa,
@@ -210,13 +215,15 @@
     const calkowityCzasZaladunkuMinuty =
       czasZaladunkuMinuty + dodatkowyCzasZaladunkuMinuty;
     const calkowityCzasRozladunkuMinuty = czasRozladunkuMinuty;
+    const rytmDostawMinuty =
+      czasRozladunkuMinuty + dodatkowyOdstepDostawMinuty;
     const startBudowyMinuty = pobierzMinutyGodziny(
       budowa.startRoboczy,
       "StartRoboczy",
       budowa.idBudowy
     );
     const rozpoczecieRozladunkuMinuty =
-      startBudowyMinuty + (kurs.numerKursu - 1) * calkowityCzasRozladunkuMinuty;
+      startBudowyMinuty + (kurs.numerKursu - 1) * rytmDostawMinuty;
     const wyjazdZBetoniarniMinuty = rozpoczecieRozladunkuMinuty - czasDojazduMinuty;
     const rozpoczecieZaladunkuMinuty =
       wyjazdZBetoniarniMinuty - calkowityCzasZaladunkuMinuty;
@@ -233,6 +240,9 @@
       czasRozladunkuMinuty: czasRozladunkuMinuty,
       dodatkowyCzasRozladunkuMinuty: 0,
       calkowityCzasRozladunkuMinuty: calkowityCzasRozladunkuMinuty,
+      dodatkowyOdstepDostawMinuty: dodatkowyOdstepDostawMinuty,
+      rytmDostawMinuty: rytmDostawMinuty,
+      minutaRozpoczeciaZaladunku: rozpoczecieZaladunkuMinuty,
       czyNadpisanyCzasRozladunku:
         budowa.czasRozladunkuRoboczyMinuty !== null &&
         budowa.czasRozladunkuRoboczyMinuty !== undefined &&
@@ -269,15 +279,27 @@
       budowyWedlugId.set(String(budowa.idBudowy), budowa);
     });
 
-    return (Array.isArray(kursy) ? kursy : []).map(function (kurs) {
-      const budowa = budowyWedlugId.get(String(kurs.idBudowy));
+    return (Array.isArray(kursy) ? kursy : [])
+      .map(function (kurs, indeksPierwotny) {
+        const budowa = budowyWedlugId.get(String(kurs.idBudowy));
 
-      if (!budowa) {
-        throw new Error("Nie znaleziono budowy dla kursu „" + kurs.idKursu + "”.");
-      }
+        if (!budowa) {
+          throw new Error("Nie znaleziono budowy dla kursu „" + kurs.idKursu + "”.");
+        }
 
-      return obliczCzasyKursu(kurs, budowa, parametry || {});
-    });
+        return {
+          indeksPierwotny: indeksPierwotny,
+          kurs: obliczCzasyKursu(kurs, budowa, parametry || {})
+        };
+      })
+      .sort(function (lewy, prawy) {
+        const roznicaCzasu =
+          lewy.kurs.minutaRozpoczeciaZaladunku - prawy.kurs.minutaRozpoczeciaZaladunku;
+        return roznicaCzasu || lewy.indeksPierwotny - prawy.indeksPierwotny;
+      })
+      .map(function (pozycja) {
+        return pozycja.kurs;
+      });
   }
 
   aplikacja.gruszki = {
