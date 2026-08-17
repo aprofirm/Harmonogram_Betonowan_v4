@@ -55,8 +55,12 @@ function sprawdzRzeczywistyUkladKdx(aplikacja) {
   );
 }
 
-function sprawdzOsobnaTabele() {
-  const interfejs = fs.readFileSync(
+function sprawdzRozdzielenieModulow() {
+  const interfejsRozladunku = fs.readFileSync(
+    path.join(katalogProjektu, "js/interfejs/rodzaj_rozladunku.js"),
+    "utf8"
+  );
+  const interfejsOdstepu = fs.readFileSync(
     path.join(katalogProjektu, "js/interfejs/odstep_dostaw.js"),
     "utf8"
   );
@@ -65,19 +69,22 @@ function sprawdzOsobnaTabele() {
     "utf8"
   );
 
-  assert.match(interfejs, /Odbiory własne/);
-  assert.match(interfejs, /POZA AUTOMATYCZNYM HARMONOGRAMEM/);
-  assert.match(interfejs, /wiersze-odbiorow-wlasnych/);
-  assert.match(interfejs, /czyDaneZrodloweMajaKolumneRozladunku/);
-  assert.match(interfejs, /pominieto-odbior-wlasny/);
-  assert.match(interfejs, /nie wymagają czasów przejazdu/i);
-  assert.match(interfejs, /closest\("\.pole-formularza"\)/);
+  assert.match(interfejsRozladunku, /Odbiory własne/);
+  assert.match(interfejsRozladunku, /POZA AUTOMATYCZNYM HARMONOGRAMEM/);
+  assert.match(interfejsRozladunku, /wiersze-odbiorow-wlasnych/);
+  assert.match(interfejsRozladunku, /nie wymagają czasów przejazdu/i);
+  assert.match(interfejsRozladunku, /closest\("\.pole-formularza"\)/);
+  assert.match(interfejsRozladunku, /rodzajRozladunku/);
+  assert.doesNotMatch(interfejsOdstepu, /Odbiory własne/);
+  assert.doesNotMatch(interfejsOdstepu, /rodzajRozladunku/);
   assert.match(css, /\.panel-odbiorow-wlasnych/);
   assert.match(css, /\.tabela-odbiorow-wlasnych/);
 }
 
 const aplikacja = wczytajAplikacje();
 sprawdzRzeczywistyUkladKdx(aplikacja);
-sprawdzOsobnaTabele();
+sprawdzRozdzielenieModulow();
 
-console.log("✓ Odbiór własny z rzeczywistego KDX jest poza harmonogramem i ma osobną tabelę.");
+console.log(
+  "✓ Odbiór własny z rzeczywistego KDX jest poza harmonogramem, a interfejs ma osobny moduł."
+);
