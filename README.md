@@ -167,6 +167,13 @@ Po ponownym imporcie dokładnie tej samej firmy i budowy program uzupełnia oba
 czasy bez ponownego wpisywania. Przy polach pokazuje źródło: **Ręcznie**,
 **Z pamięci** albo — po przyszłym podłączeniu map — **OpenMap**.
 
+Przycisk **Pokaż zapisane trasy** otwiera lokalny podgląd książki tras bez
+wychodzenia z aplikacji. Tabela pokazuje dokładny opis lokalizacji używany przy
+dopasowaniu, czas dojazdu, czas powrotu, źródło wartości oraz datę aktualizacji
+i ostatniego użycia. Pojedynczy wpis można usunąć po potwierdzeniu. Usunięcie
+nie zmienia bieżącego planu; jeżeli ta sama budowa nadal ma komplet czasów,
+kolejne przeliczenie może ponownie zapisać trasę do pamięci.
+
 Pamięć tras ma osobny klucz, limit 1000 lokalizacji i około 1 MB. Kolejny zapis
 tej samej lokalizacji aktualizuje wcześniejszy wpis. **Wyczyść plan dnia** nie
 usuwa książki tras. Dane pozostają w konkretnym profilu przeglądarki; jeśli
@@ -208,6 +215,7 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
     node testy/pamiec_tras_integracja.test.js
+    node testy/pamiec_tras_podglad.test.js
     node testy/kp_3.test.js
 
 Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
