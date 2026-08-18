@@ -68,7 +68,6 @@ const wynik = aplikacja.harmonogram.przeliczCalyHarmonogram({
   }
 });
 
-assert.equal(wynik.punktEtapu, "3C.3");
 assert.equal(wynik.kursy.length, 4);
 assert.deepEqual(
   Array.from(wynik.kursy, function (kurs) { return kurs.numerGruszki; }),

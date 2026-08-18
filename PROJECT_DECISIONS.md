@@ -1402,6 +1402,8 @@ Obowiązują zasady:
   zachowują stabilną kolejność wejściową;
 - silnik najpierw ponownie wykorzystuje pierwszą wolną gruszkę o najniższym
   numerze, a gdy żadna nie jest dostępna, tworzy kolejny numer;
+- numer gruszki jest technicznym oznaczeniem zasobu w harmonogramie, a nie
+  stałym przypisaniem konkretnego samochodu, kierowcy ani numeru rejestracyjnego;
 - identyfikatory techniczne mają format `GRUSZKA-001`, `GRUSZKA-002` itd.;
 - 3C nie realizuje jeszcze trybu ograniczonej floty i nie przesuwa kursów z
   powodu liczby dostępnych pojazdów; należy to do 3E;

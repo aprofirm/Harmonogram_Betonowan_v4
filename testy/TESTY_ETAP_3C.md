@@ -5,7 +5,7 @@
 - [x] 3C.1 — model i zasady przydziału.
 - [x] 3C.2 — niezależny silnik przydziału.
 - [x] 3C.3 — integracja z pełnym harmonogramem.
-- [ ] 3C.4 — widok operatora.
+- [x] 3C.4 — widok operatora.
 - [ ] 3C.5 — testy integracyjne i przypadki brzegowe.
 - [ ] 3C.6 — pełna regresja, publikacja i test operatora.
 
@@ -59,3 +59,21 @@ Przed podłączeniem do centralnego harmonogramu dodano `testy/etap_3c_integracj
 Po integracji `testy/etap_3c_3.test.js` sprawdza pełne `przeliczCalyHarmonogram()`: kursy mają konkretne numery gruszek, wynik `gruszki` zawiera użyte pojazdy i przydzielone kursy, a centralny komunikat informuje o liczbie przydzielonych gruszek.
 
 3C.3 jest zaliczony po pełnej regresji. Następny krok: 3C.4.
+
+## Test 3C.4 — widok operatora
+
+Tabela kursów pokazuje dodatkową kolumnę **Gruszka**. Wartości `Gruszka 1`,
+`Gruszka 2` itd. są technicznym oznaczeniem pierwszego wolnego zasobu. Nie są
+stałym przypisaniem do konkretnego samochodu ani kierowcy.
+
+Uruchom:
+
+```text
+node testy/etap_3c_4.test.js
+```
+
+Test sprawdza obecność kolumny, zgodną liczbę komórek pustego wiersza, użycie
+`numerGruszki` z wyniku silnika oraz aktualne oznaczenie etapu 3C.4.
+
+Po 3C.4 następny podetap to **3C.5 — testy integracyjne i przypadki brzegowe**.
+

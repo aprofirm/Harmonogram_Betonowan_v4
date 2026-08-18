@@ -523,7 +523,7 @@
     const opis = document.createElement("span");
 
     wiersz.className = "pusty-wiersz pusty-wiersz--kursy";
-    komorka.colSpan = 8;
+    komorka.colSpan = 9;
     ikona.className = "pusty-wiersz__ikona";
     ikona.setAttribute("aria-hidden", "true");
     ikona.textContent = "◷";
@@ -548,6 +548,12 @@
     wiersz.appendChild(
       utworzKomorke(
         String(kurs.numerKursu) + "/" + String(kurs.liczbaKursowBudowy),
+        "wartosc-wazna"
+      )
+    );
+    wiersz.appendChild(
+      utworzKomorke(
+        "Gruszka " + String(kurs.numerGruszki),
         "wartosc-wazna"
       )
     );

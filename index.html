@@ -50,7 +50,7 @@
               <p class="etykieta-sekcji">USTAWIENIA</p>
               <h2 id="tytul-parametrow">Parametry planu</h2>
             </div>
-            <span class="znacznik-etapu">Etap 3C.3</span>
+            <span class="znacznik-etapu">Etap 3C.4</span>
           </div>
 
           <section class="sekcja-danych" aria-labelledby="tytul-importu">
@@ -158,9 +158,9 @@
           </form>
 
           <p class="informacja-etapu">
-            Etap 3C.3 przydziela konkretne gruszki do kursów bez nakładania ich
-            pełnych cykli. Numery gruszek zostaną pokazane w tabeli operatora
-            w następnym podetapie 3C.4.
+            Etap 3C.4 pokazuje przy każdym kursie numer technicznej gruszki.
+            Jest to pierwsza wolna gruszka wybrana przez silnik, a nie stałe
+            przypisanie konkretnego samochodu.
           </p>
 
           <details class="diagnostyka">
@@ -281,8 +281,8 @@
                 <h2>Godziny kursów</h2>
               </div>
               <p class="opis-panelu">
-                Kursy są ułożone według planowanego startu załadunku. Przydział
-                numerów gruszek nastąpi dopiero w punkcie 3C.
+                Kursy są ułożone według planowanego startu załadunku. Kolumna
+                Gruszka pokazuje pierwszą wolną gruszkę przydzieloną do kursu.
               </p>
             </div>
 
@@ -291,6 +291,7 @@
                 <thead>
                   <tr>
                     <th>Kurs</th>
+                    <th>Gruszka</th>
                     <th>Budowa</th>
                     <th>Ilość</th>
                     <th>Załadunek</th>
@@ -302,7 +303,7 @@
                 </thead>
                 <tbody id="wiersze-kursow">
                   <tr class="pusty-wiersz pusty-wiersz--kursy">
-                    <td colspan="8">
+                    <td colspan="9">
                       <span class="pusty-wiersz__ikona" aria-hidden="true">◷</span>
                       <strong>Godziny kursów pojawią się po przeliczeniu</strong>
                       <span>Najpierw uzupełnij czasy przejazdu przy budowach.</span>
@@ -378,7 +379,7 @@
 
       <footer class="stopka">
         <span>Harmonogram Betonowań v4</span>
-        <span>Etap 3C.3 · przydział gruszek w silniku</span>
+        <span>Etap 3C.4 · numery gruszek w tabeli</span>
       </footer>
     </div>
 

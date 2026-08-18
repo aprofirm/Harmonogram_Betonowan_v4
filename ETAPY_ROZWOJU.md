@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono 3C.1–3C.3, następny jest 3C.4 — widok numeru gruszki**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono 3C.1–3C.4, następny jest 3C.5 — testy integracyjne i przypadki brzegowe**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -369,8 +369,9 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
     jest dostępna, tworzony jest kolejny numer; moduł nie przesuwa godzin kursów.
   - [x] **3C.3 — integracja z harmonogramem:** podłączenie przydziału do
     `przeliczCalyHarmonogram()`, wyniku `gruszki` i wspólnego stanu kursów.
-  - [ ] **3C.4 — widok operatora:** pokazanie numeru gruszki przy każdym kursie
-    bez przebudowy pozostałych tabel.
+  - [x] **3C.4 — widok operatora:** pokazanie numeru gruszki przy każdym kursie
+    bez przebudowy pozostałych tabel; numer jest technicznym oznaczeniem pierwszej
+    wolnej gruszki, a nie stałą tożsamością konkretnego pojazdu.
   - [ ] **3C.5 — testy integracyjne i przypadki brzegowe:** wiele budów,
     jednoczesne starty, kurs dokładnie po powrocie, brak kursów, stabilne
     numerowanie i kontrola braku nakładania przedziałów jednej gruszki.

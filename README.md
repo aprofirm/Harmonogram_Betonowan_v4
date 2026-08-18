@@ -222,6 +222,10 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_3a.test.js
     node testy/etap_3b_1.test.js
     node testy/etap_3b_2.test.js
+    node testy/etap_3c.test.js
+    node testy/etap_3c_integracja.test.js
+    node testy/etap_3c_3.test.js
+    node testy/etap_3c_4.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
@@ -241,17 +245,17 @@ historią repozytorium.
 ## Aktualny stan
 
 **Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są **3A**, cały
-**3B** oraz **3C.1–3C.3**. Centralne `przeliczCalyHarmonogram()` generuje kursy,
-liczy ich pełne czasy i następnie przypisuje konkretne gruszki tak, aby fizyczne
-cykle jednego pojazdu się nie nakładały. Wynik przechowuje zarówno kursy z
-`idGruszki`/`numerGruszki`, jak i wspólny stan użytych gruszek.
+**3B** oraz **3C.1–3C.4**. Centralne `przeliczCalyHarmonogram()` generuje kursy,
+liczy ich pełne czasy i następnie przypisuje pierwsze wolne gruszki tak, aby
+fizyczne cykle jednego zasobu się nie nakładały. Tabela kursów pokazuje teraz
+`Gruszka 1`, `Gruszka 2` itd. jako techniczne oznaczenia zasobów.
 
 Przed integracją osobny test 3B → 3C.2 potwierdził zgodność modułów, w tym
 przeplatanie kilku budów i ponowne użycie pojazdu dokładnie w minucie powrotu.
 Pełna regresja jest wykonywana przy każdej zmianie na `main`.
 
-**Następny podetap: 3C.4 — widok operatora.** Dodamy numer gruszki do tabeli
-kursów bez zmiany działającego algorytmu przydziału. Następnie 3C.5 rozszerzy
-przypadki brzegowe, a 3C.6 obejmie publikację i test operatorski. Punkt 3D
-pozostaje odpowiedzialny za formalną minimalną liczbę gruszek, a 3E za tryb
-„mam X gruszek”.
+**Następny podetap: 3C.5 — testy integracyjne i przypadki brzegowe.**
+Sprawdzimy wiele budów, jednoczesne starty, dokładną granicę powrotu, pusty plan,
+stabilność numerowania i brak nakładania cykli jednej gruszki. Następnie 3C.6
+obejmie publikację i test operatorski. Punkt 3D pozostaje odpowiedzialny za
+formalną minimalną liczbę gruszek, a 3E za tryb „mam X gruszek”.
