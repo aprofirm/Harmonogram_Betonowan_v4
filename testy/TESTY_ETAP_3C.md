@@ -4,7 +4,7 @@
 
 - [x] 3C.1 — model i zasady przydziału.
 - [x] 3C.2 — niezależny silnik przydziału.
-- [ ] 3C.3 — integracja z pełnym harmonogramem.
+- [x] 3C.3 — integracja z pełnym harmonogramem.
 - [ ] 3C.4 — widok operatora.
 - [ ] 3C.5 — testy integracyjne i przypadki brzegowe.
 - [ ] 3C.6 — pełna regresja, publikacja i test operatora.
@@ -51,3 +51,11 @@ Test sprawdza:
 Test operatora nie jest jeszcze wymagany, ponieważ 3C.2 nie jest podłączony do
 głównego przeliczenia ani interfejsu. Ręczny test będzie częścią 3C.6 po
 integracji 3C.3–3C.5.
+
+## Test integracyjny 3B → 3C.2 i test 3C.3
+
+Przed podłączeniem do centralnego harmonogramu dodano `testy/etap_3c_integracja.test.js`. Test korzysta z rzeczywistych funkcji generowania i liczenia czasów 3B, a następnie przekazuje wynik do 3C.2. Sprawdza przeplatanie budów, jednoczesną potrzebę kilku pojazdów, brak nakładania i ponowne użycie gruszki dokładnie w minucie powrotu.
+
+Po integracji `testy/etap_3c_3.test.js` sprawdza pełne `przeliczCalyHarmonogram()`: kursy mają konkretne numery gruszek, wynik `gruszki` zawiera użyte pojazdy i przydzielone kursy, a centralny komunikat informuje o liczbie przydzielonych gruszek.
+
+3C.3 jest zaliczony po pełnej regresji. Następny krok: 3C.4.

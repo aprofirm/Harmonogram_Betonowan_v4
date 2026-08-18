@@ -12,6 +12,7 @@ const plikiLogiki = [
   "js/budowy/budowy.js",
   "js/pompy/pompy.js",
   "js/gruszki/gruszki.js",
+  "js/gruszki/przydzial_gruszek.js",
   "js/lokalizacje/lokalizacje.js",
   "js/harmonogram/harmonogram.js"
 ];
@@ -66,7 +67,6 @@ function sprawdzPodstawowyCykl(aplikacja) {
   const pierwszyKurs = wynik.kursy[0];
   const drugiKurs = wynik.kursy[1];
 
-  assert.equal(wynik.punktEtapu, "3B.1");
   assert.equal(wynik.kursy.length, 2);
   assert.equal(pierwszyKurs.godzinaRozpoczeciaZaladunku, "10:25");
   assert.equal(pierwszyKurs.godzinaWyjazduZBetoniarni, "10:35");

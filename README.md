@@ -241,17 +241,17 @@ historią repozytorium.
 ## Aktualny stan
 
 **Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są **3A**, cały
-**3B** oraz pierwsze dwa podetapy **3C.1–3C.2**. Nowy niezależny moduł przydziału
-potrafi przypisać konkretne numery gruszek do gotowych kursów tak, aby fizyczne
-cykle jednej gruszki się nie nakładały. Kurs rozpoczynający załadunek dokładnie
-w chwili powrotu poprzedniego może wykorzystać ten sam pojazd.
+**3B** oraz **3C.1–3C.3**. Centralne `przeliczCalyHarmonogram()` generuje kursy,
+liczy ich pełne czasy i następnie przypisuje konkretne gruszki tak, aby fizyczne
+cykle jednego pojazdu się nie nakładały. Wynik przechowuje zarówno kursy z
+`idGruszki`/`numerGruszki`, jak i wspólny stan użytych gruszek.
 
-Moduł 3C.2 jest na razie odseparowany od głównego `przeliczCalyHarmonogram()`.
-Dzięki temu działający wynik 3B.2 pozostaje bez zmian do czasu osobnego testu
-integracyjnego.
+Przed integracją osobny test 3B → 3C.2 potwierdził zgodność modułów, w tym
+przeplatanie kilku budów i ponowne użycie pojazdu dokładnie w minucie powrotu.
+Pełna regresja jest wykonywana przy każdej zmianie na `main`.
 
-**Następny podetap: 3C.3 — integracja przydziału gruszek z pełnym
-harmonogramem.** Następnie 3C.4 doda numer gruszki do widoku operatora, 3C.5
-obejmie testy integracyjne, a 3C.6 pełną regresję i test operatora. Punkt 3D
+**Następny podetap: 3C.4 — widok operatora.** Dodamy numer gruszki do tabeli
+kursów bez zmiany działającego algorytmu przydziału. Następnie 3C.5 rozszerzy
+przypadki brzegowe, a 3C.6 obejmie publikację i test operatorski. Punkt 3D
 pozostaje odpowiedzialny za formalną minimalną liczbę gruszek, a 3E za tryb
 „mam X gruszek”.

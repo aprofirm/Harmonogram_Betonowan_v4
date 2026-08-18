@@ -32,10 +32,12 @@
       : "";
 
     if (kursy.length) {
+      const liczbaGruszek = new Set(
+        kursy.map(function (kurs) { return kurs.idGruszki; }).filter(Boolean)
+      ).size;
       return "Wygenerowano " + kursy.length +
-        " kursów z godzinami załadunku, dojazdu, rozładunku i powrotu. " +
-        "Przydział numerów gruszek zostanie dodany w punkcie 3C." +
-        dopisekOdbiorow;
+        " kursów z godzinami pełnego cyklu. Przydzielono " + liczbaGruszek +
+        " gruszek bez nakładania ich kursów." + dopisekOdbiorow;
     }
 
     if (liczbaOdbiorowWlasnych) {
@@ -61,11 +63,19 @@
       listaBudow,
       parametry.pojemnoscGruszkiM3
     );
-    const kursy = aplikacja.gruszki.obliczCzasyKursow(
+    const kursyZCzasami = aplikacja.gruszki.obliczCzasyKursow(
       wygenerowaneKursy,
       listaBudow,
       parametry
     );
+    const wynikPrzydzialu = aplikacja.gruszki.przydzielGruszkiDoKursow(
+      kursyZCzasami
+    );
+    const kursy = wynikPrzydzialu.kursy;
+    const stanGruszek = {
+      dostepneGruszki: wynikPrzydzialu.gruszki,
+      przydzieloneKursy: kursy
+    };
     const komunikatKursow = utworzKomunikatKursow(kursy, listaBudow);
 
     return {
@@ -75,7 +85,7 @@
       parametry: parametry,
       budowy: listaBudow,
       pompy: aplikacja.pompy.utworzPustyStanPomp(),
-      gruszki: aplikacja.gruszki.utworzPustyStanGruszek(),
+      gruszki: stanGruszek,
       lokalizacje: aplikacja.lokalizacje.utworzPustyStanLokalizacji(),
       kursy: kursy,
       konflikty: [],

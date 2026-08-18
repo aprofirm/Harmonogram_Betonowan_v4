@@ -18,6 +18,7 @@ const plikiJavaScript = [
   "js/budowy/budowy.js",
   "js/pompy/pompy.js",
   "js/gruszki/gruszki.js",
+  "js/gruszki/przydzial_gruszek.js",
   "js/lokalizacje/lokalizacje.js",
   "js/harmonogram/harmonogram.js",
   "js/interfejs/interfejs.js",

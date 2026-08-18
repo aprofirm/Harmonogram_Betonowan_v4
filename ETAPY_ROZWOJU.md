@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono 3C.1 i 3C.2, następny jest 3C.3 — integracja przydziału z harmonogramem**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono 3C.1–3C.3, następny jest 3C.4 — widok numeru gruszki**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -367,7 +367,7 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
   - [x] **3C.2 — niezależny silnik przydziału:** kursy są porządkowane według
     rozpoczęcia załadunku, otrzymują pierwszą wolną gruszkę, a gdy żadna nie
     jest dostępna, tworzony jest kolejny numer; moduł nie przesuwa godzin kursów.
-  - [ ] **3C.3 — integracja z harmonogramem:** podłączenie przydziału do
+  - [x] **3C.3 — integracja z harmonogramem:** podłączenie przydziału do
     `przeliczCalyHarmonogram()`, wyniku `gruszki` i wspólnego stanu kursów.
   - [ ] **3C.4 — widok operatora:** pokazanie numeru gruszki przy każdym kursie
     bez przebudowy pozostałych tabel.
@@ -1262,3 +1262,14 @@ otwarte.
 
 **3C.1 i 3C.2 są zakończone.** Punkt 3C pozostaje otwarty. Następny podetap to
 **3C.3 — integracja z pełnym harmonogramem**.
+
+
+## Zamknięcie 3C.3 — 2026-08-18
+
+- [x] test integracyjny 3B → 3C.2 potwierdził zgodność rzeczywistych kursów z modułem przydziału;
+- [x] centralne `przeliczCalyHarmonogram()` zwraca teraz kursy z `idGruszki` i `numerGruszki`;
+- [x] wynik `gruszki` przechowuje użyte pojazdy i te same przydzielone kursy;
+- [x] moduł przydziału jest ładowany lokalnie z repozytorium bez CDN i internetu;
+- [x] pełna regresja `testy/*.test.js` została wykonana przed zapisaniem tego statusu.
+
+Podetap **3C.3** jest zakończony. Następny niezakończony podetap to **3C.4 — widok operatora**, czyli pokazanie numeru gruszki przy kursie bez zmiany zasad przydziału.
