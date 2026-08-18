@@ -22,6 +22,9 @@ jobs:
       - name: Wprowadź zmiany 3C.4
         run: python .github/wprowadz_3c4.py
 
+      - name: Dostosuj test 3C.3 do kolejnych podetapów
+        run: python .github/napraw_test_3c4.py
+
       - name: Uruchom pełną regresję
         run: |
           set -euo pipefail
@@ -34,6 +37,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html js/konfiguracja/konfiguracja.js js/interfejs/interfejs.js testy/etap_3c_4.test.js testy/TESTY_ETAP_3C.md ETAPY_ROZWOJU.md PROJECT_DECISIONS.md README.md
+          git add index.html js/konfiguracja/konfiguracja.js js/interfejs/interfejs.js testy/etap_3c_3.test.js testy/etap_3c_4.test.js testy/TESTY_ETAP_3C.md ETAPY_ROZWOJU.md PROJECT_DECISIONS.md README.md
           git commit -m "Pokaż numery gruszek w tabeli kursów"
           git push
