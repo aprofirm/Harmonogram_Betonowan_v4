@@ -1,0 +1,48 @@
+name: Diagnostyka 3C.4
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/diag-3c4.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  diagnostyka:
+    if: github.event.head_commit.message == 'Uruchom diagnostykę 3C.4'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+
+      - name: Sprawdź zmianę i testy
+        shell: bash
+        run: |
+          set +e
+          : > .github/wynik_3c4.txt
+          echo "=== PYTHON ===" >> .github/wynik_3c4.txt
+          python .github/wprowadz_3c4.py >> .github/wynik_3c4.txt 2>&1
+          PYTHON_STATUS=$?
+          echo "PYTHON_STATUS=$PYTHON_STATUS" >> .github/wynik_3c4.txt
+          WYNIK=$PYTHON_STATUS
+          if [ "$PYTHON_STATUS" -eq 0 ]; then
+            echo "=== TESTY ===" >> .github/wynik_3c4.txt
+            for plik in testy/*.test.js; do
+              echo "=== $plik ===" >> .github/wynik_3c4.txt
+              node "$plik" >> .github/wynik_3c4.txt 2>&1
+              STATUS=$?
+              echo "STATUS=$STATUS" >> .github/wynik_3c4.txt
+              if [ "$STATUS" -ne 0 ]; then WYNIK=1; fi
+            done
+          fi
+          echo "WYNIK_KONCOWY=$WYNIK" >> .github/wynik_3c4.txt
+
+      - name: Zapisz wynik diagnostyki
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/wynik_3c4.txt
+          git commit -m "Zapisz wynik diagnostyki 3C.4"
+          git push
