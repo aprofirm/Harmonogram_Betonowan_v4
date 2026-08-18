@@ -1,0 +1,85 @@
+=== PYTHON ===
+PYTHON_STATUS=0
+=== TESTY ===
+=== testy/diagnostyka.test.js ===
+✓ Diagnostyka: zapis, limit sesji, prywatność i czyszczenie działają poprawnie.
+STATUS=0
+=== testy/etap_1.test.js ===
+✓ Etap 1: wszystkie testy zakończyły się powodzeniem.
+STATUS=0
+=== testy/etap_2.test.js ===
+✓ Etap 2: wszystkie testy zakończyły się powodzeniem.
+STATUS=0
+=== testy/etap_3a.test.js ===
+✓ Etap 3A: generowanie kursów i ponowne przeliczanie działają poprawnie.
+STATUS=0
+=== testy/etap_3b_1.test.js ===
+✓ Etap 3B.1: pełne czasy kursów są obliczane poprawnie.
+STATUS=0
+=== testy/etap_3b_2.test.js ===
+✓ Etap 3B.2: rytm, odstęp, różne czasy, przeplatanie, walidacja i pamięć działają poprawnie.
+STATUS=0
+=== testy/etap_3c.test.js ===
+✓ Etap 3C.2: przydział gruszek nie nakłada kursów i poprawnie wykorzystuje pojazd po jego powrocie.
+STATUS=0
+=== testy/etap_3c_3.test.js ===
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+'3C.4' !== '3C.3'
+
+    at Object.<anonymous> (/home/runner/work/Harmonogram_Betonowan_v4/Harmonogram_Betonowan_v4/testy/etap_3c_3.test.js:71:8)
+    at Module._compile (node:internal/modules/cjs/loader:1781:14)
+    at Object..js (node:internal/modules/cjs/loader:1913:10)
+    at Module.load (node:internal/modules/cjs/loader:1505:32)
+    at Function._load (node:internal/modules/cjs/loader:1309:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: '3C.4',
+  expected: '3C.3',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.23.2
+STATUS=1
+=== testy/etap_3c_4.test.js ===
+✓ Etap 3C.4: tabela operatora pokazuje techniczny numer pierwszej wolnej gruszki przy każdym kursie.
+STATUS=0
+=== testy/etap_3c_integracja.test.js ===
+✓ Integracja 3B → 3C.2: rzeczywiste kursy z czasami są poprawnie przydzielane do gruszek bez nakładania cykli.
+STATUS=0
+=== testy/kdx_zmienne_kolumny.test.js ===
+✓ KDX: zmienne zestawy i kolejność kolumn są obsługiwane.
+STATUS=0
+=== testy/kp_3.test.js ===
+✓ KP-3: ilość ręczna, wariant roboczy i kompaktowy układ działają.
+STATUS=0
+=== testy/odbior_wlasny_tabela.test.js ===
+✓ Odbiór własny z rzeczywistego KDX jest poza harmonogramem, a interfejs ma osobny moduł.
+STATUS=0
+=== testy/pamiec_aplikacji.test.js ===
+✓ KP-1 i KP-2.7.1: plan, historia, czyszczenie i migracja tras działają.
+STATUS=0
+=== testy/pamiec_planu.test.js ===
+✓ KP-1.2–KP-1.4: pamięć planu i historia 100 zapisów działają poprawnie.
+STATUS=0
+=== testy/pamiec_tras.test.js ===
+✓ KP-2.2: wersjonowana pamięć 1000 znanych tras działa poprawnie.
+STATUS=0
+=== testy/pamiec_tras_integracja.test.js ===
+✓ KP-2.3–KP-2.7.1: cache omija mapę i archiwizuje wszystkie kompletne trasy.
+STATUS=0
+=== testy/pamiec_tras_podglad.test.js ===
+✓ KP-2: podgląd, wyszukiwanie, sortowanie i usuwanie zapisanych tras działa poprawnie.
+STATUS=0
+=== testy/rodzaj_rozladunku.test.js ===
+✓ Rodzaj rozładunku i odbiór własny są obsługiwane poprawnie i modułowo.
+STATUS=0
+WYNIK_KONCOWY=1
