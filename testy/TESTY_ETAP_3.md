@@ -4,9 +4,9 @@
 
 Etap 3 jest w toku. **Punkt 3A — generowanie kursów** oraz cały **3B — czasy cyklu i rytm dostaw** są zakończone i sprawdzone. Zakończone pozostają również kroki przekrojowe **KP-1–KP-3**.
 
-Dodatkowo 2026-08-17 operator potwierdził na rzeczywistym eksporcie KDX obsługę pola **Rodzaj rozładunku** oraz oddzielenie **Odbiorów własnych** od dostaw planowanych. Odbiory własne nie wymagają trasy i nie generują kursów.
+W punkcie **3C — przydział konkretnych gruszek** zakończono **3C.1 — model i zasady przydziału** oraz **3C.2 — niezależny silnik przydziału**. Moduł nie zmienia godzin z 3B.2 i nie jest jeszcze podłączony do głównego przeliczenia ani interfejsu.
 
-**Następny punkt: 3C — przydział konkretnych gruszek do kursów.** Implementacja 3C nie została jeszcze rozpoczęta. Przed kodowaniem trzeba rozpisać jego pełne podetapy. Punkt 3D dotyczy minimalnej liczby gruszek, a 3E trybu „mam X gruszek”.
+**Następny podetap: 3C.3 — integracja z pełnym harmonogramem.** Punkt 3D dotyczy formalnej minimalnej liczby gruszek, a 3E trybu „mam X gruszek”.
 
 ## Cel
 
@@ -244,3 +244,16 @@ Zaimplementowane części Etapu 3 sprawdzają osobne pliki:
 Workflow `.github/workflows/testy.yml` uruchamia wszystkie testy `testy/*.test.js`
 na GitHub Actions. Regresja 3B.2.6 przeszła poprawnie. Zwykłe działanie aplikacji
 nie wymaga Node.js ani połączenia z internetem.
+
+## Wynik 3C.1–3C.2
+
+- [x] pełny podział 3C zapisano przed integracją z aplikacją;
+- [x] niezależny moduł przydziału nie zależy od interfejsu;
+- [x] nakładające się cykle nie dostają tej samej gruszki;
+- [x] kurs dokładnie od minuty powrotu może użyć tej samej gruszki;
+- [x] numerowanie jest stabilne i deterministyczne;
+- [x] puste dane dają pusty wynik, a błędne czasy kończą się czytelnym błędem;
+- [x] szczegółowy scenariusz znajduje się w `TESTY_ETAP_3C.md`;
+- [x] test automatyczny znajduje się w `etap_3c.test.js`.
+
+3C.1 i 3C.2 są zakończone. 3C pozostaje otwarte; następny jest 3C.3.

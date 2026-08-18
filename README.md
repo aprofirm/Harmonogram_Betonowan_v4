@@ -240,8 +240,18 @@ historią repozytorium.
 
 ## Aktualny stan
 
-**Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są **3A — generowanie kursów** oraz cały **3B — czasy cyklu i rytm dostaw**, w tym **3B.1** i **3B.2.1–3B.2.7**. Zakończone pozostają również kroki przekrojowe **KP-1 — pamięć planu dnia**, **KP-2 — pamięć znanych tras** i **KP-3 — budowa ręczna oraz kompaktowy widok**.
+**Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są **3A**, cały
+**3B** oraz pierwsze dwa podetapy **3C.1–3C.2**. Nowy niezależny moduł przydziału
+potrafi przypisać konkretne numery gruszek do gotowych kursów tak, aby fizyczne
+cykle jednej gruszki się nie nakładały. Kurs rozpoczynający załadunek dokładnie
+w chwili powrotu poprzedniego może wykorzystać ten sam pojazd.
 
-Końcowy test operatorski 3B.2 potwierdził na rzeczywistym planie regułę `rytm = dokładny czas rozładunku + dodatkowy odstęp`. Dla rozładunku `15 min` i odstępu `5 min` kolejne rozładunki wystąpiły co `20 min`, a dodatkowy odstęp nie wydłużył fizycznego cyklu gruszki. GitHub Pages opublikował sprawdzoną wersję, a pełna regresja automatyczna przed próbą operatorską zakończyła się powodzeniem.
+Moduł 3C.2 jest na razie odseparowany od głównego `przeliczCalyHarmonogram()`.
+Dzięki temu działający wynik 3B.2 pozostaje bez zmian do czasu osobnego testu
+integracyjnego.
 
-**Następny punkt: 3C — przydział konkretnych gruszek do kursów.** Kod 3C nie został jeszcze rozpoczęty. Na początku następnego spotkania należy najpierw rozpisać jego kompletne podetapy zgodnie z `AGENTS.md`. Punkt 3D pozostaje odpowiedzialny za minimalną liczbę gruszek, a 3E za tryb „mam X gruszek”.
+**Następny podetap: 3C.3 — integracja przydziału gruszek z pełnym
+harmonogramem.** Następnie 3C.4 doda numer gruszki do widoku operatora, 3C.5
+obejmie testy integracyjne, a 3C.6 pełną regresję i test operatora. Punkt 3D
+pozostaje odpowiedzialny za formalną minimalną liczbę gruszek, a 3E za tryb
+„mam X gruszek”.

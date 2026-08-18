@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono 3A i 3B, następny jest 3C — przydział gruszek**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono 3C.1 i 3C.2, następny jest 3C.3 — integracja przydziału z harmonogramem**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -360,6 +360,23 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
       kursów i odtworzenia po odświeżeniu; dopiero wtedy zamknięcie 3B.2 i
       całego punktu 3B.
 - [ ] **3C — przydział gruszek:** brak nakładania kursów jednej gruszki.
+  - [x] **3C.1 — model i zasady przydziału:** każdy kurs zajmuje gruszkę od
+    rozpoczęcia załadunku do powrotu do betoniarni; pojazd może otrzymać kolejny
+    kurs dokładnie od minuty swojej ponownej gotowości; numerowanie jest
+    deterministyczne i rozpoczyna się od `GRUSZKA-001`.
+  - [x] **3C.2 — niezależny silnik przydziału:** kursy są porządkowane według
+    rozpoczęcia załadunku, otrzymują pierwszą wolną gruszkę, a gdy żadna nie
+    jest dostępna, tworzony jest kolejny numer; moduł nie przesuwa godzin kursów.
+  - [ ] **3C.3 — integracja z harmonogramem:** podłączenie przydziału do
+    `przeliczCalyHarmonogram()`, wyniku `gruszki` i wspólnego stanu kursów.
+  - [ ] **3C.4 — widok operatora:** pokazanie numeru gruszki przy każdym kursie
+    bez przebudowy pozostałych tabel.
+  - [ ] **3C.5 — testy integracyjne i przypadki brzegowe:** wiele budów,
+    jednoczesne starty, kurs dokładnie po powrocie, brak kursów, stabilne
+    numerowanie i kontrola braku nakładania przedziałów jednej gruszki.
+  - [ ] **3C.6 — pełna regresja, publikacja i test operatora:** kontrola
+    GitHub Pages oraz ręczne potwierdzenie przydziału na rzeczywistym planie;
+    dopiero wtedy zamknięcie całego 3C.
 - [ ] **3D — minimalna liczba gruszek.**
 - [ ] **3E — tryb „mam X gruszek” i ponowne przeliczenie zasobów.**
 
@@ -683,12 +700,13 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Na następnym spotkaniu rozpocząć **3C — przydział konkretnych gruszek do
-kursów**. Przed pierwszą zmianą kodu trzeba zgodnie z `AGENTS.md` przejrzeć
-aktualny stan repozytorium i rozpisać wszystkie znane podetapy 3C. Zakres 3C ma
-zapewnić, że jedna gruszka nie otrzyma dwóch nakładających się kursów; 3D
-pozostaje osobnym punktem dotyczącym minimalnej liczby gruszek, a 3E osobnym
-trybem „mam X gruszek”.
+Kontynuować **3C.3 — integrację przydziału gruszek z pełnym harmonogramem**.
+Moduł 3C.2 jest już niezależnie przetestowany, ale aplikacja operatora nadal
+korzysta z wyniku 3B.2 i nie pokazuje numerów gruszek. W 3C.3 trzeba podłączyć
+nowy moduł do jednego centralnego przeliczenia bez zmiany godzin zaplanowanych
+w 3B.2. Punkt 3D pozostaje odpowiedzialny za formalne wyznaczenie i prezentację
+minimalnej liczby gruszek, a 3E za tryb „mam X gruszek” i wynikające z niego
+przesuwanie planu.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1222,3 +1240,25 @@ Następny niezakończony punkt to **3C — przydział gruszek**. Implementacja 3
 nie została jeszcze rozpoczęta; na początku następnego spotkania należy najpierw
 rozpisać jego kompletne podetapy i granice zakresu. Punkty 3D i 3E pozostają
 otwarte.
+
+
+## 3C.1–3C.2 — plan i niezależny silnik przydziału — 2026-08-18
+
+- [x] przed zmianą kodu rozpisano pełne podetapy 3C i granice odpowiedzialności;
+- [x] dodano osobny moduł `js/gruszki/przydzial_gruszek.js` bez zależności od
+  HTML i bez przebudowy istniejącej logiki 3B.2;
+- [x] każdy kurs jest traktowany jako zajęcie gruszki od rozpoczęcia załadunku
+  do zakończenia powrotu do betoniarni;
+- [x] gruszka może otrzymać kolejny kurs, gdy jego załadunek zaczyna się w tej
+  samej minucie, w której poprzedni kurs kończy powrót;
+- [x] nakładające się kursy otrzymują różne numery `GRUSZKA-001`,
+  `GRUSZKA-002` itd.;
+- [x] moduł nie zmienia godzin kursów i nie realizuje jeszcze ograniczenia
+  „mam X gruszek”; ten zakres pozostaje w 3E;
+- [x] test `testy/etap_3c.test.js` obejmuje pusty plan, nakładanie, dokładną
+  granicę powrotu, ponowne użycie pojazdu, stabilne sortowanie i błędne dane;
+- [x] przed zapisem dokumentacji jednorazowy workflow uruchamia pełną regresję
+  wszystkich plików `testy/*.test.js`.
+
+**3C.1 i 3C.2 są zakończone.** Punkt 3C pozostaje otwarty. Następny podetap to
+**3C.3 — integracja z pełnym harmonogramem**.

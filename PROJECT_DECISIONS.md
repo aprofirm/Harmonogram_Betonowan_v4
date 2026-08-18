@@ -1386,6 +1386,34 @@ funkcji jest wykonywana razem z krokiem 3B.2.6 i nie zamyka jeszcze 3B.2 ani 3B.
 
 ---
 
+## 75. Przydział konkretnych gruszek — zasady 3C
+
+W punkcie 3C przydział jest wykonywany dla godzin kursów obliczonych wcześniej
+przez 3B.2. Sam przydział nie może na tym etapie przesuwać godzin kursów.
+
+Obowiązują zasady:
+
+- jeden kurs zajmuje konkretną gruszkę od rozpoczęcia załadunku do powrotu do
+  betoniarni;
+- jedna gruszka nie może mieć dwóch nakładających się cykli;
+- gruszka jest ponownie dostępna od dokładnej minuty zakończenia powrotu, więc
+  kolejny załadunek może zacząć się dokładnie w tej samej minucie;
+- kursy są rozpatrywane według rozpoczęcia załadunku, a przy równych godzinach
+  zachowują stabilną kolejność wejściową;
+- silnik najpierw ponownie wykorzystuje pierwszą wolną gruszkę o najniższym
+  numerze, a gdy żadna nie jest dostępna, tworzy kolejny numer;
+- identyfikatory techniczne mają format `GRUSZKA-001`, `GRUSZKA-002` itd.;
+- 3C nie realizuje jeszcze trybu ograniczonej floty i nie przesuwa kursów z
+  powodu liczby dostępnych pojazdów; należy to do 3E;
+- formalne obliczenie i prezentacja minimalnej liczby potrzebnych gruszek
+  pozostają osobnym punktem 3D, nawet jeżeli wynik przydziału 3C dostarcza dane
+  potrzebne do tego obliczenia.
+
+Moduł przydziału pozostaje częścią silnika i nie może zależeć od HTML ani
+sposobu prezentacji tabeli operatora.
+
+---
+
 # Powiązane tematy otwarte
 
 Pomysły, warianty i pytania, które nie są jeszcze obowiązującymi decyzjami, są prowadzone w `POMYSLY_I_BACKLOG.md`. Dzięki temu ten dokument pozostaje jednoznacznym źródłem zatwierdzonych ustaleń.
