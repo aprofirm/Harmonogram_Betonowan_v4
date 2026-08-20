@@ -51,3 +51,5 @@ jobs:
             testy/etap_3c_5.test.js
           git commit -m "Domknij testy integracyjne 3C.5"
           git push
+
+# Jednorazowy workflow pomocniczy dla gałęzi 3C.5.
