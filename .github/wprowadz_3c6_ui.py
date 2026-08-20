@@ -24,7 +24,7 @@ tresc = wczytaj("js/interfejs/interfejs.js")
 tresc = zamien_raz(
     tresc,
     '''  function opiszZakresCzasu(godzinaPoczatku, godzinaKonca) {\n    return godzinaPoczatku + "–" + godzinaKonca;\n  }\n''',
-    '''  function opiszZakresCzasu(godzinaPoczatku, godzinaKonca) {\n    return godzinaPoczatku + "–" + godzinaKonca;\n  }\n\n  function utworzKomorkeZakresuZPogrubionymPoczatkiem(\n    godzinaPoczatku,\n    godzinaKonca\n  ) {\n    const komorka = document.createElement("td");\n    const poczatek = document.createElement("strong");\n\n    komorka.className = "czas-kursu";\n    poczatek.className = "czas-kursu__poczatek";\n    poczatek.textContent = godzinaPoczatku;\n\n    komorka.appendChild(poczatek);\n    komorka.appendChild(document.createTextNode("–" + godzinaKonca));\n    return komorka;\n  }\n''',
+    '''  function opiszZakresCzasu(godzinaPoczatku, godzinaKonca) {\n    return godzinaPoczatku + "–" + godzinaKonca;\n  }\n\n  function utworzKomorkeZakresuZPogrubionymPoczatkiem(\n    godzinaPoczatku,\n    godzinaKonca\n  ) {\n    const komorka = document.createElement("td");\n    const poczatek = document.createElement("strong");\n    const koniec = document.createElement("span");\n\n    komorka.className = "czas-kursu";\n    poczatek.className = "czas-kursu__poczatek";\n    poczatek.textContent = godzinaPoczatku;\n    koniec.textContent = "–" + godzinaKonca;\n\n    komorka.appendChild(poczatek);\n    komorka.appendChild(koniec);\n    return komorka;\n  }\n''',
     "funkcja pogrubienia początku zakresu"
 )
 
