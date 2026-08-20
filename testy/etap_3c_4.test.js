@@ -26,7 +26,7 @@ assert.match(
   interfejs,
   /"Gruszka " \+ String\(kurs\.numerGruszki\)/
 );
-assert.match(konfiguracja, /punktEtapu: "3C\.4"/);
+assert.match(konfiguracja, /punktEtapu: "3C\.\d+"/);
 assert.doesNotMatch(html, /numery gruszek zostaną pokazane/i);
 
 console.log(

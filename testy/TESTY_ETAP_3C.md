@@ -6,7 +6,7 @@
 - [x] 3C.2 — niezależny silnik przydziału.
 - [x] 3C.3 — integracja z pełnym harmonogramem.
 - [x] 3C.4 — widok operatora.
-- [ ] 3C.5 — testy integracyjne i przypadki brzegowe.
+- [x] 3C.5 — testy integracyjne i przypadki brzegowe.
 - [ ] 3C.6 — pełna regresja, publikacja i test operatora.
 
 ## Zakres testu 3C.2
@@ -75,5 +75,27 @@ node testy/etap_3c_4.test.js
 Test sprawdza obecność kolumny, zgodną liczbę komórek pustego wiersza, użycie
 `numerGruszki` z wyniku silnika oraz aktualne oznaczenie etapu 3C.4.
 
-Po 3C.4 następny podetap to **3C.5 — testy integracyjne i przypadki brzegowe**.
+Po 3C.4 wykonano **3C.5 — testy integracyjne i przypadki brzegowe**. Następny podetap to **3C.6 — pełna regresja, publikacja i test operatora**.
 
+
+## Test 3C.5 — integracja i przypadki brzegowe
+
+Uruchom:
+
+```text
+node testy/etap_3c_5.test.js
+```
+
+Test korzysta z centralnego `przeliczCalyHarmonogram()` i sprawdza:
+
+1. pusty plan oraz pozycje, które nie powinny utworzyć żadnego kursu;
+2. kilka budów generujących przeplatające się kursy;
+3. dwa kursy z identyczną minutą rozpoczęcia załadunku;
+4. stabilną kolejność i deterministyczne numery gruszek;
+5. ponowne użycie `GRUSZKA-001` dokładnie w minucie jej powrotu;
+6. identyczny przydział po ponownym przeliczeniu tych samych danych;
+7. brak nakładania przedziałów `załadunek → powrót` dla każdej gruszki;
+8. poprawne identyfikatory i status wszystkich przydzielonych kursów.
+
+3C.5 nie zmienia algorytmu przydziału, jeżeli powyższe przypadki przechodzą.
+Następny podetap to **3C.6 — pełna regresja, publikacja i test operatora**.

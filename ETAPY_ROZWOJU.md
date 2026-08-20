@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono 3C.1–3C.4, następny jest 3C.5 — testy integracyjne i przypadki brzegowe**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono 3C.1–3C.5, następny jest 3C.6 — pełna regresja, publikacja i test operatora**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -372,7 +372,7 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
   - [x] **3C.4 — widok operatora:** pokazanie numeru gruszki przy każdym kursie
     bez przebudowy pozostałych tabel; numer jest technicznym oznaczeniem pierwszej
     wolnej gruszki, a nie stałą tożsamością konkretnego pojazdu.
-  - [ ] **3C.5 — testy integracyjne i przypadki brzegowe:** wiele budów,
+  - [x] **3C.5 — testy integracyjne i przypadki brzegowe:** wiele budów,
     jednoczesne starty, kurs dokładnie po powrocie, brak kursów, stabilne
     numerowanie i kontrola braku nakładania przedziałów jednej gruszki.
   - [ ] **3C.6 — pełna regresja, publikacja i test operatora:** kontrola
@@ -404,8 +404,8 @@ Etapu 3. Dopiero potem zapisujemy opis wykonanej pracy, bieżący punkt i nastę
 ## Kryteria zakończenia
 
 - [x] liczba kursów odpowiada ilości betonu i pojemności gruszki,
-- [ ] jedna gruszka nie może być jednocześnie w dwóch kursach,
-- [ ] dostępność gruszki następuje dopiero po zakończeniu pełnego cyklu,
+- [x] jedna gruszka nie może być jednocześnie w dwóch kursach,
+- [x] dostępność gruszki następuje dopiero po zakończeniu pełnego cyklu,
 - [ ] program potrafi podać minimalną potrzebną liczbę gruszek,
 - [ ] zmniejszenie dostępnej liczby gruszek powoduje nowe realne wyliczenie,
 - [x] ponowne przeliczenie liczby kursów nie pozostawia starych kursów,
@@ -1274,3 +1274,23 @@ otwarte.
 - [x] pełna regresja `testy/*.test.js` została wykonana przed zapisaniem tego statusu.
 
 Podetap **3C.3** jest zakończony. Następny niezakończony podetap to **3C.4 — widok operatora**, czyli pokazanie numeru gruszki przy kursie bez zmiany zasad przydziału.
+
+
+## Zamknięcie 3C.5 — testy integracyjne i przypadki brzegowe — 2026-08-20
+
+- [x] dodano `testy/etap_3c_5.test.js` korzystający z centralnego
+  `przeliczCalyHarmonogram()`;
+- [x] sprawdzono wiele budów i przeplatanie sześciu kursów;
+- [x] dwa kursy rozpoczynające załadunek w tej samej minucie zachowują stabilną
+  kolejność i otrzymują różne gruszki;
+- [x] gruszka może zostać użyta ponownie dokładnie w minucie zakończenia
+  poprzedniego pełnego cyklu;
+- [x] pusty plan oraz pozycje bez kursów nie tworzą sztucznych zasobów;
+- [x] ponowne przeliczenie identycznych danych daje identyczne numery gruszek;
+- [x] test automatycznie kontroluje brak nakładania przedziałów każdej gruszki;
+- [x] pełna regresja wszystkich `testy/*.test.js` przechodzi przed zapisaniem
+  statusu 3C.5.
+
+Podetap **3C.5** jest zakończony. Punkt **3C** pozostaje otwarty. Następny i
+ostatni podetap to **3C.6 — pełna regresja, publikacja i test operatora**.
+Dopiero po 3C.6 można zamknąć 3C i przejść do 3D.

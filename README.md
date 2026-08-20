@@ -130,10 +130,10 @@ rozładunek i powrót. Wydłużony załadunek przesuwa początek załadunku dane
 kursu wstecz, ale nie zmienia planowanej godziny jego dostawy.
 
 Po przeliczeniu kursy wszystkich budów są układane wspólnie według planowanego
-rozpoczęcia załadunku, dzięki czemu mogą się przeplatać. Na tym etapie program
-nie przydziela jeszcze numerów konkretnych gruszek i nie przesuwa dostaw z
-powodu ograniczonej liczby pojazdów — to pozostaje zakresem 3C i dalszych
-punktów.
+rozpoczęcia załadunku, dzięki czemu mogą się przeplatać. Następnie silnik 3C
+przydziela do nich techniczne numery pierwszych wolnych gruszek i pilnuje, aby
+pełne cykle jednego zasobu się nie nakładały. Sam przydział nadal nie przesuwa
+dostaw z powodu ograniczonej liczby pojazdów — ten zakres pozostaje w 3E.
 
 Zmiana pola **Odstęp dostaw** oznacza dotychczasowy wynik jako nieaktualny.
 Wartość jest zapisywana w bieżącym planie i zapisach historycznych oraz
@@ -207,6 +207,7 @@ Instrukcje testów ręcznych znajdują się w plikach:
 - [testy/TESTY_ETAP_2.md](testy/TESTY_ETAP_2.md),
 - [testy/TESTY_ETAP_3A.md](testy/TESTY_ETAP_3A.md),
 - [testy/TESTY_ETAP_3B_1.md](testy/TESTY_ETAP_3B_1.md),
+- [testy/TESTY_ETAP_3C.md](testy/TESTY_ETAP_3C.md) — przydział konkretnych gruszek,
 - [testy/TESTY_KP_1.md](testy/TESTY_KP_1.md) — plan testu pamięci dnia,
 - [testy/TESTY_KP_2.md](testy/TESTY_KP_2.md) — plan testu pamięci tras,
 - [testy/TESTY_KP_3.md](testy/TESTY_KP_3.md) — ilość ręczna, wariant i szeroki widok,
@@ -226,6 +227,7 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_3c_integracja.test.js
     node testy/etap_3c_3.test.js
     node testy/etap_3c_4.test.js
+    node testy/etap_3c_5.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
@@ -245,17 +247,18 @@ historią repozytorium.
 ## Aktualny stan
 
 **Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są **3A**, cały
-**3B** oraz **3C.1–3C.4**. Centralne `przeliczCalyHarmonogram()` generuje kursy,
+**3B** oraz **3C.1–3C.5**. Centralne `przeliczCalyHarmonogram()` generuje kursy,
 liczy ich pełne czasy i następnie przypisuje pierwsze wolne gruszki tak, aby
-fizyczne cykle jednego zasobu się nie nakładały. Tabela kursów pokazuje teraz
+fizyczne cykle jednego zasobu się nie nakładały. Tabela kursów pokazuje
 `Gruszka 1`, `Gruszka 2` itd. jako techniczne oznaczenia zasobów.
 
-Przed integracją osobny test 3B → 3C.2 potwierdził zgodność modułów, w tym
-przeplatanie kilku budów i ponowne użycie pojazdu dokładnie w minucie powrotu.
-Pełna regresja jest wykonywana przy każdej zmianie na `main`.
+Test 3C.5 obejmuje jednocześnie wiele budów, jednakowe początki załadunku,
+dokładną granicę `powrót == następny start`, pusty plan, pozycje bez kursów,
+stabilne numerowanie przy ponownym przeliczeniu i kontrolę wszystkich przedziałów
+zajęcia każdej gruszki. Pełna regresja jest wykonywana przy każdej zmianie na
+`main`.
 
-**Następny podetap: 3C.5 — testy integracyjne i przypadki brzegowe.**
-Sprawdzimy wiele budów, jednoczesne starty, dokładną granicę powrotu, pusty plan,
-stabilność numerowania i brak nakładania cykli jednej gruszki. Następnie 3C.6
-obejmie publikację i test operatorski. Punkt 3D pozostaje odpowiedzialny za
-formalną minimalną liczbę gruszek, a 3E za tryb „mam X gruszek”.
+**Następny podetap: 3C.6 — pełna regresja, publikacja i test operatora.**
+Po ręcznym potwierdzeniu przydziału na rzeczywistym planie będzie można zamknąć
+całe 3C. Punkt 3D pozostaje odpowiedzialny za formalną minimalną liczbę gruszek,
+a 3E za tryb „mam X gruszek”.
