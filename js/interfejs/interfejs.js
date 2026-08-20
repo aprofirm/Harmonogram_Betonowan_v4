@@ -541,6 +541,24 @@
     return godzinaPoczatku + "–" + godzinaKonca;
   }
 
+  function utworzKomorkeZakresuZPogrubionymPoczatkiem(
+    godzinaPoczatku,
+    godzinaKonca
+  ) {
+    const komorka = document.createElement("td");
+    const poczatek = document.createElement("strong");
+    const koniec = document.createElement("span");
+
+    komorka.className = "czas-kursu";
+    poczatek.className = "czas-kursu__poczatek";
+    poczatek.textContent = godzinaPoczatku;
+    koniec.textContent = "–" + godzinaKonca;
+
+    komorka.appendChild(poczatek);
+    komorka.appendChild(koniec);
+    return komorka;
+  }
+
   function utworzWierszKursu(kurs, budowa) {
     const wiersz = document.createElement("tr");
     const nazwaBudowy = budowa ? budowa.budowa : kurs.idBudowy;
@@ -560,12 +578,9 @@
     wiersz.appendChild(utworzKomorke(nazwaBudowy));
     wiersz.appendChild(utworzKomorke(String(kurs.iloscBetonuM3) + " m³"));
     wiersz.appendChild(
-      utworzKomorke(
-        opiszZakresCzasu(
-          kurs.godzinaRozpoczeciaZaladunku,
-          kurs.godzinaWyjazduZBetoniarni
-        ),
-        "czas-kursu"
+      utworzKomorkeZakresuZPogrubionymPoczatkiem(
+        kurs.godzinaRozpoczeciaZaladunku,
+        kurs.godzinaWyjazduZBetoniarni
       )
     );
     wiersz.appendChild(

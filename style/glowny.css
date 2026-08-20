@@ -1083,6 +1083,11 @@ td {
   white-space: nowrap;
 }
 
+.czas-kursu__poczatek {
+  color: var(--kolor-granatowy-ciemny);
+  font-weight: 900;
+}
+
 .pusty-wiersz td {
   height: 250px;
   color: var(--kolor-tekstu-pomocniczego);

@@ -14,6 +14,10 @@ const konfiguracja = fs.readFileSync(
   path.join(katalogProjektu, "js/konfiguracja/konfiguracja.js"),
   "utf8"
 );
+const css = fs.readFileSync(
+  path.join(katalogProjektu, "style/glowny.css"),
+  "utf8"
+);
 
 assert.match(html, /<th>Kurs<\/th>\s*<th>Gruszka<\/th>\s*<th>Budowa<\/th>/);
 assert.match(
@@ -27,6 +31,16 @@ assert.match(
   /"Gruszka " \+ String\(kurs\.numerGruszki\)/
 );
 assert.match(konfiguracja, /punktEtapu: "3C\.\d+"/);
+assert.match(interfejs, /poczatek\.className = "czas-kursu__poczatek"/);
+assert.match(
+  interfejs,
+  /utworzKomorkeZakresuZPogrubionymPoczatkiem\(\s*kurs\.godzinaRozpoczeciaZaladunku,\s*kurs\.godzinaWyjazduZBetoniarni/
+);
+assert.equal(
+  (interfejs.match(/utworzKomorkeZakresuZPogrubionymPoczatkiem\(/g) || []).length,
+  2
+);
+assert.match(css, /\.czas-kursu__poczatek\s*\{[\s\S]*?font-weight:\s*900;/);
 assert.doesNotMatch(html, /numery gruszek zostaną pokazane/i);
 
 console.log(
