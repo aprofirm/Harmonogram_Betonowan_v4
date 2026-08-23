@@ -15,13 +15,16 @@ const css = fs.readFileSync(
   "utf8"
 );
 
-assert.match(html, /<th>Kurs<\/th>\s*<th>Gruszka<\/th>\s*<th>Budowa<\/th>/);
 assert.match(
   html,
-  /<tbody id="wiersze-kursow">[\s\S]*?<td colspan="9">[\s\S]*?Godziny kursów pojawią się po przeliczeniu/
+  /<th>Kurs<\/th>\s*<th>Gruszka<\/th>\s*<th>Skutek floty<\/th>\s*<th>Budowa<\/th>/
 );
-assert.match(html, /pierwszą wolną gruszkę przydzieloną do kursu/i);
-assert.match(interfejs, /komorka\.colSpan = 9;/);
+assert.match(
+  html,
+  /<tbody id="wiersze-kursow">[\s\S]*?<td colspan="10">[\s\S]*?Godziny kursów pojawią się po przeliczeniu/
+);
+assert.match(html, /ograniczonej flocie widzisz nową godzinę/i);
+assert.match(interfejs, /komorka\.colSpan = 10;/);
 assert.match(
   interfejs,
   /"Gruszka " \+ String\(kurs\.numerGruszki\)/

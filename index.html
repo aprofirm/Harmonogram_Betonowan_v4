@@ -50,7 +50,7 @@
               <p class="etykieta-sekcji">USTAWIENIA</p>
               <h2 id="tytul-parametrow">Parametry planu</h2>
             </div>
-            <span class="znacznik-etapu">Etap 3D.4</span>
+            <span class="znacznik-etapu">Etap 3E.5</span>
           </div>
 
           <section class="sekcja-danych" aria-labelledby="tytul-importu">
@@ -155,12 +155,28 @@
                 <span>min</span>
               </span>
             </label>
+
+            <label class="pole-formularza" for="tryb-gruszek">
+              <span>Tryb gruszek</span>
+              <select id="tryb-gruszek" name="trybGruszek" required>
+                <option value="oblicz-potrzebne">Oblicz, ile potrzeba</option>
+                <option value="mam-okreslona-liczbe">Mam określoną liczbę</option>
+              </select>
+            </label>
+
+            <label class="pole-formularza" for="liczba-dostepnych-gruszek">
+              <span>Dostępne gruszki</span>
+              <span class="pole-z-jednostka">
+                <input id="liczba-dostepnych-gruszek" name="liczbaDostepnychGruszek" type="number" min="0" step="1" inputmode="numeric">
+                <span>szt.</span>
+              </span>
+            </label>
           </form>
 
           <p class="informacja-etapu">
-            Etap 3D pokazuje minimalną liczbę gruszek potrzebnych do wykonania
-            ustalonych godzin bez nakładania pełnych cykli. Ograniczenie planu
-            do rzeczywiście dostępnej floty pozostaje zakresem 3E.
+            W trybie „Oblicz, ile potrzeba” program zachowuje ustalone godziny.
+            W trybie „Mam określoną liczbę” przydziela tylko podaną flotę i
+            pokazuje przesunięcia kursów spowodowane brakiem wolnej gruszki.
           </p>
 
           <details class="diagnostyka">
@@ -240,6 +256,10 @@
                   <span id="minimalna-liczba-gruszek">0</span>
                   <small>potrzebnych gruszek</small>
                 </div>
+                <div class="podsumowanie__gruszki-dostepne">
+                  <span id="liczba-dostepnych-gruszek-wynik">—</span>
+                  <small>dostępnych gruszek</small>
+                </div>
                 <div>
                   <span id="liczba-konfliktow">0</span>
                   <small>konfliktów</small>
@@ -285,8 +305,8 @@
                 <h2>Godziny kursów</h2>
               </div>
               <p class="opis-panelu">
-                Kursy są ułożone według planowanego startu załadunku. Kolumna
-                Gruszka pokazuje pierwszą wolną gruszkę przydzieloną do kursu.
+                Kursy zachowują kolejność planowanego startu załadunku. Przy
+                ograniczonej flocie widzisz nową godzinę oraz wielkość przesunięcia.
               </p>
             </div>
 
@@ -296,6 +316,7 @@
                   <tr>
                     <th>Kurs</th>
                     <th>Gruszka</th>
+                    <th>Skutek floty</th>
                     <th>Budowa</th>
                     <th>Ilość</th>
                     <th>Załadunek</th>
@@ -307,7 +328,7 @@
                 </thead>
                 <tbody id="wiersze-kursow">
                   <tr class="pusty-wiersz pusty-wiersz--kursy">
-                    <td colspan="9">
+                    <td colspan="10">
                       <span class="pusty-wiersz__ikona" aria-hidden="true">◷</span>
                       <strong>Godziny kursów pojawią się po przeliczeniu</strong>
                       <span>Najpierw uzupełnij czasy przejazdu przy budowach.</span>
@@ -383,7 +404,7 @@
 
       <footer class="stopka">
         <span>Harmonogram Betonowań v4</span>
-        <span>Etap 3D.4 · minimalna liczba gruszek</span>
+        <span>Etap 3E.5 · tryb „mam X gruszek”</span>
       </footer>
     </div>
 

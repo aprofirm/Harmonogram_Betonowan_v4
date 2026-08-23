@@ -359,7 +359,8 @@ h3 {
   font-weight: 700;
 }
 
-.pole-formularza input {
+.pole-formularza input,
+.pole-formularza select {
   width: 100%;
   min-height: 40px;
   border: 1px solid #cbd7df;
@@ -371,14 +372,33 @@ h3 {
   transition: border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
 }
 
-.pole-formularza > input {
+.pole-formularza > input,
+.pole-formularza > select {
   padding: 0 12px;
 }
 
-.pole-formularza input:focus {
+.pole-formularza input:focus,
+.pole-formularza select:focus {
   border-color: var(--kolor-niebieski);
   background: #ffffff;
   box-shadow: 0 0 0 3px rgba(29, 111, 159, 0.13);
+}
+
+.pole-formularza select {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid #cbd7df;
+  border-radius: 10px;
+  outline: none;
+  background: #fbfcfd;
+  color: var(--kolor-granatowy-ciemny);
+  font-weight: 650;
+}
+
+.pole-formularza input:disabled {
+  color: #7e8e99;
+  background: #eef2f4;
+  cursor: not-allowed;
 }
 
 .pole-z-jednostka {
@@ -865,6 +885,14 @@ h3 {
   color: #176b4d;
 }
 
+.podsumowanie__gruszki-dostepne {
+  background: #eef6fb;
+}
+
+.podsumowanie__gruszki-dostepne span {
+  color: var(--kolor-niebieski);
+}
+
 .podsumowanie small {
   color: var(--kolor-tekstu-pomocniczego);
   font-size: 0.7rem;
@@ -910,6 +938,39 @@ td {
 
 .wartosc-wazna {
   color: var(--kolor-granatowy-ciemny);
+  font-weight: 800;
+}
+
+.wiersz-kursu--opozniony {
+  background: #fffaf2;
+}
+
+.wiersz-kursu--nieprzydzielony {
+  background: #fff1f1;
+}
+
+.skutek-floty {
+  color: var(--kolor-tekstu-pomocniczego);
+  white-space: nowrap;
+}
+
+.skutek-floty strong,
+.skutek-floty small {
+  display: block;
+}
+
+.skutek-floty--opoznienie strong {
+  color: #a65e1e;
+}
+
+.skutek-floty--opoznienie small {
+  margin-top: 2px;
+  color: #7d6a58;
+  font-size: 0.66rem;
+}
+
+.skutek-floty--brak {
+  color: var(--kolor-czerwony);
   font-weight: 800;
 }
 

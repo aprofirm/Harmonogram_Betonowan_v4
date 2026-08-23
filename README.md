@@ -132,8 +132,9 @@ kursu wstecz, ale nie zmienia planowanej godziny jego dostawy.
 Po przeliczeniu kursy wszystkich budów są układane wspólnie według planowanego
 rozpoczęcia załadunku, dzięki czemu mogą się przeplatać. Następnie silnik 3C
 przydziela do nich techniczne numery pierwszych wolnych gruszek i pilnuje, aby
-pełne cykle jednego zasobu się nie nakładały. Sam przydział nadal nie przesuwa
-dostaw z powodu ograniczonej liczby pojazdów — ten zakres pozostaje w 3E.
+pełne cykle jednego zasobu się nie nakładały. W trybie ograniczonej floty 3E
+ten sam porządek służy do przeliczenia kursów dla liczby pojazdów podanej przez
+operatora.
 
 Zmiana pola **Odstęp dostaw** oznacza dotychczasowy wynik jako nieaktualny.
 Wartość jest zapisywana w bieżącym planie i zapisach historycznych oraz
@@ -147,9 +148,27 @@ może wykonać ustalone kursy bez nakładania pełnych cykli od rozpoczęcia
 załadunku do powrotu do betoniarni.
 
 Wynik jest liczony od nowa po każdej zmianie wpływającej na harmonogram. Dla
-pustego planu wynosi `0`. Ta liczba nie ogranicza jeszcze planu do rzeczywiście
-dostępnej floty i nie przesuwa kursów — tryb „mam X gruszek” pozostaje zakresem
-punktu 3E.
+pustego planu wynosi `0`. Pozostaje widoczny również w trybie ograniczonej floty
+jako punkt odniesienia do liczby pojazdów podanej przez operatora.
+
+## Tryb „mam X gruszek”
+
+W ustawieniach **Tryb gruszek** dostępne są dwa warianty:
+
+- **Oblicz, ile potrzeba** — zachowuje ustalone godziny i pokazuje minimalną
+  flotę potrzebną bez nakładania cykli;
+- **Mam określoną liczbę** — przyjmuje całkowitą liczbę dostępnych gruszek od
+  `0` wzwyż i ponownie przydziela do niej wszystkie kursy.
+
+Jeżeli w ograniczonym trybie żadna gruszka nie jest wolna o planowanej godzinie,
+kurs otrzymuje pojazd wracający najwcześniej. Cały cykl — załadunek, dojazd,
+rozładunek i powrót — zostaje przesunięty o tę samą liczbę minut. Kolumna
+**Skutek floty** pokazuje opóźnienie oraz pierwotną godzinę rozładunku, a
+podsumowanie zestawia liczbę potrzebną z dostępną.
+
+Dla `0` dostępnych gruszek program nie tworzy fikcyjnego planu: pozostawia kursy
+nieprzydzielone i pokazuje konflikt. Tryb oraz wpisana liczba są zachowywane w
+pamięci bieżącego planu i w zapisach historycznych.
 
 ## Diagnostyka i raport błędów
 
@@ -221,6 +240,7 @@ Instrukcje testów ręcznych znajdują się w plikach:
 - [testy/TESTY_ETAP_3B_1.md](testy/TESTY_ETAP_3B_1.md),
 - [testy/TESTY_ETAP_3C.md](testy/TESTY_ETAP_3C.md) — przydział konkretnych gruszek,
 - [testy/TESTY_ETAP_3D.md](testy/TESTY_ETAP_3D.md) — minimalna liczba gruszek,
+- [testy/TESTY_ETAP_3E.md](testy/TESTY_ETAP_3E.md) — tryb „mam X gruszek”,
 - [testy/TESTY_KP_1.md](testy/TESTY_KP_1.md) — plan testu pamięci dnia,
 - [testy/TESTY_KP_2.md](testy/TESTY_KP_2.md) — plan testu pamięci tras,
 - [testy/TESTY_KP_3.md](testy/TESTY_KP_3.md) — ilość ręczna, wariant i szeroki widok,
@@ -242,6 +262,7 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_3c_4.test.js
     node testy/etap_3c_5.test.js
     node testy/etap_3d.test.js
+    node testy/etap_3e.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
@@ -261,17 +282,18 @@ historią repozytorium.
 ## Aktualny stan
 
 **Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są **3A**, cały
-**3B**, cały **3C** oraz **3D.1–3D.4**. Centralne
+**3B**, cały **3C**, cały **3D** oraz implementacja **3E.1–3E.5**. Centralne
 `przeliczCalyHarmonogram()` generuje kursy, liczy ich pełne czasy, przypisuje
 pierwsze wolne gruszki i zwraca osobną `minimalnaLiczbaGruszek`. Tabela kursów
 pokazuje `Gruszka 1`, `Gruszka 2` itd., a podsumowanie wyświetla wprost liczbę
 pojazdów potrzebnych do realizacji bez nakładania cykli.
 
-Test 3D obejmuje pusty plan, jeden ponownie wykorzystywany zasób, wiele
-nakładających się kursów, centralny wynik, komunikat oraz widok operatora. Pełna
-regresja jest wykonywana przy każdej zmianie na `main`.
+Tryb 3E pozwala podać rzeczywistą liczbę gruszek. Przy zbyt małej flocie
+przelicza wszystkie czasy kursów, nie nakłada cykli jednej gruszki i jawnie
+pokazuje opóźnienia. Test automatyczny obejmuje flotę wystarczającą, zbyt małą,
+`0`, błędne dane, pamięć oraz stabilność wyniku.
 
-Publikacja **3D.5.1** na `main`, pełna regresja GitHub Actions i GitHub Pages są
-zakończone. **Następny podetap: 3D.5.2 — test operatora.** Po ręcznym
-potwierdzeniu licznika na rzeczywistym planie będzie można zamknąć 3D i przejść
-do 3E — trybu „mam X gruszek”.
+Test operatora **3D.5.2** został zaliczony na rzeczywistym planie: `7` budów,
+`11` kursów, `5` potrzebnych gruszek i `0` konfliktów. **Następny podetap:
+3E.6.1 — publikacja wdrożonego trybu na `main`**, a po niej test operatora
+3E.6.2 i zamknięcie całego Etapu 3.

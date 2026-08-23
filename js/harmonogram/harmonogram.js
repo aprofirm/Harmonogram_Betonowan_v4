@@ -25,15 +25,52 @@
     }).length;
   }
 
+  function pobierzUstawieniaTrybuGruszek(parametry) {
+    const trybGruszek = parametry.trybGruszek || "oblicz-potrzebne";
+
+    if (trybGruszek === "oblicz-potrzebne") {
+      return {
+        trybGruszek: trybGruszek,
+        liczbaDostepnychGruszek: null
+      };
+    }
+
+    if (trybGruszek !== "mam-okreslona-liczbe") {
+      throw new Error("Nie rozpoznano wybranego trybu pracy gruszek.");
+    }
+
+    const liczbaDostepnychGruszek = Number(parametry.liczbaDostepnychGruszek);
+
+    if (
+      !Number.isInteger(liczbaDostepnychGruszek) ||
+      liczbaDostepnychGruszek < 0
+    ) {
+      throw new Error(
+        "Liczba dostępnych gruszek musi być liczbą całkowitą nie mniejszą niż 0."
+      );
+    }
+
+    return {
+      trybGruszek: trybGruszek,
+      liczbaDostepnychGruszek: liczbaDostepnychGruszek
+    };
+  }
+
+  function utworzDopisekOdbiorowWlasnych(listaBudow) {
+    const liczbaOdbiorowWlasnych = policzOdbioryWlasne(listaBudow);
+
+    return liczbaOdbiorowWlasnych
+      ? " Odbiory własne poza harmonogramem: " + liczbaOdbiorowWlasnych + "."
+      : "";
+  }
+
   function utworzKomunikatKursow(
     kursy,
     listaBudow,
     minimalnaLiczbaGruszek
   ) {
     const liczbaOdbiorowWlasnych = policzOdbioryWlasne(listaBudow);
-    const dopisekOdbiorow = liczbaOdbiorowWlasnych
-      ? " Odbiory własne poza harmonogramem: " + liczbaOdbiorowWlasnych + "."
-      : "";
+    const dopisekOdbiorow = utworzDopisekOdbiorowWlasnych(listaBudow);
 
     if (kursy.length) {
       return "Wygenerowano " + kursy.length +
@@ -50,6 +87,50 @@
 
     return "Nie wygenerowano kursów. Pozycje z 0 m³ są już zrealizowane, " +
       "a pozycje bez ilości wymagają uzupełnienia danych.";
+  }
+
+  function utworzKomunikatOgraniczonejFloty(
+    wynikPrzydzialu,
+    minimalnaLiczbaGruszek,
+    listaBudow
+  ) {
+    const liczbaDostepnychGruszek =
+      wynikPrzydzialu.liczbaDostepnychGruszek;
+    const dopisekOdbiorow = utworzDopisekOdbiorowWlasnych(listaBudow);
+
+    if (wynikPrzydzialu.liczbaNieprzydzielonychKursow > 0) {
+      return "Minimalna liczba potrzebnych gruszek: " +
+        minimalnaLiczbaGruszek + ". Dostępne gruszki: 0. Nie przydzielono " +
+        wynikPrzydzialu.liczbaNieprzydzielonychKursow +
+        " kursów." + dopisekOdbiorow;
+    }
+
+    if (!wynikPrzydzialu.czyOgraniczenieWplyneloNaPlan) {
+      return "Dostępnych gruszek: " + liczbaDostepnychGruszek +
+        ". Minimalna liczba potrzebnych: " + minimalnaLiczbaGruszek +
+        "; ograniczenie nie zmienia godzin kursów." + dopisekOdbiorow;
+    }
+
+    return "Minimalna liczba potrzebnych gruszek: " +
+      minimalnaLiczbaGruszek + ". Dostępne gruszki: " +
+      liczbaDostepnychGruszek + ". Przeliczono kursy. " +
+      "Opóźnionych kursów: " + wynikPrzydzialu.liczbaOpoznionychKursow +
+      ", największe opóźnienie: " +
+      wynikPrzydzialu.maksymalneOpoznienieKursuMinuty +
+      " min." + dopisekOdbiorow;
+  }
+
+  function utworzKonfliktyOgraniczonejFloty(wynikPrzydzialu) {
+    if (wynikPrzydzialu.liczbaNieprzydzielonychKursow <= 0) {
+      return [];
+    }
+
+    return [{
+      kod: "BRAK_DOSTEPNYCH_GRUSZEK",
+      rodzaj: "gruszki",
+      opis: "Nie można przydzielić kursów, ponieważ dostępnych jest 0 gruszek.",
+      liczbaKursow: wynikPrzydzialu.liczbaNieprzydzielonychKursow
+    }];
   }
 
   function przeliczCalyHarmonogram(daneWejsciowe) {
@@ -70,20 +151,51 @@
       listaBudow,
       parametry
     );
-    const wynikPrzydzialu = aplikacja.gruszki.przydzielGruszkiDoKursow(
+    const ustawieniaTrybuGruszek = pobierzUstawieniaTrybuGruszek(parametry);
+    const wynikMinimalnejFloty = aplikacja.gruszki.przydzielGruszkiDoKursow(
       kursyZCzasami
     );
+    const czyOgraniczonaFlota =
+      ustawieniaTrybuGruszek.trybGruszek === "mam-okreslona-liczbe";
+    const wynikPrzydzialu = czyOgraniczonaFlota
+      ? aplikacja.gruszki.przydzielOgraniczonaLiczbeGruszekDoKursow(
+        kursyZCzasami,
+        ustawieniaTrybuGruszek.liczbaDostepnychGruszek
+      )
+      : wynikMinimalnejFloty;
     const kursy = wynikPrzydzialu.kursy;
+    const minimalnaLiczbaGruszek =
+      wynikMinimalnejFloty.minimalnaLiczbaGruszek;
     const stanGruszek = {
-      minimalnaLiczbaGruszek: wynikPrzydzialu.minimalnaLiczbaGruszek,
+      trybGruszek: ustawieniaTrybuGruszek.trybGruszek,
+      minimalnaLiczbaGruszek: minimalnaLiczbaGruszek,
+      liczbaDostepnychGruszek:
+        ustawieniaTrybuGruszek.liczbaDostepnychGruszek,
       dostepneGruszki: wynikPrzydzialu.gruszki,
-      przydzieloneKursy: kursy
+      przydzieloneKursy: kursy,
+      liczbaNieprzydzielonychKursow:
+        wynikPrzydzialu.liczbaNieprzydzielonychKursow || 0,
+      liczbaOpoznionychKursow:
+        wynikPrzydzialu.liczbaOpoznionychKursow || 0,
+      maksymalneOpoznienieKursuMinuty:
+        wynikPrzydzialu.maksymalneOpoznienieKursuMinuty || 0,
+      czyOgraniczenieWplyneloNaPlan:
+        Boolean(wynikPrzydzialu.czyOgraniczenieWplyneloNaPlan)
     };
-    const komunikatKursow = utworzKomunikatKursow(
-      kursy,
-      listaBudow,
-      wynikPrzydzialu.minimalnaLiczbaGruszek
-    );
+    const komunikatKursow = czyOgraniczonaFlota
+      ? utworzKomunikatOgraniczonejFloty(
+        wynikPrzydzialu,
+        minimalnaLiczbaGruszek,
+        listaBudow
+      )
+      : utworzKomunikatKursow(
+        kursy,
+        listaBudow,
+        minimalnaLiczbaGruszek
+      );
+    const konflikty = czyOgraniczonaFlota
+      ? utworzKonfliktyOgraniczonejFloty(wynikPrzydzialu)
+      : [];
 
     return {
       etap: aplikacja.konfiguracja.numerEtapu,
@@ -95,8 +207,11 @@
       gruszki: stanGruszek,
       lokalizacje: aplikacja.lokalizacje.utworzPustyStanLokalizacji(),
       kursy: kursy,
-      minimalnaLiczbaGruszek: wynikPrzydzialu.minimalnaLiczbaGruszek,
-      konflikty: [],
+      trybGruszek: ustawieniaTrybuGruszek.trybGruszek,
+      minimalnaLiczbaGruszek: minimalnaLiczbaGruszek,
+      liczbaDostepnychGruszek:
+        ustawieniaTrybuGruszek.liczbaDostepnychGruszek,
+      konflikty: konflikty,
       komunikaty: [komunikatKursow]
     };
   }

@@ -1439,6 +1439,43 @@ Obowiązują zasady:
 
 ---
 
+## 77. Ograniczona flota gruszek — zasady 3E
+
+Operator może pracować w jednym z dwóch jawnych trybów:
+
+- **Oblicz, ile potrzeba** — dotychczasowy tryb bez ograniczenia floty;
+- **Mam określoną liczbę** — tryb ograniczający przydział do podanej liczby
+  technicznych gruszek.
+
+W trybie ograniczonym obowiązują zasady:
+
+- liczba dostępnych gruszek musi być liczbą całkowitą nie mniejszą niż `0`;
+- minimalna liczba obliczona według 3D pozostaje osobnym wynikiem i punktem
+  odniesienia; podanie mniejszej floty nie może jej nadpisywać;
+- kursy są nadal rozpatrywane według planowanego rozpoczęcia załadunku, a przy
+  równych godzinach zachowują stabilną kolejność wejściową;
+- jeżeli o planowanej godzinie istnieje wolna gruszka, kurs nie jest przesuwany;
+- jeżeli wszystkie podane gruszki są zajęte, kurs otrzymuje pojazd wracający
+  najwcześniej, a rozpoczęcie załadunku zostaje przesunięte do chwili jego
+  dostępności;
+- przesunięcie obejmuje spójnie cały cykl: załadunek, dojazd, rozładunek,
+  powrót i ponowną gotowość; żaden kurs nie może rozpocząć się wcześniej niż
+  wynikało z planu;
+- operator widzi nową godzinę, liczbę minut opóźnienia i pierwotną planowaną
+  godzinę rozładunku; program nie może ukrywać skutku niedoboru floty;
+- dla `0` dostępnych gruszek kursy pozostają nieprzydzielone i powstaje jawny
+  konflikt zamiast fikcyjnego harmonogramu;
+- tryb i liczba dostępnych gruszek są częścią pamięci planu i zapisów
+  historycznych;
+- `StartPlanowany` pozostaje nienaruszony.
+
+3E tworzy deterministyczny harmonogram kursów ograniczony wyłącznie liczbą
+gruszek. Docelowe priorytety pomiędzy budowami, formalne konflikty przekroczenia
+limitu opóźnienia, połączenie ograniczeń gruszek i pomp oraz korekty
+`StartRoboczy` całych budów pozostają zakresem Etapu 5.
+
+---
+
 # Powiązane tematy otwarte
 
 Pomysły, warianty i pytania, które nie są jeszcze obowiązującymi decyzjami, są prowadzone w `POMYSLY_I_BACKLOG.md`. Dzięki temu ten dokument pozostaje jednoznacznym źródłem zatwierdzonych ustaleń.

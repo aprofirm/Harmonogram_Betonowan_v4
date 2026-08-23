@@ -308,7 +308,12 @@
           czasTrwaniaMs: Date.now() - czasRozpoczecia,
           liczbaBudow: wynik.budowy.length,
           liczbaKursow: wynik.kursy.length,
+          trybGruszek: wynik.trybGruszek,
           minimalnaLiczbaGruszek: wynik.minimalnaLiczbaGruszek,
+          liczbaDostepnychGruszek: wynik.liczbaDostepnychGruszek,
+          liczbaOpoznionychKursow: wynik.gruszki.liczbaOpoznionychKursow,
+          maksymalneOpoznienieKursuMinuty:
+            wynik.gruszki.maksymalneOpoznienieKursuMinuty,
           liczbaKonfliktow: wynik.konflikty.length,
           statusZapisuPlanu: wynikZapisu ? wynikZapisu.status : "bez-zapisu",
           statusHistorii: wynikHistorii ? wynikHistorii.status : "bez-nowego-zapisu",

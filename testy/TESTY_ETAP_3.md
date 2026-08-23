@@ -7,10 +7,10 @@ cyklu i rytm dostaw** oraz cały **3C — przydział konkretnych gruszek** są
 zakończone i sprawdzone. Zakończone pozostają również kroki przekrojowe
 **KP-1–KP-3**.
 
-W punkcie **3D — minimalna liczba gruszek** zakończono 3D.1–3D.4 oraz publikację
-3D.5.1: wynik jest zwracany przez silnik, pokazany operatorowi, objęty testami i
-opublikowany. **Następny podetap: 3D.5.2 — test operatora.** Punkt 3E pozostaje
-odpowiedzialny za tryb „mam X gruszek”.
+Punkt **3D — minimalna liczba gruszek** jest zakończony wraz z publikacją i
+testem operatora. W punkcie **3E — tryb „mam X gruszek”** wdrożono 3E.1–3E.5:
+ograniczony przydział, przesuwanie pełnego cyklu, widoczne skutki, pamięć i testy.
+**Następny podetap: 3E.6.1 — publikacja.**
 
 ## Cel
 
@@ -174,8 +174,7 @@ Oczekiwany wynik:
 - program potrafi wskazać minimalną liczbę gruszek potrzebnych do wykonania założonego rytmu bez konfliktu dostępności,
 - wynik wynika z czasów cyklu, a nie z wartości wpisanej na stałe.
 
-Status: zaimplementowane w 3D.1–3D.4 i sprawdzane przez
-`testy/etap_3d.test.js`. Do zamknięcia pozostaje test operatora 3D.5.
+Status: zakończone w 3D wraz z testem operatora 3D.5.2.
 
 ## Test 9 — tryb „mam X gruszek”
 
@@ -189,6 +188,9 @@ Oczekiwany wynik:
 - program przelicza kursy ponownie dla rzeczywiście dostępnej liczby gruszek,
 - nie zwraca wyłącznie komunikatu „za mało gruszek”,
 - konsekwencje ograniczenia są widoczne w nowym wyniku lub konfliktach.
+
+Status: zaimplementowane w 3E.1–3E.5 i sprawdzane przez
+`testy/etap_3e.test.js`; do zamknięcia pozostaje publikacja i test operatora 3E.6.
 
 ## Test 10 — pełne ponowne przeliczenie
 
@@ -266,4 +268,4 @@ nie wymaga Node.js ani połączenia z internetem.
 - [x] test automatyczny znajduje się w `etap_3c.test.js`.
 
 3C.1 i 3C.2 są zakończone. Pełny wynik testów i zamknięcie całego 3C opisuje
-`TESTY_ETAP_3C.md`. Aktualny następny krok to 3D.5.
+`TESTY_ETAP_3C.md`. Aktualny następny krok to publikacja 3E.6.1.

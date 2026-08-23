@@ -9,15 +9,17 @@
     pojemnoscGruszkiM3: 8,
     czasZaladunkuMinuty: 10,
     czasRozladunkuMinuty: 15,
-    maksymalneOpoznienieStartuMinuty: 30
+    maksymalneOpoznienieStartuMinuty: 30,
+    trybGruszek: "oblicz-potrzebne",
+    liczbaDostepnychGruszek: null
   });
 
   aplikacja.konfiguracja = Object.freeze({
     nazwaAplikacji: "Harmonogram Betonowań v4",
     numerEtapu: 3,
-    punktEtapu: "3D.4",
+    punktEtapu: "3E.5",
     parametryDomyslne: parametryDomyslne,
     komunikatPoPrzeliczeniu:
-      "Kursy, godziny pełnego cyklu i minimalna liczba gruszek zostały obliczone od nowa."
+      "Kursy, godziny pełnego cyklu i przydział dostępnych gruszek zostały obliczone od nowa."
   });
 })(window);

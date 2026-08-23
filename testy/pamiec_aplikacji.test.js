@@ -96,6 +96,8 @@ function utworzDokumentTestowy() {
     "czas-zaladunku",
     "czas-rozladunku",
     "maksymalne-opoznienie",
+    "tryb-gruszek",
+    "liczba-dostepnych-gruszek",
     "przycisk-przelicz",
     "przycisk-wyczysc-plan",
     "sekcja-statusu",
@@ -104,6 +106,7 @@ function utworzDokumentTestowy() {
     "liczba-budow",
     "liczba-kursow",
     "minimalna-liczba-gruszek",
+    "liczba-dostepnych-gruszek-wynik",
     "liczba-konfliktow",
     "wiersze-harmonogramu",
     "wiersze-kursow",
@@ -486,6 +489,23 @@ async function uruchomTest() {
 
   polePojemnosci.value = "8";
   polePojemnosci.zdarzenia.change();
+  const poleTrybuGruszek = pierwszaStrona.dokument.elementy["tryb-gruszek"];
+  const poleLiczbyGruszek = pierwszaStrona.dokument.elementy[
+    "liczba-dostepnych-gruszek"
+  ];
+  poleTrybuGruszek.value = "mam-okreslona-liczbe";
+  poleTrybuGruszek.zdarzenia.change();
+  poleLiczbyGruszek.value = "1";
+  poleLiczbyGruszek.zdarzenia.change();
+  assert.equal(poleLiczbyGruszek.disabled, false);
+  assert.equal(
+    odczytajDanePlanu(pamiecLokalna).parametry.trybGruszek,
+    "mam-okreslona-liczbe"
+  );
+  assert.equal(
+    odczytajDanePlanu(pamiecLokalna).parametry.liczbaDostepnychGruszek,
+    "1"
+  );
   pierwszaStrona.dokument.elementy["przycisk-przelicz"].zdarzenia.click();
 
   danePlanu = odczytajDanePlanu(pamiecLokalna);
@@ -495,6 +515,10 @@ async function uruchomTest() {
   assert.equal(
     pierwszaStrona.dokument.elementy["minimalna-liczba-gruszek"].textContent,
     "2"
+  );
+  assert.equal(
+    pierwszaStrona.dokument.elementy["liczba-dostepnych-gruszek-wynik"].textContent,
+    "1"
   );
 
   pierwszaStrona.dokument.elementy["przycisk-przelicz"].zdarzenia.click();
@@ -510,6 +534,18 @@ async function uruchomTest() {
   assert.equal(
     stronaPoOdswiezeniu.dokument.elementy["minimalna-liczba-gruszek"].textContent,
     "2"
+  );
+  assert.equal(
+    stronaPoOdswiezeniu.dokument.elementy["tryb-gruszek"].value,
+    "mam-okreslona-liczbe"
+  );
+  assert.equal(
+    stronaPoOdswiezeniu.dokument.elementy["liczba-dostepnych-gruszek"].value,
+    "1"
+  );
+  assert.equal(
+    stronaPoOdswiezeniu.dokument.elementy["liczba-dostepnych-gruszek-wynik"].textContent,
+    "1"
   );
   assert.equal(
     stronaPoOdswiezeniu.dokument.elementy["nazwa-pliku-csv"].textContent,

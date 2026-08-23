@@ -27,6 +27,10 @@
       czasZaladunku: pobierzWymaganyElement("czas-zaladunku"),
       czasRozladunku: pobierzWymaganyElement("czas-rozladunku"),
       maksymalneOpoznienie: pobierzWymaganyElement("maksymalne-opoznienie"),
+      trybGruszek: pobierzWymaganyElement("tryb-gruszek"),
+      liczbaDostepnychGruszek: pobierzWymaganyElement(
+        "liczba-dostepnych-gruszek"
+      ),
       przyciskPrzelicz: pobierzWymaganyElement("przycisk-przelicz"),
       przyciskWyczyscPlan: pobierzWymaganyElement("przycisk-wyczysc-plan"),
       sekcjaStatusu: pobierzWymaganyElement("sekcja-statusu"),
@@ -36,6 +40,9 @@
       liczbaKursow: pobierzWymaganyElement("liczba-kursow"),
       minimalnaLiczbaGruszek: pobierzWymaganyElement(
         "minimalna-liczba-gruszek"
+      ),
+      liczbaDostepnychGruszekWynik: pobierzWymaganyElement(
+        "liczba-dostepnych-gruszek-wynik"
       ),
       liczbaKonfliktow: pobierzWymaganyElement("liczba-konfliktow"),
       wierszeHarmonogramu: pobierzWymaganyElement("wiersze-harmonogramu"),
@@ -74,6 +81,11 @@
     elementy.maksymalneOpoznienie.value = String(
       parametryDomyslne.maksymalneOpoznienieStartuMinuty
     );
+    elementy.trybGruszek.value = parametryDomyslne.trybGruszek;
+    elementy.liczbaDostepnychGruszek.value = formatujWartoscPola(
+      parametryDomyslne.liczbaDostepnychGruszek
+    );
+    aktualizujDostepnoscPolaLiczbyGruszek();
   }
 
   function pobierzWartosciParametrowDoZapisu() {
@@ -82,7 +94,12 @@
       pojemnoscGruszkiM3: elementy.pojemnoscGruszki.value,
       czasZaladunkuMinuty: elementy.czasZaladunku.value,
       czasRozladunkuMinuty: elementy.czasRozladunku.value,
-      maksymalneOpoznienieStartuMinuty: elementy.maksymalneOpoznienie.value
+      maksymalneOpoznienieStartuMinuty: elementy.maksymalneOpoznienie.value,
+      trybGruszek: elementy.trybGruszek.value,
+      liczbaDostepnychGruszek:
+        elementy.trybGruszek.value === "mam-okreslona-liczbe"
+          ? elementy.liczbaDostepnychGruszek.value
+          : null
     };
   }
 
@@ -96,6 +113,14 @@
 
   function formatujWartoscPola(wartosc) {
     return wartosc === null || wartosc === undefined ? "" : String(wartosc);
+  }
+
+  function aktualizujDostepnoscPolaLiczbyGruszek() {
+    const czyOgraniczonaFlota =
+      elementy.trybGruszek.value === "mam-okreslona-liczbe";
+
+    elementy.liczbaDostepnychGruszek.disabled = !czyOgraniczonaFlota;
+    elementy.liczbaDostepnychGruszek.required = czyOgraniczonaFlota;
   }
 
   function ustawParametryZPamieci(parametry) {
@@ -117,6 +142,13 @@
         "maksymalneOpoznienieStartuMinuty"
       )
     );
+    elementy.trybGruszek.value = formatujWartoscPola(
+      pobierzWartoscLubDomyslna(parametry, "trybGruszek")
+    );
+    elementy.liczbaDostepnychGruszek.value = formatujWartoscPola(
+      pobierzWartoscLubDomyslna(parametry, "liczbaDostepnychGruszek")
+    );
+    aktualizujDostepnoscPolaLiczbyGruszek();
   }
 
   function pobierzLiczbe(elementPola, nazwaPola, najmniejszaWartosc) {
@@ -135,6 +167,32 @@
   function pobierzParametryZFormularza() {
     if (!elementy.poczatekDnia.value) {
       throw new Error("Pole „Początek dnia” nie może być puste.");
+    }
+
+    const trybGruszek = elementy.trybGruszek.value;
+    let liczbaDostepnychGruszek = null;
+
+    if (
+      trybGruszek !== "oblicz-potrzebne" &&
+      trybGruszek !== "mam-okreslona-liczbe"
+    ) {
+      throw new Error("Wybierz poprawny tryb pracy gruszek.");
+    }
+
+    if (trybGruszek === "mam-okreslona-liczbe") {
+      if (String(elementy.liczbaDostepnychGruszek.value).trim() === "") {
+        throw new Error("Pole „Liczba dostępnych gruszek” nie może być puste.");
+      }
+
+      liczbaDostepnychGruszek = pobierzLiczbe(
+        elementy.liczbaDostepnychGruszek,
+        "Liczba dostępnych gruszek",
+        0
+      );
+
+      if (!Number.isInteger(liczbaDostepnychGruszek)) {
+        throw new Error("Liczba dostępnych gruszek musi być liczbą całkowitą.");
+      }
     }
 
     return {
@@ -158,7 +216,9 @@
         elementy.maksymalneOpoznienie,
         "Maksymalne opóźnienie startu",
         0
-      )
+      ),
+      trybGruszek: trybGruszek,
+      liczbaDostepnychGruszek: liczbaDostepnychGruszek
     };
   }
 
@@ -526,7 +586,7 @@
     const opis = document.createElement("span");
 
     wiersz.className = "pusty-wiersz pusty-wiersz--kursy";
-    komorka.colSpan = 9;
+    komorka.colSpan = 10;
     ikona.className = "pusty-wiersz__ikona";
     ikona.setAttribute("aria-hidden", "true");
     ikona.textContent = "◷";
@@ -565,6 +625,13 @@
   function utworzWierszKursu(kurs, budowa) {
     const wiersz = document.createElement("tr");
     const nazwaBudowy = budowa ? budowa.budowa : kurs.idBudowy;
+    const czyNieprzydzielony = !kurs.numerGruszki;
+
+    if (czyNieprzydzielony) {
+      wiersz.className = "wiersz-kursu--nieprzydzielony";
+    } else if (Number(kurs.opoznienieZPowoduGruszekMinuty) > 0) {
+      wiersz.className = "wiersz-kursu--opozniony";
+    }
 
     wiersz.appendChild(
       utworzKomorke(
@@ -574,10 +641,13 @@
     );
     wiersz.appendChild(
       utworzKomorke(
-        "Gruszka " + String(kurs.numerGruszki),
+        czyNieprzydzielony
+          ? "Brak gruszki"
+          : "Gruszka " + String(kurs.numerGruszki),
         "wartosc-wazna"
       )
     );
+    wiersz.appendChild(utworzKomorkeSkutkuOgraniczenia(kurs));
     wiersz.appendChild(utworzKomorke(nazwaBudowy));
     wiersz.appendChild(utworzKomorke(String(kurs.iloscBetonuM3) + " m³"));
     wiersz.appendChild(
@@ -620,6 +690,34 @@
     return wiersz;
   }
 
+  function utworzKomorkeSkutkuOgraniczenia(kurs) {
+    const komorka = document.createElement("td");
+    const opoznienie = kurs.opoznienieZPowoduGruszekMinuty;
+
+    if (opoznienie === null) {
+      komorka.className = "skutek-floty skutek-floty--brak";
+      komorka.textContent = "Nieprzydzielony";
+      return komorka;
+    }
+
+    if (!Number(opoznienie)) {
+      komorka.className = "skutek-floty";
+      komorka.textContent = "—";
+      return komorka;
+    }
+
+    const wartosc = document.createElement("strong");
+    const plan = document.createElement("small");
+
+    komorka.className = "skutek-floty skutek-floty--opoznienie";
+    wartosc.textContent = "+" + String(opoznienie) + " min";
+    plan.textContent = "plan rozładunku " +
+      String(kurs.planowanaGodzinaRozpoczeciaRozladunku || "—");
+    komorka.appendChild(wartosc);
+    komorka.appendChild(plan);
+    return komorka;
+  }
+
   function pokazListeKursow(listaKursow, listaBudow) {
     const fragment = document.createDocumentFragment();
     const budowyWedlugId = new Map();
@@ -653,14 +751,25 @@
     elementy.minimalnaLiczbaGruszek.textContent = String(
       wynik.minimalnaLiczbaGruszek
     );
+    elementy.liczbaDostepnychGruszekWynik.textContent =
+      wynik.liczbaDostepnychGruszek === null
+        ? "—"
+        : String(wynik.liczbaDostepnychGruszek);
     elementy.liczbaKonfliktow.textContent = String(wynik.konflikty.length);
-    ustawStatus("sukces", "Przeliczenie zakończone", wynik.komunikaty[0]);
+    ustawStatus(
+      wynik.konflikty.length ? "ostrzezenie" : "sukces",
+      wynik.konflikty.length
+        ? "Przeliczenie wymaga uwagi"
+        : "Przeliczenie zakończone",
+      wynik.komunikaty[0]
+    );
   }
 
   function wyczyscWidokWyniku() {
     pokazListeKursow([], []);
     elementy.liczbaKursow.textContent = "0";
     elementy.minimalnaLiczbaGruszek.textContent = "0";
+    elementy.liczbaDostepnychGruszekWynik.textContent = "—";
     elementy.liczbaKonfliktow.textContent = "0";
   }
 
@@ -1006,11 +1115,17 @@
       elementy.pojemnoscGruszki,
       elementy.czasZaladunku,
       elementy.czasRozladunku,
-      elementy.maksymalneOpoznienie
+      elementy.maksymalneOpoznienie,
+      elementy.liczbaDostepnychGruszek
     ].forEach(function (pole) {
       pole.addEventListener("change", function () {
         obslugaZmianyParametrowAplikacji(pobierzWartosciParametrowDoZapisu());
       });
+    });
+
+    elementy.trybGruszek.addEventListener("change", function () {
+      aktualizujDostepnoscPolaLiczbyGruszek();
+      obslugaZmianyParametrowAplikacji(pobierzWartosciParametrowDoZapisu());
     });
   }
 

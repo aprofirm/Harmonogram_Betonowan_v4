@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono publikację 3D.5.1, następny jest test operatora 3D.5.2**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; 3D zakończone, wdrożono 3E.1–3E.5, następna jest publikacja 3E.6.1**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -378,7 +378,7 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
   - [x] **3C.6 — pełna regresja, publikacja i test operatora:** kontrola
     GitHub Pages oraz ręczne potwierdzenie przydziału na rzeczywistym planie;
     dopiero wtedy zamknięcie całego 3C.
-- [ ] **3D — minimalna liczba gruszek:** osobny wynik wymaganej floty dla
+- [x] **3D — minimalna liczba gruszek:** osobny wynik wymaganej floty dla
   ustalonych godzin kursów.
   - [x] **3D.1 — reguła i granice zakresu:** wynik 3D jest liczbą technicznych
     zasobów potrzebnych do obsłużenia kursów bez nakładania pełnych cykli;
@@ -391,12 +391,33 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
   - [x] **3D.4 — testy, regresja i dokumentacja:** przypadki `0`, `1` i wielu
     jednocześnie potrzebnych gruszek, integracja interfejsu i pamięci oraz pełna
     regresja wcześniejszych funkcji.
-  - [ ] **3D.5 — publikacja i test operatora:** końcowa kontrola wersji 3D.
+  - [x] **3D.5 — publikacja i test operatora:** końcowa kontrola wersji 3D.
     - [x] **3D.5.1 — publikacja:** commit trafił na `main`, pełna regresja
       GitHub Actions i wdrożenie GitHub Pages zakończyły się powodzeniem.
-    - [ ] **3D.5.2 — test operatora:** ręczne potwierdzenie, że rzeczywisty
+    - [x] **3D.5.2 — test operatora:** ręczne potwierdzenie, że rzeczywisty
       plan pokazuje oczekiwaną minimalną liczbę; dopiero wtedy zamknięcie 3D.
 - [ ] **3E — tryb „mam X gruszek” i ponowne przeliczenie zasobów.**
+  - [x] **3E.1 — reguła i granice zakresu:** tryb domyślny nadal oblicza flotę
+    potrzebną bez zmiany godzin, a tryb ograniczony zachowuje tę liczbę jako
+    punkt odniesienia i przelicza kursy wyłącznie dla podanej floty.
+  - [x] **3E.2 — parametr, walidacja i pamięć:** operator wybiera jeden z dwóch
+    trybów, a w trybie „mam określoną liczbę” podaje całkowitą liczbę gruszek
+    nie mniejszą niż `0`; ustawienie jest zachowywane w bieżącym planie i historii.
+  - [x] **3E.3 — ograniczony przydział:** kursy zachowują stabilną kolejność
+    planowanego załadunku; jeżeli żadna gruszka nie jest wolna, kurs otrzymuje
+    pojazd wracający najwcześniej i cały jego cykl zostaje przesunięty.
+  - [x] **3E.4 — jawne konsekwencje:** wynik pokazuje liczbę dostępną, liczbę
+    potrzebną, opóźnienie każdego przesuniętego kursu i pierwotną godzinę
+    rozładunku; dla `0` gruszek kursy pozostają nieprzydzielone i powstaje konflikt.
+  - [x] **3E.5 — testy, regresja i dokumentacja:** tryb bez limitu, flota
+    wystarczająca, flota zbyt mała, `0`, błędne dane, stabilność przydziału,
+    pamięć oraz brak nakładania cykli zostały objęte testami automatycznymi.
+  - [ ] **3E.6 — publikacja i test operatora:** końcowa kontrola wersji 3E.
+    - [ ] **3E.6.1 — publikacja:** commit na `main`, pełna regresja GitHub
+      Actions i wdrożenie GitHub Pages.
+    - [ ] **3E.6.2 — test operatora:** porównanie tego samego planu w trybie
+      bez limitu oraz dla mniejszej, równej i zerowej liczby dostępnych gruszek;
+      dopiero wtedy zamknięcie 3E i całego Etapu 3.
 
 Po każdym podetapie wykonujemy jego osobny test oraz pełną regresję wcześniejszych
 funkcji. Następnie ponownie przeglądamy tę listę i kryteria zakończenia całego
@@ -424,7 +445,7 @@ Etapu 3. Dopiero potem zapisujemy opis wykonanej pracy, bieżący punkt i nastę
 - [x] jedna gruszka nie może być jednocześnie w dwóch kursach,
 - [x] dostępność gruszki następuje dopiero po zakończeniu pełnego cyklu,
 - [x] program potrafi podać minimalną potrzebną liczbę gruszek,
-- [ ] zmniejszenie dostępnej liczby gruszek powoduje nowe realne wyliczenie,
+- [x] zmniejszenie dostępnej liczby gruszek powoduje nowe realne wyliczenie,
 - [x] ponowne przeliczenie liczby kursów nie pozostawia starych kursów,
 - [x] zmiana pojemności gruszki jest wykonywana przez konfigurację, a nie zmianę kodu.
 
@@ -718,12 +739,12 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **3D.5.2 — test operatora**. Publikacja 3D.5.1 jest zakończona. Po
-przeliczeniu rzeczywistego planu licznik **potrzebnych gruszek** ma pokazać
-liczbę zgodną z najwyższym technicznym numerem użytym w tabeli kursów. Ponowne
-przeliczenie tych samych danych ma dać ten sam wynik, a zmiana czasów albo rytmu
-ma przeliczyć go od nowa. Po potwierdzeniu można zamknąć 3D i przejść do 3E —
-trybu „mam X gruszek”.
+Wykonać **3E.6.1 — publikację** wdrożonego trybu „mam X gruszek”: commit na
+`main`, pełną regresję GitHub Actions i kontrolę GitHub Pages. Następnie wykonać
+**3E.6.2 — test operatora** na tym samym rzeczywistym planie: porównać tryb
+bez limitu z flotą `5`, flotą mniejszą od wymaganej oraz `0` gruszek. Po
+potwierdzeniu jawnych przesunięć i braku nakładania cykli można zamknąć 3E i
+cały Etap 3.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1358,3 +1379,40 @@ ostatni podetap to **3D.5 — publikacja i test operatora**.
 Podetap **3D.5.1** jest zakończony. Punkt 3D pozostaje otwarty wyłącznie do
 testu operatora **3D.5.2**. Po jego zaliczeniu następnym punktem będzie 3E —
 tryb „mam X gruszek”.
+
+
+## Zamknięcie 3D.5.2 i całego 3D — 2026-08-23
+
+- [x] operator przeliczył rzeczywisty plan na opublikowanej wersji;
+- [x] wynik obejmował `7` budów, `11` kursów, `5` potrzebnych gruszek i
+  `0` konfliktów;
+- [x] licznik był zgodny z najwyższym technicznym numerem gruszki w tabeli;
+- [x] ponowne przeliczenie, zmiana danych wpływających na plan i wyczyszczenie
+  licznika działały prawidłowo;
+- [x] operator potwierdził wynik i przejście do 3E.
+
+Podetap **3D.5.2**, cały punkt **3D** i jego test operatorski są zakończone.
+
+
+## 3E.1–3E.5 — tryb „mam X gruszek” — 2026-08-23
+
+- [x] przed zmianą kodu zapisano pełny podział 3E i oddzielono techniczne
+  przesunięcia kursów od docelowych priorytetów i korekt całego Etapu 5;
+- [x] dodano tryb domyślny **Oblicz, ile potrzeba** oraz tryb **Mam określoną
+  liczbę** z całkowitą wartością od `0` wzwyż;
+- [x] minimalna liczba z 3D pozostaje widoczna jako punkt odniesienia niezależnie
+  od liczby pojazdów wpisanej przez operatora;
+- [x] ograniczony przydział nigdy nie tworzy gruszki ponad podaną liczbę;
+- [x] gdy wszystkie pojazdy są zajęte, kurs otrzymuje gruszkę wracającą
+  najwcześniej, a załadunek, dojazd, rozładunek, powrót i ponowna gotowość są
+  przesuwane razem;
+- [x] tabela pokazuje skutek floty, wielkość opóźnienia i planowaną godzinę
+  rozładunku, a podsumowanie zestawia liczbę potrzebną z dostępną;
+- [x] `0` dostępnych gruszek pozostawia kursy nieprzydzielone i tworzy jawny
+  konflikt zamiast fikcyjnego harmonogramu;
+- [x] tryb i liczba dostępnych gruszek są zapisywane oraz odtwarzane z pamięci;
+- [x] test `testy/etap_3e.test.js` oraz pełna regresja wcześniejszych funkcji
+  przechodzą lokalnie.
+
+Podetapy **3E.1–3E.5** są zakończone. Punkt 3E i cały Etap 3 pozostają otwarte
+do publikacji **3E.6.1** oraz testu operatora **3E.6.2**.

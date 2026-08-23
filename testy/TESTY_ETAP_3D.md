@@ -6,9 +6,9 @@
 - [x] 3D.2 — osobny wynik silnika.
 - [x] 3D.3 — licznik w widoku operatora.
 - [x] 3D.4 — testy automatyczne, regresja i dokumentacja.
-- [ ] 3D.5 — publikacja i test operatora.
+- [x] 3D.5 — publikacja i test operatora.
   - [x] 3D.5.1 — publikacja, GitHub Actions i GitHub Pages.
-  - [ ] 3D.5.2 — test operatora.
+  - [x] 3D.5.2 — test operatora.
 
 ## Zasada
 
@@ -48,5 +48,15 @@ Test sprawdza:
    policzona od nowa.
 7. Wyczyść plan i sprawdź, czy licznik wraca do `0`.
 
-Publikacja 3D.5.1 jest zakończona. Po zaliczeniu testu operatora 3D.5.2 można
-zamknąć 3D i rozpocząć 3E.
+## Wynik testu operatora — 2026-08-23
+
+- [x] rzeczywisty plan pokazał `7` budów i `11` kursów;
+- [x] licznik pokazał `5` potrzebnych gruszek;
+- [x] najwyższy numer w tabeli kursów również wynosił `Gruszka 5`;
+- [x] wynik nie zawierał konfliktów;
+- [x] ponowne przeliczenie i zmiany wpływające na plan odświeżały licznik;
+- [x] wyczyszczenie planu zerowało wynik;
+- [x] operator potwierdził poprawne działanie.
+
+Punkt 3D jest zakończony. Dalszy rozwój odbywa się w 3E — trybie „mam X
+gruszek”.

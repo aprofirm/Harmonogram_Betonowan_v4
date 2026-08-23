@@ -307,6 +307,7 @@
     generujKursyDlaBudowy: generujKursyDlaBudowy,
     generujKursy: generujKursy,
     obliczCzasyKursu: obliczCzasyKursu,
-    obliczCzasyKursow: obliczCzasyKursow
+    obliczCzasyKursow: obliczCzasyKursow,
+    formatujMinutyJakoGodzine: formatujMinutyJakoGodzine
   };
 })(window);
