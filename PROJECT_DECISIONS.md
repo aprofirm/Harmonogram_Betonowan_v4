@@ -1486,6 +1486,44 @@ Zmiana położenia nie zmienia zasad obliczeń, walidacji ani pamięci planu.
 Po zmianie wartości operator nadal świadomie uruchamia pełne przeliczenie
 przyciskiem **Przelicz harmonogram**.
 
+## 79. Gruszki i pompy mają wspólne sterowanie zasobami przy wyniku
+
+Po wdrożeniu Etapu 4 obecny panel sterowania flotą zostanie rozszerzony do
+kompaktowego panelu **Sterowanie zasobami**. Gruszki pozostają w pierwszym
+wierszu, a pompy pojawiają się bezpośrednio pod nimi, jeżeli układ zachowuje
+czytelność i estetykę na ekranie operatora.
+
+Wiersz pomp ma pokazywać co najmniej:
+
+- tryb `Oblicz, ile potrzeba` albo `Mam określoną liczbę`,
+- liczbę pomp potrzebnych,
+- liczbę pomp, którymi operator dysponuje,
+- skróconą informację o dostępności.
+
+Godzina **Dostępna od** jest cechą konkretnej pompy, a nie jedną wspólną
+godziną całej floty. Panel może pokazać zwięzłe podsumowanie, np. ile pomp jest
+dostępnych teraz i ile dołączy później, natomiast szczegóły pozostają na liście
+pomp. Układ ma pozostać responsywny i nie może przenosić logiki obliczeniowej do
+HTML ani CSS.
+
+## 80. Ręczna korekta godziny budowy bez ponownego importu
+
+Operator może zmienić godzinę rozpoczęcia wybranej budowy bez ponownego
+wczytywania CSV. Program rozdziela trzy znaczenia:
+
+- `StartPlanowany` — niezmienna godzina źródłowa z KDX/CSV albo godzina bazowa
+  budowy dodanej ręcznie;
+- `StartZadany` — bieżąca godzina oczekiwana przez operatora i używana jako
+  punkt wejścia do następnego przeliczenia;
+- `StartRoboczy` — rzeczywista godzina możliwa do wykonania po uwzględnieniu
+  ograniczeń harmonogramu.
+
+Interfejs pokazuje wartość zadaną w edytowalnym polu, a obok zachowuje widoczną
+godzinę planowaną oraz przycisk `↺` przywracający wartość źródłową. Zmiana albo
+przywrócenie oznacza wynik jako nieaktualny, wymaga świadomego przeliczenia i
+jest zapisywane w pamięci planu oraz historii. Program nie może bez śladu
+nadpisać `StartPlanowany`.
+
 ---
 
 # Powiązane tematy otwarte

@@ -49,7 +49,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy
+- [ ] Etap 4 — Pompy — **plan podetapów gotowy; start po zakończeniu KP-4**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -201,6 +201,43 @@ Kryteria zamknięcia KP-3:
 - [x] układ zachowuje techniczny breakpoint jednokolumnowy na węższych ekranach;
 - [x] aplikacja nie próbuje zmieniać zoomu przeglądarki;
 - [x] pełna regresja automatyczna i test operatora przechodzą poprawnie.
+
+## Planowany krok przekrojowy KP-4 — ręczna korekta godziny budowy
+
+KP-4 pozwoli operatorowi poprawić godzinę rozpoczęcia wybranej budowy bez
+ponownego wczytywania CSV. Krok wykonujemy przed Etapem 4, ponieważ silnik pomp
+musi otrzymać jednoznaczną bieżącą godzinę zadaną przez operatora, a jednocześnie
+nie może utracić godziny źródłowej z KDX.
+
+- [ ] **KP-4.1 — model trzech godzin:**
+  - [ ] `StartPlanowany` pozostaje niezmienną godziną źródłową z KDX/CSV albo
+    formularza budowy ręcznej;
+  - [ ] `StartZadany` jest bieżącą godziną, którą operator chce uwzględnić przy
+    następnym przeliczeniu; początkowo jest równy `StartPlanowany`;
+  - [ ] `StartRoboczy` pozostaje rzeczywistą godziną możliwą do wykonania po
+    uwzględnieniu ograniczeń silnika; do czasu Etapu 5 jest równy
+    `StartZadany`, jeżeli inne wdrożone reguły nie wymagają jawnej korekty.
+- [ ] **KP-4.2 — edycja w tabeli:** pole **Start do przeliczenia** przy każdej
+  budowie, widoczna pierwotna godzina planowana i przycisk `↺` przywracający
+  wartość źródłową bez ponownego importu.
+- [ ] **KP-4.3 — walidacja i wynik nieaktualny:** poprawny format `HH:MM`, brak
+  cichej zmiany `StartPlanowany` oraz oznaczenie harmonogramu jako wymagającego
+  ponownego przeliczenia po zmianie lub przywróceniu.
+- [ ] **KP-4.4 — pamięć i zgodność:** zapis korekty w bieżącym planie i historii,
+  odtworzenie po odświeżeniu oraz bezpieczne otwieranie starszych zapisów bez
+  `StartZadany`.
+- [ ] **KP-4.5 — testy, publikacja i test operatora:** osobny test automatyczny,
+  pełna regresja, publikacja na `main` oraz ręczne potwierdzenie zmiany,
+  przeliczenia, odświeżenia i przywrócenia godziny bazowej.
+
+Kryteria zamknięcia KP-4:
+
+- [ ] korekta jednej budowy nie zmienia godzin źródłowych pozostałych budów;
+- [ ] operator zawsze widzi godzinę źródłową i bieżącą wartość zadaną;
+- [ ] przeliczenie korzysta z `StartZadany`, a wynik możliwy do wykonania jest
+  nadal przechowywany osobno jako `StartRoboczy`;
+- [ ] kolejny import tworzy nowy plan na podstawie nowych danych;
+- [ ] aplikacja nadal działa offline i przechodzi całą regresję Etapu 3.
 
 ## Stan testów po zakończeniu kroku 3B.1 — 2026-08-15
 
@@ -480,6 +517,116 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
 - wyliczanie minimalnej liczby pomp,
 - tryb `mam X pomp — przelicz`.
 
+## Postęp podetapów Etapu 4
+
+- [ ] **4A — reguły, dane wejściowe i granice zakresu.**
+  - [ ] **4A.1 — kwalifikacja budów:** ustalić i przetestować, które budowy
+    wymagają pompy na podstawie `rodzajRozladunku`, bez zmiany obsługi odbiorów
+    własnych, leja, wywrotki, taczki i starszych danych bez tej kolumny.
+  - [ ] **4A.2 — czas obsługi pompy:** ustalić źródła czasu przygotowania,
+    betonowania, zakończenia, mycia oraz przygotowania do przejazdu; wartości
+    biznesowe mają być parametrami, a nie liczbami wpisanymi na stałe w kodzie.
+  - [ ] **4A.3 — wynik niezależnego silnika:** Etap 4 zwraca przydział pompy,
+    okres zajętości, najwcześniejszy możliwy start i skutek niedoboru pomp, ale
+    nie nadpisuje jeszcze `StartPlanowany`, nie przebudowuje kursów gruszek i nie
+    rozstrzyga wspólnych konfliktów obu zasobów — ten zakres należy do Etapu 5.
+  - [ ] **4A.4 — zapis decyzji i test zasad:** zatwierdzone reguły trafiają do
+    `PROJECT_DECISIONS.md`, a przypadki wymagające decyzji pozostają jawnie w
+    `POMYSLY_I_BACKLOG.md`.
+- [ ] **4B — model danych i lista pomp.**
+  - [ ] **4B.1 — model pompy:** stabilne ID, czytelna nazwa, typ własna lub
+    zewnętrzna, aktywność w danym dniu, godzina **Dostępna od** i miejsce na
+    rzeczywiście potrzebne parametry techniczne, np. wysięg.
+  - [ ] **4B.2 — operacje na liście:** dodawanie, edycja, wyłączanie i usuwanie
+    pompy bez mieszania tych operacji z silnikiem harmonogramu.
+  - [ ] **4B.3 — walidacja i testy modelu:** unikalne ID, poprawne typy, bezpieczne
+    wartości puste i brak przydzielania pomp nieaktywnych.
+- [ ] **4C — interfejs listy pomp i pamięć planu.**
+  - [ ] **4C.1 — panel pomp:** czytelna lista z typem, aktywnością, godziną
+    **Dostępna od** i podstawowymi parametrami, działająca również na węższym
+    ekranie.
+  - [ ] **4C.2 — pamięć:** lista pomp i ich bieżąca dostępność są zapisywane w
+    planie dnia oraz zapisach historycznych bez psucia starszych rekordów.
+  - [ ] **4C.3 — odtworzenie i test operatora:** odświeżenie, historia, kolejny
+    import i wyczyszczenie planu zachowują ustalone zasady pamięci.
+- [ ] **4D — okres zajętości pompy na budowie.**
+  - [ ] **4D.1 — planowane okno betonowania:** wyznaczenie początku i końca
+    obsługi budowy na podstawie danych planu, a nie czasu pojedynczej gruszki.
+  - [ ] **4D.2 — pełny cykl pompy:** przygotowanie przed betonowaniem, praca,
+    zakończenie i czynności po pracy tworzą jeden spójny przedział zajętości.
+  - [ ] **4D.3 — przypadki brzegowe i testy:** jedna dostawa, wiele dostaw,
+    zerowa ilość, budowa niewymagająca pompy i brak wymaganych czasów.
+- [ ] **4E — przejazdy pomp.**
+  - [ ] **4E.1 — baza do pierwszej budowy:** osobny czas dojazdu pompy z bazy.
+  - [ ] **4E.2 — budowa do budowy:** osobny czas przejazdu pomiędzy każdą parą
+    kolejnych miejsc pracy, bez założenia, że jest równy trasie z bazy.
+  - [ ] **4E.3 — niezależność od map:** silnik otrzymuje gotowy czas przejazdu
+    i działa offline; automatyczne pozyskiwanie tras pozostaje zakresem Etapu 6.
+  - [ ] **4E.4 — testy:** brak trasy, trasa zerowa, różne czasy w obu kierunkach
+    oraz przejazd wymuszający późniejszy start następnej budowy.
+- [ ] **4F — niezależny przydział pomp.**
+  - [ ] **4F.1 — stabilna kolejność:** budowy wymagające pompy są rozpatrywane
+    deterministycznie według planowanego startu i kolejności wejściowej.
+  - [ ] **4F.2 — pierwsza pasująca pompa:** silnik wybiera pierwszą aktywną,
+    dostępną już o wymaganej godzinie, wolną i zgodną z wymaganiami pompę,
+    uwzględniając pełny cykl oraz przejazd.
+  - [ ] **4F.3 — brak nakładania:** jedna pompa nie może mieć dwóch kolidujących
+    okresów pracy, a granica `gotowa == kolejny start przygotowania` jest
+    dozwolona.
+  - [ ] **4F.4 — najwcześniejszy start:** gdy żadna pompa nie jest gotowa,
+    wynik podaje najwcześniejszą możliwą godzinę i wielkość przesunięcia bez
+    cichego zmieniania całego harmonogramu gruszek.
+  - [ ] **4F.5 — testy integracyjne:** wiele budów, równe starty, wyłączona
+    pompa, niepasujący parametr, przejazd i powtarzalny wynik.
+- [ ] **4G — minimalna liczba pomp.**
+  - [ ] **4G.1 — wynik silnika:** obliczenie najmniejszej technicznej liczby
+    pomp potrzebnych do planu bez nakładania ich pełnych cykli.
+  - [ ] **4G.2 — widok operatora:** osobny licznik potrzebnych pomp i czytelna
+    informacja dla planu bez budów pompowanych.
+  - [ ] **4G.3 — testy:** wyniki `0`, `1` i wiele pomp oraz zgodność z
+    przydziałami technicznymi.
+- [ ] **4H — tryb „mam X pomp”.**
+  - [ ] **4H.1 — dwa tryby pracy:** `Oblicz, ile potrzeba` oraz
+    `Mam określoną liczbę`, z walidacją całkowitej liczby od `0` wzwyż.
+  - [ ] **4H.2 — ograniczony przydział:** silnik nie tworzy pompy ponad podaną
+    liczbę albo ponad aktywną listę i wylicza rzeczywisty skutek niedoboru.
+  - [ ] **4H.3 — jawne konsekwencje:** operator widzi liczbę potrzebną,
+    dostępną, przydział, przesunięcie i pierwotny plan; `0` pomp nie tworzy
+    fikcyjnych przydziałów.
+  - [ ] **4H.4 — pamięć i ponowne przeliczenie:** tryb oraz liczba są
+    odtwarzane, a każda zmiana buduje wynik od początku bez starych zajętości.
+  - [ ] **4H.5 — testy:** flota wystarczająca, zbyt mała, `0`, błędne dane,
+    stabilność wyniku i brak nakładania pracy jednej pompy.
+- [ ] **4I — integracja wyniku i interfejs operatora.**
+  - [ ] **4I.1 — centralny wynik:** `przeliczCalyHarmonogram()` udostępnia
+    osobny wynik pomp, nadal bez docelowego łączenia korekt pomp i gruszek.
+  - [ ] **4I.2 — wspólne sterowanie zasobami:** w nagłówku harmonogramu pod
+    sterowaniem gruszkami pojawia się estetyczny, kompaktowy wiersz pomp z
+    trybem pracy, liczbą potrzebną, liczbą dostępną i skrótem dostępności.
+    Szczegółowa godzina **Dostępna od** pozostaje przypisana do konkretnej pompy.
+  - [ ] **4I.3 — tabela pomp:** budowa, przydzielona pompa, przygotowanie,
+    betonowanie, zakończenie, przejazd i gotowość do kolejnej pracy.
+  - [ ] **4I.4 — komunikaty:** czytelny brak pompy, niedostępność, niezgodny
+    parametr i przesunięcie wynikające z przejazdu lub zajętości.
+  - [ ] **4I.5 — zgodność offline i dostępność interfejsu:** brak nowych
+    bibliotek, CDN i obowiązkowego internetu.
+- [ ] **4J — pełna regresja, publikacja i test operatora.**
+  - [ ] **4J.1 — testy automatyczne:** wszystkie scenariusze Etapu 4 oraz pełna
+    regresja importu, pamięci, rodzajów rozładunku i całego Etapu 3.
+  - [ ] **4J.2 — publikacja:** commit na `main`, GitHub Actions i GitHub Pages.
+  - [ ] **4J.3 — test operatora:** rzeczywisty plan z brakiem pomp, jedną pompą,
+    kilkoma budowami, pompą nieaktywną, zbyt małą flotą i przejazdem między
+    budowami; dopiero wtedy zamknięcie Etapu 4.
+
+## Granica Etapu 4
+
+Etap 4 buduje i testuje niezależny wynik pomp. Może wskazać najwcześniejszy
+możliwy start oraz skutek ograniczenia floty pomp, ale nie łączy jeszcze tego
+wyniku z ograniczoną flotą gruszek w jeden ostateczny plan. Zmiana
+`StartRoboczy`, ponowne generowanie kursów po przesunięciu przez pompę, wybór
+budowy przesuwanej przy wielu rozwiązaniach i wspólna optymalizacja obu zasobów
+należą do Etapu 5.
+
 ## Kryteria zakończenia
 
 - [ ] jedna pompa nie może obsługiwać dwóch budów jednocześnie,
@@ -739,10 +886,11 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Opublikować drobną poprawkę czytelności, która przenosi **tryb pracy** i
-**liczbę gruszek** do nagłówka wyniku, a następnie krótko potwierdzić jej wygląd
-na GitHub Pages. Logika 3E nie zmienia się. Po tej kontroli, przed rozpoczęciem
-implementacji Etapu 4, rozpisać kompletne podetapy pomp i ich granice zakresu.
+Wykonać **KP-4.1 — model ręcznej korekty godziny budowy**. Zachować
+`StartPlanowany` jako źródło, dodać `StartZadany` jako wartość edytowaną przez
+operatora i pozostawić `StartRoboczy` jako wynik możliwości silnika. Po
+zamknięciu całego KP-4 następnym podetapem będzie **4A.1 — kwalifikacja budów
+wymagających pompy**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1430,7 +1578,9 @@ do publikacji **3E.6.1** oraz testu operatora **3E.6.2**.
   zgodnie z instrukcją testu 3E.6.2;
 - [x] po teście zaakceptowano przeniesienie sterowania flotą do nagłówka wyniku
   jako osobną poprawkę czytelności bez zmiany logiki silnika.
+- [x] po publikacji operator potwierdził poprawne działanie i czytelność
+  kontrolek **Tryb pracy** oraz **Liczba gruszek** w nowym miejscu.
 
 Podetapy **3E.6.1–3E.6.2**, cały punkt **3E** oraz cały **Etap 3 — podstawowy
-silnik gruszek** są zakończone. Po publikacji poprawki rozmieszczenia kontrolek
-następnym dużym krokiem będzie rozpisanie podetapów **Etapu 4 — pompy**.
+silnik gruszek** są zakończone. Pełny podział **Etapu 4 — pompy** został
+przygotowany; następnym podetapem jest **4A.1 — kwalifikacja budów**.

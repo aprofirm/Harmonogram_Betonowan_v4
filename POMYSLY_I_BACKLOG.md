@@ -143,3 +143,51 @@ Silnik ma przeliczać realny plan przy ograniczonej liczbie obu zasobów. Dokła
 **Powiązanie:** Etap 6 — Adresy, lokalizacje i trasy
 
 OpenStreetMap pozostaje preferowanym źródłem danych mapowych, ale konkretny dostawca usług online nie jest jeszcze trwale wybrany. Warstwa usług ma być wymienna bez przebudowy silnika harmonogramu.
+
+---
+
+## P-009 — Domyślne czasy pełnego cyklu pompy
+
+**Data:** 2026-08-23
+**Status:** DO DOPRECYZOWANIA
+**Powiązanie:** Etap 4A.2 i 4D — Pompy
+
+Trzeba ustalić początkowe wartości i poziom konfiguracji dla:
+
+- przygotowania pompy przed betonowaniem,
+- zakończenia pracy i składania,
+- mycia lub innych czynności końcowych,
+- przygotowania do przejazdu na następną budowę.
+
+Należy rozstrzygnąć, które wartości są globalne, które zależą od konkretnej
+pompy, a które mogą być nadpisane dla pojedynczej budowy. Do czasu zatwierdzenia
+nie wpisujemy przypadkowych wartości domyślnych do silnika.
+
+---
+
+## P-010 — Sposób traktowania pomp zewnętrznych
+
+**Data:** 2026-08-23
+**Status:** DO DOPRECYZOWANIA
+**Powiązanie:** Etap 4A i 4B — Pompy
+
+Model ma rozróżniać pompy własne i zewnętrzne, ale trzeba jeszcze ustalić, czy
+pompa zewnętrzna:
+
+- jest zwykłym zasobem wspólnej listy,
+- jest z góry przypisywana do konkretnej budowy,
+- może obsłużyć kilka budów tego samego dnia,
+- rozpoczyna dzień w bazie betoniarni, własnej bazie czy przy pierwszej budowie.
+
+---
+
+## P-011 — Ręczne czasy przejazdów pomp przed integracją mapową
+
+**Data:** 2026-08-23
+**Status:** DO DOPRECYZOWANIA
+**Powiązanie:** Etap 4E — Pompy
+
+Etap 4 musi odróżnić trasę `baza → budowa` od `budowa → budowa`, a automatyczne
+trasy są dopiero zakresem Etapu 6. Trzeba wybrać najprostszy sposób ręcznego
+podania lub zapamiętania czasów pomiędzy parami budów. Niezależnie od wybranego
+interfejsu silnik pomp ma otrzymywać gotowe minuty i działać bez internetu.

@@ -241,6 +241,8 @@ Instrukcje testów ręcznych znajdują się w plikach:
 - [testy/TESTY_ETAP_3C.md](testy/TESTY_ETAP_3C.md) — przydział konkretnych gruszek,
 - [testy/TESTY_ETAP_3D.md](testy/TESTY_ETAP_3D.md) — minimalna liczba gruszek,
 - [testy/TESTY_ETAP_3E.md](testy/TESTY_ETAP_3E.md) — tryb „mam X gruszek”,
+- [testy/TESTY_KP_4.md](testy/TESTY_KP_4.md) — ręczna korekta godziny budowy,
+- [testy/TESTY_ETAP_4.md](testy/TESTY_ETAP_4.md) — plan testów pomp,
 - [testy/TESTY_KP_1.md](testy/TESTY_KP_1.md) — plan testu pamięci dnia,
 - [testy/TESTY_KP_2.md](testy/TESTY_KP_2.md) — plan testu pamięci tras,
 - [testy/TESTY_KP_3.md](testy/TESTY_KP_3.md) — ilość ręczna, wariant i szeroki widok,
@@ -296,5 +298,8 @@ umieszczone bezpośrednio w nagłówku wyniku, obok podsumowania harmonogramu.
 
 Test operatora **3E.6.2** został zaliczony na rzeczywistym planie: plan bazowy
 wymagał `5` gruszek, a przy `4` dostępnych program nie utworzył piątego pojazdu
-i jawnie pokazał przesunięcia `+30 min` oraz `+5 min`. Następny duży krok to
-rozpisanie podetapów **Etapu 4 — pompy** przed rozpoczęciem jego implementacji.
+i jawnie pokazał przesunięcia `+30 min` oraz `+5 min`. Następny krok to
+**KP-4.1 — model ręcznej korekty godziny budowy**. Po zamknięciu KP-4 rozpocznie
+się **4A.1 — kwalifikacja budów wymagających pompy**. Pełny podział Etapu 4 jest
+zapisany w `ETAPY_ROZWOJU.md`; pełne połączenie ograniczeń pomp i gruszek
+pozostaje świadomie zakresem Etapu 5.
