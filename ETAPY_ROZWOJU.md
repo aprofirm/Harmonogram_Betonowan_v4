@@ -209,12 +209,12 @@ ponownego wczytywania CSV. Krok wykonujemy przed Etapem 4, ponieważ silnik pomp
 musi otrzymać jednoznaczną bieżącą godzinę zadaną przez operatora, a jednocześnie
 nie może utracić godziny źródłowej z KDX.
 
-- [ ] **KP-4.1 — model trzech godzin:**
-  - [ ] `StartPlanowany` pozostaje niezmienną godziną źródłową z KDX/CSV albo
+- [x] **KP-4.1 — model trzech godzin:**
+  - [x] `StartPlanowany` pozostaje niezmienną godziną źródłową z KDX/CSV albo
     formularza budowy ręcznej;
-  - [ ] `StartZadany` jest bieżącą godziną, którą operator chce uwzględnić przy
+  - [x] `StartZadany` jest bieżącą godziną, którą operator chce uwzględnić przy
     następnym przeliczeniu; początkowo jest równy `StartPlanowany`;
-  - [ ] `StartRoboczy` pozostaje rzeczywistą godziną możliwą do wykonania po
+  - [x] `StartRoboczy` pozostaje rzeczywistą godziną możliwą do wykonania po
     uwzględnieniu ograniczeń silnika; do czasu Etapu 5 jest równy
     `StartZadany`, jeżeli inne wdrożone reguły nie wymagają jawnej korekty.
 - [ ] **KP-4.2 — edycja w tabeli:** pole **Start do przeliczenia** przy każdej
@@ -886,11 +886,10 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **KP-4.1 — model ręcznej korekty godziny budowy**. Zachować
-`StartPlanowany` jako źródło, dodać `StartZadany` jako wartość edytowaną przez
-operatora i pozostawić `StartRoboczy` jako wynik możliwości silnika. Po
-zamknięciu całego KP-4 następnym podetapem będzie **4A.1 — kwalifikacja budów
-wymagających pompy**.
+Wykonać **KP-4.2 — edycję godziny w tabeli budów**. Pokazać pole **Start do
+przeliczenia**, zachować widoczną godzinę źródłową i dodać przywrócenie `↺` bez
+ponownego importu. Po zamknięciu całego KP-4 następnym podetapem będzie **4A.1
+— kwalifikacja budów wymagających pompy**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1584,3 +1583,18 @@ do publikacji **3E.6.1** oraz testu operatora **3E.6.2**.
 Podetapy **3E.6.1–3E.6.2**, cały punkt **3E** oraz cały **Etap 3 — podstawowy
 silnik gruszek** są zakończone. Pełny podział **Etapu 4 — pompy** został
 przygotowany; następnym podetapem jest **4A.1 — kwalifikacja budów**.
+
+
+## KP-4.1 — model trzech godzin budowy — 2026-08-23
+
+- [x] budowy z importu i budowy ręczne otrzymują `StartZadany` równy
+  `StartPlanowany`;
+- [x] `StartPlanowanyZrodlowy`, `StartPlanowany`, `StartZadany` i
+  `StartRoboczy` pozostają osobnymi polami modelu;
+- [x] lista robocza bezpiecznie uzupełnia `StartZadany` w obiektach utworzonych
+  przed KP-4.1 bez modyfikowania ich źródła;
+- [x] `StartZadany` jest uwzględniony w polach zapisywanych razem z planem;
+- [x] osobny test `testy/kp_4.test.js` oraz pełna regresja potwierdzają model.
+
+Podetap **KP-4.1** jest zakończony. Następny podetap to **KP-4.2 — edycja
+godziny w tabeli budów i przywracanie wartości źródłowej**.

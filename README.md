@@ -298,8 +298,10 @@ umieszczone bezpośrednio w nagłówku wyniku, obok podsumowania harmonogramu.
 
 Test operatora **3E.6.2** został zaliczony na rzeczywistym planie: plan bazowy
 wymagał `5` gruszek, a przy `4` dostępnych program nie utworzył piątego pojazdu
-i jawnie pokazał przesunięcia `+30 min` oraz `+5 min`. Następny krok to
-**KP-4.1 — model ręcznej korekty godziny budowy**. Po zamknięciu KP-4 rozpocznie
-się **4A.1 — kwalifikacja budów wymagających pompy**. Pełny podział Etapu 4 jest
-zapisany w `ETAPY_ROZWOJU.md`; pełne połączenie ograniczeń pomp i gruszek
-pozostaje świadomie zakresem Etapu 5.
+i jawnie pokazał przesunięcia `+30 min` oraz `+5 min`. Model KP-4.1 przechowuje
+już osobno źródłowy `StartPlanowany`, bieżący `StartZadany` i wynikowy
+`StartRoboczy`. Następny krok to **KP-4.2 — edycja godziny w tabeli budów i jej
+przywracanie bez ponownego importu**. Po zamknięciu KP-4 rozpocznie się **4A.1 —
+kwalifikacja budów wymagających pompy**. Pełny podział Etapu 4 jest zapisany w
+`ETAPY_ROZWOJU.md`; pełne połączenie ograniczeń pomp i gruszek pozostaje
+świadomie zakresem Etapu 5.

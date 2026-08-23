@@ -14,6 +14,7 @@
     "budowa",
     "startPlanowanyZrodlowy",
     "startPlanowany",
+    "startZadany",
     "startRoboczy",
     "tolerancjaStartuMinuty",
     "najpozniejszyStart",

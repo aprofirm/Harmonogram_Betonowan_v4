@@ -49,6 +49,7 @@ function sprawdzPoprawnyImport(aplikacja) {
   assert.equal(stanImportu.budowy[0].firma, "Beton, Polska");
   assert.equal(stanImportu.budowy[0].budowa, 'Osiedle "Północ"');
   assert.equal(stanImportu.budowy[0].startPlanowany, "07:30");
+  assert.equal(stanImportu.budowy[0].startZadany, "07:30");
   assert.equal(stanImportu.budowy[0].startRoboczy, "07:30");
   assert.equal(stanImportu.budowy[0].daneZrodlowe.ID_Budowy, "0012");
   assert.equal(stanImportu.budowy[0].rodzajBetonu, "C25/30");
@@ -86,6 +87,7 @@ function sprawdzTestowyUkladKdx(aplikacja) {
   assert.equal(stanImportu.budowy[0].firma, "Przykładowa Firma A");
   assert.equal(stanImportu.budowy[0].budowa, "Osiedle Zielone");
   assert.equal(stanImportu.budowy[0].startPlanowany, "08:00");
+  assert.equal(stanImportu.budowy[0].startZadany, "08:00");
   assert.equal(stanImportu.budowy[0].startRoboczy, "08:00");
   assert.equal(stanImportu.budowy[0].dataPlanowana, "7.08.2026");
   assert.equal(stanImportu.budowy[0].iloscBetonuM3, "8");
@@ -107,6 +109,7 @@ function sprawdzTolerancjeIZrealizowanePozycje(aplikacja) {
 
   assert.equal(elastyczna.startPlanowanyZrodlowy, "13:00 (+60 min)");
   assert.equal(elastyczna.startPlanowany, "13:00");
+  assert.equal(elastyczna.startZadany, "13:00");
   assert.equal(elastyczna.startRoboczy, "13:00");
   assert.equal(elastyczna.tolerancjaStartuMinuty, 60);
   assert.equal(elastyczna.najpozniejszyStart, "14:00");
@@ -219,6 +222,7 @@ function sprawdzBudowyReczne(aplikacja) {
   assert.equal(pierwsza.idBudowy, "RECZNE-001");
   assert.equal(druga.idBudowy, "RECZNE-002");
   assert.equal(druga.zrodlo, "reczna");
+  assert.equal(druga.startZadany, druga.startPlanowany);
   assert.equal(druga.startRoboczy, druga.startPlanowany);
   assert.equal(druga.daneZrodlowe, null);
   assert.equal(pierwsza.iloscBetonuM3, "12.5");

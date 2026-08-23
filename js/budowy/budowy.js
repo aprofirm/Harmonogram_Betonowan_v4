@@ -106,6 +106,32 @@
     return budowa;
   }
 
+  function uzupelnijStartZadanyBudowy(budowa) {
+    if (!budowa || typeof budowa !== "object") {
+      throw new Error("Nie znaleziono budowy do uzupełnienia godziny zadanej.");
+    }
+
+    if (!Object.prototype.hasOwnProperty.call(budowa, "startZadany")) {
+      budowa.startZadany = pobierzWymaganyTekst(
+        Object.prototype.hasOwnProperty.call(budowa, "startPlanowany")
+          ? budowa.startPlanowany
+          : budowa.startRoboczy,
+        "Start zadany"
+      );
+    } else {
+      budowa.startZadany = pobierzWymaganyTekst(
+        budowa.startZadany,
+        "Start zadany"
+      );
+    }
+
+    if (!Object.prototype.hasOwnProperty.call(budowa, "startRoboczy")) {
+      budowa.startRoboczy = budowa.startZadany;
+    }
+
+    return budowa;
+  }
+
   function utworzPoczatkoweCzasyRobocze() {
     return {
       czasDojazduRoboczyMinuty: null,
@@ -246,6 +272,7 @@
       budowa: pobierzWymaganyTekst(daneBudowy.budowa, "Budowa", numerWiersza),
       startPlanowanyZrodlowy: opisStartu.wartoscZrodlowa,
       startPlanowany: opisStartu.startPlanowany,
+      startZadany: opisStartu.startPlanowany,
       startRoboczy: opisStartu.startPlanowany,
       tolerancjaStartuMinuty: opisStartu.tolerancjaStartuMinuty,
       najpozniejszyStart: opisStartu.najpozniejszyStart,
@@ -298,6 +325,7 @@
       budowa: pobierzWymaganyTekst(daneBudowy && daneBudowy.budowa, "Budowa"),
       startPlanowanyZrodlowy: startPlanowany,
       startPlanowany: startPlanowany,
+      startZadany: startPlanowany,
       startRoboczy: startPlanowany,
       tolerancjaStartuMinuty: 0,
       najpozniejszyStart: startPlanowany,
@@ -473,6 +501,7 @@
 
     return listaZImportu.concat(listaReczna).map(function (budowa) {
       const kopiaBudowy = Object.assign({}, budowa);
+      uzupelnijStartZadanyBudowy(kopiaBudowy);
       return uzupelnijDodatkowyOdstepDostawBudowy(kopiaBudowy);
     });
   }
@@ -481,6 +510,7 @@
     utworzBudoweZImportu: utworzBudoweZImportu,
     utworzBudoweReczna: utworzBudoweReczna,
     utworzListeRobocza: utworzListeRobocza,
+    uzupelnijStartZadanyBudowy: uzupelnijStartZadanyBudowy,
     uzupelnijBazowaIloscBetonu: uzupelnijBazowaIloscBetonu,
     ustawCzasyRobocze: ustawCzasyRobocze,
     uzupelnijDodatkowyOdstepDostawBudowy:
