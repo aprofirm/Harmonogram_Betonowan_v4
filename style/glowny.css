@@ -857,6 +857,14 @@ h3 {
   font-weight: 800;
 }
 
+.podsumowanie__gruszki {
+  background: #f0faf5;
+}
+
+.podsumowanie__gruszki span {
+  color: #176b4d;
+}
+
 .podsumowanie small {
   color: var(--kolor-tekstu-pomocniczego);
   font-size: 0.7rem;

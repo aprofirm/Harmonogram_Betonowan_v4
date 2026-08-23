@@ -74,12 +74,14 @@ assert.deepEqual(
   [1, 2, 3, 1]
 );
 assert.equal(wynik.gruszki.dostepneGruszki.length, 3);
+assert.equal(wynik.gruszki.minimalnaLiczbaGruszek, 3);
+assert.equal(wynik.minimalnaLiczbaGruszek, 3);
 assert.equal(wynik.gruszki.przydzieloneKursy.length, wynik.kursy.length);
 assert.equal(wynik.gruszki.przydzieloneKursy[0].idKursu, wynik.kursy[0].idKursu);
 assert.equal(wynik.kursy[3].idGruszki, "GRUSZKA-001");
 assert.equal(wynik.kursy[3].minutaRozpoczeciaZaladunku, 575);
 assert.equal(wynik.kursy[0].minutaGotowosciDoKolejnegoKursu, 575);
-assert.match(wynik.komunikaty[0], /Przydzielono 3 gruszek/i);
+assert.match(wynik.komunikaty[0], /Minimalna liczba gruszek[^:]*: 3/i);
 
 wynik.kursy.forEach(function (kurs) {
   assert.equal(kurs.statusKursu, "przydzielony");

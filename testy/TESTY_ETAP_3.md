@@ -2,11 +2,15 @@
 
 ## Status
 
-Etap 3 jest w toku. **Punkt 3A — generowanie kursów** oraz cały **3B — czasy cyklu i rytm dostaw** są zakończone i sprawdzone. Zakończone pozostają również kroki przekrojowe **KP-1–KP-3**.
+Etap 3 jest w toku. Punkty **3A — generowanie kursów**, cały **3B — czasy
+cyklu i rytm dostaw** oraz cały **3C — przydział konkretnych gruszek** są
+zakończone i sprawdzone. Zakończone pozostają również kroki przekrojowe
+**KP-1–KP-3**.
 
-W punkcie **3C — przydział konkretnych gruszek** zakończono **3C.1 — model i zasady przydziału** oraz **3C.2 — niezależny silnik przydziału**. Moduł nie zmienia godzin z 3B.2 i nie jest jeszcze podłączony do głównego przeliczenia ani interfejsu.
-
-**Następny podetap: 3C.3 — integracja z pełnym harmonogramem.** Punkt 3D dotyczy formalnej minimalnej liczby gruszek, a 3E trybu „mam X gruszek”.
+W punkcie **3D — minimalna liczba gruszek** zakończono 3D.1–3D.4: wynik jest
+zwracany przez silnik, pokazany operatorowi i objęty testami. **Następny
+podetap: 3D.5 — publikacja i test operatora.** Punkt 3E pozostaje odpowiedzialny
+za tryb „mam X gruszek”.
 
 ## Cel
 
@@ -170,6 +174,9 @@ Oczekiwany wynik:
 - program potrafi wskazać minimalną liczbę gruszek potrzebnych do wykonania założonego rytmu bez konfliktu dostępności,
 - wynik wynika z czasów cyklu, a nie z wartości wpisanej na stałe.
 
+Status: zaimplementowane w 3D.1–3D.4 i sprawdzane przez
+`testy/etap_3d.test.js`. Do zamknięcia pozostaje test operatora 3D.5.
+
 ## Test 9 — tryb „mam X gruszek”
 
 Dane:
@@ -239,7 +246,9 @@ Zaimplementowane części Etapu 3 sprawdzają osobne pliki:
 - `testy/rodzaj_rozladunku.test.js` — logika rodzaju rozładunku i kontrola
   podziału odpowiedzialności modułów,
 - `testy/odbior_wlasny_tabela.test.js` — rzeczywisty wariant KDX i osobna tabela
-  odbiorów własnych.
+  odbiorów własnych,
+- `testy/etap_3d.test.js` — minimalna liczba gruszek dla pustego planu,
+  jednego zasobu i nakładających się kursów oraz jej prezentacja w interfejsie.
 
 Workflow `.github/workflows/testy.yml` uruchamia wszystkie testy `testy/*.test.js`
 na GitHub Actions. Regresja 3B.2.6 przeszła poprawnie. Zwykłe działanie aplikacji
@@ -256,4 +265,5 @@ nie wymaga Node.js ani połączenia z internetem.
 - [x] szczegółowy scenariusz znajduje się w `TESTY_ETAP_3C.md`;
 - [x] test automatyczny znajduje się w `etap_3c.test.js`.
 
-3C.1 i 3C.2 są zakończone. 3C pozostaje otwarte; następny jest 3C.3.
+3C.1 i 3C.2 są zakończone. Pełny wynik testów i zamknięcie całego 3C opisuje
+`TESTY_ETAP_3C.md`. Aktualny następny krok to 3D.5.

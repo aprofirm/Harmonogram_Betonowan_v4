@@ -103,6 +103,7 @@ function utworzDokumentTestowy() {
     "tresc-statusu",
     "liczba-budow",
     "liczba-kursow",
+    "minimalna-liczba-gruszek",
     "liczba-konfliktow",
     "wiersze-harmonogramu",
     "wiersze-kursow",
@@ -491,6 +492,10 @@ async function uruchomTest() {
   assert.equal(danePlanu.czyHarmonogramPrzeliczony, true);
   assert.equal(odczytajHistorie(pamiecLokalna).zapisy.length, 1);
   assert.equal(pierwszaStrona.dokument.elementy["liczba-kursow"].textContent, "3");
+  assert.equal(
+    pierwszaStrona.dokument.elementy["minimalna-liczba-gruszek"].textContent,
+    "2"
+  );
 
   pierwszaStrona.dokument.elementy["przycisk-przelicz"].zdarzenia.click();
   assert.equal(odczytajHistorie(pamiecLokalna).zapisy.length, 1);
@@ -502,6 +507,10 @@ async function uruchomTest() {
 
   assert.equal(stronaPoOdswiezeniu.dokument.elementy["liczba-budow"].textContent, "2");
   assert.equal(stronaPoOdswiezeniu.dokument.elementy["liczba-kursow"].textContent, "3");
+  assert.equal(
+    stronaPoOdswiezeniu.dokument.elementy["minimalna-liczba-gruszek"].textContent,
+    "2"
+  );
   assert.equal(
     stronaPoOdswiezeniu.dokument.elementy["nazwa-pliku-csv"].textContent,
     "plan-testowy.csv"
@@ -520,6 +529,10 @@ async function uruchomTest() {
   ustawieniaPotwierdzenia.wynik = true;
   stronaPoOdswiezeniu.dokument.elementy["przycisk-wyczysc-plan"].zdarzenia.click();
   assert.equal(stronaPoOdswiezeniu.dokument.elementy["liczba-budow"].textContent, "0");
+  assert.equal(
+    stronaPoOdswiezeniu.dokument.elementy["minimalna-liczba-gruszek"].textContent,
+    "0"
+  );
   assert.equal(pamiecLokalna.getItem(kluczPlanu), null);
   assert.equal(odczytajHistorie(pamiecLokalna).zapisy.length, 1);
   assert.equal(JSON.parse(pamiecLokalna.getItem(kluczPamieciTras)).trasy.length, 2);
@@ -533,6 +546,10 @@ async function uruchomTest() {
 
   assert.equal(stronaPoOdswiezeniu.dokument.elementy["liczba-budow"].textContent, "2");
   assert.equal(stronaPoOdswiezeniu.dokument.elementy["liczba-kursow"].textContent, "3");
+  assert.equal(
+    stronaPoOdswiezeniu.dokument.elementy["minimalna-liczba-gruszek"].textContent,
+    "2"
+  );
   assert.notEqual(pamiecLokalna.getItem(kluczPlanu), null);
   assert.equal(odczytajHistorie(pamiecLokalna).zapisy.length, 1);
 

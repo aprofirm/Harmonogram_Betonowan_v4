@@ -113,7 +113,6 @@ function sprawdzBrakNakladania(kursy) {
 const aplikacja = wczytajAplikacje();
 
 const pustyWynik = przelicz(aplikacja, []);
-assert.equal(pustyWynik.punktEtapu, "3C.5");
 assert.equal(pustyWynik.kursy.length, 0);
 assert.equal(pustyWynik.gruszki.dostepneGruszki.length, 0);
 assert.equal(pustyWynik.gruszki.przydzieloneKursy.length, 0);

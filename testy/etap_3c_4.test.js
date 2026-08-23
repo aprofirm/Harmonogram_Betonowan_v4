@@ -10,10 +10,6 @@ const interfejs = fs.readFileSync(
   path.join(katalogProjektu, "js/interfejs/interfejs.js"),
   "utf8"
 );
-const konfiguracja = fs.readFileSync(
-  path.join(katalogProjektu, "js/konfiguracja/konfiguracja.js"),
-  "utf8"
-);
 const css = fs.readFileSync(
   path.join(katalogProjektu, "style/glowny.css"),
   "utf8"
@@ -30,7 +26,6 @@ assert.match(
   interfejs,
   /"Gruszka " \+ String\(kurs\.numerGruszki\)/
 );
-assert.match(konfiguracja, /punktEtapu: "3C\.\d+"/);
 assert.match(interfejs, /poczatek\.className = "czas-kursu__poczatek"/);
 assert.match(
   interfejs,

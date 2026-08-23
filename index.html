@@ -50,7 +50,7 @@
               <p class="etykieta-sekcji">USTAWIENIA</p>
               <h2 id="tytul-parametrow">Parametry planu</h2>
             </div>
-            <span class="znacznik-etapu">Etap 3C.5</span>
+            <span class="znacznik-etapu">Etap 3D.4</span>
           </div>
 
           <section class="sekcja-danych" aria-labelledby="tytul-importu">
@@ -158,9 +158,9 @@
           </form>
 
           <p class="informacja-etapu">
-            Etap 3C.5 sprawdza przydział gruszek na wielu budowach i
-            przypadkach brzegowych. Godziny kursów pozostają bez zmian, a jedna
-            gruszka nie może mieć nakładających się pełnych cykli.
+            Etap 3D pokazuje minimalną liczbę gruszek potrzebnych do wykonania
+            ustalonych godzin bez nakładania pełnych cykli. Ograniczenie planu
+            do rzeczywiście dostępnej floty pozostaje zakresem 3E.
           </p>
 
           <details class="diagnostyka">
@@ -235,6 +235,10 @@
                 <div>
                   <span id="liczba-kursow">0</span>
                   <small>kursów</small>
+                </div>
+                <div class="podsumowanie__gruszki">
+                  <span id="minimalna-liczba-gruszek">0</span>
+                  <small>potrzebnych gruszek</small>
                 </div>
                 <div>
                   <span id="liczba-konfliktow">0</span>
@@ -379,7 +383,7 @@
 
       <footer class="stopka">
         <span>Harmonogram Betonowań v4</span>
-        <span>Etap 3C.5 · integracja i przypadki brzegowe</span>
+        <span>Etap 3D.4 · minimalna liczba gruszek</span>
       </footer>
     </div>
 

@@ -1416,6 +1416,29 @@ sposobu prezentacji tabeli operatora.
 
 ---
 
+## 76. Minimalna liczba gruszek — zasady 3D
+
+Dla ustalonych godzin kursów minimalna liczba gruszek jest równa liczbie
+technicznych zasobów utworzonych przez przydział 3C. Kursy są rozpatrywane
+według początku załadunku, a nowa gruszka powstaje wyłącznie wtedy, gdy żadna
+wcześniejsza nie wróciła jeszcze do betoniarni. Taki wynik odpowiada największej
+liczbie nakładających się pełnych cykli i jest najmniejszą flotą zdolną wykonać
+plan bez zmiany godzin.
+
+Obowiązują zasady:
+
+- wynik jest udostępniany jawnie jako `minimalnaLiczbaGruszek`, a nie tylko
+  pośrednio przez najwyższy numer w tabeli;
+- pusty plan i plan bez kursów wymagają `0` gruszek;
+- ponowne przeliczenie identycznego planu daje identyczny wynik;
+- zmiana godzin, czasów cyklu, rytmu, ilości betonu albo pojemności gruszki
+  przelicza wynik od nowa razem z całym harmonogramem;
+- liczba jest widoczna w podsumowaniu operatora i komunikacie po przeliczeniu;
+- 3D nie pyta jeszcze, ile gruszek operator rzeczywiście posiada, nie ogranicza
+  przydziału i nie przesuwa kursów; ten zakres pozostaje w 3E.
+
+---
+
 # Powiązane tematy otwarte
 
 Pomysły, warianty i pytania, które nie są jeszcze obowiązującymi decyzjami, są prowadzone w `POMYSLY_I_BACKLOG.md`. Dzięki temu ten dokument pozostaje jednoznacznym źródłem zatwierdzonych ustaleń.

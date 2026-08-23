@@ -34,6 +34,9 @@
       trescStatusu: pobierzWymaganyElement("tresc-statusu"),
       liczbaBudow: pobierzWymaganyElement("liczba-budow"),
       liczbaKursow: pobierzWymaganyElement("liczba-kursow"),
+      minimalnaLiczbaGruszek: pobierzWymaganyElement(
+        "minimalna-liczba-gruszek"
+      ),
       liczbaKonfliktow: pobierzWymaganyElement("liczba-konfliktow"),
       wierszeHarmonogramu: pobierzWymaganyElement("wiersze-harmonogramu"),
       wierszeKursow: pobierzWymaganyElement("wiersze-kursow"),
@@ -647,6 +650,9 @@
     pokazListeBudow(wynik.budowy);
     pokazListeKursow(wynik.kursy, wynik.budowy);
     elementy.liczbaKursow.textContent = String(wynik.kursy.length);
+    elementy.minimalnaLiczbaGruszek.textContent = String(
+      wynik.minimalnaLiczbaGruszek
+    );
     elementy.liczbaKonfliktow.textContent = String(wynik.konflikty.length);
     ustawStatus("sukces", "Przeliczenie zakończone", wynik.komunikaty[0]);
   }
@@ -654,6 +660,7 @@
   function wyczyscWidokWyniku() {
     pokazListeKursow([], []);
     elementy.liczbaKursow.textContent = "0";
+    elementy.minimalnaLiczbaGruszek.textContent = "0";
     elementy.liczbaKonfliktow.textContent = "0";
   }
 

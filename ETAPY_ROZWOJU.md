@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono 3C.1–3C.5, następny jest 3C.6 — pełna regresja, publikacja i test operatora**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono 3D.1–3D.4, następny jest 3D.5 — publikacja i test operatora**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -359,7 +359,7 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
       GitHub Pages oraz ręczne potwierdzenie rytmu, pełnego cyklu, kolejności
       kursów i odtworzenia po odświeżeniu; dopiero wtedy zamknięcie 3B.2 i
       całego punktu 3B.
-- [ ] **3C — przydział gruszek:** brak nakładania kursów jednej gruszki.
+- [x] **3C — przydział gruszek:** brak nakładania kursów jednej gruszki.
   - [x] **3C.1 — model i zasady przydziału:** każdy kurs zajmuje gruszkę od
     rozpoczęcia załadunku do powrotu do betoniarni; pojazd może otrzymać kolejny
     kurs dokładnie od minuty swojej ponownej gotowości; numerowanie jest
@@ -375,10 +375,25 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
   - [x] **3C.5 — testy integracyjne i przypadki brzegowe:** wiele budów,
     jednoczesne starty, kurs dokładnie po powrocie, brak kursów, stabilne
     numerowanie i kontrola braku nakładania przedziałów jednej gruszki.
-  - [ ] **3C.6 — pełna regresja, publikacja i test operatora:** kontrola
+  - [x] **3C.6 — pełna regresja, publikacja i test operatora:** kontrola
     GitHub Pages oraz ręczne potwierdzenie przydziału na rzeczywistym planie;
     dopiero wtedy zamknięcie całego 3C.
-- [ ] **3D — minimalna liczba gruszek.**
+- [ ] **3D — minimalna liczba gruszek:** osobny wynik wymaganej floty dla
+  ustalonych godzin kursów.
+  - [x] **3D.1 — reguła i granice zakresu:** wynik 3D jest liczbą technicznych
+    zasobów potrzebnych do obsłużenia kursów bez nakładania pełnych cykli;
+    godziny pozostają bez zmian, a ograniczenie dostępnej floty należy do 3E.
+  - [x] **3D.2 — wynik silnika:** przydział zwraca
+    `minimalnaLiczbaGruszek`, a centralny harmonogram udostępnia ją jako osobne
+    pole wyniku oraz w stanie gruszek.
+  - [x] **3D.3 — widok operatora:** liczba jest widoczna w podsumowaniu jako
+    **potrzebnych gruszek** i w komunikacie zakończonego przeliczenia.
+  - [x] **3D.4 — testy, regresja i dokumentacja:** przypadki `0`, `1` i wielu
+    jednocześnie potrzebnych gruszek, integracja interfejsu i pamięci oraz pełna
+    regresja wcześniejszych funkcji.
+  - [ ] **3D.5 — publikacja i test operatora:** kontrola GitHub Pages i ręczne
+    potwierdzenie, że rzeczywisty plan pokazuje oczekiwaną minimalną liczbę;
+    dopiero wtedy zamknięcie 3D.
 - [ ] **3E — tryb „mam X gruszek” i ponowne przeliczenie zasobów.**
 
 Po każdym podetapie wykonujemy jego osobny test oraz pełną regresję wcześniejszych
@@ -406,7 +421,7 @@ Etapu 3. Dopiero potem zapisujemy opis wykonanej pracy, bieżący punkt i nastę
 - [x] liczba kursów odpowiada ilości betonu i pojemności gruszki,
 - [x] jedna gruszka nie może być jednocześnie w dwóch kursach,
 - [x] dostępność gruszki następuje dopiero po zakończeniu pełnego cyklu,
-- [ ] program potrafi podać minimalną potrzebną liczbę gruszek,
+- [x] program potrafi podać minimalną potrzebną liczbę gruszek,
 - [ ] zmniejszenie dostępnej liczby gruszek powoduje nowe realne wyliczenie,
 - [x] ponowne przeliczenie liczby kursów nie pozostawia starych kursów,
 - [x] zmiana pojemności gruszki jest wykonywana przez konfigurację, a nie zmianę kodu.
@@ -701,13 +716,11 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Kontynuować **3C.3 — integrację przydziału gruszek z pełnym harmonogramem**.
-Moduł 3C.2 jest już niezależnie przetestowany, ale aplikacja operatora nadal
-korzysta z wyniku 3B.2 i nie pokazuje numerów gruszek. W 3C.3 trzeba podłączyć
-nowy moduł do jednego centralnego przeliczenia bez zmiany godzin zaplanowanych
-w 3B.2. Punkt 3D pozostaje odpowiedzialny za formalne wyznaczenie i prezentację
-minimalnej liczby gruszek, a 3E za tryb „mam X gruszek” i wynikające z niego
-przesuwanie planu.
+Wykonać **3D.5 — publikację i test operatora**. Po przeliczeniu rzeczywistego
+planu licznik **potrzebnych gruszek** ma pokazać liczbę zgodną z najwyższym
+technicznym numerem użytym w tabeli kursów. Ponowne przeliczenie tych samych
+danych ma dać ten sam wynik, a zmiana czasów albo rytmu ma przeliczyć go od
+nowa. Po potwierdzeniu można zamknąć 3D i przejść do 3E — trybu „mam X gruszek”.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1294,3 +1307,36 @@ Podetap **3C.3** jest zakończony. Następny niezakończony podetap to **3C.4 �
 Podetap **3C.5** jest zakończony. Punkt **3C** pozostaje otwarty. Następny i
 ostatni podetap to **3C.6 — pełna regresja, publikacja i test operatora**.
 Dopiero po 3C.6 można zamknąć 3C i przejść do 3D.
+
+
+## Zamknięcie 3C.6 i całego 3C — 2026-08-23
+
+- [x] pełna regresja automatyczna przechodziła na `main`;
+- [x] GitHub Pages udostępnił wersję z przydziałem gruszek;
+- [x] operator sprawdził przydział na rzeczywistym planie KDX;
+- [x] każda gruszka rozpoczynała następny kurs dopiero po wcześniejszym
+  powrocie, a nakładające się pełne cykle miały różne numery;
+- [x] ponowne użycie gruszki i rytm dostaw były zgodne z godzinami kursów;
+- [x] operator zaakceptował wynik oraz zamknięcie 3C.
+
+Podetap **3C.6** i cały punkt **3C** są zakończone. Następnym punktem jest 3D.
+
+
+## 3D.1–3D.4 — minimalna liczba gruszek — 2026-08-23
+
+- [x] zapisano pełny podział 3D i oddzielono go od ograniczonej floty 3E;
+- [x] wynik przydziału 3C został formalnie udostępniony jako
+  `minimalnaLiczbaGruszek` bez ponownego liczenia i bez przesuwania godzin;
+- [x] centralny harmonogram zwraca liczbę na najwyższym poziomie oraz w stanie
+  gruszek;
+- [x] podsumowanie operatora pokazuje wyróżniony licznik **potrzebnych
+  gruszek**, zerowany po zmianie albo wyczyszczeniu planu;
+- [x] komunikat po przeliczeniu podaje minimalną liczbę wprost;
+- [x] test `testy/etap_3d.test.js` sprawdza pusty plan, jeden zasób, wiele
+  nakładających się kursów, wynik centralny i widok operatora;
+- [x] regresja pamięci potwierdza ponowne pokazanie wyniku po odświeżeniu i
+  wczytaniu historii;
+- [x] pełna regresja wszystkich `testy/*.test.js` przechodzi.
+
+Podetapy **3D.1–3D.4** są zakończone. Punkt 3D pozostaje otwarty. Następny i
+ostatni podetap to **3D.5 — publikacja i test operatora**.

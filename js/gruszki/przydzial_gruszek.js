@@ -116,6 +116,7 @@
 
     return {
       kursy: przydzieloneKursy,
+      minimalnaLiczbaGruszek: gruszki.length,
       gruszki: gruszki.map(function (gruszka) {
         return Object.assign({}, gruszka);
       })

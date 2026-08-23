@@ -7,7 +7,11 @@
 - [x] 3C.3 — integracja z pełnym harmonogramem.
 - [x] 3C.4 — widok operatora.
 - [x] 3C.5 — testy integracyjne i przypadki brzegowe.
-- [ ] 3C.6 — pełna regresja, publikacja i test operatora.
+- [x] 3C.6 — pełna regresja, publikacja i test operatora.
+
+Cały punkt 3C został zamknięty 2026-08-23 po ręcznej kontroli rzeczywistego
+planu KDX. Operator potwierdził brak nakładania cykli jednej gruszki, poprawne
+ponowne wykorzystanie pojazdów oraz zgodność godzin i rytmu dostaw.
 
 ## Zakres testu 3C.2
 
@@ -98,4 +102,5 @@ Test korzysta z centralnego `przeliczCalyHarmonogram()` i sprawdza:
 8. poprawne identyfikatory i status wszystkich przydzielonych kursów.
 
 3C.5 nie zmienia algorytmu przydziału, jeżeli powyższe przypadki przechodzą.
-Następny podetap to **3C.6 — pełna regresja, publikacja i test operatora**.
+Po zaliczeniu 3C.6 cały punkt 3C jest zakończony. Następny punkt to 3D —
+minimalna liczba gruszek.

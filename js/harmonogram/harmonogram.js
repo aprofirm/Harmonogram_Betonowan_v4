@@ -25,19 +25,21 @@
     }).length;
   }
 
-  function utworzKomunikatKursow(kursy, listaBudow) {
+  function utworzKomunikatKursow(
+    kursy,
+    listaBudow,
+    minimalnaLiczbaGruszek
+  ) {
     const liczbaOdbiorowWlasnych = policzOdbioryWlasne(listaBudow);
     const dopisekOdbiorow = liczbaOdbiorowWlasnych
       ? " Odbiory własne poza harmonogramem: " + liczbaOdbiorowWlasnych + "."
       : "";
 
     if (kursy.length) {
-      const liczbaGruszek = new Set(
-        kursy.map(function (kurs) { return kurs.idGruszki; }).filter(Boolean)
-      ).size;
       return "Wygenerowano " + kursy.length +
-        " kursów z godzinami pełnego cyklu. Przydzielono " + liczbaGruszek +
-        " gruszek bez nakładania ich kursów." + dopisekOdbiorow;
+        " kursów z godzinami pełnego cyklu. Minimalna liczba gruszek " +
+        "potrzebna do realizacji bez nakładania kursów: " +
+        minimalnaLiczbaGruszek + "." + dopisekOdbiorow;
     }
 
     if (liczbaOdbiorowWlasnych) {
@@ -73,10 +75,15 @@
     );
     const kursy = wynikPrzydzialu.kursy;
     const stanGruszek = {
+      minimalnaLiczbaGruszek: wynikPrzydzialu.minimalnaLiczbaGruszek,
       dostepneGruszki: wynikPrzydzialu.gruszki,
       przydzieloneKursy: kursy
     };
-    const komunikatKursow = utworzKomunikatKursow(kursy, listaBudow);
+    const komunikatKursow = utworzKomunikatKursow(
+      kursy,
+      listaBudow,
+      wynikPrzydzialu.minimalnaLiczbaGruszek
+    );
 
     return {
       etap: aplikacja.konfiguracja.numerEtapu,
@@ -88,6 +95,7 @@
       gruszki: stanGruszek,
       lokalizacje: aplikacja.lokalizacje.utworzPustyStanLokalizacji(),
       kursy: kursy,
+      minimalnaLiczbaGruszek: wynikPrzydzialu.minimalnaLiczbaGruszek,
       konflikty: [],
       komunikaty: [komunikatKursow]
     };

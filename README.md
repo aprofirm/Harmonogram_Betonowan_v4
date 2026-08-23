@@ -139,6 +139,18 @@ Zmiana pola **Odstęp dostaw** oznacza dotychczasowy wynik jako nieaktualny.
 Wartość jest zapisywana w bieżącym planie i zapisach historycznych oraz
 odtwarzana po odświeżeniu strony.
 
+## Minimalna liczba gruszek
+
+Po każdym przeliczeniu aplikacja pokazuje w podsumowaniu osobny licznik
+**potrzebnych gruszek**. Jest to najmniejsza liczba technicznych zasobów, która
+może wykonać ustalone kursy bez nakładania pełnych cykli od rozpoczęcia
+załadunku do powrotu do betoniarni.
+
+Wynik jest liczony od nowa po każdej zmianie wpływającej na harmonogram. Dla
+pustego planu wynosi `0`. Ta liczba nie ogranicza jeszcze planu do rzeczywiście
+dostępnej floty i nie przesuwa kursów — tryb „mam X gruszek” pozostaje zakresem
+punktu 3E.
+
 ## Diagnostyka i raport błędów
 
 Aplikacja automatycznie zapisuje techniczne zdarzenia z maksymalnie 10 ostatnich uruchomień. Rejestrowane są m.in. uruchomienie programu, rozpoczęcie i wynik importu CSV, przeliczenie harmonogramu, ostrzeżenia oraz błędy z bezpiecznym wskazaniem miejsca w kodzie.
@@ -208,6 +220,7 @@ Instrukcje testów ręcznych znajdują się w plikach:
 - [testy/TESTY_ETAP_3A.md](testy/TESTY_ETAP_3A.md),
 - [testy/TESTY_ETAP_3B_1.md](testy/TESTY_ETAP_3B_1.md),
 - [testy/TESTY_ETAP_3C.md](testy/TESTY_ETAP_3C.md) — przydział konkretnych gruszek,
+- [testy/TESTY_ETAP_3D.md](testy/TESTY_ETAP_3D.md) — minimalna liczba gruszek,
 - [testy/TESTY_KP_1.md](testy/TESTY_KP_1.md) — plan testu pamięci dnia,
 - [testy/TESTY_KP_2.md](testy/TESTY_KP_2.md) — plan testu pamięci tras,
 - [testy/TESTY_KP_3.md](testy/TESTY_KP_3.md) — ilość ręczna, wariant i szeroki widok,
@@ -228,6 +241,7 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_3c_3.test.js
     node testy/etap_3c_4.test.js
     node testy/etap_3c_5.test.js
+    node testy/etap_3d.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
@@ -247,18 +261,16 @@ historią repozytorium.
 ## Aktualny stan
 
 **Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są **3A**, cały
-**3B** oraz **3C.1–3C.5**. Centralne `przeliczCalyHarmonogram()` generuje kursy,
-liczy ich pełne czasy i następnie przypisuje pierwsze wolne gruszki tak, aby
-fizyczne cykle jednego zasobu się nie nakładały. Tabela kursów pokazuje
-`Gruszka 1`, `Gruszka 2` itd. jako techniczne oznaczenia zasobów.
+**3B**, cały **3C** oraz **3D.1–3D.4**. Centralne
+`przeliczCalyHarmonogram()` generuje kursy, liczy ich pełne czasy, przypisuje
+pierwsze wolne gruszki i zwraca osobną `minimalnaLiczbaGruszek`. Tabela kursów
+pokazuje `Gruszka 1`, `Gruszka 2` itd., a podsumowanie wyświetla wprost liczbę
+pojazdów potrzebnych do realizacji bez nakładania cykli.
 
-Test 3C.5 obejmuje jednocześnie wiele budów, jednakowe początki załadunku,
-dokładną granicę `powrót == następny start`, pusty plan, pozycje bez kursów,
-stabilne numerowanie przy ponownym przeliczeniu i kontrolę wszystkich przedziałów
-zajęcia każdej gruszki. Pełna regresja jest wykonywana przy każdej zmianie na
-`main`.
+Test 3D obejmuje pusty plan, jeden ponownie wykorzystywany zasób, wiele
+nakładających się kursów, centralny wynik, komunikat oraz widok operatora. Pełna
+regresja jest wykonywana przy każdej zmianie na `main`.
 
-**Następny podetap: 3C.6 — pełna regresja, publikacja i test operatora.**
-Po ręcznym potwierdzeniu przydziału na rzeczywistym planie będzie można zamknąć
-całe 3C. Punkt 3D pozostaje odpowiedzialny za formalną minimalną liczbę gruszek,
-a 3E za tryb „mam X gruszek”.
+**Następny podetap: 3D.5 — publikacja i test operatora.** Po ręcznym
+potwierdzeniu licznika na rzeczywistym planie będzie można zamknąć 3D i przejść
+do 3E — trybu „mam X gruszek”.

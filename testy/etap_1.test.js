@@ -70,6 +70,7 @@ function utworzDokumentTestowy() {
     "tresc-statusu",
     "liczba-budow",
     "liczba-kursow",
+    "minimalna-liczba-gruszek",
     "liczba-konfliktow",
     "wiersze-harmonogramu",
     "wiersze-kursow",
@@ -211,6 +212,7 @@ function sprawdzPrzeliczenie() {
   assert.equal(wynik.parametry.czasRozladunkuMinuty, 14);
   assert.deepEqual(Array.from(wynik.budowy), []);
   assert.deepEqual(Array.from(wynik.kursy), []);
+  assert.equal(wynik.minimalnaLiczbaGruszek, 0);
   assert.deepEqual(Array.from(wynik.konflikty), []);
   assert.equal(Object.isFrozen(aplikacja.konfiguracja.parametryDomyslne), true);
   assert.equal(srodowisko.dokument.elementy["czas-rozladunku"].value, "15");
@@ -223,6 +225,10 @@ function sprawdzPrzeliczenie() {
     "Przeliczenie zakończone"
   );
   assert.equal(srodowisko.dokument.elementy["sekcja-statusu"].dataset.rodzaj, "sukces");
+  assert.equal(
+    srodowisko.dokument.elementy["minimalna-liczba-gruszek"].textContent,
+    "0"
+  );
   assert.equal(przycisk.disabled, false);
 
   srodowisko.dokument.elementy["pojemnosc-gruszki"].value = "0";
