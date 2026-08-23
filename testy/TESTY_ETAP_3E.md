@@ -7,9 +7,9 @@
 - [x] 3E.3 — ograniczony przydział gruszek.
 - [x] 3E.4 — jawne konsekwencje w wyniku operatora.
 - [x] 3E.5 — testy automatyczne, regresja i dokumentacja.
-- [ ] 3E.6 — publikacja i test operatora.
-  - [ ] 3E.6.1 — publikacja, GitHub Actions i GitHub Pages.
-  - [ ] 3E.6.2 — test operatora.
+- [x] 3E.6 — publikacja i test operatora.
+  - [x] 3E.6.1 — publikacja, GitHub Actions i GitHub Pages.
+  - [x] 3E.6.2 — test operatora.
 
 ## Zasada
 
@@ -61,5 +61,14 @@ Po zakończeniu publikacji 3E.6.1:
 7. Odśwież stronę po zapisaniu wariantu — tryb i liczba mają zostać odtworzone,
    a harmonogram ponownie przeliczony.
 
-Po zaliczeniu testu można zamknąć 3E i cały Etap 3. Następny etap to Etap 4 —
-pompy.
+Test został zaliczony na rzeczywistym planie. Przy `4` dostępnych gruszkach
+program nie utworzył `Gruszki 5`, pokazał dwa opóźnione kursy (`+30 min` i
+`+5 min`) oraz zachował pierwotne godziny rozładunku. Operator potwierdził
+również pozostałe warianty instrukcji, brak nakładania cykli i odtworzenie
+ustawienia.
+
+Po teście sterowanie flotą przeniesiono z bocznych ustawień do nagłówka wyniku,
+obok liczników. Jest to poprawka czytelności bez zmiany obliczeń; została objęta
+testem struktury interfejsu i pełną regresją automatyczną.
+
+3E i cały Etap 3 są zakończone. Następny etap to Etap 4 — pompy.

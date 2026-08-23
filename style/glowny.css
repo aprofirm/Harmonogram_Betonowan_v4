@@ -848,6 +848,56 @@ h3 {
   border-bottom: 1px solid var(--kolor-obramowania);
 }
 
+.panel__naglowek--wynik {
+  display: grid;
+  grid-template-columns: auto minmax(350px, 1fr) auto;
+  gap: 20px;
+}
+
+.sterowanie-flota {
+  justify-self: center;
+  width: min(100%, 500px);
+  padding: 9px 12px 11px;
+  border: 1px solid #d7e5ed;
+  border-radius: 11px;
+  background: #f6fafc;
+}
+
+.sterowanie-flota__tytul {
+  margin: 0 0 5px;
+  color: var(--kolor-niebieski);
+  font-size: 0.63rem;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+}
+
+.sterowanie-flota__pola {
+  display: grid;
+  grid-template-columns: minmax(210px, 1fr) minmax(130px, 0.55fr);
+  gap: 10px;
+}
+
+.pole-formularza--flota {
+  gap: 4px;
+  font-size: 0.72rem;
+}
+
+.pole-formularza--flota input,
+.pole-formularza--flota select {
+  min-height: 34px;
+}
+
+.pole-formularza--flota > input,
+.pole-formularza--flota > select,
+.pole-formularza--flota .pole-z-jednostka input {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.pole-formularza--flota .pole-z-jednostka > span {
+  padding: 0 10px;
+}
+
 .opis-panelu {
   max-width: 320px;
   margin-bottom: 0;
@@ -1208,6 +1258,20 @@ td {
   }
 }
 
+@media (max-width: 1450px) {
+  .panel__naglowek--wynik {
+    grid-template-columns: minmax(180px, 1fr) auto;
+  }
+
+  .sterowanie-flota {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: stretch;
+    width: 100%;
+    max-width: none;
+  }
+}
+
 @media (max-width: 620px) {
   .aplikacja {
     padding: 18px 12px 14px;
@@ -1235,6 +1299,25 @@ td {
   }
 
   .formularz-parametrow {
+    grid-template-columns: 1fr;
+  }
+
+  .panel__naglowek--wynik {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .panel__naglowek--wynik .podsumowanie,
+  .sterowanie-flota {
+    grid-column: 1;
+  }
+
+  .sterowanie-flota {
+    grid-row: auto;
+  }
+
+  .sterowanie-flota__pola {
     grid-template-columns: 1fr;
   }
 

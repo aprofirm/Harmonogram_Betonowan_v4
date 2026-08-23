@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; 3D zakończone, wdrożono 3E.1–3E.5, następna jest publikacja 3E.6.1**
+- [x] Etap 3 — Podstawowy silnik gruszek
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -396,7 +396,7 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
       GitHub Actions i wdrożenie GitHub Pages zakończyły się powodzeniem.
     - [x] **3D.5.2 — test operatora:** ręczne potwierdzenie, że rzeczywisty
       plan pokazuje oczekiwaną minimalną liczbę; dopiero wtedy zamknięcie 3D.
-- [ ] **3E — tryb „mam X gruszek” i ponowne przeliczenie zasobów.**
+- [x] **3E — tryb „mam X gruszek” i ponowne przeliczenie zasobów.**
   - [x] **3E.1 — reguła i granice zakresu:** tryb domyślny nadal oblicza flotę
     potrzebną bez zmiany godzin, a tryb ograniczony zachowuje tę liczbę jako
     punkt odniesienia i przelicza kursy wyłącznie dla podanej floty.
@@ -412,10 +412,10 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
   - [x] **3E.5 — testy, regresja i dokumentacja:** tryb bez limitu, flota
     wystarczająca, flota zbyt mała, `0`, błędne dane, stabilność przydziału,
     pamięć oraz brak nakładania cykli zostały objęte testami automatycznymi.
-  - [ ] **3E.6 — publikacja i test operatora:** końcowa kontrola wersji 3E.
-    - [ ] **3E.6.1 — publikacja:** commit na `main`, pełna regresja GitHub
+  - [x] **3E.6 — publikacja i test operatora:** końcowa kontrola wersji 3E.
+    - [x] **3E.6.1 — publikacja:** commit na `main`, pełna regresja GitHub
       Actions i wdrożenie GitHub Pages.
-    - [ ] **3E.6.2 — test operatora:** porównanie tego samego planu w trybie
+    - [x] **3E.6.2 — test operatora:** porównanie tego samego planu w trybie
       bez limitu oraz dla mniejszej, równej i zerowej liczby dostępnych gruszek;
       dopiero wtedy zamknięcie 3E i całego Etapu 3.
 
@@ -739,12 +739,10 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **3E.6.1 — publikację** wdrożonego trybu „mam X gruszek”: commit na
-`main`, pełną regresję GitHub Actions i kontrolę GitHub Pages. Następnie wykonać
-**3E.6.2 — test operatora** na tym samym rzeczywistym planie: porównać tryb
-bez limitu z flotą `5`, flotą mniejszą od wymaganej oraz `0` gruszek. Po
-potwierdzeniu jawnych przesunięć i braku nakładania cykli można zamknąć 3E i
-cały Etap 3.
+Opublikować drobną poprawkę czytelności, która przenosi **tryb pracy** i
+**liczbę gruszek** do nagłówka wyniku, a następnie krótko potwierdzić jej wygląd
+na GitHub Pages. Logika 3E nie zmienia się. Po tej kontroli, przed rozpoczęciem
+implementacji Etapu 4, rozpisać kompletne podetapy pomp i ich granice zakresu.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1416,3 +1414,23 @@ Podetap **3D.5.2**, cały punkt **3D** i jego test operatorski są zakończone.
 
 Podetapy **3E.1–3E.5** są zakończone. Punkt 3E i cały Etap 3 pozostają otwarte
 do publikacji **3E.6.1** oraz testu operatora **3E.6.2**.
+
+
+## Zamknięcie 3E.6 i całego Etapu 3 — 2026-08-23
+
+- [x] wersja 3E została opublikowana na `main`;
+- [x] GitHub Actions i GitHub Pages zakończyły publikację powodzeniem;
+- [x] operator porównał ten sam rzeczywisty plan w trybie obliczania potrzebnej
+  floty i w trybie ograniczonej liczby gruszek;
+- [x] dla `5` gruszek plan nie wymagał przesunięć;
+- [x] dla `4` gruszek program nie utworzył `Gruszki 5`, pokazał dwa opóźnione
+  kursy (`+30 min` i `+5 min`) oraz ich pierwotne godziny rozładunku;
+- [x] potwierdzono brak nakładania pełnych cykli jednej gruszki;
+- [x] wariant `0` gruszek i odtworzenie ustawienia z pamięci zostały sprawdzone
+  zgodnie z instrukcją testu 3E.6.2;
+- [x] po teście zaakceptowano przeniesienie sterowania flotą do nagłówka wyniku
+  jako osobną poprawkę czytelności bez zmiany logiki silnika.
+
+Podetapy **3E.6.1–3E.6.2**, cały punkt **3E** oraz cały **Etap 3 — podstawowy
+silnik gruszek** są zakończone. Po publikacji poprawki rozmieszczenia kontrolek
+następnym dużym krokiem będzie rozpisanie podetapów **Etapu 4 — pompy**.

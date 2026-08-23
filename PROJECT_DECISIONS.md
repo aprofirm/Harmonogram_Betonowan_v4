@@ -1474,6 +1474,18 @@ gruszek. Docelowe priorytety pomiędzy budowami, formalne konflikty przekroczeni
 limitu opóźnienia, połączenie ograniczeń gruszek i pomp oraz korekty
 `StartRoboczy` całych budów pozostają zakresem Etapu 5.
 
+## 78. Sterowanie flotą znajduje się przy wyniku harmonogramu
+
+Tryb pracy gruszek i liczba rzeczywiście dostępnych pojazdów są podstawowymi
+danymi używanymi podczas oceny gotowego harmonogramu. Dlatego kontrolki
+**Tryb pracy** i **Liczba gruszek** znajdują się w nagłówku sekcji
+**Dzisiejszy harmonogram**, obok liczników wyniku, a nie w bocznym panelu
+ogólnych parametrów.
+
+Zmiana położenia nie zmienia zasad obliczeń, walidacji ani pamięci planu.
+Po zmianie wartości operator nadal świadomie uruchamia pełne przeliczenie
+przyciskiem **Przelicz harmonogram**.
+
 ---
 
 # Powiązane tematy otwarte

@@ -281,8 +281,8 @@ historią repozytorium.
 
 ## Aktualny stan
 
-**Etap 3 — podstawowy silnik gruszek** jest w toku. Zakończone są **3A**, cały
-**3B**, cały **3C**, cały **3D** oraz implementacja **3E.1–3E.5**. Centralne
+**Etap 3 — podstawowy silnik gruszek** jest zakończony. Zakończone i sprawdzone
+są **3A**, cały **3B**, cały **3C**, cały **3D** oraz cały **3E**. Centralne
 `przeliczCalyHarmonogram()` generuje kursy, liczy ich pełne czasy, przypisuje
 pierwsze wolne gruszki i zwraca osobną `minimalnaLiczbaGruszek`. Tabela kursów
 pokazuje `Gruszka 1`, `Gruszka 2` itd., a podsumowanie wyświetla wprost liczbę
@@ -291,9 +291,10 @@ pojazdów potrzebnych do realizacji bez nakładania cykli.
 Tryb 3E pozwala podać rzeczywistą liczbę gruszek. Przy zbyt małej flocie
 przelicza wszystkie czasy kursów, nie nakłada cykli jednej gruszki i jawnie
 pokazuje opóźnienia. Test automatyczny obejmuje flotę wystarczającą, zbyt małą,
-`0`, błędne dane, pamięć oraz stabilność wyniku.
+`0`, błędne dane, pamięć oraz stabilność wyniku. Tryb pracy i liczba gruszek są
+umieszczone bezpośrednio w nagłówku wyniku, obok podsumowania harmonogramu.
 
-Test operatora **3D.5.2** został zaliczony na rzeczywistym planie: `7` budów,
-`11` kursów, `5` potrzebnych gruszek i `0` konfliktów. **Następny podetap:
-3E.6.1 — publikacja wdrożonego trybu na `main`**, a po niej test operatora
-3E.6.2 i zamknięcie całego Etapu 3.
+Test operatora **3E.6.2** został zaliczony na rzeczywistym planie: plan bazowy
+wymagał `5` gruszek, a przy `4` dostępnych program nie utworzył piątego pojazdu
+i jawnie pokazał przesunięcia `+30 min` oraz `+5 min`. Następny duży krok to
+rozpisanie podetapów **Etapu 4 — pompy** przed rozpoczęciem jego implementacji.

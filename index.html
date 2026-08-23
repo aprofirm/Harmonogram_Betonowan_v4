@@ -156,28 +156,7 @@
               </span>
             </label>
 
-            <label class="pole-formularza" for="tryb-gruszek">
-              <span>Tryb gruszek</span>
-              <select id="tryb-gruszek" name="trybGruszek" required>
-                <option value="oblicz-potrzebne">Oblicz, ile potrzeba</option>
-                <option value="mam-okreslona-liczbe">Mam określoną liczbę</option>
-              </select>
-            </label>
-
-            <label class="pole-formularza" for="liczba-dostepnych-gruszek">
-              <span>Dostępne gruszki</span>
-              <span class="pole-z-jednostka">
-                <input id="liczba-dostepnych-gruszek" name="liczbaDostepnychGruszek" type="number" min="0" step="1" inputmode="numeric">
-                <span>szt.</span>
-              </span>
-            </label>
           </form>
-
-          <p class="informacja-etapu">
-            W trybie „Oblicz, ile potrzeba” program zachowuje ustalone godziny.
-            W trybie „Mam określoną liczbę” przydziela tylko podaną flotę i
-            pokazuje przesunięcia kursów spowodowane brakiem wolnej gruszki.
-          </p>
 
           <details class="diagnostyka">
             <summary>Diagnostyka programu</summary>
@@ -238,10 +217,30 @@
           </div>
 
           <div class="panel panel-harmonogramu">
-            <div class="panel__naglowek panel__naglowek--harmonogram">
+            <div class="panel__naglowek panel__naglowek--harmonogram panel__naglowek--wynik">
               <div>
                 <p class="etykieta-sekcji">WYNIK</p>
                 <h2 id="tytul-harmonogramu">Dzisiejszy harmonogram</h2>
+              </div>
+              <div class="sterowanie-flota" aria-label="Sterowanie flotą gruszek">
+                <p class="sterowanie-flota__tytul">STEROWANIE FLOTĄ</p>
+                <div class="sterowanie-flota__pola">
+                  <label class="pole-formularza pole-formularza--flota" for="tryb-gruszek">
+                    <span>Tryb pracy</span>
+                    <select id="tryb-gruszek" name="trybGruszek" required>
+                      <option value="oblicz-potrzebne">Oblicz, ile potrzeba</option>
+                      <option value="mam-okreslona-liczbe">Mam określoną liczbę</option>
+                    </select>
+                  </label>
+
+                  <label class="pole-formularza pole-formularza--flota pole-formularza--liczba-gruszek" for="liczba-dostepnych-gruszek">
+                    <span>Liczba gruszek</span>
+                    <span class="pole-z-jednostka">
+                      <input id="liczba-dostepnych-gruszek" name="liczbaDostepnychGruszek" type="number" min="0" step="1" inputmode="numeric">
+                      <span>szt.</span>
+                    </span>
+                  </label>
+                </div>
               </div>
               <div class="podsumowanie" aria-label="Podsumowanie harmonogramu">
                 <div>
@@ -404,7 +403,7 @@
 
       <footer class="stopka">
         <span>Harmonogram Betonowań v4</span>
-        <span>Etap 3E.5 · tryb „mam X gruszek”</span>
+        <span>Etap 3 zakończony · gotowość do Etapu 4</span>
       </footer>
     </div>
 

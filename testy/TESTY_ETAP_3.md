@@ -2,15 +2,16 @@
 
 ## Status
 
-Etap 3 jest w toku. Punkty **3A — generowanie kursów**, cały **3B — czasy
+Etap 3 jest zakończony. Punkty **3A — generowanie kursów**, cały **3B — czasy
 cyklu i rytm dostaw** oraz cały **3C — przydział konkretnych gruszek** są
 zakończone i sprawdzone. Zakończone pozostają również kroki przekrojowe
 **KP-1–KP-3**.
 
 Punkt **3D — minimalna liczba gruszek** jest zakończony wraz z publikacją i
-testem operatora. W punkcie **3E — tryb „mam X gruszek”** wdrożono 3E.1–3E.5:
-ograniczony przydział, przesuwanie pełnego cyklu, widoczne skutki, pamięć i testy.
-**Następny podetap: 3E.6.1 — publikacja.**
+testem operatora. Punkt **3E — tryb „mam X gruszek”** również jest zakończony:
+ograniczony przydział, przesuwanie pełnego cyklu, widoczne skutki, pamięć,
+publikacja i test operatora zostały zaliczone. Następny duży krok to rozpisanie
+podetapów **Etapu 4 — pompy**.
 
 ## Cel
 
@@ -189,8 +190,8 @@ Oczekiwany wynik:
 - nie zwraca wyłącznie komunikatu „za mało gruszek”,
 - konsekwencje ograniczenia są widoczne w nowym wyniku lub konfliktach.
 
-Status: zaimplementowane w 3E.1–3E.5 i sprawdzane przez
-`testy/etap_3e.test.js`; do zamknięcia pozostaje publikacja i test operatora 3E.6.
+Status: zaimplementowane, sprawdzone przez `testy/etap_3e.test.js`, opublikowane
+i potwierdzone przez operatora w 3E.6.
 
 ## Test 10 — pełne ponowne przeliczenie
 
@@ -268,4 +269,5 @@ nie wymaga Node.js ani połączenia z internetem.
 - [x] test automatyczny znajduje się w `etap_3c.test.js`.
 
 3C.1 i 3C.2 są zakończone. Pełny wynik testów i zamknięcie całego 3C opisuje
-`TESTY_ETAP_3C.md`. Aktualny następny krok to publikacja 3E.6.1.
+`TESTY_ETAP_3C.md`. Cały Etap 3 jest zakończony; następny duży krok to
+rozpisanie podetapów Etapu 4.

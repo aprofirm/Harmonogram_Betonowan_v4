@@ -176,8 +176,14 @@ const interfejs = fs.readFileSync(
 assert.match(html, /id="tryb-gruszek"/);
 assert.match(html, /id="liczba-dostepnych-gruszek"/);
 assert.match(html, /id="liczba-dostepnych-gruszek-wynik">—<\/span>/);
+assert.match(
+  html,
+  /class="sterowanie-flota"[\s\S]*id="tryb-gruszek"[\s\S]*id="liczba-dostepnych-gruszek"[\s\S]*class="podsumowanie"/
+);
+assert.equal((html.match(/id="tryb-gruszek"/g) || []).length, 1);
+assert.equal((html.match(/id="liczba-dostepnych-gruszek"/g) || []).length, 1);
 assert.match(html, /<th>Skutek floty<\/th>/);
-assert.match(html, /Etap 3E\.5/);
+assert.match(html, /Etap 3 zakończony/);
 assert.match(interfejs, /plan rozładunku/);
 assert.match(interfejs, /liczbaDostepnychGruszekWynik\.textContent/);
 
