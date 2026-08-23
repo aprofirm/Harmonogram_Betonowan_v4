@@ -1614,6 +1614,12 @@ godziny w tabeli budów i przywracanie wartości źródłowej**.
   wymagający ponownego przeliczenia;
 - [x] test modelu i test pełnego przepływu aplikacji obejmują zmianę,
   przywrócenie, zachowanie źródła i stan nieaktualnego wyniku.
+- [x] implementacja została opublikowana bezpośrednio na `main` w commicie
+  `03d8fe8`;
+- [x] pełna regresja wszystkich `23` zestawów testów przeszła lokalnie oraz w
+  GitHub Actions;
+- [x] GitHub Pages zakończył wdrożenie powodzeniem i udostępnia pole **Start do
+  przeliczenia**, godzinę źródłową oraz przycisk przywrócenia `↺`.
 
 Podetap **KP-4.2** jest zakończony. KP-4 pozostaje otwarty. Następny podetap to
 **KP-4.3 — pełna walidacja formatu godziny i czytelne błędy korekty**.
