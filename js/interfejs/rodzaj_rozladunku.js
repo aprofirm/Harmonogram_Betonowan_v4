@@ -88,7 +88,14 @@
     const thead = document.createElement("thead");
     const wiersz = document.createElement("tr");
 
-    ["Start", "Firma", "Odbiór / miejsce", "Beton", "ID", "Status"].forEach(
+    [
+      "Start do przeliczenia",
+      "Firma",
+      "Odbiór / miejsce",
+      "Beton",
+      "ID",
+      "Status"
+    ].forEach(
       function (naglowek) {
         const komorka = document.createElement("th");
         komorka.textContent = naglowek;
@@ -174,14 +181,6 @@
     return komorka;
   }
 
-  function opiszStart(budowa) {
-    if (Number(budowa && budowa.tolerancjaStartuMinuty) > 0 && budowa.najpozniejszyStart) {
-      return String(budowa.startPlanowany || "") + "–" + String(budowa.najpozniejszyStart);
-    }
-
-    return String(budowa && budowa.startPlanowany || "—");
-  }
-
   function opiszBeton(budowa) {
     const rodzaj = String(budowa && budowa.rodzajBetonu || "").trim();
     const ilosc = Number(budowa && budowa.iloscBetonuLiczbaM3);
@@ -209,7 +208,9 @@
         wiersz.className = "wiersz-zrealizowany";
       }
 
-      wiersz.appendChild(utworzKomorke(opiszStart(budowa), "wartosc-wazna"));
+      wiersz.appendChild(
+        aplikacja.interfejs.utworzKomorkeStartuBudowy(budowa)
+      );
       wiersz.appendChild(utworzKomorke(String(budowa.firma || "")));
       wiersz.appendChild(utworzKomorke(String(budowa.budowa || "")));
       wiersz.appendChild(utworzKomorke(opiszBeton(budowa)));

@@ -2,9 +2,11 @@
 
 ## Status
 
-Podetap **KP-4.1** jest zaimplementowany i objęty osobnym testem
-`testy/kp_4.test.js`. Następny podetap to **KP-4.2 — edycja godziny w tabeli
-budów i przywracanie wartości źródłowej**.
+Podetapy **KP-4.1** i **KP-4.2** są zaimplementowane. Test
+`testy/kp_4.test.js` obejmuje model i wpływ korekty na godziny kursu, a
+`testy/pamiec_aplikacji.test.js` sprawdza pole w tabeli, zmianę, zapis bieżącego
+planu, nieaktualny wynik i przywrócenie. Następny podetap to **KP-4.3 — pełna
+walidacja formatu godziny i czytelne błędy korekty**.
 
 ## Zasada
 
@@ -20,11 +22,11 @@ Operator może zmienić tylko wartość zadaną. Program nie nadpisuje godziny
 Test całego KP-4 powinien potwierdzić:
 
 1. [x] nowa budowa otrzymuje `StartZadany` równy `StartPlanowany`;
-2. ręczna korekta jednej budowy nie zmienia `StartPlanowany`;
-3. poprawiona godzina jest używana przy następnym przeliczeniu;
-4. przycisk przywrócenia odtwarza godzinę źródłową tylko wybranej budowy;
+2. [x] ręczna korekta jednej budowy nie zmienia `StartPlanowany`;
+3. [x] poprawiona godzina jest używana przy następnym przeliczeniu;
+4. [x] przycisk przywrócenia odtwarza godzinę źródłową tylko wybranej budowy;
 5. błędny format, pusta wartość i nieistniejąca budowa dają czytelny błąd;
-6. zmiana i przywrócenie oznaczają wcześniejszy wynik jako nieaktualny;
+6. [x] zmiana i przywrócenie oznaczają wcześniejszy wynik jako nieaktualny;
 7. korekta jest zapisywana w bieżącym planie i historii;
 8. korekta zostaje odtworzona po odświeżeniu;
 9. [x] starszy obiekt bez `StartZadany` przyjmuje bezpiecznie `StartPlanowany`;

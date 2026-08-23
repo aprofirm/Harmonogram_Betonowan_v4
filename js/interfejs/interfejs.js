@@ -7,6 +7,7 @@
   let elementy = null;
   let obslugaZmianyCzasowBudowy = function () {};
   let obslugaZmianyIlosciBetonuBudowy = function () {};
+  let obslugaZmianyStartuBudowy = function () {};
   let obslugaZmianyParametrowAplikacji = function () {};
   let parametryDomyslneInterfejsu = {};
 
@@ -500,6 +501,59 @@
     return budowa.startPlanowany;
   }
 
+  function utworzKomorkeStartuBudowy(budowa) {
+    const komorka = document.createElement("td");
+    const kontrolki = document.createElement("span");
+    const pole = document.createElement("input");
+    const przyciskPrzywroc = document.createElement("button");
+    const opisPlanu = document.createElement("small");
+    const startPlanowany = String(budowa.startPlanowany || "").trim();
+    const startZadany = String(
+      budowa.startZadany || budowa.startPlanowany || ""
+    ).trim();
+    const czyStartZmieniony = startZadany !== startPlanowany;
+    const czyZrealizowana = budowa.statusRealizacji === "zrealizowana";
+
+    komorka.className = "komorka-startu-budowy";
+    kontrolki.className = "kontrolki-startu-budowy";
+
+    pole.className = "pole-startu-budowy";
+    pole.type = "time";
+    pole.value = startZadany;
+    pole.disabled = czyZrealizowana;
+    pole.setAttribute(
+      "aria-label",
+      "Start do przeliczenia dla budowy " + budowa.budowa
+    );
+    pole.addEventListener("change", function () {
+      obslugaZmianyStartuBudowy(budowa.idBudowy, pole.value, false);
+    });
+
+    przyciskPrzywroc.className = "przycisk-przywroc-start";
+    przyciskPrzywroc.type = "button";
+    przyciskPrzywroc.textContent = "↺";
+    przyciskPrzywroc.disabled = czyZrealizowana || !czyStartZmieniony;
+    przyciskPrzywroc.title =
+      "Przywróć planowaną godzinę " + opiszOknoStartu(budowa);
+    przyciskPrzywroc.setAttribute(
+      "aria-label",
+      "Przywróć planowaną godzinę " + startPlanowany +
+        " dla budowy " + budowa.budowa
+    );
+    przyciskPrzywroc.addEventListener("click", function () {
+      obslugaZmianyStartuBudowy(budowa.idBudowy, null, true);
+    });
+
+    opisPlanu.className = "plan-zrodlowy-startu";
+    opisPlanu.textContent = "Plan: " + opiszOknoStartu(budowa);
+
+    kontrolki.appendChild(pole);
+    kontrolki.appendChild(przyciskPrzywroc);
+    komorka.appendChild(kontrolki);
+    komorka.appendChild(opisPlanu);
+    return komorka;
+  }
+
   function utworzWierszBudowy(budowa) {
     const wiersz = document.createElement("tr");
     const etykietaZrodla = budowa.zrodlo === "reczna" ? "Ręczna" : "CSV";
@@ -534,7 +588,7 @@
       wiersz.className = "wiersz-zrealizowany";
     }
 
-    wiersz.appendChild(utworzKomorke(opiszOknoStartu(budowa), "wartosc-wazna"));
+    wiersz.appendChild(utworzKomorkeStartuBudowy(budowa));
     wiersz.appendChild(utworzKomorke(budowa.firma));
     wiersz.appendChild(utworzKomorke(budowa.budowa));
     wiersz.appendChild(
@@ -842,6 +896,13 @@
   function pokazBladIlosciBetonu(blad) {
     const trescBledu = blad instanceof Error ? blad.message : "Wystąpił nieznany błąd.";
     ustawStatus("blad", "Nie można zmienić ilości betonu", trescBledu);
+  }
+
+  function pokazBladStartuBudowy(blad) {
+    const trescBledu = blad instanceof Error
+      ? blad.message
+      : "Nie udało się zmienić godziny budowy.";
+    ustawStatus("blad", "Nie można zmienić godziny budowy", trescBledu);
   }
 
   function pokazBladCzasow(blad) {
@@ -1157,7 +1218,8 @@
     obslugaZmianyIlosciBetonu,
     obslugaZmianyParametrow,
     obslugaWyczyszczeniaPlanu,
-    obslugaOtwarciaHistorii
+    obslugaOtwarciaHistorii,
+    obslugaZmianyStartu
   ) {
     znajdzElementyInterfejsu();
     parametryDomyslneInterfejsu = Object.assign({}, parametryDomyslne);
@@ -1168,6 +1230,9 @@
       typeof obslugaZmianyIlosciBetonu === "function"
         ? obslugaZmianyIlosciBetonu
         : function () {};
+    obslugaZmianyStartuBudowy = typeof obslugaZmianyStartu === "function"
+      ? obslugaZmianyStartu
+      : function () {};
     obslugaZmianyParametrowAplikacji =
       typeof obslugaZmianyParametrow === "function"
         ? obslugaZmianyParametrow
@@ -1198,9 +1263,11 @@
     pokazPrzywroconyPlan: pokazPrzywroconyPlan,
     wyczyscPlan: wyczyscPlan,
     pokazListeBudow: pokazListeBudow,
+    utworzKomorkeStartuBudowy: utworzKomorkeStartuBudowy,
     pokazBlad: pokazBlad,
     pokazBladDanych: pokazBladDanych,
     pokazBladIlosciBetonu: pokazBladIlosciBetonu,
+    pokazBladStartuBudowy: pokazBladStartuBudowy,
     pokazBladCzasow: pokazBladCzasow,
     zakonczPrzeliczenie: zakonczPrzeliczenie,
     pokazTrwajacyImport: pokazTrwajacyImport,

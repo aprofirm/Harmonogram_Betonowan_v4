@@ -244,6 +244,7 @@ h3 {
 .przycisk-historii:focus-visible,
 .przycisk-zamknij:focus-visible,
 .przycisk-wczytaj-zapis:focus-visible,
+.przycisk-przywroc-start:focus-visible,
 .przycisk-przywroc-ilosc:focus-visible,
 .przycisk-przywroc-czas-rozladunku:focus-visible {
   outline: 3px solid rgba(242, 139, 53, 0.4);
@@ -1091,6 +1092,74 @@ td {
 .pole-czasu-budowy:disabled {
   color: #8b989f;
   background: #edf1f3;
+}
+
+.komorka-startu-budowy {
+  min-width: 154px;
+}
+
+.kontrolki-startu-budowy {
+  display: inline-grid;
+  grid-template-columns: 98px 32px;
+  align-items: center;
+  gap: 5px;
+}
+
+.pole-startu-budowy {
+  width: 98px;
+  min-height: 34px;
+  padding: 0 7px;
+  border: 1px solid #cbd7df;
+  border-radius: 8px;
+  outline: none;
+  color: var(--kolor-granatowy-ciemny);
+  background: #fbfcfd;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.pole-startu-budowy:focus {
+  border-color: var(--kolor-niebieski);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(29, 111, 159, 0.13);
+}
+
+.pole-startu-budowy:disabled {
+  color: #8b989f;
+  background: #edf1f3;
+}
+
+.przycisk-przywroc-start {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #bfd2de;
+  border-radius: 8px;
+  color: var(--kolor-niebieski);
+  background: #f1f8fc;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.przycisk-przywroc-start:hover:not(:disabled) {
+  border-color: var(--kolor-niebieski);
+  background: #e7f4fa;
+}
+
+.przycisk-przywroc-start:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+
+.plan-zrodlowy-startu {
+  display: block;
+  margin-top: 4px;
+  color: var(--kolor-tekstu-pomocniczego);
+  font-size: 0.66rem;
+  font-weight: 650;
+  white-space: nowrap;
 }
 
 .komorka-czasu-rozladunku {

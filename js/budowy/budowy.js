@@ -132,6 +132,30 @@
     return budowa;
   }
 
+  function zmienStartZadanyBudowy(budowa, wartosc) {
+    uzupelnijStartZadanyBudowy(budowa);
+
+    const nowyStartZadany = pobierzWymaganyTekst(
+      wartosc,
+      "Start do przeliczenia"
+    );
+
+    budowa.startZadany = nowyStartZadany;
+    budowa.startRoboczy = nowyStartZadany;
+    return budowa;
+  }
+
+  function przywrocStartPlanowanyBudowy(budowa) {
+    if (!budowa || typeof budowa !== "object") {
+      throw new Error("Nie znaleziono budowy do przywrócenia godziny planowanej.");
+    }
+
+    return zmienStartZadanyBudowy(
+      budowa,
+      pobierzWymaganyTekst(budowa.startPlanowany, "Start planowany")
+    );
+  }
+
   function utworzPoczatkoweCzasyRobocze() {
     return {
       czasDojazduRoboczyMinuty: null,
@@ -511,6 +535,8 @@
     utworzBudoweReczna: utworzBudoweReczna,
     utworzListeRobocza: utworzListeRobocza,
     uzupelnijStartZadanyBudowy: uzupelnijStartZadanyBudowy,
+    zmienStartZadanyBudowy: zmienStartZadanyBudowy,
+    przywrocStartPlanowanyBudowy: przywrocStartPlanowanyBudowy,
     uzupelnijBazowaIloscBetonu: uzupelnijBazowaIloscBetonu,
     ustawCzasyRobocze: ustawCzasyRobocze,
     uzupelnijDodatkowyOdstepDostawBudowy:

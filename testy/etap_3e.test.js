@@ -183,7 +183,7 @@ assert.match(
 assert.equal((html.match(/id="tryb-gruszek"/g) || []).length, 1);
 assert.equal((html.match(/id="liczba-dostepnych-gruszek"/g) || []).length, 1);
 assert.match(html, /<th>Skutek floty<\/th>/);
-assert.match(html, /Etap 3 zakończony/);
+assert.match(html, /KP-4\.2/);
 assert.match(interfejs, /plan rozładunku/);
 assert.match(interfejs, /liczbaDostepnychGruszekWynik\.textContent/);
 

@@ -19,7 +19,8 @@ function wczytajAplikacje() {
   [
     "js/konfiguracja/konfiguracja.js",
     "js/import/import_csv.js",
-    "js/budowy/budowy.js"
+    "js/budowy/budowy.js",
+    "js/gruszki/gruszki.js"
   ].forEach(function (sciezkaPliku) {
     const kod = fs.readFileSync(path.join(katalogProjektu, sciezkaPliku), "utf8");
     new vm.Script(kod, { filename: sciezkaPliku }).runInContext(kontekst);
@@ -100,6 +101,44 @@ function sprawdzZgodnoscModelu(aplikacja) {
   }, /Start zadany.*nie może być puste/i);
 }
 
+function sprawdzZmianeIPrzywracanieStartu(aplikacja) {
+  const budowa = aplikacja.budowy.utworzBudoweReczna(
+    {
+      firma: "Firma testowa",
+      budowa: "Budowa testowa",
+      startPlanowany: "09:00",
+      iloscBetonuM3: "8"
+    },
+    []
+  );
+
+  aplikacja.budowy.ustawCzasyRobocze(budowa, {
+    czasDojazduRoboczyMinuty: 20,
+    czasPowrotuRoboczyMinuty: 20
+  });
+  aplikacja.budowy.zmienStartZadanyBudowy(budowa, "09:45");
+
+  assert.equal(budowa.startPlanowany, "09:00");
+  assert.equal(budowa.startPlanowanyZrodlowy, "09:00");
+  assert.equal(budowa.startZadany, "09:45");
+  assert.equal(budowa.startRoboczy, "09:45");
+
+  const kurs = aplikacja.gruszki.obliczCzasyKursow(
+    aplikacja.gruszki.generujKursyDlaBudowy(budowa, 8),
+    [budowa],
+    {
+      czasZaladunkuMinuty: 10,
+      czasRozladunkuMinuty: 15
+    }
+  )[0];
+  assert.equal(kurs.godzinaRozpoczeciaRozladunku, "09:45");
+
+  aplikacja.budowy.przywrocStartPlanowanyBudowy(budowa);
+  assert.equal(budowa.startPlanowany, "09:00");
+  assert.equal(budowa.startZadany, "09:00");
+  assert.equal(budowa.startRoboczy, "09:00");
+}
+
 function sprawdzPoleZapisuPlanu() {
   const kodAplikacji = fs.readFileSync(
     path.join(katalogProjektu, "js/aplikacja.js"),
@@ -112,15 +151,39 @@ function sprawdzPoleZapisuPlanu() {
   );
 }
 
+function sprawdzInterfejsKorektyStartu() {
+  const html = fs.readFileSync(path.join(katalogProjektu, "index.html"), "utf8");
+  const interfejs = fs.readFileSync(
+    path.join(katalogProjektu, "js/interfejs/interfejs.js"),
+    "utf8"
+  );
+  const css = fs.readFileSync(
+    path.join(katalogProjektu, "style/glowny.css"),
+    "utf8"
+  );
+
+  assert.match(html, /<th>Start do przeliczenia<\/th>/);
+  assert.match(html, /KP-4\.2 · ręczna korekta startu budów/);
+  assert.match(interfejs, /className = "pole-startu-budowy"/);
+  assert.match(interfejs, /type = "time"/);
+  assert.match(interfejs, /textContent = "Plan: " \+ opiszOknoStartu/);
+  assert.match(interfejs, /className = "przycisk-przywroc-start"/);
+  assert.match(interfejs, /obslugaZmianyStartuBudowy/);
+  assert.match(css, /\.komorka-startu-budowy/);
+  assert.match(css, /\.plan-zrodlowy-startu/);
+}
+
 function uruchomTesty() {
   const aplikacja = wczytajAplikacje();
 
   sprawdzModelImportu(aplikacja);
   sprawdzModelBudowyRecznej(aplikacja);
   sprawdzZgodnoscModelu(aplikacja);
+  sprawdzZmianeIPrzywracanieStartu(aplikacja);
   sprawdzPoleZapisuPlanu();
+  sprawdzInterfejsKorektyStartu();
 
-  console.log("✓ KP-4.1: model trzech godzin działa poprawnie.");
+  console.log("✓ KP-4.1–KP-4.2: model i ręczna korekta startu działają poprawnie.");
 }
 
 uruchomTesty();

@@ -258,6 +258,11 @@ function znajdzPierwszaKomorkeRozladunku(srodowisko) {
   return wiersze[0].children[6];
 }
 
+function znajdzPierwszaKomorkeStartu(srodowisko) {
+  const wiersze = srodowisko.dokument.elementy["wiersze-harmonogramu"].children;
+  return wiersze[0].children[0];
+}
+
 function sprawdzMigracjeTrasZeStarszegoPlanu() {
   const pamiecLokalna = utworzPamiecLokalna();
   const ustawieniaPotwierdzenia = { wynik: true };
@@ -520,6 +525,41 @@ async function uruchomTest() {
     pierwszaStrona.dokument.elementy["liczba-dostepnych-gruszek-wynik"].textContent,
     "1"
   );
+
+  pierwszaStrona.dokument.elementy["przycisk-przelicz"].zdarzenia.click();
+  assert.equal(odczytajHistorie(pamiecLokalna).zapisy.length, 1);
+
+  let komorkaStartu = znajdzPierwszaKomorkeStartu(pierwszaStrona);
+  assert.equal(komorkaStartu.children[0].children[0].type, "time");
+  assert.equal(komorkaStartu.children[0].children[0].value, "08:00");
+  assert.equal(komorkaStartu.children[0].children[1].disabled, true);
+  assert.equal(komorkaStartu.children[1].textContent, "Plan: 08:00");
+
+  komorkaStartu.children[0].children[0].value = "08:30";
+  komorkaStartu.children[0].children[0].zdarzenia.change();
+  danePlanu = odczytajDanePlanu(pamiecLokalna);
+  assert.equal(danePlanu.budowyZImportu[0].startPlanowany, "08:00");
+  assert.equal(danePlanu.budowyZImportu[0].startZadany, "08:30");
+  assert.equal(danePlanu.budowyZImportu[0].startRoboczy, "08:30");
+  assert.equal(danePlanu.czyHarmonogramPrzeliczony, false);
+  assert.equal(pierwszaStrona.dokument.elementy["liczba-kursow"].textContent, "0");
+  assert.equal(
+    pierwszaStrona.dokument.elementy["tytul-statusu"].textContent,
+    "Dane planu zostały zmienione"
+  );
+
+  komorkaStartu = znajdzPierwszaKomorkeStartu(pierwszaStrona);
+  assert.equal(komorkaStartu.children[0].children[0].value, "08:30");
+  assert.equal(komorkaStartu.children[0].children[1].disabled, false);
+  assert.equal(komorkaStartu.children[1].textContent, "Plan: 08:00");
+  komorkaStartu.children[0].children[1].zdarzenia.click();
+
+  danePlanu = odczytajDanePlanu(pamiecLokalna);
+  assert.equal(danePlanu.budowyZImportu[0].startPlanowany, "08:00");
+  assert.equal(danePlanu.budowyZImportu[0].startZadany, "08:00");
+  assert.equal(danePlanu.budowyZImportu[0].startRoboczy, "08:00");
+  komorkaStartu = znajdzPierwszaKomorkeStartu(pierwszaStrona);
+  assert.equal(komorkaStartu.children[0].children[1].disabled, true);
 
   pierwszaStrona.dokument.elementy["przycisk-przelicz"].zdarzenia.click();
   assert.equal(odczytajHistorie(pamiecLokalna).zapisy.length, 1);

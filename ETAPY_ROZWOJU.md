@@ -217,7 +217,7 @@ nie może utracić godziny źródłowej z KDX.
   - [x] `StartRoboczy` pozostaje rzeczywistą godziną możliwą do wykonania po
     uwzględnieniu ograniczeń silnika; do czasu Etapu 5 jest równy
     `StartZadany`, jeżeli inne wdrożone reguły nie wymagają jawnej korekty.
-- [ ] **KP-4.2 — edycja w tabeli:** pole **Start do przeliczenia** przy każdej
+- [x] **KP-4.2 — edycja w tabeli:** pole **Start do przeliczenia** przy każdej
   budowie, widoczna pierwotna godzina planowana i przycisk `↺` przywracający
   wartość źródłową bez ponownego importu.
 - [ ] **KP-4.3 — walidacja i wynik nieaktualny:** poprawny format `HH:MM`, brak
@@ -886,10 +886,11 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **KP-4.2 — edycję godziny w tabeli budów**. Pokazać pole **Start do
-przeliczenia**, zachować widoczną godzinę źródłową i dodać przywrócenie `↺` bez
-ponownego importu. Po zamknięciu całego KP-4 następnym podetapem będzie **4A.1
-— kwalifikacja budów wymagających pompy**.
+Wykonać **KP-4.3 — walidację korekty godziny**. Wymusić dokładny format
+`HH:MM`, dodać czytelne błędy dla pustej i niepoprawnej wartości oraz
+potwierdzić, że zmiana i przywrócenie wymagają ponownego przeliczenia bez
+nadpisania `StartPlanowany`. Po zamknięciu całego KP-4 następnym podetapem
+będzie **4A.1 — kwalifikacja budów wymagających pompy**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1598,3 +1599,21 @@ przygotowany; następnym podetapem jest **4A.1 — kwalifikacja budów**.
 
 Podetap **KP-4.1** jest zakończony. Następny podetap to **KP-4.2 — edycja
 godziny w tabeli budów i przywracanie wartości źródłowej**.
+
+
+## KP-4.2 — edycja godziny w tabeli — 2026-08-23
+
+- [x] pierwsza kolumna tabeli budów pokazuje pole **Start do przeliczenia**;
+- [x] pod polem pozostaje widoczna źródłowa godzina lub pełne okno planowane;
+- [x] operator może zmienić godzinę bez ponownego importu CSV;
+- [x] przycisk `↺` przywraca `StartPlanowany` tylko dla wybranej budowy;
+- [x] korekta ustawia `StartZadany` i `StartRoboczy`, ale nie zmienia
+  `StartPlanowany` ani `StartPlanowanyZrodlowy`;
+- [x] ten sam mechanizm działa dla dostaw planowanych i odbiorów własnych;
+- [x] zmiana jest zapisywana w bieżącym planie i oznacza poprzedni wynik jako
+  wymagający ponownego przeliczenia;
+- [x] test modelu i test pełnego przepływu aplikacji obejmują zmianę,
+  przywrócenie, zachowanie źródła i stan nieaktualnego wyniku.
+
+Podetap **KP-4.2** jest zakończony. KP-4 pozostaje otwarty. Następny podetap to
+**KP-4.3 — pełna walidacja formatu godziny i czytelne błędy korekty**.

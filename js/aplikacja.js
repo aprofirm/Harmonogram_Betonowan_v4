@@ -251,6 +251,45 @@
     }
   }
 
+  function obsluzZmianeStartuBudowy(idBudowy, wartosc, czyPrzywrocicPlanowany) {
+    try {
+      const budowa = znajdzBudoweDoZmiany(idBudowy);
+
+      if (!budowa) {
+        throw new Error("Nie znaleziono budowy o ID „" + idBudowy + "”.");
+      }
+
+      if (czyPrzywrocicPlanowany) {
+        aplikacja.budowy.przywrocStartPlanowanyBudowy(budowa);
+      } else {
+        aplikacja.budowy.zmienStartZadanyBudowy(budowa, wartosc);
+      }
+
+      oznaczPlanJakoNieprzeliczony(true);
+      aplikacja.interfejs.pokazListeBudow(pobierzAktualnaListeBudow());
+      zapiszZdarzenieDiagnostyczne(
+        "informacja",
+        czyPrzywrocicPlanowany
+          ? "przywrocenie-planowanego-startu-budowy"
+          : "zmiana-zadanego-startu-budowy",
+        czyPrzywrocicPlanowany
+          ? "Przywrócono planowaną godzinę budowy."
+          : "Zmieniono zadaną godzinę budowy.",
+        { idBudowy: budowa.idBudowy }
+      );
+      return budowa;
+    } catch (blad) {
+      aplikacja.interfejs.pokazBladStartuBudowy(blad);
+      aplikacja.interfejs.pokazListeBudow(pobierzAktualnaListeBudow());
+      zapiszBladDiagnostyczny(
+        blad,
+        "blad-zmiany-startu-budowy",
+        "Nie udało się zmienić zadanej godziny budowy."
+      );
+      return null;
+    }
+  }
+
   function wykonajPrzeliczenie(opcje) {
     const ustawieniaPrzeliczenia = opcje || {};
 
@@ -713,7 +752,8 @@
         obsluzZmianeIlosciBetonuBudowy,
         obsluzZmianeParametrow,
         obsluzWyczyszczeniePlanu,
-        obsluzOtwarcieHistorii
+        obsluzOtwarcieHistorii,
+        obsluzZmianeStartuBudowy
       );
       aplikacja.pamiecTras.uruchomPamiecTras();
       odswiezStanPamieciTras();
