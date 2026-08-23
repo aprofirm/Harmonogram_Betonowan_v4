@@ -48,7 +48,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
-- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono 3D.1–3D.4, następny jest 3D.5 — publikacja i test operatora**
+- [ ] Etap 3 — Podstawowy silnik gruszek — **w toku; zakończono publikację 3D.5.1, następny jest test operatora 3D.5.2**
 - [ ] Etap 4 — Pompy
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
@@ -391,9 +391,11 @@ Zbudować niezależną logikę kursów i dostępności gruszek.
   - [x] **3D.4 — testy, regresja i dokumentacja:** przypadki `0`, `1` i wielu
     jednocześnie potrzebnych gruszek, integracja interfejsu i pamięci oraz pełna
     regresja wcześniejszych funkcji.
-  - [ ] **3D.5 — publikacja i test operatora:** kontrola GitHub Pages i ręczne
-    potwierdzenie, że rzeczywisty plan pokazuje oczekiwaną minimalną liczbę;
-    dopiero wtedy zamknięcie 3D.
+  - [ ] **3D.5 — publikacja i test operatora:** końcowa kontrola wersji 3D.
+    - [x] **3D.5.1 — publikacja:** commit trafił na `main`, pełna regresja
+      GitHub Actions i wdrożenie GitHub Pages zakończyły się powodzeniem.
+    - [ ] **3D.5.2 — test operatora:** ręczne potwierdzenie, że rzeczywisty
+      plan pokazuje oczekiwaną minimalną liczbę; dopiero wtedy zamknięcie 3D.
 - [ ] **3E — tryb „mam X gruszek” i ponowne przeliczenie zasobów.**
 
 Po każdym podetapie wykonujemy jego osobny test oraz pełną regresję wcześniejszych
@@ -716,11 +718,12 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **3D.5 — publikację i test operatora**. Po przeliczeniu rzeczywistego
-planu licznik **potrzebnych gruszek** ma pokazać liczbę zgodną z najwyższym
-technicznym numerem użytym w tabeli kursów. Ponowne przeliczenie tych samych
-danych ma dać ten sam wynik, a zmiana czasów albo rytmu ma przeliczyć go od
-nowa. Po potwierdzeniu można zamknąć 3D i przejść do 3E — trybu „mam X gruszek”.
+Wykonać **3D.5.2 — test operatora**. Publikacja 3D.5.1 jest zakończona. Po
+przeliczeniu rzeczywistego planu licznik **potrzebnych gruszek** ma pokazać
+liczbę zgodną z najwyższym technicznym numerem użytym w tabeli kursów. Ponowne
+przeliczenie tych samych danych ma dać ten sam wynik, a zmiana czasów albo rytmu
+ma przeliczyć go od nowa. Po potwierdzeniu można zamknąć 3D i przejść do 3E —
+trybu „mam X gruszek”.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1340,3 +1343,18 @@ Podetap **3C.6** i cały punkt **3C** są zakończone. Następnym punktem jest 3
 
 Podetapy **3D.1–3D.4** są zakończone. Punkt 3D pozostaje otwarty. Następny i
 ostatni podetap to **3D.5 — publikacja i test operatora**.
+
+
+## 3D.5.1 — publikacja — 2026-08-23
+
+- [x] zawartość punktu 3D trafiła bezpośrednio na `main` w commicie
+  `fce3a02`;
+- [x] pełna regresja GitHub Actions zakończyła się statusem `success`;
+- [x] wdrożenie GitHub Pages zakończyło się statusem `success`;
+- [x] opublikowana strona zawiera licznik **potrzebnych gruszek** i oznaczenie
+  Etapu 3D.4;
+- [x] wersja lokalna nadal nie wymaga internetu ani zewnętrznych bibliotek.
+
+Podetap **3D.5.1** jest zakończony. Punkt 3D pozostaje otwarty wyłącznie do
+testu operatora **3D.5.2**. Po jego zaliczeniu następnym punktem będzie 3E —
+tryb „mam X gruszek”.

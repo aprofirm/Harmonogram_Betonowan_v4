@@ -7,6 +7,8 @@
 - [x] 3D.3 — licznik w widoku operatora.
 - [x] 3D.4 — testy automatyczne, regresja i dokumentacja.
 - [ ] 3D.5 — publikacja i test operatora.
+  - [x] 3D.5.1 — publikacja, GitHub Actions i GitHub Pages.
+  - [ ] 3D.5.2 — test operatora.
 
 ## Zasada
 
@@ -33,7 +35,7 @@ Test sprawdza:
 6. obecność i zerowanie licznika **potrzebnych gruszek** w interfejsie;
 7. aktualne oznaczenie punktu 3D.
 
-## Test operatora 3D.5
+## Test operatora 3D.5.2
 
 1. Otwórz opublikowaną aplikację i wczytaj ten sam rzeczywisty plan, na którym
    został zaliczony test 3C.6.
@@ -46,4 +48,5 @@ Test sprawdza:
    policzona od nowa.
 7. Wyczyść plan i sprawdź, czy licznik wraca do `0`.
 
-Po zaliczeniu testu operatora można zamknąć 3D i rozpocząć 3E.
+Publikacja 3D.5.1 jest zakończona. Po zaliczeniu testu operatora 3D.5.2 można
+zamknąć 3D i rozpocząć 3E.

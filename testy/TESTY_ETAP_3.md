@@ -7,10 +7,10 @@ cyklu i rytm dostaw** oraz cały **3C — przydział konkretnych gruszek** są
 zakończone i sprawdzone. Zakończone pozostają również kroki przekrojowe
 **KP-1–KP-3**.
 
-W punkcie **3D — minimalna liczba gruszek** zakończono 3D.1–3D.4: wynik jest
-zwracany przez silnik, pokazany operatorowi i objęty testami. **Następny
-podetap: 3D.5 — publikacja i test operatora.** Punkt 3E pozostaje odpowiedzialny
-za tryb „mam X gruszek”.
+W punkcie **3D — minimalna liczba gruszek** zakończono 3D.1–3D.4 oraz publikację
+3D.5.1: wynik jest zwracany przez silnik, pokazany operatorowi, objęty testami i
+opublikowany. **Następny podetap: 3D.5.2 — test operatora.** Punkt 3E pozostaje
+odpowiedzialny za tryb „mam X gruszek”.
 
 ## Cel
 

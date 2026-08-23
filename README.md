@@ -271,6 +271,7 @@ Test 3D obejmuje pusty plan, jeden ponownie wykorzystywany zasób, wiele
 nakładających się kursów, centralny wynik, komunikat oraz widok operatora. Pełna
 regresja jest wykonywana przy każdej zmianie na `main`.
 
-**Następny podetap: 3D.5 — publikacja i test operatora.** Po ręcznym
+Publikacja **3D.5.1** na `main`, pełna regresja GitHub Actions i GitHub Pages są
+zakończone. **Następny podetap: 3D.5.2 — test operatora.** Po ręcznym
 potwierdzeniu licznika na rzeczywistym planie będzie można zamknąć 3D i przejść
 do 3E — trybu „mam X gruszek”.
