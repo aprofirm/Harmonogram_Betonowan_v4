@@ -49,7 +49,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **plan podetapów gotowy; start po zakończeniu KP-4**
+- [ ] Etap 4 — Pompy — **rozpoczęty; 4A.1 zakończony**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -202,7 +202,7 @@ Kryteria zamknięcia KP-3:
 - [x] aplikacja nie próbuje zmieniać zoomu przeglądarki;
 - [x] pełna regresja automatyczna i test operatora przechodzą poprawnie.
 
-## Planowany krok przekrojowy KP-4 — ręczna korekta godziny budowy
+## Zakończony krok przekrojowy KP-4 — ręczna korekta godziny budowy
 
 KP-4 pozwoli operatorowi poprawić godzinę rozpoczęcia wybranej budowy bez
 ponownego wczytywania CSV. Krok wykonujemy przed Etapem 4, ponieważ silnik pomp
@@ -226,18 +226,18 @@ nie może utracić godziny źródłowej z KDX.
 - [x] **KP-4.4 — pamięć i zgodność:** zapis korekty w bieżącym planie i historii,
   odtworzenie po odświeżeniu oraz bezpieczne otwieranie starszych zapisów bez
   `StartZadany`.
-- [ ] **KP-4.5 — testy, publikacja i test operatora:** osobny test automatyczny,
+- [x] **KP-4.5 — testy, publikacja i test operatora:** osobny test automatyczny,
   pełna regresja, publikacja na `main` oraz ręczne potwierdzenie zmiany,
   przeliczenia, odświeżenia i przywrócenia godziny bazowej.
 
 Kryteria zamknięcia KP-4:
 
-- [ ] korekta jednej budowy nie zmienia godzin źródłowych pozostałych budów;
-- [ ] operator zawsze widzi godzinę źródłową i bieżącą wartość zadaną;
-- [ ] przeliczenie korzysta z `StartZadany`, a wynik możliwy do wykonania jest
+- [x] korekta jednej budowy nie zmienia godzin źródłowych pozostałych budów;
+- [x] operator zawsze widzi godzinę źródłową i bieżącą wartość zadaną;
+- [x] przeliczenie korzysta z `StartZadany`, a wynik możliwy do wykonania jest
   nadal przechowywany osobno jako `StartRoboczy`;
-- [ ] kolejny import tworzy nowy plan na podstawie nowych danych;
-- [ ] aplikacja nadal działa offline i przechodzi całą regresję Etapu 3.
+- [x] kolejny import tworzy nowy plan na podstawie nowych danych;
+- [x] aplikacja nadal działa offline i przechodzi całą regresję Etapu 3.
 
 ## Stan testów po zakończeniu kroku 3B.1 — 2026-08-15
 
@@ -520,7 +520,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
 ## Postęp podetapów Etapu 4
 
 - [ ] **4A — reguły, dane wejściowe i granice zakresu.**
-  - [ ] **4A.1 — kwalifikacja budów:** ustalić i przetestować, które budowy
+  - [x] **4A.1 — kwalifikacja budów:** ustalić i przetestować, które budowy
     wymagają pompy na podstawie `rodzajRozladunku`, bez zmiany obsługi odbiorów
     własnych, leja, wywrotki, taczki i starszych danych bez tej kolumny.
   - [ ] **4A.2 — czas obsługi pompy:** ustalić źródła czasu przygotowania,
@@ -886,11 +886,10 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **KP-4.5 — końcową regresję, publikację i test operatora**. Na
-rzeczywistym planie potwierdzić zmianę godziny, ponowne przeliczenie,
-odtworzenie korekty po odświeżeniu, przywrócenie godziny bazowej oraz brak
-przeniesienia korekty do kolejnego importu. Po zamknięciu całego KP-4 następnym
-podetapem będzie **4A.1 — kwalifikacja budów wymagających pompy**.
+Wykonać **4A.2 — ustalenie czasu obsługi pompy**. Rozstrzygnąć źródła czasu
+przygotowania przed betonowaniem, właściwej pracy, zakończenia, mycia oraz
+przygotowania do przejazdu. Wartości biznesowe muszą pozostać parametrami, a
+nie przypadkowymi liczbami zapisanymi na stałe w silniku.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1668,3 +1667,36 @@ Podetap **KP-4.3** jest zakończony. KP-4 pozostaje otwarty. Następny podetap t
 
 Podetap **KP-4.4** jest zakończony. KP-4 pozostaje otwarty. Następny podetap to
 **KP-4.5 — końcowa regresja, publikacja i test operatora**.
+
+
+## KP-4.5 — publikacja i test operatora — 2026-08-24
+
+- [x] pełna regresja wszystkich `23` wcześniejszych zestawów testów przeszła
+  lokalnie i w GitHub Actions;
+- [x] KP-4.4 opublikowano na `main` w commicie `6d4e42c`;
+- [x] wdrożenie GitHub Pages zakończyło się powodzeniem;
+- [x] operator potwierdził na rzeczywistym planie zmianę godziny, ponowne
+  przeliczenie, odtworzenie po odświeżeniu, przywrócenie godziny bazowej i
+  poprawne zakończenie testu.
+
+Podetap **KP-4.5** oraz cały **KP-4 — ręczna korekta godziny budowy** są
+zakończone. Rozpoczęto **Etap 4 — pompy** od podetapu 4A.1.
+
+
+## 4A.1 — kwalifikacja budów wymagających pompy — 2026-08-24
+
+- [x] moduł pomp rozpoznaje budowę jako wymagającą pompy wyłącznie wtedy, gdy
+  jej znormalizowany `rodzajRozladunku` ma wartość `pompa`;
+- [x] odbiór własny, lej, wywrotka, taczka, nieznana wartość oraz starsza
+  budowa bez pola rodzaju rozładunku nie są uznawane za pompowane;
+- [x] kwalifikacja zwraca osobno budowy wymagające i niewymagające pompy oraz
+  jawne liczniki obu grup, zachowując stabilną kolejność wejściową;
+- [x] kwalifikacja nie zmienia budów, godzin, ilości, statusu ani kursów
+  gruszek i nie rozstrzyga jeszcze okresu zajętości pompy;
+- [x] osobny test `testy/etap_4a_1.test.js` obejmuje wszystkie obsługiwane
+  rodzaje rozładunku, brak pola, puste dane, stabilny podział i brak mutacji;
+- [x] kontrola składni i pełna regresja wszystkich `24` zestawów testów
+  przechodzą po rozpoczęciu Etapu 4.
+
+Podetap **4A.1** jest zakończony. Punkt 4A oraz cały Etap 4 pozostają otwarte.
+Następny podetap to **4A.2 — czas obsługi pompy**.

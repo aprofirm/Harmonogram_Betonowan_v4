@@ -205,7 +205,7 @@ function sprawdzInterfejsKorektyStartu() {
   );
 
   assert.match(html, /<th>Start do przeliczenia<\/th>/);
-  assert.match(html, /KP-4\.4 · pamięć korekty startu/);
+  assert.match(html, /4A\.1 · kwalifikacja budów do pomp/);
   assert.match(interfejs, /className = "pole-startu-budowy"/);
   assert.match(interfejs, /type = "time"/);
   assert.match(interfejs, /step = "60"/);
@@ -230,7 +230,7 @@ function uruchomTesty() {
   sprawdzInterfejsKorektyStartu();
 
   console.log(
-    "✓ KP-4.1–KP-4.4: model, walidacja i pamięć korekty startu działają."
+    "✓ KP-4: model, walidacja i pamięć korekty startu działają."
   );
 }
 

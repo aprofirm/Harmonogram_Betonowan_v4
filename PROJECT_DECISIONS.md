@@ -1524,6 +1524,21 @@ przywrócenie oznacza wynik jako nieaktualny, wymaga świadomego przeliczenia i
 jest zapisywane w pamięci planu oraz historii. Program nie może bez śladu
 nadpisać `StartPlanowany`.
 
+## 81. Kwalifikacja budów wymagających pompy
+
+Do niezależnego silnika pomp kwalifikują się wyłącznie budowy, których
+znormalizowane pole `rodzajRozladunku` ma wartość `pompa`.
+
+Budowy oznaczone jako odbiór własny, lej, wywrotka albo taczka nie wymagają
+przydziału pompy. Starsze dane bez pola rodzaju rozładunku, pusta wartość oraz
+wartość nierozpoznana również nie mogą być po cichu uznane za pompowanie.
+
+Kwalifikacja opiera się wyłącznie na rodzaju rozładunku. Nie zmienia godzin,
+ilości betonu, statusu realizacji ani kursów gruszek. Zasady tworzenia okresu
+zajętości dla budów zakończonych lub bez dodatniej ilości betonu należą do 4D.
+Podetap 4A.1 nie przydziela jeszcze konkretnej pompy i nie zmienia
+`StartRoboczy`.
+
 ---
 
 # Powiązane tematy otwarte

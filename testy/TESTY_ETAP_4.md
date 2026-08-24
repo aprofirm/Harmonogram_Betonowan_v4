@@ -2,9 +2,10 @@
 
 ## Status
 
-Etap 4 nie został jeszcze zaimplementowany. Pełny podział 4A–4J został zapisany
-przed rozpoczęciem zmian w kodzie. Etap rozpocznie się od **4A.1 — kwalifikacji
-budów wymagających pompy** po wcześniejszym zamknięciu przekrojowego KP-4.
+Etap 4 jest rozpoczęty. Podetap **4A.1 — kwalifikacja budów wymagających pompy**
+jest zaimplementowany i ma osobny test `testy/etap_4a_1.test.js`. Następny
+podetap to **4A.2 — czas obsługi pompy**. Pełna regresja obejmuje obecnie `24`
+zestawy testów.
 
 ## Cel
 
@@ -35,10 +36,10 @@ obejmować:
 
 ### 4A — reguły i granice
 
-- tylko właściwie zakwalifikowana budowa trafia do silnika pomp;
-- pozostałe rodzaje rozładunku nie otrzymują pompy;
-- starsze dane bez kolumny nie są bez ostrzeżenia uznawane za pompowane;
-- wynik Etapu 4 nie nadpisuje `StartPlanowany` ani kursów gruszek;
+- [x] tylko właściwie zakwalifikowana budowa trafia do silnika pomp;
+- [x] pozostałe rodzaje rozładunku nie otrzymują pompy;
+- [x] starsze dane bez kolumny nie są bez ostrzeżenia uznawane za pompowane;
+- [x] kwalifikacja nie nadpisuje `StartPlanowany` ani kursów gruszek;
 - brakujące decyzje pozostają opisane w backlogu zamiast trafiać do kodu jako
   ukryte wartości domyślne.
 

@@ -315,14 +315,18 @@ umieszczone bezpośrednio w nagłówku wyniku, obok podsumowania harmonogramu.
 
 Test operatora **3E.6.2** został zaliczony na rzeczywistym planie: plan bazowy
 wymagał `5` gruszek, a przy `4` dostępnych program nie utworzył piątego pojazdu
-i jawnie pokazał przesunięcia `+30 min` oraz `+5 min`. KP-4.1–KP-4.4
-przechowują osobno źródłowy `StartPlanowany`, bieżący `StartZadany` i wynikowy
+i jawnie pokazał przesunięcia `+30 min` oraz `+5 min`. Mechanizm KP-4
+przechowuje osobno źródłowy `StartPlanowany`, bieżący `StartZadany` i wynikowy
 `StartRoboczy`, a godzinę można już zmienić i przywrócić bezpośrednio w tabeli.
 Korekta przyjmuje wyłącznie poprawny format `HH:MM`, a błędna próba nie zmienia
 modelu ani wcześniejszego wyniku. Zmieniona godzina jest zapisywana w bieżącym
 planie i po przeliczeniu również w historii, zostaje odtworzona po odświeżeniu,
 a starsze plany bez `StartZadany` są bezpiecznie uzupełniane godziną planowaną.
-Następny krok to **KP-4.5 — końcowa regresja, publikacja i test operatora**.
-Po zamknięciu KP-4 rozpocznie się **4A.1 — kwalifikacja budów wymagających
-pompy**. Pełny podział Etapu 4 jest zapisany w `ETAPY_ROZWOJU.md`; pełne
-połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.
+Test operatora KP-4.5 został zaliczony i cały KP-4 jest zakończony.
+
+Etap 4 rozpoczął się od ukończonego **4A.1 — kwalifikacja budów wymagających
+pompy**. Moduł pomp wybiera wyłącznie budowy z rodzajem rozładunku `pompa`; lej,
+wywrotka, taczka, odbiór własny i starsze dane bez tej informacji pozostają
+poza tą grupą. Następny krok to **4A.2 — ustalenie parametrów czasu pełnej
+obsługi pompy**. Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie
+zakresem Etapu 5.

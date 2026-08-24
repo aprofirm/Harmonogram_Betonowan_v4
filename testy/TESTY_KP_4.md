@@ -2,12 +2,12 @@
 
 ## Status
 
-Podetapy **KP-4.1–KP-4.4** są zaimplementowane. Test
+Wszystkie podetapy **KP-4.1–KP-4.5** są zakończone. Test
 `testy/kp_4.test.js` obejmuje model i wpływ korekty na godziny kursu, a
 `testy/pamiec_aplikacji.test.js` sprawdza pole w tabeli, zmianę, zapis bieżącego
 planu i historii, odświeżenie, błędną próbę, przywrócenie, kolejny import oraz
-migrację starszego planu. Następny podetap to **KP-4.5 — końcowa regresja,
-publikacja i test operatora**.
+migrację starszego planu. Pełna regresja, publikacja oraz test operatora zostały
+zaliczone 2026-08-24. Cały KP-4 jest zamknięty.
 
 ## Zasada
 
@@ -37,13 +37,13 @@ Test całego KP-4 powinien potwierdzić:
 
 ## Test operatora KP-4.5
 
-1. Wczytaj plan i zapamiętaj źródłową godzinę wybranej budowy.
-2. Zmień **Start do przeliczenia** na inną poprawną godzinę.
-3. Sprawdź oznaczenie wyniku jako nieaktualnego i przelicz harmonogram.
-4. Potwierdź zmianę godzin kursów wyłącznie dla właściwej budowy.
-5. Odśwież stronę i sprawdź odtworzenie korekty.
-6. Użyj `↺`, przelicz i potwierdź powrót do godziny źródłowej.
-7. Wczytaj kolejny CSV i potwierdź brak korekty ze starego planu.
+1. [x] Wczytaj plan i zapamiętaj źródłową godzinę wybranej budowy.
+2. [x] Zmień **Start do przeliczenia** na inną poprawną godzinę.
+3. [x] Sprawdź oznaczenie wyniku jako nieaktualnego i przelicz harmonogram.
+4. [x] Potwierdź zmianę godzin kursów wyłącznie dla właściwej budowy.
+5. [x] Odśwież stronę i sprawdź odtworzenie korekty.
+6. [x] Użyj `↺`, przelicz i potwierdź powrót do godziny źródłowej.
+7. [x] Wczytaj kolejny CSV i potwierdź brak korekty ze starego planu.
 
-Dopiero po automatycznej regresji, publikacji i tym teście można zamknąć KP-4
-oraz rozpocząć 4A.1.
+Automatyczna regresja, publikacja i test operatora zostały zakończone. KP-4 jest
+zamknięty, a rozwój przeszedł do Etapu 4.
