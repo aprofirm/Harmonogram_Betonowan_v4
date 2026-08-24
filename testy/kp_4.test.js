@@ -139,6 +139,43 @@ function sprawdzZmianeIPrzywracanieStartu(aplikacja) {
   assert.equal(budowa.startRoboczy, "09:00");
 }
 
+function sprawdzWalidacjeKorektyStartu(aplikacja) {
+  const budowa = aplikacja.budowy.utworzBudoweReczna(
+    {
+      firma: "Firma walidacji",
+      budowa: "Budowa walidacji",
+      startPlanowany: "07:30",
+      iloscBetonuM3: "8"
+    },
+    []
+  );
+  const niepoprawneGodziny = ["7:30", "24:00", "12:60", "12:30:00", "tekst"];
+
+  assert.throws(function () {
+    aplikacja.budowy.zmienStartZadanyBudowy(budowa, "");
+  }, /Start do przeliczenia.*nie może być puste/i);
+
+  niepoprawneGodziny.forEach(function (godzina) {
+    assert.throws(function () {
+      aplikacja.budowy.zmienStartZadanyBudowy(budowa, godzina);
+    }, /formacie HH:MM.*00:00 do 23:59/i);
+  });
+
+  assert.equal(budowa.startPlanowany, "07:30");
+  assert.equal(budowa.startPlanowanyZrodlowy, "07:30");
+  assert.equal(budowa.startZadany, "07:30");
+  assert.equal(budowa.startRoboczy, "07:30");
+
+  aplikacja.budowy.zmienStartZadanyBudowy(budowa, "00:00");
+  assert.equal(budowa.startZadany, "00:00");
+  aplikacja.budowy.zmienStartZadanyBudowy(budowa, "23:59");
+  assert.equal(budowa.startZadany, "23:59");
+
+  assert.throws(function () {
+    aplikacja.budowy.zmienStartZadanyBudowy(null, "08:00");
+  }, /Nie znaleziono budowy/i);
+}
+
 function sprawdzPoleZapisuPlanu() {
   const kodAplikacji = fs.readFileSync(
     path.join(katalogProjektu, "js/aplikacja.js"),
@@ -161,14 +198,21 @@ function sprawdzInterfejsKorektyStartu() {
     path.join(katalogProjektu, "style/glowny.css"),
     "utf8"
   );
+  const kodAplikacji = fs.readFileSync(
+    path.join(katalogProjektu, "js/aplikacja.js"),
+    "utf8"
+  );
 
   assert.match(html, /<th>Start do przeliczenia<\/th>/);
-  assert.match(html, /KP-4\.2 · ręczna korekta startu budów/);
+  assert.match(html, /KP-4\.3 · walidacja korekty startu/);
   assert.match(interfejs, /className = "pole-startu-budowy"/);
   assert.match(interfejs, /type = "time"/);
+  assert.match(interfejs, /step = "60"/);
+  assert.match(interfejs, /required = true/);
   assert.match(interfejs, /textContent = "Plan: " \+ opiszOknoStartu/);
   assert.match(interfejs, /className = "przycisk-przywroc-start"/);
   assert.match(interfejs, /obslugaZmianyStartuBudowy/);
+  assert.match(kodAplikacji, /Nie znaleziono budowy o ID/);
   assert.match(css, /\.komorka-startu-budowy/);
   assert.match(css, /\.plan-zrodlowy-startu/);
 }
@@ -180,10 +224,13 @@ function uruchomTesty() {
   sprawdzModelBudowyRecznej(aplikacja);
   sprawdzZgodnoscModelu(aplikacja);
   sprawdzZmianeIPrzywracanieStartu(aplikacja);
+  sprawdzWalidacjeKorektyStartu(aplikacja);
   sprawdzPoleZapisuPlanu();
   sprawdzInterfejsKorektyStartu();
 
-  console.log("✓ KP-4.1–KP-4.2: model i ręczna korekta startu działają poprawnie.");
+  console.log(
+    "✓ KP-4.1–KP-4.3: korekta startu i walidacja HH:MM działają poprawnie."
+  );
 }
 
 uruchomTesty();

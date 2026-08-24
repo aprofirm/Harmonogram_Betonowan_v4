@@ -220,7 +220,7 @@ nie może utracić godziny źródłowej z KDX.
 - [x] **KP-4.2 — edycja w tabeli:** pole **Start do przeliczenia** przy każdej
   budowie, widoczna pierwotna godzina planowana i przycisk `↺` przywracający
   wartość źródłową bez ponownego importu.
-- [ ] **KP-4.3 — walidacja i wynik nieaktualny:** poprawny format `HH:MM`, brak
+- [x] **KP-4.3 — walidacja i wynik nieaktualny:** poprawny format `HH:MM`, brak
   cichej zmiany `StartPlanowany` oraz oznaczenie harmonogramu jako wymagającego
   ponownego przeliczenia po zmianie lub przywróceniu.
 - [ ] **KP-4.4 — pamięć i zgodność:** zapis korekty w bieżącym planie i historii,
@@ -886,11 +886,11 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **KP-4.3 — walidację korekty godziny**. Wymusić dokładny format
-`HH:MM`, dodać czytelne błędy dla pustej i niepoprawnej wartości oraz
-potwierdzić, że zmiana i przywrócenie wymagają ponownego przeliczenia bez
-nadpisania `StartPlanowany`. Po zamknięciu całego KP-4 następnym podetapem
-będzie **4A.1 — kwalifikacja budów wymagających pompy**.
+Wykonać **KP-4.4 — pamięć i zgodność korekty godziny**. Potwierdzić zapis
+`StartZadany` w bieżącym planie i historii, odtworzenie korekty po odświeżeniu
+oraz bezpieczne otwieranie starszych zapisów bez tego pola. Po zamknięciu
+całego KP-4 następnym podetapem będzie **4A.1 — kwalifikacja budów wymagających
+pompy**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1623,3 +1623,25 @@ godziny w tabeli budów i przywracanie wartości źródłowej**.
 
 Podetap **KP-4.2** jest zakończony. KP-4 pozostaje otwarty. Następny podetap to
 **KP-4.3 — pełna walidacja formatu godziny i czytelne błędy korekty**.
+
+
+## KP-4.3 — walidacja korekty godziny — 2026-08-24
+
+- [x] korekta przyjmuje wyłącznie pełny zapis `HH:MM` od `00:00` do `23:59`;
+- [x] pusta wartość daje osobny, czytelny komunikat po polsku;
+- [x] niepełny format, godzina poza dobą, niepoprawne minuty i tekst są
+  odrzucane przed zmianą modelu;
+- [x] błędna próba zachowuje poprzednie `StartZadany`, `StartRoboczy`,
+  `StartPlanowany` i `StartPlanowanyZrodlowy`;
+- [x] błędna próba nie unieważnia wcześniej poprawnie przeliczonego wyniku;
+- [x] poprawna zmiana oraz przywrócenie nadal oznaczają harmonogram jako
+  wymagający ponownego przeliczenia;
+- [x] pole czasu korzysta również z natywnych ograniczeń przeglądarki i kroku
+  jednej minuty;
+- [x] test modelu obejmuje format, granice doby i brak budowy, a test pełnego
+  przepływu sprawdza komunikat oraz zachowanie wcześniejszego wyniku.
+- [x] kontrola składni i pełna regresja wszystkich `23` zestawów testów
+  przechodzą po zmianie.
+
+Podetap **KP-4.3** jest zakończony. KP-4 pozostaje otwarty. Następny podetap to
+**KP-4.4 — pamięć korekty i zgodność ze starszymi zapisami**.

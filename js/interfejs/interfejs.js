@@ -519,6 +519,8 @@
 
     pole.className = "pole-startu-budowy";
     pole.type = "time";
+    pole.step = "60";
+    pole.required = true;
     pole.value = startZadany;
     pole.disabled = czyZrealizowana;
     pole.setAttribute(

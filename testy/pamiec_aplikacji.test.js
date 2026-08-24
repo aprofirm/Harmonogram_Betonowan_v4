@@ -535,6 +535,25 @@ async function uruchomTest() {
   assert.equal(komorkaStartu.children[0].children[1].disabled, true);
   assert.equal(komorkaStartu.children[1].textContent, "Plan: 08:00");
 
+  komorkaStartu.children[0].children[0].value = "";
+  komorkaStartu.children[0].children[0].zdarzenia.change();
+  danePlanu = odczytajDanePlanu(pamiecLokalna);
+  assert.equal(danePlanu.budowyZImportu[0].startPlanowany, "08:00");
+  assert.equal(danePlanu.budowyZImportu[0].startZadany, "08:00");
+  assert.equal(danePlanu.budowyZImportu[0].startRoboczy, "08:00");
+  assert.equal(danePlanu.czyHarmonogramPrzeliczony, true);
+  assert.equal(pierwszaStrona.dokument.elementy["liczba-kursow"].textContent, "3");
+  assert.equal(
+    pierwszaStrona.dokument.elementy["tytul-statusu"].textContent,
+    "Nie można zmienić godziny budowy"
+  );
+  assert.match(
+    pierwszaStrona.dokument.elementy["tresc-statusu"].textContent,
+    /nie może być puste/i
+  );
+
+  komorkaStartu = znajdzPierwszaKomorkeStartu(pierwszaStrona);
+  assert.equal(komorkaStartu.children[0].children[0].value, "08:00");
   komorkaStartu.children[0].children[0].value = "08:30";
   komorkaStartu.children[0].children[0].zdarzenia.change();
   danePlanu = odczytajDanePlanu(pamiecLokalna);

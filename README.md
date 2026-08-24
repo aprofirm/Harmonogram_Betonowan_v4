@@ -103,6 +103,11 @@ Po zmianie wybierz ponownie **Przelicz harmonogram**. Przycisk `↺` przywraca
 w osobnej tabeli odbiorów własnych, a zrealizowane pozycje pozostają
 zablokowane.
 
+Godzinę podajemy zawsze w pełnym formacie `HH:MM`, od `00:00` do `23:59`.
+Pusta wartość, niepełny zapis, niepoprawne minuty albo godzina poza dobą dają
+czytelny komunikat i nie zmieniają budowy. Taka błędna próba nie usuwa również
+wcześniej poprawnie przeliczonego wyniku.
+
 ## Szeroki, kompaktowy widok
 
 Na komputerze aplikacja jest przygotowana do pracy przy zwykłym zoomie
@@ -310,11 +315,12 @@ umieszczone bezpośrednio w nagłówku wyniku, obok podsumowania harmonogramu.
 
 Test operatora **3E.6.2** został zaliczony na rzeczywistym planie: plan bazowy
 wymagał `5` gruszek, a przy `4` dostępnych program nie utworzył piątego pojazdu
-i jawnie pokazał przesunięcia `+30 min` oraz `+5 min`. KP-4.1 i KP-4.2
+i jawnie pokazał przesunięcia `+30 min` oraz `+5 min`. KP-4.1–KP-4.3
 przechowują osobno źródłowy `StartPlanowany`, bieżący `StartZadany` i wynikowy
 `StartRoboczy`, a godzinę można już zmienić i przywrócić bezpośrednio w tabeli.
-Następny krok to **KP-4.3 — pełna walidacja formatu godziny i czytelne błędy
-korekty**. Po zamknięciu KP-4 rozpocznie się **4A.1 — kwalifikacja budów
-wymagających pompy**. Pełny podział Etapu 4 jest zapisany w
+Korekta przyjmuje wyłącznie poprawny format `HH:MM`, a błędna próba nie zmienia
+modelu ani wcześniejszego wyniku. Następny krok to **KP-4.4 — pamięć korekty i
+zgodność ze starszymi zapisami**. Po zamknięciu KP-4 rozpocznie się **4A.1 —
+kwalifikacja budów wymagających pompy**. Pełny podział Etapu 4 jest zapisany w
 `ETAPY_ROZWOJU.md`; pełne połączenie ograniczeń pomp i gruszek pozostaje
 świadomie zakresem Etapu 5.

@@ -15,6 +15,26 @@
     return tekst;
   }
 
+  function pobierzGodzineHHMM(wartosc, nazwaPola) {
+    const godzina = pobierzWymaganyTekst(wartosc, nazwaPola);
+    const dopasowanie = godzina.match(/^(\d{2}):(\d{2})$/);
+    const liczbaGodzin = dopasowanie ? Number(dopasowanie[1]) : null;
+    const liczbaMinut = dopasowanie ? Number(dopasowanie[2]) : null;
+
+    if (
+      !dopasowanie ||
+      liczbaGodzin > 23 ||
+      liczbaMinut > 59
+    ) {
+      throw new Error(
+        "Pole „" + nazwaPola + "” musi zawierać poprawną godzinę " +
+          "w formacie HH:MM, od 00:00 do 23:59."
+      );
+    }
+
+    return godzina;
+  }
+
   function dodajMinutyDoGodziny(godzina, liczbaMinut) {
     const czesci = godzina.split(":");
     const minutyDnia = Number(czesci[0]) * 60 + Number(czesci[1]) + liczbaMinut;
@@ -135,7 +155,7 @@
   function zmienStartZadanyBudowy(budowa, wartosc) {
     uzupelnijStartZadanyBudowy(budowa);
 
-    const nowyStartZadany = pobierzWymaganyTekst(
+    const nowyStartZadany = pobierzGodzineHHMM(
       wartosc,
       "Start do przeliczenia"
     );
