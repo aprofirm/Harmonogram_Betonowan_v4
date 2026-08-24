@@ -1728,3 +1728,26 @@ Nie zamyka to 4B.2, 4B.3, 4C.3 ani 4I.2: potrzebne są jeszcze pełne operacje
 listy, reguła pomijania nieaktywnych pomp w przydziale, test operatora oraz
 rzeczywisty wynik liczby potrzebnych pomp. Następny krok pozostaje bez zmian:
 **4A.2 — czas obsługi pompy**.
+
+
+## Punkt kontrolny — standardowy wysięg pomp i plan na kolejny dzień — 2026-08-24
+
+- [x] zatwierdzono biznesową zasadę, że podstawowy wysięg pompy oraz standardowe
+  wymaganie budowy wynoszą `32 m`;
+- [x] standardowa budowa pokazuje zwarty opis **Pompa · 32 m**, a pole długości
+  pojawia się dopiero po zaznaczeniu **Większa pompa**;
+- [x] odznaczenie przełącznika przywraca `32 m`, a starsze puste wartości są
+  bezpiecznie migrowane do standardu;
+- [x] pełna lokalna regresja wszystkich `25` zestawów testów przeszła;
+- [x] zmiana została opublikowana na `main` w commicie `c94969a`;
+- [ ] operator ma po aktualizacji GitHub Pages wykonać `Ctrl + F5`, wczytać plan
+  testowy i potwierdzić niski, czytelny wiersz **Pompa · 32 m**;
+- [ ] operator ma zaznaczyć **Większa pompa**, wpisać np. `36 m`, sprawdzić
+  zapis po odświeżeniu, a następnie odznaczyć przełącznik i potwierdzić powrót
+  do `32 m`.
+
+Po zaliczeniu tego krótkiego testu należy zapisać jego wynik. Nie zamyka on
+jeszcze 4C.3 ani 4I.2, ponieważ te punkty obejmują również dalsze działanie
+pełnej listy i rzeczywistych wyników silnika pomp. Następnym podetapem
+implementacyjnym pozostaje **4A.2 — ustalenie parametrów czasu pełnej obsługi
+pompy**.
