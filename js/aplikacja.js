@@ -640,6 +640,15 @@
     numerOstatniegoImportu += 1;
     stanImportu = utworzStanImportuZPamieci(danePlanu);
     budowyReczne = skopiujListeBudowDoPamieci(danePlanu.budowyReczne);
+    const zapisanePompy = Array.isArray(danePlanu.listaPomp)
+      ? danePlanu.listaPomp
+      : [];
+    const liczbaMigrowanychWysiegowPomp = zapisanePompy.filter(function (pompa) {
+      const wysieg = pompa && pompa.wysiegMetry;
+      return wysieg === null ||
+        wysieg === undefined ||
+        String(wysieg).trim() === "";
+    }).length;
     listaPomp = aplikacja.pompy.normalizujListePomp(
       danePlanu.listaPomp,
       danePlanu.parametry && danePlanu.parametry.poczatekDnia
@@ -653,10 +662,21 @@
         : aplikacja.konfiguracja.parametryDomyslne.czasRozladunkuMinuty;
     let liczbaMigrowanychCzasowRozladunku = 0;
     let liczbaMigrowanychStartowZadanych = 0;
+    let liczbaMigrowanychWymaganWysiegu = 0;
 
     stanImportu.budowy.concat(budowyReczne).forEach(function (budowa) {
       const czyBrakujeStartuZadanego =
         !Object.prototype.hasOwnProperty.call(budowa, "startZadany");
+      const zapisanyWymaganyWysieg = budowa.wymaganyWysiegPompyMetry;
+      const czyWymagaMigracjiWysiegu =
+        aplikacja.pompy.czyBudowaWymagaPompy(budowa) &&
+        (
+          zapisanyWymaganyWysieg === null ||
+          zapisanyWymaganyWysieg === undefined ||
+          String(zapisanyWymaganyWysieg).trim() === "" ||
+          Number(zapisanyWymaganyWysieg) <
+            aplikacja.pompy.DOMYSLNY_WYSIEG_POMPY_METRY
+        );
       const czyWymagaMigracji =
         !Object.prototype.hasOwnProperty.call(
           budowa,
@@ -668,9 +688,14 @@
         budowa,
         czasRozladunkuDoMigracji
       );
+      aplikacja.pompy.uzupelnijWymaganyWysiegPompyBudowy(budowa);
 
       if (czyBrakujeStartuZadanego) {
         liczbaMigrowanychStartowZadanych += 1;
+      }
+
+      if (czyWymagaMigracjiWysiegu) {
+        liczbaMigrowanychWymaganWysiegu += 1;
       }
 
       if (czyWymagaMigracji) {
@@ -694,7 +719,9 @@
 
     if (
       liczbaMigrowanychCzasowRozladunku > 0 ||
-      liczbaMigrowanychStartowZadanych > 0
+      liczbaMigrowanychStartowZadanych > 0 ||
+      liczbaMigrowanychWysiegowPomp > 0 ||
+      liczbaMigrowanychWymaganWysiegu > 0
     ) {
       zapiszBiezacyPlan();
     }
@@ -714,6 +741,21 @@
         "migracja-startow-zadanych",
         "Uzupełniono godziny zadane w budowach ze starszego planu.",
         { liczbaBudow: liczbaMigrowanychStartowZadanych }
+      );
+    }
+
+    if (
+      liczbaMigrowanychWysiegowPomp > 0 ||
+      liczbaMigrowanychWymaganWysiegu > 0
+    ) {
+      zapiszZdarzenieDiagnostyczne(
+        "informacja",
+        "migracja-wysiegow-pomp",
+        "Uzupełniono standardowy wysięg pomp 32 m w starszym planie.",
+        {
+          liczbaPomp: liczbaMigrowanychWysiegowPomp,
+          liczbaBudow: liczbaMigrowanychWymaganWysiegu
+        }
       );
     }
 

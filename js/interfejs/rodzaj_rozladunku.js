@@ -246,39 +246,61 @@
       return;
     }
 
-    if (!komorkaBudowy.querySelector(".rodzaj-rozladunku-budowy")) {
-      const etykieta = document.createElement("small");
-      etykieta.className = "rodzaj-rozladunku-budowy";
-      etykieta.textContent = opis;
-      komorkaBudowy.appendChild(etykieta);
-    }
-
-    if (
-      !aplikacja.pompy ||
-      !aplikacja.pompy.czyBudowaWymagaPompy(budowa) ||
-      komorkaBudowy.querySelector(".wymagany-wysieg-pompy")
-    ) {
+    if (komorkaBudowy.querySelector(".rodzaj-rozladunku-budowy")) {
       return;
     }
 
+    const etykieta = document.createElement("small");
+    etykieta.className = "rodzaj-rozladunku-budowy";
+
+    if (!aplikacja.pompy || !aplikacja.pompy.czyBudowaWymagaPompy(budowa)) {
+      etykieta.textContent = opis;
+      komorkaBudowy.appendChild(etykieta);
+      return;
+    }
+
+    const domyslnyWysieg = aplikacja.pompy.DOMYSLNY_WYSIEG_POMPY_METRY;
+    const wymaganyWysieg =
+      aplikacja.pompy.pobierzWymaganyWysiegPompyBudowy(budowa);
+    const czyWiekszaPompa = wymaganyWysieg > domyslnyWysieg;
+    const opisRodzaju = document.createElement("span");
+    const przelacznik = document.createElement("label");
+    const polePrzelacznika = document.createElement("input");
+    const tekstPrzelacznika = document.createElement("span");
     const etykietaWysiegu = document.createElement("label");
     const opisWysiegu = document.createElement("span");
     const kontrolki = document.createElement("span");
     const poleWysiegu = document.createElement("input");
     const jednostka = document.createElement("span");
 
+    etykieta.className += " rodzaj-rozladunku-budowy--pompa";
+    opisRodzaju.className = "rodzaj-rozladunku-budowy__opis";
+    opisRodzaju.textContent =
+      opis + " · " + String(wymaganyWysieg).replace(".", ",") + " m";
+    przelacznik.className = "wieksza-pompa";
+    polePrzelacznika.type = "checkbox";
+    polePrzelacznika.checked = czyWiekszaPompa;
+    polePrzelacznika.disabled = budowa.statusRealizacji === "zrealizowana";
+    polePrzelacznika.setAttribute(
+      "aria-label",
+      "Większa pompa dla budowy " + budowa.budowa
+    );
+    polePrzelacznika.setAttribute("aria-expanded", String(czyWiekszaPompa));
+    tekstPrzelacznika.textContent = "Większa pompa";
+    przelacznik.appendChild(polePrzelacznika);
+    przelacznik.appendChild(tekstPrzelacznika);
+    etykieta.appendChild(opisRodzaju);
+    etykieta.appendChild(przelacznik);
+
     etykietaWysiegu.className = "wymagany-wysieg-pompy";
-    opisWysiegu.textContent = "Wymagany wysięg";
+    etykietaWysiegu.hidden = !czyWiekszaPompa;
+    opisWysiegu.textContent = "Wysięg";
     kontrolki.className = "wymagany-wysieg-pompy__kontrolki";
     poleWysiegu.type = "number";
-    poleWysiegu.min = "1";
+    poleWysiegu.min = String(domyslnyWysieg + 0.1);
     poleWysiegu.step = "0.1";
     poleWysiegu.placeholder = "np. 36";
-    poleWysiegu.value =
-      budowa.wymaganyWysiegPompyMetry === null ||
-      budowa.wymaganyWysiegPompyMetry === undefined
-        ? ""
-        : String(budowa.wymaganyWysiegPompyMetry);
+    poleWysiegu.value = czyWiekszaPompa ? String(wymaganyWysieg) : "";
     poleWysiegu.disabled = budowa.statusRealizacji === "zrealizowana";
     poleWysiegu.setAttribute(
       "aria-label",
@@ -295,6 +317,22 @@
     kontrolki.appendChild(jednostka);
     etykietaWysiegu.appendChild(opisWysiegu);
     etykietaWysiegu.appendChild(kontrolki);
+    polePrzelacznika.addEventListener("change", function () {
+      const czyPokazacPole = polePrzelacznika.checked;
+      polePrzelacznika.setAttribute("aria-expanded", String(czyPokazacPole));
+
+      if (czyPokazacPole) {
+        etykietaWysiegu.hidden = false;
+        poleWysiegu.focus();
+        return;
+      }
+
+      obslugaZmianyWymaganegoWysieguPompy(
+        budowa.idBudowy,
+        domyslnyWysieg
+      );
+    });
+    komorkaBudowy.appendChild(etykieta);
     komorkaBudowy.appendChild(etykietaWysiegu);
   }
 

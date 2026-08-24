@@ -26,20 +26,54 @@
   font-weight: 750;
 }
 
+.rodzaj-rozladunku-budowy--pompa {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3px 9px;
+}
+
+.rodzaj-rozladunku-budowy__opis {
+  white-space: nowrap;
+}
+
+.wieksza-pompa {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #7a5a2b;
+  font-size: 0.62rem;
+  font-weight: 750;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.wieksza-pompa input {
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  accent-color: var(--kolor-niebieski);
+}
+
 .wymagany-wysieg-pompy {
-  display: grid;
-  gap: 3px;
-  margin-top: 7px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
   color: #7a5a2b;
   font-size: 0.64rem;
   font-weight: 750;
 }
 
+.wymagany-wysieg-pompy[hidden] {
+  display: none;
+}
+
 .wymagany-wysieg-pompy__kontrolki {
   display: inline-flex;
   align-items: center;
-  width: 90px;
-  min-height: 30px;
+  width: 82px;
+  min-height: 26px;
   overflow: hidden;
   border: 1px solid #dbc9ae;
   border-radius: 7px;
@@ -47,9 +81,9 @@
 }
 
 .wymagany-wysieg-pompy__kontrolki input {
-  width: 60px;
+  width: 54px;
   min-width: 0;
-  padding: 5px 6px;
+  padding: 3px 6px;
   border: 0;
   outline: 0;
   background: transparent;

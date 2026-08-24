@@ -1541,15 +1541,18 @@ Podetap 4A.1 nie przydziela jeszcze konkretnej pompy i nie zmienia
 
 ## 82. Wysięg jest cechą pompy i wymaganiem konkretnej budowy
 
-Każda pompa na liście zasobów może mieć własny wysięg podany w metrach. Każda
-budowa zakwalifikowana jako `pompa` może niezależnie określić **Wymagany
-wysięg** bez zmiany danych źródłowych KDX/CSV.
+Podstawowy wysięg pompy i standardowe wymaganie budowy wynoszą `32 m`, ponieważ
+takie pompy są podstawowym zasobem operatora. Nowa pompa otrzymuje wysięg
+`32 m`, a nowa budowa zakwalifikowana jako `pompa` otrzymuje wymaganie `32 m`.
+Starsze puste wartości są przy odtworzeniu planu automatycznie uzupełniane tym
+standardem.
 
-Obie wartości mogą pozostać puste, co oznacza brak uzupełnionej informacji, a
-nie wysięg równy `0`. Wpisana wartość musi być większa od `0`. W przyszłym
-przydziale pompa z uzupełnionym wysięgiem będzie pasowała do budowy tylko wtedy,
-gdy jej wysięg nie jest mniejszy od wymagania budowy; dokładne zachowanie przy
-braku jednej z wartości zostanie domknięte razem z walidacją przydziału 4F.
+Każda pompa na liście zasobów nadal może mieć własny wysięg podany w metrach.
+W wierszu budowy standard jest pokazany jako zwarty opis **Pompa · 32 m**.
+Operator zaznacza **Większa pompa** tylko dla budowy wymagającej dłuższego
+wysięgu; dopiero wtedy pojawia się pole przyjmujące wartość większą niż `32 m`.
+Odznaczenie przywraca standard `32 m`. W przyszłym przydziale pompa będzie
+pasowała do budowy tylko wtedy, gdy jej wysięg nie jest mniejszy od wymagania.
 
 Godzina **Dostępna od**, typ, aktywność i wysięg należą do konkretnej pompy i są
 zapisywane w planie dnia. Wymagany wysięg należy do konkretnej budowy. Licznik

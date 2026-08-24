@@ -68,6 +68,8 @@ function sprawdzImportRodzajow(aplikacja) {
     }),
     ["odbior-wlasny", "lej", "pompa", "wywrotka", "taczka"]
   );
+  assert.equal(stanImportu.budowy[2].wymaganyWysiegPompyMetry, 32);
+  assert.equal(stanImportu.budowy[1].wymaganyWysiegPompyMetry, null);
 
   const odbiorWlasny = stanImportu.budowy[0];
   assert.equal(aplikacja.budowy.czyOdbiorWlasny(odbiorWlasny), true);
@@ -129,9 +131,18 @@ function sprawdzBudowyReczne(aplikacja) {
     iloscBetonuM3: "5",
     rodzajRozladunku: "taczka"
   }, [odbiorWlasny]);
+  const pompa = aplikacja.budowy.utworzBudoweReczna({
+    firma: "Firma P",
+    budowa: "Budowa pompa",
+    startPlanowany: "13:30",
+    iloscBetonuM3: "8",
+    rodzajRozladunku: "pompa"
+  }, [odbiorWlasny, taczka]);
 
   assert.equal(odbiorWlasny.rodzajRozladunku, "odbior-wlasny");
   assert.equal(taczka.rodzajRozladunku, "taczka");
+  assert.equal(pompa.rodzajRozladunku, "pompa");
+  assert.equal(pompa.wymaganyWysiegPompyMetry, 32);
   assert.equal(aplikacja.gruszki.generujKursyDlaBudowy(odbiorWlasny, 8).length, 0);
   assert.equal(aplikacja.gruszki.generujKursyDlaBudowy(taczka, 8).length, 1);
 

@@ -5,6 +5,7 @@
     zakresGlobalny.HarmonogramBetonowan || {};
 
   const TYPY_POMP = Object.freeze(["wlasna", "zewnetrzna"]);
+  const DOMYSLNY_WYSIEG_POMPY_METRY = 32;
 
   function pobierzNieujemnaLiczbeCalkowita(wartosc, nazwaPola) {
     const liczba = Number(wartosc);
@@ -55,6 +56,24 @@
     return liczba;
   }
 
+  function pobierzWysiegPompyLubDomyslny(wartosc) {
+    const wysieg = pobierzDodatniaLiczbeLubBrak(wartosc, "Wysięg pompy");
+    return wysieg === null ? DOMYSLNY_WYSIEG_POMPY_METRY : wysieg;
+  }
+
+  function pobierzWymaganyWysiegLubDomyslny(wartosc) {
+    const wysieg = pobierzDodatniaLiczbeLubBrak(
+      wartosc,
+      "Wymagany wysięg pompy"
+    );
+
+    if (wysieg === null || wysieg < DOMYSLNY_WYSIEG_POMPY_METRY) {
+      return DOMYSLNY_WYSIEG_POMPY_METRY;
+    }
+
+    return wysieg;
+  }
+
   function pobierzTypPompy(wartosc) {
     const typ = String(wartosc || "").trim().toLowerCase();
 
@@ -76,7 +95,7 @@
       typ: "wlasna",
       aktywna: true,
       dostepnaOd: pobierzGodzineHHMM(poczatekDnia || "07:00", "Dostępna od"),
-      wysiegMetry: null
+      wysiegMetry: DOMYSLNY_WYSIEG_POMPY_METRY
     };
   }
 
@@ -128,10 +147,7 @@
         dane.dostepnaOd || poczatekDnia || "07:00",
         "Dostępna od"
       ),
-      wysiegMetry: pobierzDodatniaLiczbeLubBrak(
-        dane.wysiegMetry,
-        "Wysięg pompy"
-      )
+      wysiegMetry: pobierzWysiegPompyLubDomyslny(dane.wysiegMetry)
     };
   }
 
@@ -188,7 +204,7 @@
     } else if (nazwaPola === "dostepnaOd") {
       pompa.dostepnaOd = pobierzGodzineHHMM(wartosc, "Dostępna od");
     } else if (nazwaPola === "wysiegMetry") {
-      pompa.wysiegMetry = pobierzDodatniaLiczbeLubBrak(wartosc, "Wysięg pompy");
+      pompa.wysiegMetry = pobierzWysiegPompyLubDomyslny(wartosc);
     } else {
       throw new Error("Nie można zmienić nieznanego pola pompy „" + nazwaPola + "”.");
     }
@@ -207,10 +223,44 @@
       throw new Error("Nie znaleziono budowy do zapisania wymaganego wysięgu pompy.");
     }
 
-    budowa.wymaganyWysiegPompyMetry = pobierzDodatniaLiczbeLubBrak(
+    const wymaganyWysieg = pobierzDodatniaLiczbeLubBrak(
       wartosc,
       "Wymagany wysięg pompy"
     );
+
+    if (
+      wymaganyWysieg !== null &&
+      wymaganyWysieg < DOMYSLNY_WYSIEG_POMPY_METRY
+    ) {
+      throw new Error(
+        "Wymagany wysięg pompy nie może być mniejszy niż standardowe 32 m."
+      );
+    }
+
+    budowa.wymaganyWysiegPompyMetry =
+      wymaganyWysieg === null
+        ? DOMYSLNY_WYSIEG_POMPY_METRY
+        : wymaganyWysieg;
+    return budowa;
+  }
+
+  function pobierzWymaganyWysiegPompyBudowy(budowa) {
+    if (!czyBudowaWymagaPompy(budowa)) {
+      return null;
+    }
+
+    return pobierzWymaganyWysiegLubDomyslny(
+      budowa.wymaganyWysiegPompyMetry
+    );
+  }
+
+  function uzupelnijWymaganyWysiegPompyBudowy(budowa) {
+    const wymaganyWysieg = pobierzWymaganyWysiegPompyBudowy(budowa);
+
+    if (wymaganyWysieg !== null) {
+      budowa.wymaganyWysiegPompyMetry = wymaganyWysieg;
+    }
+
     return budowa;
   }
 
@@ -266,6 +316,7 @@
 
   aplikacja.pompy = {
     TYPY_POMP: TYPY_POMP,
+    DOMYSLNY_WYSIEG_POMPY_METRY: DOMYSLNY_WYSIEG_POMPY_METRY,
     utworzPustyStanPomp: utworzPustyStanPomp,
     czyBudowaWymagaPompy: czyBudowaWymagaPompy,
     zakwalifikujBudowyDoObslugiPomp: zakwalifikujBudowyDoObslugiPomp,
@@ -274,6 +325,8 @@
     zmienDanePompy: zmienDanePompy,
     skopiujListePomp: skopiujListePomp,
     pobierzLiczbeAktywnychPomp: pobierzLiczbeAktywnychPomp,
-    zmienWymaganyWysiegPompyBudowy: zmienWymaganyWysiegPompyBudowy
+    zmienWymaganyWysiegPompyBudowy: zmienWymaganyWysiegPompyBudowy,
+    pobierzWymaganyWysiegPompyBudowy: pobierzWymaganyWysiegPompyBudowy,
+    uzupelnijWymaganyWysiegPompyBudowy: uzupelnijWymaganyWysiegPompyBudowy
   };
 })(window);

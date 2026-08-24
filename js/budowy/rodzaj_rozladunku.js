@@ -118,7 +118,9 @@
         { pusteJakoOdbiorWlasny: czyKolumnaJestWPliku }
       );
 
-      return utworzBudoweZImportuPodstawowe(dane, numerWiersza);
+      const budowa = utworzBudoweZImportuPodstawowe(dane, numerWiersza);
+      aplikacja.pompy.uzupelnijWymaganyWysiegPompyBudowy(budowa);
+      return budowa;
     };
 
     aplikacja.budowy.utworzBudoweReczna = function (daneBudowy, listaIstniejacychBudow) {
@@ -132,6 +134,7 @@
       );
 
       budowa.rodzajRozladunku = rodzajRozladunku;
+      aplikacja.pompy.uzupelnijWymaganyWysiegPompyBudowy(budowa);
       return budowa;
     };
 

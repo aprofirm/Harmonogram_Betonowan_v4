@@ -121,13 +121,14 @@ function sprawdzPusteDane(pompy) {
 function sprawdzListePomp(pompy) {
   let lista = pompy.dopasujLiczbePomp([], 2, "06:30");
 
+  assert.equal(pompy.DOMYSLNY_WYSIEG_POMPY_METRY, 32);
   assert.equal(lista.length, 2);
   assert.equal(lista[0].idPompy, "POMPA-001");
   assert.equal(lista[1].idPompy, "POMPA-002");
   assert.equal(lista[0].dostepnaOd, "06:30");
   assert.equal(lista[0].typ, "wlasna");
   assert.equal(lista[0].aktywna, true);
-  assert.equal(lista[0].wysiegMetry, null);
+  assert.equal(lista[0].wysiegMetry, 32);
 
   lista = pompy.zmienDanePompy(
     lista,
@@ -143,6 +144,21 @@ function sprawdzListePomp(pompy) {
   assert.equal(lista[0].wysiegMetry, 42);
   assert.equal(lista[1].typ, "zewnetrzna");
   assert.equal(pompy.pobierzLiczbeAktywnychPomp(lista), 1);
+
+  lista = pompy.zmienDanePompy(lista, "POMPA-002", "wysiegMetry", "");
+  assert.equal(lista[1].wysiegMetry, 32);
+
+  const listaZeStarszegoPlanu = pompy.normalizujListePomp([
+    {
+      idPompy: "POMPA-STARA",
+      nazwa: "Pompa ze starszego planu",
+      typ: "wlasna",
+      aktywna: true,
+      dostepnaOd: "07:00",
+      wysiegMetry: null
+    }
+  ]);
+  assert.equal(listaZeStarszegoPlanu[0].wysiegMetry, 32);
 
   const zmniejszonaLista = pompy.dopasujLiczbePomp(lista, 1, "07:00");
   assert.equal(zmniejszonaLista.length, 1);
@@ -165,10 +181,28 @@ function sprawdzWalidacjePompIWysieguBudowy(pompy) {
   }, /większą niż 0/i);
 
   const budowa = utworzBudowe("WYSIEG-1", "pompa");
+  assert.equal(pompy.pobierzWymaganyWysiegPompyBudowy(budowa), 32);
+  pompy.uzupelnijWymaganyWysiegPompyBudowy(budowa);
+  assert.equal(budowa.wymaganyWysiegPompyMetry, 32);
   pompy.zmienWymaganyWysiegPompyBudowy(budowa, "36");
   assert.equal(budowa.wymaganyWysiegPompyMetry, 36);
   pompy.zmienWymaganyWysiegPompyBudowy(budowa, "");
-  assert.equal(budowa.wymaganyWysiegPompyMetry, null);
+  assert.equal(budowa.wymaganyWysiegPompyMetry, 32);
+  assert.throws(function () {
+    pompy.zmienWymaganyWysiegPompyBudowy(budowa, "31");
+  }, /standardowe 32 m/i);
+
+  const budowaZeStarszegoPlanu = utworzBudowe("WYSIEG-STARY", "pompa", {
+    wymaganyWysiegPompyMetry: 24
+  });
+  pompy.uzupelnijWymaganyWysiegPompyBudowy(budowaZeStarszegoPlanu);
+  assert.equal(budowaZeStarszegoPlanu.wymaganyWysiegPompyMetry, 32);
+  assert.equal(
+    pompy.pobierzWymaganyWysiegPompyBudowy(
+      utworzBudowe("BEZ-WYSIEGU", "lej")
+    ),
+    null
+  );
 }
 
 function uruchomTesty() {

@@ -52,8 +52,11 @@ obejmować:
 - [x] lista jest zapisywana w bieżącym planie i historii oraz odtwarzana po
   odświeżeniu;
 - [x] starszy zapis bez listy pomp nadal daje się bezpiecznie otworzyć;
-- [x] wysięg pompy i wymagany wysięg budowy przyjmują tylko wartość dodatnią
-  albo jawny brak wartości.
+- [x] nowa pompa i pompowana budowa otrzymują standardowy wysięg `32 m`, a
+  starsze puste wartości są bezpiecznie uzupełniane;
+- [x] standardowa budowa ma kompaktowy opis bez stale widocznego pola, pole
+  pojawia się po zaznaczeniu **Większa pompa**, przyjmuje wartość powyżej
+  `32 m`, a odznaczenie przywraca standard.
 
 ### 4D — pełny okres zajętości
 

@@ -1708,15 +1708,18 @@ Na wyraźne zlecenie operatora wykonano przed 4A.2 niezależne elementy modelu i
 interfejsu, które nie wymagają jeszcze ustalenia czasów pełnego cyklu pompy:
 
 - [x] **4B.1:** pompa ma stabilne ID, nazwę, typ własna/zewnętrzna, aktywność,
-  własną godzinę **Dostępna od** i wysięg w metrach;
+  własną godzinę **Dostępna od** i wysięg w metrach, domyślnie `32 m`;
 - [x] **4C.1:** panel **Sterowanie zasobami** pokazuje pompy bezpośrednio pod
   gruszkami, pozwala podać rzeczywistą liczbę i edytować szczegóły każdej
   pompy, a podsumowanie pokazuje liczbę aktywnych pomp;
 - [x] **4C.2:** tryb, liczba i lista pomp są zapisywane w bieżącym planie oraz
   historii i odtwarzane po odświeżeniu; starszy zapis bez listy pozostaje
   poprawny;
-- [x] budowa z rodzajem rozładunku `pompa` ma w komórce budowy edytowalne pole
-  **Wymagany wysięg**, również zapisywane w planie;
+- [x] budowa z rodzajem rozładunku `pompa` ma standardowe wymaganie `32 m`
+  pokazane w jednym zwartym wierszu; zaznaczenie **Większa pompa** odsłania pole
+  dla wartości większej niż `32 m`, a odznaczenie przywraca standard;
+- [x] starsze puste wysięgi pomp i wymagania budów są przy odtworzeniu planu
+  migrowane do `32 m`, a wynik jest zapisywany w pamięci planu;
 - [x] licznik potrzebnych pomp świadomie pokazuje `—`, dopóki 4A.2–4G nie
   dostarczą rzeczywistego okresu zajętości, przydziału i minimalnej liczby;
 - [x] model, pamięć i struktura panelu są objęte testami automatycznymi.

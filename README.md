@@ -196,12 +196,15 @@ czytelną listę, na której każda pompa ma osobno:
 - typ **Własna** albo **Zewnętrzna**,
 - znacznik aktywności w bieżącym planie,
 - godzinę **Dostępna od**,
-- wysięg w metrach.
+- wysięg w metrach, domyślnie `32 m`.
 
-Przy budowie z rodzajem rozładunku **Pompa** w komórce budowy znajduje się
-pole **Wymagany wysięg**. Pusta wartość oznacza brak uzupełnionej informacji;
-wpisana wartość musi być większa od `0`. Lista pomp i wymagania budów są
-zapisywane razem z planem oraz historią i wracają po odświeżeniu.
+Przy budowie z rodzajem rozładunku **Pompa** program przyjmuje standardowy
+wymagany wysięg `32 m` i pokazuje go w kompaktowym opisie. Pole do wpisania
+innej wartości pozostaje ukryte, dopóki operator nie zaznaczy **Większa pompa**;
+wtedy można podać wymaganie większe niż `32 m`. Odznaczenie przełącznika
+przywraca standard `32 m`. Lista pomp i wymagania budów są zapisywane razem z
+planem oraz historią i wracają po odświeżeniu. Starsze puste wymagania są
+automatycznie uzupełniane standardem `32 m`.
 
 Licznik **potrzebnych pomp** pokazuje na tym etapie `—`. Nie jest to błąd ani
 wynik `0`: rzeczywista minimalna liczba będzie obliczana dopiero po dodaniu

@@ -427,6 +427,58 @@ function sprawdzStarszyPlanBezStartuZadanego() {
   assert.equal(zmigrowanaBudowa.startRoboczy, "08:20");
 }
 
+function sprawdzMigracjeStandardowegoWysieguPomp() {
+  const pamiecLokalna = utworzPamiecLokalna();
+  const ustawieniaPotwierdzenia = { wynik: true };
+  const srodowiskoPrzygotowawcze = uruchomAplikacje(
+    pamiecLokalna,
+    ustawieniaPotwierdzenia
+  );
+  const starszaBudowa = srodowiskoPrzygotowawcze.aplikacja.budowy
+    .utworzBudoweZImportu({
+      idBudowy: "POMPA-START-001",
+      firma: "Firma starszego planu",
+      budowa: "Budowa z pompą bez wysięgu",
+      startPlanowany: "08:00",
+      iloscBetonuM3: "8"
+    }, 2);
+
+  starszaBudowa.rodzajRozladunku = "pompa";
+  delete starszaBudowa.wymaganyWysiegPompyMetry;
+
+  pamiecLokalna.setItem(kluczPlanu, JSON.stringify({
+    wersja: 1,
+    zapisano: "2026-08-20T12:00:00.000Z",
+    danePlanu: {
+      wersjaStanuAplikacji: 3,
+      nazwaPliku: "starsze-pompy.csv",
+      separator: ";",
+      ostrzezeniaImportu: [],
+      budowyZImportu: [starszaBudowa],
+      budowyReczne: [],
+      listaPomp: [{
+        idPompy: "POMPA-001",
+        nazwa: "Pompa 1",
+        typ: "wlasna",
+        aktywna: true,
+        dostepnaOd: "07:00",
+        wysiegMetry: null
+      }],
+      parametry: { czasRozladunkuMinuty: "15" },
+      czyHarmonogramPrzeliczony: false
+    }
+  }));
+
+  uruchomAplikacje(pamiecLokalna, ustawieniaPotwierdzenia);
+  const zmigrowanyPlan = odczytajDanePlanu(pamiecLokalna);
+
+  assert.equal(zmigrowanyPlan.listaPomp[0].wysiegMetry, 32);
+  assert.equal(
+    zmigrowanyPlan.budowyZImportu[0].wymaganyWysiegPompyMetry,
+    32
+  );
+}
+
 async function sprawdzPamiecKorektyStartu() {
   const pamiecLokalna = utworzPamiecLokalna();
   const ustawieniaPotwierdzenia = { wynik: true };
@@ -711,6 +763,7 @@ async function uruchomTest() {
   assert.equal(danePompPrzedPrzeliczeniem.listaPomp[0].dostepnaOd, "08:15");
   assert.equal(danePompPrzedPrzeliczeniem.listaPomp[0].wysiegMetry, 42);
   assert.equal(danePompPrzedPrzeliczeniem.listaPomp[1].typ, "zewnetrzna");
+  assert.equal(danePompPrzedPrzeliczeniem.listaPomp[1].wysiegMetry, 32);
   assert.equal(danePompPrzedPrzeliczeniem.listaPomp[1].aktywna, false);
   assert.equal(
     pierwszaStrona.dokument.elementy["liczba-dostepnych-pomp-wynik"].textContent,
@@ -892,6 +945,7 @@ async function uruchomTest() {
 
 sprawdzMigracjeTrasZeStarszegoPlanu();
 sprawdzStarszyPlanBezStartuZadanego();
+sprawdzMigracjeStandardowegoWysieguPomp();
 uruchomTest().then(function () {
   return sprawdzPamiecKorektyStartu();
 }).then(function () {
