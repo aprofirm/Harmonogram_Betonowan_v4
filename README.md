@@ -186,6 +186,27 @@ Dla `0` dostępnych gruszek program nie tworzy fikcyjnego planu: pozostawia kurs
 nieprzydzielone i pokazuje konflikt. Tryb oraz wpisana liczba są zachowywane w
 pamięci bieżącego planu i w zapisach historycznych.
 
+## Sterowanie zasobami pomp
+
+W nagłówku harmonogramu panel **Sterowanie zasobami** pokazuje gruszki, a
+bezpośrednio pod nimi pompy. Dla pomp można wybrać tryb pracy i podać liczbę
+zasobów rzeczywiście pozostających do dyspozycji. Program tworzy wtedy
+czytelną listę, na której każda pompa ma osobno:
+
+- typ **Własna** albo **Zewnętrzna**,
+- znacznik aktywności w bieżącym planie,
+- godzinę **Dostępna od**,
+- wysięg w metrach.
+
+Przy budowie z rodzajem rozładunku **Pompa** w komórce budowy znajduje się
+pole **Wymagany wysięg**. Pusta wartość oznacza brak uzupełnionej informacji;
+wpisana wartość musi być większa od `0`. Lista pomp i wymagania budów są
+zapisywane razem z planem oraz historią i wracają po odświeżeniu.
+
+Licznik **potrzebnych pomp** pokazuje na tym etapie `—`. Nie jest to błąd ani
+wynik `0`: rzeczywista minimalna liczba będzie obliczana dopiero po dodaniu
+pełnych czasów obsługi, zajętości i przydziału pomp w kolejnych podetapach.
+
 ## Diagnostyka i raport błędów
 
 Aplikacja automatycznie zapisuje techniczne zdarzenia z maksymalnie 10 ostatnich uruchomień. Rejestrowane są m.in. uruchomienie programu, rozpoczęcie i wynik importu CSV, przeliczenie harmonogramu, ostrzeżenia oraz błędy z bezpiecznym wskazaniem miejsca w kodzie.
@@ -325,8 +346,8 @@ a starsze plany bez `StartZadany` są bezpiecznie uzupełniane godziną planowan
 Test operatora KP-4.5 został zaliczony i cały KP-4 jest zakończony.
 
 Etap 4 rozpoczął się od ukończonego **4A.1 — kwalifikacja budów wymagających
-pompy**. Moduł pomp wybiera wyłącznie budowy z rodzajem rozładunku `pompa`; lej,
-wywrotka, taczka, odbiór własny i starsze dane bez tej informacji pozostają
-poza tą grupą. Następny krok to **4A.2 — ustalenie parametrów czasu pełnej
+pompy**. Gotowy jest także wcześniejszy fundament **4B.1** i **4C.1–4C.2**:
+model pompy, wspólny panel zasobów, lista z dostępnością i wysięgiem oraz
+pamięć planu. Następny krok to **4A.2 — ustalenie parametrów czasu pełnej
 obsługi pompy**. Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie
 zakresem Etapu 5.

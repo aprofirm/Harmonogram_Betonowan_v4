@@ -222,25 +222,53 @@
                 <p class="etykieta-sekcji">WYNIK</p>
                 <h2 id="tytul-harmonogramu">Dzisiejszy harmonogram</h2>
               </div>
-              <div class="sterowanie-flota" aria-label="Sterowanie flotą gruszek">
-                <p class="sterowanie-flota__tytul">STEROWANIE FLOTĄ</p>
-                <div class="sterowanie-flota__pola">
-                  <label class="pole-formularza pole-formularza--flota" for="tryb-gruszek">
-                    <span>Tryb pracy</span>
-                    <select id="tryb-gruszek" name="trybGruszek" required>
-                      <option value="oblicz-potrzebne">Oblicz, ile potrzeba</option>
-                      <option value="mam-okreslona-liczbe">Mam określoną liczbę</option>
-                    </select>
-                  </label>
+              <div class="sterowanie-flota" aria-label="Sterowanie zasobami gruszek i pomp">
+                <p class="sterowanie-flota__tytul">STEROWANIE ZASOBAMI</p>
+                <section class="sterowanie-zasobu" aria-labelledby="tytul-sterowania-gruszkami">
+                  <p id="tytul-sterowania-gruszkami" class="sterowanie-zasobu__tytul">GRUSZKI</p>
+                  <div class="sterowanie-flota__pola">
+                    <label class="pole-formularza pole-formularza--flota" for="tryb-gruszek">
+                      <span>Tryb pracy</span>
+                      <select id="tryb-gruszek" name="trybGruszek" required>
+                        <option value="oblicz-potrzebne">Oblicz, ile potrzeba</option>
+                        <option value="mam-okreslona-liczbe">Mam określoną liczbę</option>
+                      </select>
+                    </label>
 
-                  <label class="pole-formularza pole-formularza--flota pole-formularza--liczba-gruszek" for="liczba-dostepnych-gruszek">
-                    <span>Liczba gruszek</span>
-                    <span class="pole-z-jednostka">
-                      <input id="liczba-dostepnych-gruszek" name="liczbaDostepnychGruszek" type="number" min="0" step="1" inputmode="numeric">
-                      <span>szt.</span>
-                    </span>
-                  </label>
-                </div>
+                    <label class="pole-formularza pole-formularza--flota pole-formularza--liczba-gruszek" for="liczba-dostepnych-gruszek">
+                      <span>Liczba gruszek</span>
+                      <span class="pole-z-jednostka">
+                        <input id="liczba-dostepnych-gruszek" name="liczbaDostepnychGruszek" type="number" min="0" step="1" inputmode="numeric">
+                        <span>szt.</span>
+                      </span>
+                    </label>
+                  </div>
+                </section>
+
+                <section class="sterowanie-zasobu sterowanie-zasobu--pompy" aria-labelledby="tytul-sterowania-pompami">
+                  <div class="sterowanie-zasobu__naglowek">
+                    <p id="tytul-sterowania-pompami" class="sterowanie-zasobu__tytul">POMPY</p>
+                    <small id="podsumowanie-dostepnosci-pomp">Wybierz liczbę pomp, aby uzupełnić szczegóły.</small>
+                  </div>
+                  <div class="sterowanie-flota__pola">
+                    <label class="pole-formularza pole-formularza--flota" for="tryb-pomp">
+                      <span>Tryb pracy</span>
+                      <select id="tryb-pomp" name="trybPomp" required>
+                        <option value="oblicz-potrzebne">Oblicz, ile potrzeba</option>
+                        <option value="mam-okreslona-liczbe">Mam określoną liczbę</option>
+                      </select>
+                    </label>
+
+                    <label class="pole-formularza pole-formularza--flota" for="liczba-dostepnych-pomp">
+                      <span>Liczba pomp</span>
+                      <span class="pole-z-jednostka">
+                        <input id="liczba-dostepnych-pomp" name="liczbaDostepnychPomp" type="number" min="0" step="1" inputmode="numeric">
+                        <span>szt.</span>
+                      </span>
+                    </label>
+                  </div>
+                  <div id="lista-pomp" class="lista-pomp" aria-live="polite"></div>
+                </section>
               </div>
               <div class="podsumowanie" aria-label="Podsumowanie harmonogramu">
                 <div>
@@ -258,6 +286,14 @@
                 <div class="podsumowanie__gruszki-dostepne">
                   <span id="liczba-dostepnych-gruszek-wynik">—</span>
                   <small>dostępnych gruszek</small>
+                </div>
+                <div class="podsumowanie__pompy">
+                  <span id="minimalna-liczba-pomp">—</span>
+                  <small>potrzebnych pomp</small>
+                </div>
+                <div class="podsumowanie__pompy-dostepne">
+                  <span id="liczba-dostepnych-pomp-wynik">—</span>
+                  <small>dostępnych pomp</small>
                 </div>
                 <div>
                   <span id="liczba-konfliktow">0</span>

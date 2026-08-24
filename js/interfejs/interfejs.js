@@ -8,8 +8,10 @@
   let obslugaZmianyCzasowBudowy = function () {};
   let obslugaZmianyIlosciBetonuBudowy = function () {};
   let obslugaZmianyStartuBudowy = function () {};
+  let obslugaZmianyPompy = function () {};
   let obslugaZmianyParametrowAplikacji = function () {};
   let parametryDomyslneInterfejsu = {};
+  let listaPompInterfejsu = [];
 
   function pobierzWymaganyElement(identyfikator) {
     const znalezionyElement = document.getElementById(identyfikator);
@@ -32,6 +34,14 @@
       liczbaDostepnychGruszek: pobierzWymaganyElement(
         "liczba-dostepnych-gruszek"
       ),
+      trybPomp: pobierzWymaganyElement("tryb-pomp"),
+      liczbaDostepnychPomp: pobierzWymaganyElement(
+        "liczba-dostepnych-pomp"
+      ),
+      listaPomp: pobierzWymaganyElement("lista-pomp"),
+      podsumowanieDostepnosciPomp: pobierzWymaganyElement(
+        "podsumowanie-dostepnosci-pomp"
+      ),
       przyciskPrzelicz: pobierzWymaganyElement("przycisk-przelicz"),
       przyciskWyczyscPlan: pobierzWymaganyElement("przycisk-wyczysc-plan"),
       sekcjaStatusu: pobierzWymaganyElement("sekcja-statusu"),
@@ -44,6 +54,10 @@
       ),
       liczbaDostepnychGruszekWynik: pobierzWymaganyElement(
         "liczba-dostepnych-gruszek-wynik"
+      ),
+      minimalnaLiczbaPomp: pobierzWymaganyElement("minimalna-liczba-pomp"),
+      liczbaDostepnychPompWynik: pobierzWymaganyElement(
+        "liczba-dostepnych-pomp-wynik"
       ),
       liczbaKonfliktow: pobierzWymaganyElement("liczba-konfliktow"),
       wierszeHarmonogramu: pobierzWymaganyElement("wiersze-harmonogramu"),
@@ -86,7 +100,12 @@
     elementy.liczbaDostepnychGruszek.value = formatujWartoscPola(
       parametryDomyslne.liczbaDostepnychGruszek
     );
+    elementy.trybPomp.value = parametryDomyslne.trybPomp;
+    elementy.liczbaDostepnychPomp.value = formatujWartoscPola(
+      parametryDomyslne.liczbaDostepnychPomp
+    );
     aktualizujDostepnoscPolaLiczbyGruszek();
+    aktualizujDostepnoscPolaLiczbyPomp();
   }
 
   function pobierzWartosciParametrowDoZapisu() {
@@ -100,6 +119,11 @@
       liczbaDostepnychGruszek:
         elementy.trybGruszek.value === "mam-okreslona-liczbe"
           ? elementy.liczbaDostepnychGruszek.value
+          : null,
+      trybPomp: elementy.trybPomp.value,
+      liczbaDostepnychPomp:
+        elementy.trybPomp.value === "mam-okreslona-liczbe"
+          ? elementy.liczbaDostepnychPomp.value
           : null
     };
   }
@@ -122,6 +146,14 @@
 
     elementy.liczbaDostepnychGruszek.disabled = !czyOgraniczonaFlota;
     elementy.liczbaDostepnychGruszek.required = czyOgraniczonaFlota;
+  }
+
+  function aktualizujDostepnoscPolaLiczbyPomp() {
+    const czyOkreslonaLiczbaPomp =
+      elementy.trybPomp.value === "mam-okreslona-liczbe";
+
+    elementy.liczbaDostepnychPomp.disabled = !czyOkreslonaLiczbaPomp;
+    elementy.liczbaDostepnychPomp.required = czyOkreslonaLiczbaPomp;
   }
 
   function ustawParametryZPamieci(parametry) {
@@ -149,7 +181,14 @@
     elementy.liczbaDostepnychGruszek.value = formatujWartoscPola(
       pobierzWartoscLubDomyslna(parametry, "liczbaDostepnychGruszek")
     );
+    elementy.trybPomp.value = formatujWartoscPola(
+      pobierzWartoscLubDomyslna(parametry, "trybPomp")
+    );
+    elementy.liczbaDostepnychPomp.value = formatujWartoscPola(
+      pobierzWartoscLubDomyslna(parametry, "liczbaDostepnychPomp")
+    );
     aktualizujDostepnoscPolaLiczbyGruszek();
+    aktualizujDostepnoscPolaLiczbyPomp();
   }
 
   function pobierzLiczbe(elementPola, nazwaPola, najmniejszaWartosc) {
@@ -171,7 +210,9 @@
     }
 
     const trybGruszek = elementy.trybGruszek.value;
+    const trybPomp = elementy.trybPomp.value;
     let liczbaDostepnychGruszek = null;
+    let liczbaDostepnychPomp = null;
 
     if (
       trybGruszek !== "oblicz-potrzebne" &&
@@ -193,6 +234,29 @@
 
       if (!Number.isInteger(liczbaDostepnychGruszek)) {
         throw new Error("Liczba dostępnych gruszek musi być liczbą całkowitą.");
+      }
+    }
+
+    if (
+      trybPomp !== "oblicz-potrzebne" &&
+      trybPomp !== "mam-okreslona-liczbe"
+    ) {
+      throw new Error("Wybierz poprawny tryb pracy pomp.");
+    }
+
+    if (trybPomp === "mam-okreslona-liczbe") {
+      if (String(elementy.liczbaDostepnychPomp.value).trim() === "") {
+        throw new Error("Pole „Liczba dostępnych pomp” nie może być puste.");
+      }
+
+      liczbaDostepnychPomp = pobierzLiczbe(
+        elementy.liczbaDostepnychPomp,
+        "Liczba dostępnych pomp",
+        0
+      );
+
+      if (!Number.isInteger(liczbaDostepnychPomp)) {
+        throw new Error("Liczba dostępnych pomp musi być liczbą całkowitą.");
       }
     }
 
@@ -219,8 +283,144 @@
         0
       ),
       trybGruszek: trybGruszek,
-      liczbaDostepnychGruszek: liczbaDostepnychGruszek
+      liczbaDostepnychGruszek: liczbaDostepnychGruszek,
+      trybPomp: trybPomp,
+      liczbaDostepnychPomp: liczbaDostepnychPomp
     };
+  }
+
+  function utworzPoleKartyPompy(etykieta, pole) {
+    const kontener = document.createElement("label");
+    const opis = document.createElement("span");
+
+    kontener.className = "karta-pompy__pole";
+    opis.textContent = etykieta;
+    kontener.appendChild(opis);
+    kontener.appendChild(pole);
+    return kontener;
+  }
+
+  function utworzKartePompy(pompa) {
+    const karta = document.createElement("article");
+    const nazwa = document.createElement("strong");
+    const typ = document.createElement("select");
+    const typWlasna = document.createElement("option");
+    const typZewnetrzna = document.createElement("option");
+    const dostepnaOd = document.createElement("input");
+    const wysieg = document.createElement("input");
+    const aktywnaEtykieta = document.createElement("label");
+    const aktywnaOpis = document.createElement("span");
+    const aktywna = document.createElement("input");
+
+    karta.className = "karta-pompy";
+    karta.dataset.idPompy = pompa.idPompy;
+    nazwa.className = "karta-pompy__nazwa";
+    nazwa.textContent = pompa.nazwa;
+
+    typWlasna.value = "wlasna";
+    typWlasna.textContent = "Własna";
+    typZewnetrzna.value = "zewnetrzna";
+    typZewnetrzna.textContent = "Zewnętrzna";
+    typ.appendChild(typWlasna);
+    typ.appendChild(typZewnetrzna);
+    typ.value = pompa.typ;
+    typ.setAttribute("aria-label", "Typ " + pompa.nazwa);
+    typ.addEventListener("change", function () {
+      obslugaZmianyPompy(pompa.idPompy, "typ", typ.value);
+    });
+
+    dostepnaOd.type = "time";
+    dostepnaOd.value = pompa.dostepnaOd;
+    dostepnaOd.setAttribute("aria-label", pompa.nazwa + " dostępna od");
+    dostepnaOd.addEventListener("change", function () {
+      obslugaZmianyPompy(pompa.idPompy, "dostepnaOd", dostepnaOd.value);
+    });
+
+    wysieg.type = "number";
+    wysieg.min = "1";
+    wysieg.step = "0.1";
+    wysieg.inputMode = "decimal";
+    wysieg.placeholder = "np. 36";
+    wysieg.value = pompa.wysiegMetry === null || pompa.wysiegMetry === undefined
+      ? ""
+      : String(pompa.wysiegMetry);
+    wysieg.setAttribute("aria-label", "Wysięg " + pompa.nazwa + " w metrach");
+    wysieg.addEventListener("change", function () {
+      obslugaZmianyPompy(pompa.idPompy, "wysiegMetry", wysieg.value);
+    });
+
+    aktywnaEtykieta.className = "karta-pompy__aktywna";
+    aktywnaOpis.textContent = "Aktywna";
+    aktywna.type = "checkbox";
+    aktywna.checked = pompa.aktywna !== false;
+    aktywna.setAttribute("aria-label", "Czy " + pompa.nazwa + " jest aktywna");
+    aktywna.addEventListener("change", function () {
+      obslugaZmianyPompy(pompa.idPompy, "aktywna", aktywna.checked);
+    });
+    aktywnaEtykieta.appendChild(aktywnaOpis);
+    aktywnaEtykieta.appendChild(aktywna);
+
+    karta.appendChild(nazwa);
+    karta.appendChild(utworzPoleKartyPompy("Typ", typ));
+    karta.appendChild(utworzPoleKartyPompy("Dostępna od", dostepnaOd));
+    karta.appendChild(utworzPoleKartyPompy("Wysięg (m)", wysieg));
+    karta.appendChild(aktywnaEtykieta);
+    return karta;
+  }
+
+  function odswiezPodsumowaniePomp() {
+    const czyOkreslonaLiczbaPomp =
+      elementy.trybPomp.value === "mam-okreslona-liczbe";
+
+    elementy.minimalnaLiczbaPomp.textContent = "—";
+
+    if (!czyOkreslonaLiczbaPomp) {
+      elementy.liczbaDostepnychPompWynik.textContent = "—";
+      elementy.podsumowanieDostepnosciPomp.textContent =
+        "Po obliczeniu pokażemy potrzebną liczbę pomp.";
+      return;
+    }
+
+    const aktywnePompy = listaPompInterfejsu.filter(function (pompa) {
+      return pompa.aktywna !== false;
+    });
+    const godzinyDostepnosci = aktywnePompy.map(function (pompa) {
+      return pompa.dostepnaOd;
+    }).filter(Boolean).sort();
+
+    elementy.liczbaDostepnychPompWynik.textContent = String(aktywnePompy.length);
+
+    if (!listaPompInterfejsu.length) {
+      elementy.podsumowanieDostepnosciPomp.textContent = "Brak pomp do dyspozycji.";
+    } else if (!aktywnePompy.length) {
+      elementy.podsumowanieDostepnosciPomp.textContent =
+        "Wszystkie wpisane pompy są nieaktywne.";
+    } else {
+      elementy.podsumowanieDostepnosciPomp.textContent =
+        aktywnePompy.length +
+        (aktywnePompy.length === 1 ? " aktywna" : " aktywne") +
+        (godzinyDostepnosci.length
+          ? " · od " + godzinyDostepnosci[0]
+          : "");
+    }
+  }
+
+  function pokazListePomp(listaPomp, trybPomp) {
+    const fragment = document.createDocumentFragment();
+    const lista = Array.isArray(listaPomp) ? listaPomp : [];
+    const tryb = trybPomp || elementy.trybPomp.value;
+
+    listaPompInterfejsu = lista.slice();
+    elementy.listaPomp.hidden = tryb !== "mam-okreslona-liczbe";
+
+    if (tryb === "mam-okreslona-liczbe") {
+      lista.forEach(function (pompa) {
+        fragment.appendChild(utworzKartePompy(pompa));
+      });
+    }
+
+    elementy.listaPomp.replaceChildren(fragment);
+    odswiezPodsumowaniePomp();
   }
 
   function ustawStatus(rodzaj, tytul, tresc) {
@@ -811,6 +1011,7 @@
       wynik.liczbaDostepnychGruszek === null
         ? "—"
         : String(wynik.liczbaDostepnychGruszek);
+    odswiezPodsumowaniePomp();
     elementy.liczbaKonfliktow.textContent = String(wynik.konflikty.length);
     ustawStatus(
       wynik.konflikty.length ? "ostrzezenie" : "sukces",
@@ -826,6 +1027,8 @@
     elementy.liczbaKursow.textContent = "0";
     elementy.minimalnaLiczbaGruszek.textContent = "0";
     elementy.liczbaDostepnychGruszekWynik.textContent = "—";
+    elementy.minimalnaLiczbaPomp.textContent = "—";
+    odswiezPodsumowaniePomp();
     elementy.liczbaKonfliktow.textContent = "0";
   }
 
@@ -838,12 +1041,19 @@
     );
   }
 
-  function pokazPrzywroconyPlan(stanImportu, listaBudow, parametry, czyPrzeliczony) {
+  function pokazPrzywroconyPlan(
+    stanImportu,
+    listaBudow,
+    parametry,
+    czyPrzeliczony,
+    listaPomp
+  ) {
     const liczbaZPliku = Array.isArray(stanImportu.budowy)
       ? stanImportu.budowy.length
       : 0;
 
     ustawParametryZPamieci(parametry);
+    pokazListePomp(listaPomp, elementy.trybPomp.value);
     pokazListeBudow(listaBudow);
     wyczyscWidokWyniku();
 
@@ -872,6 +1082,7 @@
 
   function wyczyscPlan(parametryDomyslne) {
     ustawParametryDomyslne(parametryDomyslne);
+    pokazListePomp([], elementy.trybPomp.value);
     elementy.formularzBudowyRecznej.reset();
     elementy.informacjaOImporcie.dataset.rodzaj = "brak";
     elementy.nazwaPlikuCsv.textContent = "Nie wczytano pliku";
@@ -910,6 +1121,13 @@
   function pokazBladCzasow(blad) {
     const trescBledu = blad instanceof Error ? blad.message : "Nie udało się zapisać czasów.";
     ustawStatus("blad", "Nie można zapisać czasów budowy", trescBledu);
+  }
+
+  function pokazBladPompy(blad) {
+    const trescBledu = blad instanceof Error
+      ? blad.message
+      : "Nie udało się zapisać danych pompy.";
+    ustawStatus("blad", "Nie można zapisać danych pompy", trescBledu);
   }
 
   function zakonczPrzeliczenie() {
@@ -1179,7 +1397,8 @@
       elementy.czasZaladunku,
       elementy.czasRozladunku,
       elementy.maksymalneOpoznienie,
-      elementy.liczbaDostepnychGruszek
+      elementy.liczbaDostepnychGruszek,
+      elementy.liczbaDostepnychPomp
     ].forEach(function (pole) {
       pole.addEventListener("change", function () {
         obslugaZmianyParametrowAplikacji(pobierzWartosciParametrowDoZapisu());
@@ -1188,6 +1407,20 @@
 
     elementy.trybGruszek.addEventListener("change", function () {
       aktualizujDostepnoscPolaLiczbyGruszek();
+      obslugaZmianyParametrowAplikacji(pobierzWartosciParametrowDoZapisu());
+    });
+
+    elementy.trybPomp.addEventListener("change", function () {
+      aktualizujDostepnoscPolaLiczbyPomp();
+
+      if (
+        elementy.trybPomp.value === "mam-okreslona-liczbe" &&
+        String(elementy.liczbaDostepnychPomp.value).trim() === "" &&
+        listaPompInterfejsu.length > 0
+      ) {
+        elementy.liczbaDostepnychPomp.value = String(listaPompInterfejsu.length);
+      }
+
       obslugaZmianyParametrowAplikacji(pobierzWartosciParametrowDoZapisu());
     });
   }
@@ -1221,7 +1454,8 @@
     obslugaZmianyParametrow,
     obslugaWyczyszczeniaPlanu,
     obslugaOtwarciaHistorii,
-    obslugaZmianyStartu
+    obslugaZmianyStartu,
+    obslugaPompy
   ) {
     znajdzElementyInterfejsu();
     parametryDomyslneInterfejsu = Object.assign({}, parametryDomyslne);
@@ -1235,11 +1469,15 @@
     obslugaZmianyStartuBudowy = typeof obslugaZmianyStartu === "function"
       ? obslugaZmianyStartu
       : function () {};
+    obslugaZmianyPompy = typeof obslugaPompy === "function"
+      ? obslugaPompy
+      : function () {};
     obslugaZmianyParametrowAplikacji =
       typeof obslugaZmianyParametrow === "function"
         ? obslugaZmianyParametrow
         : function () {};
     ustawParametryDomyslne(parametryDomyslne);
+    pokazListePomp([], elementy.trybPomp.value);
     elementy.przyciskPrzelicz.addEventListener("click", obslugaPrzeliczenia);
     podlaczImportPliku(obslugaImportu);
     podlaczBudoweReczna(obslugaDodaniaBudowy);
@@ -1259,6 +1497,7 @@
     pobierzParametryZFormularza: pobierzParametryZFormularza,
     pobierzWartosciParametrowDoZapisu: pobierzWartosciParametrowDoZapisu,
     ustawParametryZPamieci: ustawParametryZPamieci,
+    pokazListePomp: pokazListePomp,
     pokazTrwajacePrzeliczenie: pokazTrwajacePrzeliczenie,
     pokazWynik: pokazWynik,
     oznaczWynikJakoNieaktualny: oznaczWynikJakoNieaktualny,
@@ -1271,6 +1510,7 @@
     pokazBladIlosciBetonu: pokazBladIlosciBetonu,
     pokazBladStartuBudowy: pokazBladStartuBudowy,
     pokazBladCzasow: pokazBladCzasow,
+    pokazBladPompy: pokazBladPompy,
     zakonczPrzeliczenie: zakonczPrzeliczenie,
     pokazTrwajacyImport: pokazTrwajacyImport,
     pokazUdanyImport: pokazUdanyImport,

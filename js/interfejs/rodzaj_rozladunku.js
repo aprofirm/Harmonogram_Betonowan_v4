@@ -7,6 +7,7 @@
   let sekcjaOdbiorowWlasnych = null;
   let licznikOdbiorowWlasnych = null;
   let wierszeOdbiorowWlasnych = null;
+  let obslugaZmianyWymaganegoWysieguPompy = function () {};
 
   function sprawdzZaleznosci() {
     if (!aplikacja.interfejs) {
@@ -241,15 +242,60 @@
     const komorkaBudowy = wiersz && wiersz.children[2];
     const opis = opiszRodzajRozladunku(budowa && budowa.rodzajRozladunku);
 
-    if (!komorkaBudowy || !opis ||
-        komorkaBudowy.querySelector(".rodzaj-rozladunku-budowy")) {
+    if (!komorkaBudowy || !opis) {
       return;
     }
 
-    const etykieta = document.createElement("small");
-    etykieta.className = "rodzaj-rozladunku-budowy";
-    etykieta.textContent = opis;
-    komorkaBudowy.appendChild(etykieta);
+    if (!komorkaBudowy.querySelector(".rodzaj-rozladunku-budowy")) {
+      const etykieta = document.createElement("small");
+      etykieta.className = "rodzaj-rozladunku-budowy";
+      etykieta.textContent = opis;
+      komorkaBudowy.appendChild(etykieta);
+    }
+
+    if (
+      !aplikacja.pompy ||
+      !aplikacja.pompy.czyBudowaWymagaPompy(budowa) ||
+      komorkaBudowy.querySelector(".wymagany-wysieg-pompy")
+    ) {
+      return;
+    }
+
+    const etykietaWysiegu = document.createElement("label");
+    const opisWysiegu = document.createElement("span");
+    const kontrolki = document.createElement("span");
+    const poleWysiegu = document.createElement("input");
+    const jednostka = document.createElement("span");
+
+    etykietaWysiegu.className = "wymagany-wysieg-pompy";
+    opisWysiegu.textContent = "Wymagany wysięg";
+    kontrolki.className = "wymagany-wysieg-pompy__kontrolki";
+    poleWysiegu.type = "number";
+    poleWysiegu.min = "1";
+    poleWysiegu.step = "0.1";
+    poleWysiegu.placeholder = "np. 36";
+    poleWysiegu.value =
+      budowa.wymaganyWysiegPompyMetry === null ||
+      budowa.wymaganyWysiegPompyMetry === undefined
+        ? ""
+        : String(budowa.wymaganyWysiegPompyMetry);
+    poleWysiegu.disabled = budowa.statusRealizacji === "zrealizowana";
+    poleWysiegu.setAttribute(
+      "aria-label",
+      "Wymagany wysięg pompy dla budowy " + budowa.budowa + " w metrach"
+    );
+    poleWysiegu.addEventListener("change", function () {
+      obslugaZmianyWymaganegoWysieguPompy(
+        budowa.idBudowy,
+        poleWysiegu.value
+      );
+    });
+    jednostka.textContent = "m";
+    kontrolki.appendChild(poleWysiegu);
+    kontrolki.appendChild(jednostka);
+    etykietaWysiegu.appendChild(opisWysiegu);
+    etykietaWysiegu.appendChild(kontrolki);
+    komorkaBudowy.appendChild(etykietaWysiegu);
   }
 
   function pokazBrakDostawPlanowanych(kontener, liczbaOdbiorow) {
@@ -383,6 +429,10 @@
       const argumenty = Array.from(arguments);
       const obslugaDodaniaBudowy = typeof argumenty[3] === "function"
         ? argumenty[3]
+        : function () {};
+
+      obslugaZmianyWymaganegoWysieguPompy = typeof argumenty[11] === "function"
+        ? argumenty[11]
         : function () {};
 
       argumenty[3] = function (daneBudowy) {

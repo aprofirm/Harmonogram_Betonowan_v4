@@ -1539,6 +1539,23 @@ zajętości dla budów zakończonych lub bez dodatniej ilości betonu należą d
 Podetap 4A.1 nie przydziela jeszcze konkretnej pompy i nie zmienia
 `StartRoboczy`.
 
+## 82. Wysięg jest cechą pompy i wymaganiem konkretnej budowy
+
+Każda pompa na liście zasobów może mieć własny wysięg podany w metrach. Każda
+budowa zakwalifikowana jako `pompa` może niezależnie określić **Wymagany
+wysięg** bez zmiany danych źródłowych KDX/CSV.
+
+Obie wartości mogą pozostać puste, co oznacza brak uzupełnionej informacji, a
+nie wysięg równy `0`. Wpisana wartość musi być większa od `0`. W przyszłym
+przydziale pompa z uzupełnionym wysięgiem będzie pasowała do budowy tylko wtedy,
+gdy jej wysięg nie jest mniejszy od wymagania budowy; dokładne zachowanie przy
+braku jednej z wartości zostanie domknięte razem z walidacją przydziału 4F.
+
+Godzina **Dostępna od**, typ, aktywność i wysięg należą do konkretnej pompy i są
+zapisywane w planie dnia. Wymagany wysięg należy do konkretnej budowy. Licznik
+potrzebnych pomp nie może być wyprowadzany z samej liczby wpisanych zasobów — ma
+pozostać nieustalony do czasu wdrożenia okresów zajętości i minimalnej floty.
+
 ---
 
 # Powiązane tematy otwarte

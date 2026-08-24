@@ -26,6 +26,43 @@
   font-weight: 750;
 }
 
+.wymagany-wysieg-pompy {
+  display: grid;
+  gap: 3px;
+  margin-top: 7px;
+  color: #7a5a2b;
+  font-size: 0.64rem;
+  font-weight: 750;
+}
+
+.wymagany-wysieg-pompy__kontrolki {
+  display: inline-flex;
+  align-items: center;
+  width: 90px;
+  min-height: 30px;
+  overflow: hidden;
+  border: 1px solid #dbc9ae;
+  border-radius: 7px;
+  background: #fffaf2;
+}
+
+.wymagany-wysieg-pompy__kontrolki input {
+  width: 60px;
+  min-width: 0;
+  padding: 5px 6px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 0.72rem;
+}
+
+.wymagany-wysieg-pompy__kontrolki > span {
+  padding-right: 7px;
+  color: #7a5a2b;
+  font-size: 0.67rem;
+}
+
 .status-poza-harmonogramem {
   color: var(--kolor-zielony);
   font-weight: 800;

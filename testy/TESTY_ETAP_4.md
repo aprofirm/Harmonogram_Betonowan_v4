@@ -2,10 +2,10 @@
 
 ## Status
 
-Etap 4 jest rozpoczęty. Podetap **4A.1 — kwalifikacja budów wymagających pompy**
-jest zaimplementowany i ma osobny test `testy/etap_4a_1.test.js`. Następny
-podetap to **4A.2 — czas obsługi pompy**. Pełna regresja obejmuje obecnie `24`
-zestawy testów.
+Etap 4 jest rozpoczęty. Zakończono **4A.1**, a na zlecenie operatora wcześniej
+wdrożono również model **4B.1** oraz panel i pamięć **4C.1–4C.2**. Następny
+podetap pozostaje bez zmian: **4A.2 — czas obsługi pompy**. Pełna regresja
+obejmuje obecnie `25` zestawów testów.
 
 ## Cel
 
@@ -45,12 +45,15 @@ obejmować:
 
 ### 4B–4C — model, lista i pamięć
 
-- każda pompa ma stabilne, unikalne ID;
-- typ pompy jest ograniczony do wartości obsługiwanych przez model;
+- [x] każda pompa ma stabilne, unikalne ID;
+- [x] typ pompy jest ograniczony do wartości obsługiwanych przez model;
 - pompa nieaktywna nie może zostać przydzielona;
-- dodanie, edycja, wyłączenie i usunięcie pompy daje przewidywalny wynik;
-- lista jest odtwarzana po odświeżeniu i z historii planu;
-- starszy zapis bez listy pomp nadal daje się bezpiecznie otworzyć.
+- [x] dodanie, edycja, wyłączenie i zmniejszenie listy pomp daje przewidywalny wynik;
+- [x] lista jest zapisywana w bieżącym planie i historii oraz odtwarzana po
+  odświeżeniu;
+- [x] starszy zapis bez listy pomp nadal daje się bezpiecznie otworzyć;
+- [x] wysięg pompy i wymagany wysięg budowy przyjmują tylko wartość dodatnią
+  albo jawny brak wartości.
 
 ### 4D — pełny okres zajętości
 

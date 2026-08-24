@@ -11,7 +11,9 @@
     czasRozladunkuMinuty: 15,
     maksymalneOpoznienieStartuMinuty: 30,
     trybGruszek: "oblicz-potrzebne",
-    liczbaDostepnychGruszek: null
+    liczbaDostepnychGruszek: null,
+    trybPomp: "oblicz-potrzebne",
+    liczbaDostepnychPomp: null
   });
 
   aplikacja.konfiguracja = Object.freeze({

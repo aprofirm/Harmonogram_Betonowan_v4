@@ -5,6 +5,7 @@
   let czyTrwaPrzeliczanie = false;
   let stanImportu = aplikacja.importCsv.utworzPustyStanImportu();
   let budowyReczne = [];
+  let listaPomp = [];
   let numerOstatniegoImportu = 0;
   let czyOstatniPlanPrzeliczony = false;
 
@@ -26,6 +27,7 @@
     "statusRealizacji",
     "dataPlanowana",
     "rodzajRozladunku",
+    "wymaganyWysiegPompyMetry",
     "zrodlo",
     "czasDojazduRoboczyMinuty",
     "czasPowrotuRoboczyMinuty",
@@ -75,7 +77,7 @@
 
   function utworzDanePlanuDoZapisu() {
     return {
-      wersjaStanuAplikacji: 2,
+      wersjaStanuAplikacji: 3,
       nazwaPliku: stanImportu.nazwaPliku || null,
       separator: stanImportu.separator || null,
       ostrzezeniaImportu: Array.isArray(stanImportu.ostrzezenia)
@@ -83,6 +85,7 @@
         : [],
       budowyZImportu: skopiujListeBudowDoPamieci(stanImportu.budowy),
       budowyReczne: skopiujListeBudowDoPamieci(budowyReczne),
+      listaPomp: aplikacja.pompy.skopiujListePomp(listaPomp),
       parametry: aplikacja.interfejs.pobierzWartosciParametrowDoZapisu(),
       czyHarmonogramPrzeliczony: czyOstatniPlanPrzeliczony
     };
@@ -510,7 +513,36 @@
     }
   }
 
-  function obsluzZmianeParametrow() {
+  function czyPoprawnaLiczbaPompDoUtworzenia(wartosc) {
+    const liczba = Number(wartosc);
+    const tekst = String(
+      wartosc === null || wartosc === undefined ? "" : wartosc
+    ).trim();
+
+    return tekst !== "" &&
+      Number.isInteger(liczba) && liczba >= 0;
+  }
+
+  function dopasujListePompDoParametrow(parametry) {
+    const dane = parametry || {};
+
+    if (
+      dane.trybPomp === "mam-okreslona-liczbe" &&
+      czyPoprawnaLiczbaPompDoUtworzenia(dane.liczbaDostepnychPomp)
+    ) {
+      listaPomp = aplikacja.pompy.dopasujLiczbePomp(
+        listaPomp,
+        dane.liczbaDostepnychPomp,
+        dane.poczatekDnia ||
+          aplikacja.konfiguracja.parametryDomyslne.poczatekDnia
+      );
+    }
+
+    aplikacja.interfejs.pokazListePomp(listaPomp, dane.trybPomp);
+  }
+
+  function obsluzZmianeParametrow(parametry) {
+    dopasujListePompDoParametrow(parametry);
     oznaczPlanJakoNieprzeliczony(true);
     aplikacja.interfejs.pokazListeBudow(pobierzAktualnaListeBudow());
     zapiszZdarzenieDiagnostyczne(
@@ -518,6 +550,74 @@
       "zmiana-parametrow-planu",
       "Zmieniono parametry planu."
     );
+  }
+
+  function obsluzZmianePompy(idPompy, nazwaPola, wartosc) {
+    try {
+      listaPomp = aplikacja.pompy.zmienDanePompy(
+        listaPomp,
+        idPompy,
+        nazwaPola,
+        wartosc
+      );
+      aplikacja.interfejs.pokazListePomp(
+        listaPomp,
+        aplikacja.interfejs.pobierzWartosciParametrowDoZapisu().trybPomp
+      );
+      oznaczPlanJakoNieprzeliczony(true);
+      zapiszZdarzenieDiagnostyczne(
+        "informacja",
+        "zmiana-danych-pompy",
+        "Zmieniono dane pompy.",
+        { idPompy: idPompy, pole: nazwaPola }
+      );
+      return listaPomp;
+    } catch (blad) {
+      aplikacja.interfejs.pokazBladPompy(blad);
+      aplikacja.interfejs.pokazListePomp(
+        listaPomp,
+        aplikacja.interfejs.pobierzWartosciParametrowDoZapisu().trybPomp
+      );
+      zapiszBladDiagnostyczny(
+        blad,
+        "blad-zmiany-danych-pompy",
+        "Nie udało się zapisać danych pompy."
+      );
+      return null;
+    }
+  }
+
+  function obsluzZmianeWymaganegoWysieguPompy(idBudowy, wartosc) {
+    try {
+      const budowa = znajdzBudoweDoZmiany(idBudowy);
+
+      if (!budowa) {
+        throw new Error("Nie znaleziono budowy o ID „" + idBudowy + "”.");
+      }
+
+      aplikacja.pompy.zmienWymaganyWysiegPompyBudowy(budowa, wartosc);
+      oznaczPlanJakoNieprzeliczony(true);
+      aplikacja.interfejs.pokazListeBudow(pobierzAktualnaListeBudow());
+      zapiszZdarzenieDiagnostyczne(
+        "informacja",
+        "zmiana-wymaganego-wysiegu-pompy",
+        "Zmieniono wymagany wysięg pompy dla budowy.",
+        {
+          idBudowy: idBudowy,
+          wymaganyWysiegPompyMetry: budowa.wymaganyWysiegPompyMetry
+        }
+      );
+      return budowa;
+    } catch (blad) {
+      aplikacja.interfejs.pokazBladPompy(blad);
+      aplikacja.interfejs.pokazListeBudow(pobierzAktualnaListeBudow());
+      zapiszBladDiagnostyczny(
+        blad,
+        "blad-zmiany-wymaganego-wysiegu-pompy",
+        "Nie udało się zapisać wymaganego wysięgu pompy."
+      );
+      return null;
+    }
   }
 
   function utworzStanImportuZPamieci(danePlanu) {
@@ -540,6 +640,10 @@
     numerOstatniegoImportu += 1;
     stanImportu = utworzStanImportuZPamieci(danePlanu);
     budowyReczne = skopiujListeBudowDoPamieci(danePlanu.budowyReczne);
+    listaPomp = aplikacja.pompy.normalizujListePomp(
+      danePlanu.listaPomp,
+      danePlanu.parametry && danePlanu.parametry.poczatekDnia
+    );
     const zapisanyCzasRozladunku = Number(
       danePlanu.parametry && danePlanu.parametry.czasRozladunkuMinuty
     );
@@ -584,7 +688,8 @@
       stanImportu,
       pobierzAktualnaListeBudow(),
       danePlanu.parametry || {},
-      czyOstatniPlanPrzeliczony
+      czyOstatniPlanPrzeliczony,
+      listaPomp
     );
 
     if (
@@ -709,6 +814,7 @@
     numerOstatniegoImportu += 1;
     stanImportu = aplikacja.importCsv.utworzPustyStanImportu();
     budowyReczne = [];
+    listaPomp = [];
     czyOstatniPlanPrzeliczony = false;
 
     const wynikUsuniecia = aplikacja.pamiecPlanu.usunBiezacyPlan();
@@ -776,7 +882,9 @@
         obsluzZmianeParametrow,
         obsluzWyczyszczeniePlanu,
         obsluzOtwarcieHistorii,
-        obsluzZmianeStartuBudowy
+        obsluzZmianeStartuBudowy,
+        obsluzZmianePompy,
+        obsluzZmianeWymaganegoWysieguPompy
       );
       aplikacja.pamiecTras.uruchomPamiecTras();
       odswiezStanPamieciTras();

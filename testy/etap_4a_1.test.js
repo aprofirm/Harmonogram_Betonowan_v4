@@ -118,15 +118,70 @@ function sprawdzPusteDane(pompy) {
   });
 }
 
+function sprawdzListePomp(pompy) {
+  let lista = pompy.dopasujLiczbePomp([], 2, "06:30");
+
+  assert.equal(lista.length, 2);
+  assert.equal(lista[0].idPompy, "POMPA-001");
+  assert.equal(lista[1].idPompy, "POMPA-002");
+  assert.equal(lista[0].dostepnaOd, "06:30");
+  assert.equal(lista[0].typ, "wlasna");
+  assert.equal(lista[0].aktywna, true);
+  assert.equal(lista[0].wysiegMetry, null);
+
+  lista = pompy.zmienDanePompy(
+    lista,
+    "POMPA-001",
+    "dostepnaOd",
+    "09:15"
+  );
+  lista = pompy.zmienDanePompy(lista, "POMPA-001", "wysiegMetry", "42");
+  lista = pompy.zmienDanePompy(lista, "POMPA-002", "typ", "zewnetrzna");
+  lista = pompy.zmienDanePompy(lista, "POMPA-002", "aktywna", false);
+
+  assert.equal(lista[0].dostepnaOd, "09:15");
+  assert.equal(lista[0].wysiegMetry, 42);
+  assert.equal(lista[1].typ, "zewnetrzna");
+  assert.equal(pompy.pobierzLiczbeAktywnychPomp(lista), 1);
+
+  const zmniejszonaLista = pompy.dopasujLiczbePomp(lista, 1, "07:00");
+  assert.equal(zmniejszonaLista.length, 1);
+  assert.equal(zmniejszonaLista[0].idPompy, "POMPA-001");
+  assert.equal(zmniejszonaLista[0].dostepnaOd, "09:15");
+  assert.equal(zmniejszonaLista[0].wysiegMetry, 42);
+}
+
+function sprawdzWalidacjePompIWysieguBudowy(pompy) {
+  assert.throws(function () {
+    pompy.dopasujLiczbePomp([], 1.5, "07:00");
+  }, /liczbę całkowitą/i);
+  assert.throws(function () {
+    pompy.dopasujLiczbePomp([], 1, "25:00");
+  }, /HH:MM/i);
+
+  const lista = pompy.dopasujLiczbePomp([], 1, "07:00");
+  assert.throws(function () {
+    pompy.zmienDanePompy(lista, "POMPA-001", "wysiegMetry", 0);
+  }, /większą niż 0/i);
+
+  const budowa = utworzBudowe("WYSIEG-1", "pompa");
+  pompy.zmienWymaganyWysiegPompyBudowy(budowa, "36");
+  assert.equal(budowa.wymaganyWysiegPompyMetry, 36);
+  pompy.zmienWymaganyWysiegPompyBudowy(budowa, "");
+  assert.equal(budowa.wymaganyWysiegPompyMetry, null);
+}
+
 function uruchomTesty() {
   const pompy = wczytajModulPomp();
 
   sprawdzPojedynczaKwalifikacje(pompy);
   sprawdzPodzialListy(pompy);
   sprawdzPusteDane(pompy);
+  sprawdzListePomp(pompy);
+  sprawdzWalidacjePompIWysieguBudowy(pompy);
 
   console.log(
-    "✓ Etap 4A.1: tylko budowy z rodzajem rozładunku Pompa wymagają pompy."
+    "✓ Pompy: kwalifikacja budów, lista zasobów i wysięgi działają poprawnie."
   );
 }
 

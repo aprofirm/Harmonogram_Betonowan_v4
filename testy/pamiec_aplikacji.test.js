@@ -98,6 +98,10 @@ function utworzDokumentTestowy() {
     "maksymalne-opoznienie",
     "tryb-gruszek",
     "liczba-dostepnych-gruszek",
+    "tryb-pomp",
+    "liczba-dostepnych-pomp",
+    "lista-pomp",
+    "podsumowanie-dostepnosci-pomp",
     "przycisk-przelicz",
     "przycisk-wyczysc-plan",
     "sekcja-statusu",
@@ -107,6 +111,8 @@ function utworzDokumentTestowy() {
     "liczba-kursow",
     "minimalna-liczba-gruszek",
     "liczba-dostepnych-gruszek-wynik",
+    "minimalna-liczba-pomp",
+    "liczba-dostepnych-pomp-wynik",
     "liczba-konfliktow",
     "wiersze-harmonogramu",
     "wiersze-kursow",
@@ -671,11 +677,55 @@ async function uruchomTest() {
     odczytajDanePlanu(pamiecLokalna).parametry.liczbaDostepnychGruszek,
     "1"
   );
+
+  const poleTrybuPomp = pierwszaStrona.dokument.elementy["tryb-pomp"];
+  const poleLiczbyPomp = pierwszaStrona.dokument.elementy[
+    "liczba-dostepnych-pomp"
+  ];
+  const kontenerPomp = pierwszaStrona.dokument.elementy["lista-pomp"];
+  poleTrybuPomp.value = "mam-okreslona-liczbe";
+  poleTrybuPomp.zdarzenia.change();
+  poleLiczbyPomp.value = "2";
+  poleLiczbyPomp.zdarzenia.change();
+  assert.equal(poleLiczbyPomp.disabled, false);
+  assert.equal(kontenerPomp.children.length, 2);
+
+  let pierwszaPompa = kontenerPomp.children[0];
+  pierwszaPompa.children[2].children[1].value = "08:15";
+  pierwszaPompa.children[2].children[1].zdarzenia.change();
+  pierwszaPompa = kontenerPomp.children[0];
+  pierwszaPompa.children[3].children[1].value = "42";
+  pierwszaPompa.children[3].children[1].zdarzenia.change();
+  let drugaPompa = kontenerPomp.children[1];
+  drugaPompa.children[1].children[1].value = "zewnetrzna";
+  drugaPompa.children[1].children[1].zdarzenia.change();
+  drugaPompa = kontenerPomp.children[1];
+  drugaPompa.children[4].children[1].checked = false;
+  drugaPompa.children[4].children[1].zdarzenia.change();
+
+  const danePompPrzedPrzeliczeniem = odczytajDanePlanu(pamiecLokalna);
+  assert.equal(danePompPrzedPrzeliczeniem.wersjaStanuAplikacji, 3);
+  assert.equal(danePompPrzedPrzeliczeniem.parametry.trybPomp, "mam-okreslona-liczbe");
+  assert.equal(danePompPrzedPrzeliczeniem.parametry.liczbaDostepnychPomp, "2");
+  assert.equal(danePompPrzedPrzeliczeniem.listaPomp.length, 2);
+  assert.equal(danePompPrzedPrzeliczeniem.listaPomp[0].dostepnaOd, "08:15");
+  assert.equal(danePompPrzedPrzeliczeniem.listaPomp[0].wysiegMetry, 42);
+  assert.equal(danePompPrzedPrzeliczeniem.listaPomp[1].typ, "zewnetrzna");
+  assert.equal(danePompPrzedPrzeliczeniem.listaPomp[1].aktywna, false);
+  assert.equal(
+    pierwszaStrona.dokument.elementy["liczba-dostepnych-pomp-wynik"].textContent,
+    "1"
+  );
   pierwszaStrona.dokument.elementy["przycisk-przelicz"].zdarzenia.click();
 
   danePlanu = odczytajDanePlanu(pamiecLokalna);
   assert.equal(danePlanu.czyHarmonogramPrzeliczony, true);
   assert.equal(odczytajHistorie(pamiecLokalna).zapisy.length, 1);
+  assert.equal(odczytajHistorie(pamiecLokalna).zapisy[0].danePlanu.listaPomp.length, 2);
+  assert.equal(
+    odczytajHistorie(pamiecLokalna).zapisy[0].danePlanu.listaPomp[0].wysiegMetry,
+    42
+  );
   assert.equal(pierwszaStrona.dokument.elementy["liczba-kursow"].textContent, "3");
   assert.equal(
     pierwszaStrona.dokument.elementy["minimalna-liczba-gruszek"].textContent,
@@ -767,6 +817,32 @@ async function uruchomTest() {
     "1"
   );
   assert.equal(
+    stronaPoOdswiezeniu.dokument.elementy["tryb-pomp"].value,
+    "mam-okreslona-liczbe"
+  );
+  assert.equal(
+    stronaPoOdswiezeniu.dokument.elementy["liczba-dostepnych-pomp"].value,
+    "2"
+  );
+  assert.equal(
+    stronaPoOdswiezeniu.dokument.elementy["liczba-dostepnych-pomp-wynik"].textContent,
+    "1"
+  );
+  assert.equal(
+    stronaPoOdswiezeniu.dokument.elementy["lista-pomp"].children.length,
+    2
+  );
+  assert.equal(
+    stronaPoOdswiezeniu.dokument.elementy["lista-pomp"]
+      .children[0].children[2].children[1].value,
+    "08:15"
+  );
+  assert.equal(
+    stronaPoOdswiezeniu.dokument.elementy["lista-pomp"]
+      .children[0].children[3].children[1].value,
+    "42"
+  );
+  assert.equal(
     stronaPoOdswiezeniu.dokument.elementy["nazwa-pliku-csv"].textContent,
     "plan-testowy.csv"
   );
@@ -788,6 +864,7 @@ async function uruchomTest() {
     stronaPoOdswiezeniu.dokument.elementy["minimalna-liczba-gruszek"].textContent,
     "0"
   );
+  assert.equal(stronaPoOdswiezeniu.dokument.elementy["lista-pomp"].children.length, 0);
   assert.equal(pamiecLokalna.getItem(kluczPlanu), null);
   assert.equal(odczytajHistorie(pamiecLokalna).zapisy.length, 1);
   assert.equal(JSON.parse(pamiecLokalna.getItem(kluczPamieciTras)).trasy.length, 2);

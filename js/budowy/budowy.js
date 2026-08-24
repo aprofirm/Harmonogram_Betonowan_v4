@@ -328,6 +328,7 @@
       statusRealizacji: iloscBetonuLiczbaM3 === 0 ? "zrealizowana" : "do-realizacji",
       dataPlanowana: String(daneBudowy.dataPlanowana || "").trim(),
       rodzajRozladunku: String(daneBudowy.rodzajRozladunku || "").trim(),
+      wymaganyWysiegPompyMetry: null,
       zrodlo: "csv",
       daneZrodlowe: daneBudowy.daneZrodlowe
     }, utworzPoczatkoweCzasyRobocze());
@@ -381,6 +382,7 @@
       statusRealizacji: "do-realizacji",
       dataPlanowana: "",
       rodzajRozladunku: "",
+      wymaganyWysiegPompyMetry: null,
       zrodlo: "reczna",
       daneZrodlowe: null
     }, utworzPoczatkoweCzasyRobocze());
