@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 22533)
-Total output lines: 1727
-
 # ETAPY ROZWOJU — Harmonogram Betonowań v4
 
 Ten dokument opisuje kolejność rozwoju projektu `Harmonogram_Betonowan_v4`.
@@ -762,7 +759,231 @@ Uprościć codzienną pracę operatora bez przenoszenia logiki biznesowej do int
 ## Zakres
 
 - czytelny ekran główny,
-- prosty przepływ `…2533 tokens truncated…n, pozostawiając historię
+- prosty przepływ `wczytaj CSV → sprawdź → przelicz`,
+- panel plików CSV,
+- próba wykorzystania wybranego przez użytkownika folderu, jeśli pozwala na to przeglądarka,
+- lista najnowszych/dzisiejszych plików, jeśli dostęp do folderu jest dostępny,
+- drag & drop jako podstawowa lub awaryjna metoda importu,
+- czytelna tabela harmonogramu,
+- statusy budów,
+- widoczne konflikty,
+- kolory używane pomocniczo, ale nie jako jedyne źródło informacji,
+- możliwość ręcznej edycji wybranych wartości,
+- panel gruszek,
+- panel pomp,
+- panel parametrów,
+- szczegóły lokalizacji i trasy,
+- widoczna informacja o wartościach automatycznych i ręcznie zmienionych,
+- oddzielenie widoku operatora od szczegółowej diagnostyki technicznej.
+
+## Kryteria zakończenia
+
+- [ ] podstawowa praca nie wymaga przechodzenia przez wiele ekranów,
+- [ ] najważniejsze problemy są widoczne bez otwierania narzędzi deweloperskich,
+- [ ] operator może rozpoznać, co program wyliczył automatycznie, a co zostało zmienione ręcznie,
+- [ ] interfejs nie zawiera logiki obliczeniowej,
+- [ ] aplikacja nadal może działać lokalnie.
+
+## Test regresji
+
+- [ ] wyniki silnika przed i po zmianach wyglądu są identyczne dla tych samych danych,
+- [ ] wszystkie wcześniejsze testy funkcjonalne przechodzą.
+
+---
+
+# ETAP 8 — Utwardzenie, testy regresji i wersja użytkowa
+
+## Cel
+
+Przygotować program do regularnej pracy i wychwycić przypadki, które mogą pojawić się w rzeczywistych danych.
+
+## Zakres testów
+
+- pusty CSV,
+- błędny CSV,
+- brak wymaganej kolumny,
+- niepełne dane pojedynczej budowy,
+- zero budów,
+- jedna budowa,
+- wiele budów,
+- budowa ręczna,
+- usunięcie budowy,
+- zmiana ilości betonu,
+- kolejny CSV,
+- ponowne wczytanie tego samego CSV,
+- jedna gruszka,
+- za mało gruszek,
+- zmiana liczby gruszek,
+- brak pomp,
+- jedna pompa,
+- za mało pomp,
+- zmiana liczby pomp,
+- pompa niedostępna,
+- konflikt dwóch budów,
+- przekroczenie limitu startu,
+- przekroczenie maksymalnego przestoju,
+- brak internetu,
+- awaria usługi mapowej,
+- adres niepełny,
+- adres niejednoznaczny,
+- ręczna korekta czasu dojazdu,
+- wielokrotne szybkie kliknięcie `Przelicz`,
+- ponowne przeliczenie tych samych danych,
+- brak pozostawiania starych kursów i zajętości.
+
+## Kryteria zakończenia
+
+- [ ] wszystkie krytyczne scenariusze mają test,
+- [ ] brak znanych błędów powodujących błędny przydział zasobów bez ostrzeżenia,
+- [ ] brak znanych błędów pozostawiających dane starego harmonogramu,
+- [ ] komunikaty o błędach są zrozumiałe dla operatora,
+- [ ] program uruchamia się w wymaganym trybie lokalnym,
+- [ ] podstawowe działanie nie wymaga internetu,
+- [ ] wyniki przykładowych scenariuszy zostały ręcznie zweryfikowane,
+- [ ] dokumentacja odpowiada rzeczywistemu zachowaniu programu.
+
+---
+
+# Zasady pracy pomiędzy etapami
+
+## 1. Najpierw test, potem kolejny etap
+
+Nie dokładamy następnej dużej funkcji do niedziałającego fundamentu.
+
+## 2. Małe commity
+
+Zmiany powinny być dzielone według logicznego celu. Nie łączymy w jednym commicie kilku niezależnych dużych przebudów.
+
+## 3. Aktualizacja statusu
+
+Po zakończeniu etapu aktualizujemy checkbox na początku tego dokumentu.
+
+## 4. Test regresji
+
+Każdy etap sprawdza nie tylko nową funkcję, ale też kluczowe funkcje z wcześniejszych etapów.
+
+## 5. Nowe decyzje
+
+Jeżeli podczas implementacji podejmiemy trwałą decyzję biznesową lub architektoniczną, aktualizujemy `PROJECT_DECISIONS.md`.
+
+Jeżeli zmienia się wyłącznie sposób implementacji bez zmiany zachowania programu, stosujemy `ZASADY_KODU.md`, ale nie dopisujemy zbędnej decyzji biznesowej.
+
+## 6. Nie omijamy modułowości dla szybkości
+
+Jeżeli szybkie rozwiązanie wymaga wymieszania importu, interfejsu, pomp i gruszek w jednym miejscu, wybieramy wolniejsze do napisania, ale prostsze do utrzymania rozwiązanie modułowe.
+
+## 7. Działająca wersja po każdym etapie
+
+Repozytorium powinno po każdym zakończonym etapie zawierać możliwą do uruchomienia wersję programu.
+
+## 8. Aktualizacja pamięci projektu
+
+Na końcu każdej rozmowy projektowej sprawdzamy, czy zmieniły się decyzje, backlog, status etapu albo następny krok. Aktualizujemy odpowiedni dokument przed końcowym podsumowaniem zadania.
+
+Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomysł pozostaje w `POMYSLY_I_BACKLOG.md`, dopóki nie zostanie wyraźnie zatwierdzony i przeniesiony do `PROJECT_DECISIONS.md`.
+
+---
+
+# Kolejny krok
+
+Wykonać **4A.2 — ustalenie czasu obsługi pompy**. Rozstrzygnąć źródła czasu
+przygotowania przed betonowaniem, właściwej pracy, zakończenia, mycia oraz
+przygotowania do przejazdu. Wartości biznesowe muszą pozostać parametrami, a
+nie przypadkowymi liczbami zapisanymi na stałe w silniku.
+
+
+## Weryfikacja produkcyjnego KDX — 2026-08-14
+
+- [x] prawdziwy eksport KDX został wczytany przez GitHub Pages;
+- [x] rozpoznano 8 pozycji, firmy, budowy, beton, ilości i godziny;
+- [x] brak ID został bezpiecznie obsłużony przez serię `CSV-...`;
+- [x] potwierdzono rzeczywisty zapis tolerancji `13:00 (+60 min)` jako okno 13:00–14:00;
+- [x] potwierdzono, że `0,0 m³` oznacza pozycję zrealizowaną.
+
+Etap 2 jest zweryfikowany na rzeczywistych danych KDX i pozostaje zamknięty.
+
+## Punkt 3A — generowanie kursów — 2026-08-14
+
+- [x] kursy są generowane w module `gruszki`, bez zależności od interfejsu;
+- [x] pełny kurs nie przekracza ustawionej pojemności gruszki;
+- [x] ostatni kurs może być niepełny;
+- [x] pozycje z `0,0 m³` nie generują kursów;
+- [x] każdy kurs ma własne ID, numer, ilość i powiązanie z budową;
+- [x] zmiana pojemności powoduje utworzenie nowej listy kursów od początku;
+- [x] testy Etapów 1–2, KDX, diagnostyki i punktu 3A przechodzą.
+- [x] test ręczny operatora na GitHub Pages zakończył się powodzeniem.
+
+Etap 3 pozostaje w toku. Punkt 3A odpowiada wyłącznie za liczbę i ilości kursów;
+godziny cyklu są dokładane w kroku 3B.1, nadal bez przydziału konkretnych gruszek.
+
+## Krok 3B.1 — podstawowe czasy kursów — 2026-08-15
+
+- [x] domyślny czas załadunku wynosi `10 min` i pozostaje parametrem;
+- [x] domyślny czas rozładunku wynosi `15 min` dla każdego kursu;
+- [x] czas dojazdu i powrotu jest przechowywany osobno dla każdej budowy;
+- [x] pierwsze wpisanie jednego czasu przejazdu uzupełnia drugi taką samą
+  wartością, a późniejsze zmiany obu pól pozostają niezależne;
+- [x] brak wymaganego czasu przejazdu daje czytelny komunikat z ID budowy;
+- [x] operator może dodać osobny dodatkowy czas załadunku i rozładunku dla budowy;
+- [x] każdy kurs ma godzinę rozpoczęcia i zakończenia załadunku, dojazdu, rozładunku oraz powrotu;
+- [x] każdy kurs ma godzinę ponownej gotowości gruszki;
+- [x] liczba kursów nie zmienia się przez dodanie czasów;
+- [x] test automatyczny 3B.1 i pełna regresja przechodzą;
+- [x] test ręczny na GitHub Pages potwierdził poprawne działanie.
+
+Krok 3B.1 jest zakończony. Punkt 3B pozostaje otwarty, ponieważ następny jest
+krok 3B.2 — oddzielenie rytmu dostaw od fizycznego czasu cyklu. Dopiero po jego
+zakończeniu można rozpocząć punkt 3C dotyczący przydziału gruszek.
+
+## KP-1.1 — plan trwałej pamięci dnia — 2026-08-15
+
+- [x] potwierdzono, że obowiązkowa kontrola podetapów jest już zapisana w
+  `AGENTS.md`, `ZASADY_KODU.md` i `ETAPY_ROZWOJU.md`;
+- [x] zapisano wszystkie znane podetapy KP-1 przed rozpoczęciem kodowania;
+- [x] zapisano zatwierdzone zasady lokalnego przechowywania i prywatności danych;
+- [x] ustalono, że wynik po odświeżeniu będzie obliczany ponownie z odtworzonych
+  danych zamiast przechowywania starego wyniku jako źródła prawdy;
+- [x] przygotowano osobną instrukcję testu operatorskiego KP-1;
+- [x] nie zmieniono jeszcze logiki aplikacji ani interfejsu;
+- [x] pełna regresja sześciu dotychczasowych zestawów testów przechodzi.
+
+KP-1.1 jest zakończony. KP-1 pozostaje otwarty, a następnym podetapem jest
+KP-1.2 — wersjonowany moduł pamięci planu. Po całkowitym zamknięciu KP-1 wracamy
+do 3B.2; punkt 3C nadal pozostaje zablokowany.
+
+## KP-1.2 — wersjonowany moduł pamięci planu — 2026-08-15
+
+- [x] dodano niezależny moduł `js/pamiec/pamiec_planu.js`;
+- [x] zapis otrzymuje numer wersji, czas zapisu i osobny klucz pamięci;
+- [x] poprawny plan można odczytać po utworzeniu nowej instancji strony;
+- [x] brak zapisu jest odróżniany od uszkodzonego zapisu;
+- [x] uszkodzony zapis jest bezpiecznie pomijany i usuwany;
+- [x] zapis z nieobsługiwanej wersji jest pomijany bez automatycznego usuwania;
+- [x] blokada lub błąd `localStorage` przełącza moduł na pamięć bieżącej sesji;
+- [x] moduł jest ładowany lokalnie przez `index.html` i nie wymaga internetu;
+- [x] osobny test KP-1.2 oraz pełna regresja siedmiu zestawów testów przechodzą;
+- [x] automatyczne zapisywanie danych aplikacji nie zostało jeszcze uruchomione.
+
+KP-1.2 jest zakończony. KP-1 pozostaje otwarty, a następnym podetapem jest
+KP-1.3 — podłączenie automatycznego zapisu importu, budów ręcznych, parametrów,
+czasów roboczych i informacji o wykonanym przeliczeniu. Po całkowitym zamknięciu
+KP-1 wracamy do 3B.2; punkt 3C nadal pozostaje zablokowany.
+
+## KP-1.3–KP-1.7 — zapis, historia, odtwarzanie i czyszczenie — 2026-08-15
+
+- [x] bieżący plan jest nadpisywany po imporcie, dodaniu budowy ręcznej,
+  zmianie parametrów i zmianie czasów roboczych;
+- [x] zapis nie zawiera `wierszeZrodlowe` ani pól `daneZrodlowe` z surowego CSV;
+- [x] skuteczne przeliczenie tworzy zapis historyczny z datą i godziną;
+- [x] identyczne kolejne przeliczenie nie tworzy duplikatu;
+- [x] historia przechowuje maksymalnie 100 zapisów i ma limit bezpieczeństwa
+  3 MB;
+- [x] po odświeżeniu odtwarzany jest plan roboczy, a przeliczony wynik powstaje
+  ponownie z zapisanych danych;
+- [x] przycisk na dole panelu otwiera historię od najnowszego zapisu;
+- [x] wczytanie historycznego planu wymaga potwierdzenia;
+- [x] anulowanie czyszczenia nie zmienia danych;
+- [x] potwierdzone czyszczenie usuwa tylko bieżący plan, pozostawiając historię
   i diagnostykę;
 - [x] test modułu pamięci oraz test pełnego przepływu aplikacji przechodzą.
 
