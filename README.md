@@ -353,7 +353,6 @@ pompy**. Gotowy jest także wcześniejszy fundament **4B.1** i **4C.1–4C.2**:
 model pompy, wspólny panel zasobów, lista z dostępnością i wysięgiem oraz
 pamięć planu. Standardowy wysięg wynosi `32 m`; przy budowie dodatkowe pole jest
 ukryte i pojawia się dopiero po zaznaczeniu **Większa pompa**. Zmiana jest na
-`main` i oczekuje na krótki test operatora po odświeżeniu strony. Po zapisaniu
-wyniku testu następny krok to **4A.2 — ustalenie parametrów czasu pełnej obsługi
-pompy**. Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem
-Etapu 5.
+`main` i została potwierdzona przez operatora na opublikowanej stronie.
+Następny krok to **4A.2 — ustalenie parametrów czasu pełnej obsługi pompy**.
+Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.

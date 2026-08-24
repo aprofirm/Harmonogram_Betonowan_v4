@@ -5,9 +5,9 @@
 Etap 4 jest rozpoczęty. Zakończono **4A.1**, a na zlecenie operatora wcześniej
 wdrożono również model **4B.1** oraz panel i pamięć **4C.1–4C.2**. Następny
 podetap pozostaje bez zmian: **4A.2 — czas obsługi pompy**. Standardowy wysięg
-`32 m` i zwijane pole **Większa pompa** są opublikowane na `main`; oczekują na
-krótki test operatora w przeglądarce. Pełna regresja obejmuje obecnie `25`
-zestawów testów.
+`32 m` i zwijane pole **Większa pompa** są opublikowane na `main` i zostały
+potwierdzone przez operatora w przeglądarce. Pełna regresja obejmuje obecnie
+`25` zestawów testów.
 
 ## Cel
 
@@ -60,14 +60,11 @@ obejmować:
   pojawia się po zaznaczeniu **Większa pompa**, przyjmuje wartość powyżej
   `32 m`, a odznaczenie przywraca standard.
 
-Najbliższy test operatora po publikacji:
+Test operatora po publikacji — zaliczony:
 
-1. wykonać `Ctrl + F5` i wczytać plan zawierający budowę z pompą;
-2. potwierdzić opis **Pompa · 32 m** oraz brak stale widocznego pola długości;
-3. zaznaczyć **Większa pompa**, wpisać `36 m` i odświeżyć stronę;
-4. potwierdzić zachowanie `36 m`, odznaczyć przełącznik i sprawdzić powrót do
-   `32 m`;
-5. sprawdzić, czy standardowe wiersze budów są ponownie niskie i czytelne.
+1. [x] odświeżono opublikowaną stronę i wczytano plan z budowami pompowanymi;
+2. [x] potwierdzono standard `32 m` i kompaktowy wygląd wierszy;
+3. [x] potwierdzono działanie wyboru większej pompy.
 
 ### 4D — pełny okres zajętości
 

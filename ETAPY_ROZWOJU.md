@@ -1740,14 +1740,12 @@ rzeczywisty wynik liczby potrzebnych pomp. Następny krok pozostaje bez zmian:
   bezpiecznie migrowane do standardu;
 - [x] pełna lokalna regresja wszystkich `25` zestawów testów przeszła;
 - [x] zmiana została opublikowana na `main` w commicie `c94969a`;
-- [ ] operator ma po aktualizacji GitHub Pages wykonać `Ctrl + F5`, wczytać plan
-  testowy i potwierdzić niski, czytelny wiersz **Pompa · 32 m**;
-- [ ] operator ma zaznaczyć **Większa pompa**, wpisać np. `36 m`, sprawdzić
-  zapis po odświeżeniu, a następnie odznaczyć przełącznik i potwierdzić powrót
-  do `32 m`.
+- [x] operator po aktualizacji GitHub Pages wykonał `Ctrl + F5`, wczytał plan
+  testowy i potwierdził niski, czytelny wiersz **Pompa · 32 m**;
+- [x] operator potwierdził poprawne działanie opublikowanej zmiany, w tym
+  kompaktowy układ i obsługę większego wysięgu pompy.
 
-Po zaliczeniu tego krótkiego testu należy zapisać jego wynik. Nie zamyka on
-jeszcze 4C.3 ani 4I.2, ponieważ te punkty obejmują również dalsze działanie
-pełnej listy i rzeczywistych wyników silnika pomp. Następnym podetapem
-implementacyjnym pozostaje **4A.2 — ustalenie parametrów czasu pełnej obsługi
-pompy**.
+Test operatora standardowego wysięgu został zaliczony. Nie zamyka on jeszcze
+4C.3 ani 4I.2, ponieważ te punkty obejmują również dalsze działanie pełnej
+listy i rzeczywistych wyników silnika pomp. Następnym podetapem implementacyjnym
+jest **4A.2 — ustalenie parametrów czasu pełnej obsługi pompy**.
