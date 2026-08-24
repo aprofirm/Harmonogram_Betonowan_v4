@@ -370,6 +370,166 @@ function sprawdzMigracjeTrasZeStarszegoPlanu() {
   );
 }
 
+function sprawdzStarszyPlanBezStartuZadanego() {
+  const pamiecLokalna = utworzPamiecLokalna();
+  const ustawieniaPotwierdzenia = { wynik: true };
+  const srodowiskoPrzygotowawcze = uruchomAplikacje(
+    pamiecLokalna,
+    ustawieniaPotwierdzenia
+  );
+  const starszaBudowa = srodowiskoPrzygotowawcze.aplikacja.budowy
+    .utworzBudoweZImportu({
+      idBudowy: "START-001",
+      firma: "Firma starszego planu",
+      budowa: "Budowa bez startu zadanego",
+      startPlanowany: "08:00",
+      iloscBetonuM3: "8"
+    }, 2);
+
+  delete starszaBudowa.startZadany;
+  starszaBudowa.startRoboczy = "08:20";
+
+  pamiecLokalna.setItem(kluczPlanu, JSON.stringify({
+    wersja: 1,
+    zapisano: "2026-08-20T12:00:00.000Z",
+    danePlanu: {
+      wersjaStanuAplikacji: 1,
+      nazwaPliku: "starszy-start.csv",
+      separator: ";",
+      ostrzezeniaImportu: [],
+      budowyZImportu: [starszaBudowa],
+      budowyReczne: [],
+      parametry: { czasRozladunkuMinuty: "15" },
+      czyHarmonogramPrzeliczony: false
+    }
+  }));
+
+  const stronaPoAktualizacji = uruchomAplikacje(
+    pamiecLokalna,
+    ustawieniaPotwierdzenia
+  );
+  const komorkaStartu = znajdzPierwszaKomorkeStartu(stronaPoAktualizacji);
+  const zmigrowanaBudowa = odczytajDanePlanu(pamiecLokalna)
+    .budowyZImportu[0];
+
+  assert.equal(komorkaStartu.children[0].children[0].value, "08:00");
+  assert.equal(komorkaStartu.children[0].children[1].disabled, true);
+  assert.equal(komorkaStartu.children[1].textContent, "Plan: 08:00");
+  assert.equal(zmigrowanaBudowa.startPlanowanyZrodlowy, "08:00");
+  assert.equal(zmigrowanaBudowa.startPlanowany, "08:00");
+  assert.equal(zmigrowanaBudowa.startZadany, "08:00");
+  assert.equal(zmigrowanaBudowa.startRoboczy, "08:20");
+}
+
+async function sprawdzPamiecKorektyStartu() {
+  const pamiecLokalna = utworzPamiecLokalna();
+  const ustawieniaPotwierdzenia = { wynik: true };
+  const pierwszaStrona = uruchomAplikacje(
+    pamiecLokalna,
+    ustawieniaPotwierdzenia
+  );
+
+  await wczytajCsv(pierwszaStrona);
+
+  const poleDojazdu = znajdzPierwszePoleDojazdu(pierwszaStrona);
+  poleDojazdu.value = "25";
+  poleDojazdu.zdarzenia.change();
+  pierwszaStrona.dokument.elementy["przycisk-przelicz"].zdarzenia.click();
+
+  assert.equal(odczytajHistorie(pamiecLokalna).zapisy.length, 1);
+
+  let komorkaStartu = znajdzPierwszaKomorkeStartu(pierwszaStrona);
+  komorkaStartu.children[0].children[0].value = "08:30";
+  komorkaStartu.children[0].children[0].zdarzenia.change();
+
+  let danePlanu = odczytajDanePlanu(pamiecLokalna);
+  assert.equal(danePlanu.budowyZImportu[0].startPlanowanyZrodlowy, "08:00");
+  assert.equal(danePlanu.budowyZImportu[0].startPlanowany, "08:00");
+  assert.equal(danePlanu.budowyZImportu[0].startZadany, "08:30");
+  assert.equal(danePlanu.budowyZImportu[0].startRoboczy, "08:30");
+  assert.equal(danePlanu.czyHarmonogramPrzeliczony, false);
+  assert.equal(odczytajHistorie(pamiecLokalna).zapisy.length, 1);
+
+  const stronaPoKorekcie = uruchomAplikacje(
+    pamiecLokalna,
+    ustawieniaPotwierdzenia
+  );
+  komorkaStartu = znajdzPierwszaKomorkeStartu(stronaPoKorekcie);
+  assert.equal(komorkaStartu.children[0].children[0].value, "08:30");
+  assert.equal(komorkaStartu.children[0].children[1].disabled, false);
+  assert.equal(komorkaStartu.children[1].textContent, "Plan: 08:00");
+  assert.equal(
+    stronaPoKorekcie.dokument.elementy["liczba-kursow"].textContent,
+    "0"
+  );
+
+  stronaPoKorekcie.dokument.elementy["przycisk-przelicz"].zdarzenia.click();
+
+  const historiaPoKorekcie = odczytajHistorie(pamiecLokalna);
+  const pierwszyZapis = historiaPoKorekcie.zapisy[0];
+  const zapisKorekty = historiaPoKorekcie.zapisy[
+    historiaPoKorekcie.zapisy.length - 1
+  ];
+  assert.equal(historiaPoKorekcie.zapisy.length, 2);
+  assert.equal(
+    pierwszyZapis.danePlanu.budowyZImportu[0].startZadany,
+    "08:00"
+  );
+  assert.equal(
+    zapisKorekty.danePlanu.budowyZImportu[0].startPlanowany,
+    "08:00"
+  );
+  assert.equal(
+    zapisKorekty.danePlanu.budowyZImportu[0].startZadany,
+    "08:30"
+  );
+  assert.equal(
+    stronaPoKorekcie.aplikacja.pamiecPlanu
+      .odczytajPlanHistoryczny(zapisKorekty.idZapisu)
+      .danePlanu.budowyZImportu[0].startRoboczy,
+    "08:30"
+  );
+
+  const stronaPoPrzeliczeniu = uruchomAplikacje(
+    pamiecLokalna,
+    ustawieniaPotwierdzenia
+  );
+  komorkaStartu = znajdzPierwszaKomorkeStartu(stronaPoPrzeliczeniu);
+  assert.equal(komorkaStartu.children[0].children[0].value, "08:30");
+  assert.equal(komorkaStartu.children[0].children[1].disabled, false);
+  assert.equal(
+    stronaPoPrzeliczeniu.dokument.elementy["liczba-kursow"].textContent,
+    "2"
+  );
+
+  komorkaStartu.children[0].children[1].zdarzenia.click();
+  danePlanu = odczytajDanePlanu(pamiecLokalna);
+  assert.equal(danePlanu.budowyZImportu[0].startPlanowany, "08:00");
+  assert.equal(danePlanu.budowyZImportu[0].startZadany, "08:00");
+  assert.equal(danePlanu.budowyZImportu[0].startRoboczy, "08:00");
+  assert.equal(danePlanu.czyHarmonogramPrzeliczony, false);
+
+  const stronaPoPrzywroceniu = uruchomAplikacje(
+    pamiecLokalna,
+    ustawieniaPotwierdzenia
+  );
+  komorkaStartu = znajdzPierwszaKomorkeStartu(stronaPoPrzywroceniu);
+  assert.equal(komorkaStartu.children[0].children[0].value, "08:00");
+  assert.equal(komorkaStartu.children[0].children[1].disabled, true);
+  assert.equal(
+    stronaPoPrzywroceniu.dokument.elementy["liczba-kursow"].textContent,
+    "0"
+  );
+
+  komorkaStartu.children[0].children[0].value = "08:45";
+  komorkaStartu.children[0].children[0].zdarzenia.change();
+  await wczytajCsv(stronaPoPrzywroceniu);
+  danePlanu = odczytajDanePlanu(pamiecLokalna);
+  assert.equal(danePlanu.budowyZImportu[0].startPlanowany, "08:00");
+  assert.equal(danePlanu.budowyZImportu[0].startZadany, "08:00");
+  assert.equal(danePlanu.budowyZImportu[0].startRoboczy, "08:00");
+}
+
 async function uruchomTest() {
   const pamiecLokalna = utworzPamiecLokalna();
   const ustawieniaPotwierdzenia = { wynik: true };
@@ -654,7 +814,14 @@ async function uruchomTest() {
 }
 
 sprawdzMigracjeTrasZeStarszegoPlanu();
-uruchomTest().catch(function (blad) {
+sprawdzStarszyPlanBezStartuZadanego();
+uruchomTest().then(function () {
+  return sprawdzPamiecKorektyStartu();
+}).then(function () {
+  console.log(
+    "✓ KP-4.4: korekta startu działa w pamięci, historii i starszych planach."
+  );
+}).catch(function (blad) {
   console.error(blad);
   process.exitCode = 1;
 });

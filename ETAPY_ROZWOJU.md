@@ -223,7 +223,7 @@ nie może utracić godziny źródłowej z KDX.
 - [x] **KP-4.3 — walidacja i wynik nieaktualny:** poprawny format `HH:MM`, brak
   cichej zmiany `StartPlanowany` oraz oznaczenie harmonogramu jako wymagającego
   ponownego przeliczenia po zmianie lub przywróceniu.
-- [ ] **KP-4.4 — pamięć i zgodność:** zapis korekty w bieżącym planie i historii,
+- [x] **KP-4.4 — pamięć i zgodność:** zapis korekty w bieżącym planie i historii,
   odtworzenie po odświeżeniu oraz bezpieczne otwieranie starszych zapisów bez
   `StartZadany`.
 - [ ] **KP-4.5 — testy, publikacja i test operatora:** osobny test automatyczny,
@@ -886,11 +886,11 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **KP-4.4 — pamięć i zgodność korekty godziny**. Potwierdzić zapis
-`StartZadany` w bieżącym planie i historii, odtworzenie korekty po odświeżeniu
-oraz bezpieczne otwieranie starszych zapisów bez tego pola. Po zamknięciu
-całego KP-4 następnym podetapem będzie **4A.1 — kwalifikacja budów wymagających
-pompy**.
+Wykonać **KP-4.5 — końcową regresję, publikację i test operatora**. Na
+rzeczywistym planie potwierdzić zmianę godziny, ponowne przeliczenie,
+odtworzenie korekty po odświeżeniu, przywrócenie godziny bazowej oraz brak
+przeniesienia korekty do kolejnego importu. Po zamknięciu całego KP-4 następnym
+podetapem będzie **4A.1 — kwalifikacja budów wymagających pompy**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1645,3 +1645,26 @@ Podetap **KP-4.2** jest zakończony. KP-4 pozostaje otwarty. Następny podetap t
 
 Podetap **KP-4.3** jest zakończony. KP-4 pozostaje otwarty. Następny podetap to
 **KP-4.4 — pamięć korekty i zgodność ze starszymi zapisami**.
+
+
+## KP-4.4 — pamięć korekty i zgodność — 2026-08-24
+
+- [x] `StartZadany` jest zapisywany w bieżącym planie razem z
+  `StartPlanowany`, `StartPlanowanyZrodlowy` i `StartRoboczy`;
+- [x] poprawna korekta pozostaje w bieżącym planie po odświeżeniu również
+  przed ponownym przeliczeniem;
+- [x] po przeliczeniu skorygowany plan otrzymuje osobny zapis historyczny, a
+  wcześniejszy wpis zachowuje swoją poprzednią godzinę;
+- [x] przeliczony plan z korektą odtwarza po odświeżeniu zarówno pole godziny,
+  jak i wynik harmonogramu;
+- [x] przywrócenie godziny bazowej zapisuje się trwale, a kolejny import tworzy
+  budowę z nowym `StartZadany` równym jej `StartPlanowany`;
+- [x] bieżący plan ze starszego formatu bez `StartZadany` otrzymuje tę wartość
+  z `StartPlanowany` i zostaje zapisany już w uzupełnionym formacie;
+- [x] migracja nie zmienia godziny źródłowej ani istniejącego
+  `StartRoboczy` i nie przepisuje wcześniejszych wpisów historii;
+- [x] test pełnego przepływu pamięci i osobny test KP-4 potwierdzają zmianę,
+  odświeżenie, historię, przywrócenie, nowy import i zgodność starszego planu.
+
+Podetap **KP-4.4** jest zakończony. KP-4 pozostaje otwarty. Następny podetap to
+**KP-4.5 — końcowa regresja, publikacja i test operatora**.

@@ -186,6 +186,7 @@ function sprawdzPoleZapisuPlanu() {
     kodAplikacji,
     /"startPlanowany",\s*"startZadany",\s*"startRoboczy"/
   );
+  assert.match(kodAplikacji, /migracja-startow-zadanych/);
 }
 
 function sprawdzInterfejsKorektyStartu() {
@@ -204,7 +205,7 @@ function sprawdzInterfejsKorektyStartu() {
   );
 
   assert.match(html, /<th>Start do przeliczenia<\/th>/);
-  assert.match(html, /KP-4\.3 · walidacja korekty startu/);
+  assert.match(html, /KP-4\.4 · pamięć korekty startu/);
   assert.match(interfejs, /className = "pole-startu-budowy"/);
   assert.match(interfejs, /type = "time"/);
   assert.match(interfejs, /step = "60"/);
@@ -229,7 +230,7 @@ function uruchomTesty() {
   sprawdzInterfejsKorektyStartu();
 
   console.log(
-    "✓ KP-4.1–KP-4.3: korekta startu i walidacja HH:MM działają poprawnie."
+    "✓ KP-4.1–KP-4.4: model, walidacja i pamięć korekty startu działają."
   );
 }
 

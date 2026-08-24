@@ -548,18 +548,26 @@
         ? zapisanyCzasRozladunku
         : aplikacja.konfiguracja.parametryDomyslne.czasRozladunkuMinuty;
     let liczbaMigrowanychCzasowRozladunku = 0;
+    let liczbaMigrowanychStartowZadanych = 0;
 
     stanImportu.budowy.concat(budowyReczne).forEach(function (budowa) {
+      const czyBrakujeStartuZadanego =
+        !Object.prototype.hasOwnProperty.call(budowa, "startZadany");
       const czyWymagaMigracji =
         !Object.prototype.hasOwnProperty.call(
           budowa,
           "czasRozladunkuRoboczyMinuty"
         ) || Number(budowa.dodatkowyCzasRozladunkuMinuty) !== 0;
 
+      aplikacja.budowy.uzupelnijStartZadanyBudowy(budowa);
       aplikacja.budowy.migrujCzasRozladunkuBudowy(
         budowa,
         czasRozladunkuDoMigracji
       );
+
+      if (czyBrakujeStartuZadanego) {
+        liczbaMigrowanychStartowZadanych += 1;
+      }
 
       if (czyWymagaMigracji) {
         liczbaMigrowanychCzasowRozladunku += 1;
@@ -579,13 +587,28 @@
       czyOstatniPlanPrzeliczony
     );
 
-    if (liczbaMigrowanychCzasowRozladunku > 0) {
+    if (
+      liczbaMigrowanychCzasowRozladunku > 0 ||
+      liczbaMigrowanychStartowZadanych > 0
+    ) {
       zapiszBiezacyPlan();
+    }
+
+    if (liczbaMigrowanychCzasowRozladunku > 0) {
       zapiszZdarzenieDiagnostyczne(
         "informacja",
         "migracja-czasow-rozladunku",
         "Przeniesiono czasy rozładunku ze starszego formatu planu.",
         { liczbaBudow: liczbaMigrowanychCzasowRozladunku }
+      );
+    }
+
+    if (liczbaMigrowanychStartowZadanych > 0) {
+      zapiszZdarzenieDiagnostyczne(
+        "informacja",
+        "migracja-startow-zadanych",
+        "Uzupełniono godziny zadane w budowach ze starszego planu.",
+        { liczbaBudow: liczbaMigrowanychStartowZadanych }
       );
     }
 

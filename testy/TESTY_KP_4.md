@@ -2,11 +2,12 @@
 
 ## Status
 
-Podetapy **KP-4.1–KP-4.3** są zaimplementowane. Test
+Podetapy **KP-4.1–KP-4.4** są zaimplementowane. Test
 `testy/kp_4.test.js` obejmuje model i wpływ korekty na godziny kursu, a
 `testy/pamiec_aplikacji.test.js` sprawdza pole w tabeli, zmianę, zapis bieżącego
-planu, nieaktualny wynik, błędną próbę i przywrócenie. Następny podetap to
-**KP-4.4 — pamięć korekty i zgodność ze starszymi zapisami**.
+planu i historii, odświeżenie, błędną próbę, przywrócenie, kolejny import oraz
+migrację starszego planu. Następny podetap to **KP-4.5 — końcowa regresja,
+publikacja i test operatora**.
 
 ## Zasada
 
@@ -27,10 +28,10 @@ Test całego KP-4 powinien potwierdzić:
 4. [x] przycisk przywrócenia odtwarza godzinę źródłową tylko wybranej budowy;
 5. [x] błędny format, pusta wartość i nieistniejąca budowa dają czytelny błąd;
 6. [x] zmiana i przywrócenie oznaczają wcześniejszy wynik jako nieaktualny;
-7. korekta jest zapisywana w bieżącym planie i historii;
-8. korekta zostaje odtworzona po odświeżeniu;
+7. [x] korekta jest zapisywana w bieżącym planie i historii;
+8. [x] korekta zostaje odtworzona po odświeżeniu;
 9. [x] starszy obiekt bez `StartZadany` przyjmuje bezpiecznie `StartPlanowany`;
-10. kolejny import nie pozostawia korekt należących do poprzedniego planu;
+10. [x] kolejny import nie pozostawia korekt należących do poprzedniego planu;
 11. [x] `StartRoboczy` pozostaje osobnym polem wyniku i nie nadpisuje źródła;
 12. [x] wszystkie wcześniejsze testy Etapu 3 nadal przechodzą.
 
