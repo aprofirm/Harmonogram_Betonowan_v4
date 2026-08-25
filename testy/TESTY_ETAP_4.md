@@ -2,8 +2,8 @@
 
 ## Status
 
-Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4B** oraz **4C.1–4C.2**.
-Automatyczna część **4C.3** jest gotowa, a podetap czeka na test operatora.
+Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4C**. Następny podetap to
+**4D.1 — planowane okno betonowania**.
 Standardowy wysięg
 `32 m` i zwijane pole **Większa pompa** są opublikowane na `main` i zostały
 potwierdzone przez operatora w przeglądarce. Pełna regresja obejmuje obecnie
@@ -87,13 +87,13 @@ Test operatora po publikacji — zaliczony:
 2. [x] potwierdzono standard `32 m` i kompaktowy wygląd wierszy;
 3. [x] potwierdzono działanie wyboru większej pompy.
 
-Test operatora 4C.3 — do wykonania po publikacji:
+Test operatora 4C.3 — zaliczony:
 
-1. [ ] ustawić dwie pompy z różnymi danymi i przeliczyć plan;
-2. [ ] odświeżyć stronę i potwierdzić odtworzenie obu pomp;
-3. [ ] ponownie wczytać CSV i potwierdzić, że lista pomp pozostała;
-4. [ ] wyczyścić plan i potwierdzić pustą listę pomp;
-5. [ ] przywrócić zapis historyczny i potwierdzić powrót obu pomp ze szczegółami.
+1. [x] ustawiono dwie pompy z różnymi danymi i przeliczono plan;
+2. [x] odświeżono stronę i potwierdzono odtworzenie obu pomp;
+3. [x] ponownie wczytano CSV i potwierdzono, że lista pomp pozostała;
+4. [x] wyczyszczono plan i potwierdzono pustą listę pomp;
+5. [x] przywrócono zapis historyczny i potwierdzono powrót obu pomp ze szczegółami.
 
 ### 4D — pełny okres zajętości
 

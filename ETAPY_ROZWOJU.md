@@ -49,7 +49,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; cały 4A–4B i 4C.1–4C.2 zakończone, 4C.3 czeka na test operatora**
+- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4C zakończone, następny podetap to 4D.1**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -541,13 +541,13 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
     pompy bez mieszania tych operacji z silnikiem harmonogramu.
   - [x] **4B.3 — walidacja i testy modelu:** unikalne ID, poprawne typy, bezpieczne
     wartości puste i brak przydzielania pomp nieaktywnych.
-- [ ] **4C — interfejs listy pomp i pamięć planu.**
+- [x] **4C — interfejs listy pomp i pamięć planu.**
   - [x] **4C.1 — panel pomp:** czytelna lista z typem, aktywnością, godziną
     **Dostępna od** i podstawowymi parametrami, działająca również na węższym
     ekranie.
   - [x] **4C.2 — pamięć:** lista pomp i ich bieżąca dostępność są zapisywane w
     planie dnia oraz zapisach historycznych bez psucia starszych rekordów.
-  - [ ] **4C.3 — odtworzenie i test operatora:** odświeżenie, historia, kolejny
+  - [x] **4C.3 — odtworzenie i test operatora:** odświeżenie, historia, kolejny
     import i wyczyszczenie planu zachowują ustalone zasady pamięci.
 - [ ] **4D — okres zajętości pompy na budowie.**
   - [ ] **4D.1 — planowane okno betonowania:** wyznaczenie początku i końca
@@ -886,9 +886,8 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać test operatora **4C.3** na opublikowanej stronie: sprawdzić odświeżenie,
-zapis historyczny, kolejny import oraz wyczyszczenie planu. Po potwierdzeniu
-zamknąć cały punkt 4C i przejść do 4D.1.
+Rozpocząć **4D.1 — planowane okno betonowania**: wyznaczyć początek i koniec
+obsługi budowy na podstawie całego planu dostaw, a nie czasu pojedynczej gruszki.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1855,9 +1854,10 @@ listy pomp**.
 - [x] scenariusz został dodany do `testy/pamiec_aplikacji.test.js` bez
   dublowania istniejącego środowiska testowego pamięci;
 - [x] pełna lokalna regresja wszystkich `29` zestawów testów przechodzi;
-- [ ] test operatora na opublikowanej stronie potwierdza te same cztery
+- [x] test operatora na opublikowanej stronie potwierdza te same cztery
   zachowania.
 
-Podetap **4C.3** i cały punkt 4C pozostają otwarte wyłącznie do testu operatora.
-Po jego zaliczeniu następnym podetapem będzie **4D.1 — planowane okno
-betonowania**.
+Test operatora potwierdził odtworzenie obu pomp po odświeżeniu, zachowanie listy
+po kolejnym imporcie, jej usunięcie po wyczyszczeniu planu oraz pełny powrót pomp
+z zapisu historycznego. Podetap **4C.3** i cały punkt **4C** są zakończone.
+Następny podetap to **4D.1 — planowane okno betonowania**.

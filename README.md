@@ -382,7 +382,8 @@ samego kontraktu.
 Standardowy wysięg wynosi `32 m`; przy budowie dodatkowe pole jest
 ukryte i pojawia się dopiero po zaznaczeniu **Większa pompa**. Zmiana czasów
 jest na `main` i została potwierdzona przez operatora na opublikowanej stronie.
-Automatyczny zakres **4C.3** potwierdza zachowanie listy pomp po odświeżeniu,
-kolejnym imporcie, wyczyszczeniu planu i przywróceniu historii. Następny krok to
-krótki test operatora 4C.3 na opublikowanej stronie; po nim przechodzimy do 4D.1.
+Zakres **4C.3** potwierdził automatycznie i w teście operatora zachowanie listy
+pomp po odświeżeniu, kolejnym imporcie, wyczyszczeniu planu i przywróceniu
+historii. Cały punkt 4C jest zakończony. Następny krok to **4D.1 — planowane
+okno betonowania**.
 Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.
