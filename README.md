@@ -206,6 +206,17 @@ przywraca standard `32 m`. Lista pomp i wymagania budów są zapisywane razem z
 planem oraz historią i wracają po odświeżeniu. Starsze puste wymagania są
 automatycznie uzupełniane standardem `32 m`.
 
+Dla standardowego wysięgu program przyjmuje `20 min` na rozstawienie przed
+pierwszym rozładunkiem oraz `30 min` po ostatnim rozładunku na składanie, mycie
+i przygotowanie do wyjazdu. Każde rozpoczęte dodatkowe `10 m` wysięgu dodaje po
+`5 min` do obu czasów. Kompaktowy opis pokazuje aktualne wartości, a przełącznik
+**Inne czasy** odsłania dwa pola pozwalające zapisać wyjątek dla konkretnej
+budowy. Wyłączenie wyjątku przywraca automatyczne wartości zależne od wysięgu.
+
+Właściwe pompowanie jest liczone od początku pierwszego rozładunku do końca
+ostatniego rozładunku. Pełny przydział pomp i przedziały ich zajętości powstaną
+w kolejnych podetapach Etapu 4.
+
 Licznik **potrzebnych pomp** pokazuje na tym etapie `—`. Nie jest to błąd ani
 wynik `0`: rzeczywista minimalna liczba będzie obliczana dopiero po dodaniu
 pełnych czasów obsługi, zajętości i przydziału pomp w kolejnych podetapach.
@@ -305,6 +316,8 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_3c_5.test.js
     node testy/etap_3d.test.js
     node testy/etap_3e.test.js
+    node testy/etap_4a_1.test.js
+    node testy/etap_4a_2.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
@@ -314,6 +327,7 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/kp_4.test.js
     node testy/rodzaj_rozladunku.test.js
     node testy/odbior_wlasny_tabela.test.js
+    node testy/panel_pomp.test.js
 
 Node.js nie jest potrzebny do zwykłego uruchomienia aplikacji.
 
@@ -348,11 +362,11 @@ planie i po przeliczeniu również w historii, zostaje odtworzona po odświeżen
 a starsze plany bez `StartZadany` są bezpiecznie uzupełniane godziną planowaną.
 Test operatora KP-4.5 został zaliczony i cały KP-4 jest zakończony.
 
-Etap 4 rozpoczął się od ukończonego **4A.1 — kwalifikacja budów wymagających
+Etap 4 ma ukończone **4A.1–4A.2 — kwalifikację budów i parametry czasu obsługi
 pompy**. Gotowy jest także wcześniejszy fundament **4B.1** i **4C.1–4C.2**:
 model pompy, wspólny panel zasobów, lista z dostępnością i wysięgiem oraz
 pamięć planu. Standardowy wysięg wynosi `32 m`; przy budowie dodatkowe pole jest
 ukryte i pojawia się dopiero po zaznaczeniu **Większa pompa**. Zmiana jest na
 `main` i została potwierdzona przez operatora na opublikowanej stronie.
-Następny krok to **4A.2 — ustalenie parametrów czasu pełnej obsługi pompy**.
+Następny krok to **4A.3 — wynik niezależnego silnika pomp**.
 Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.

@@ -49,7 +49,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; 4A.1, 4B.1 oraz 4C.1–4C.2 zakończone**
+- [ ] Etap 4 — Pompy — **rozpoczęty; 4A.1–4A.2, 4B.1 oraz 4C.1–4C.2 zakończone**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -523,7 +523,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
   - [x] **4A.1 — kwalifikacja budów:** ustalić i przetestować, które budowy
     wymagają pompy na podstawie `rodzajRozladunku`, bez zmiany obsługi odbiorów
     własnych, leja, wywrotki, taczki i starszych danych bez tej kolumny.
-  - [ ] **4A.2 — czas obsługi pompy:** ustalić źródła czasu przygotowania,
+  - [x] **4A.2 — czas obsługi pompy:** ustalić źródła czasu przygotowania,
     betonowania, zakończenia, mycia oraz przygotowania do przejazdu; wartości
     biznesowe mają być parametrami, a nie liczbami wpisanymi na stałe w kodzie.
   - [ ] **4A.3 — wynik niezależnego silnika:** Etap 4 zwraca przydział pompy,
@@ -886,10 +886,10 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **4A.2 — ustalenie czasu obsługi pompy**. Rozstrzygnąć źródła czasu
-przygotowania przed betonowaniem, właściwej pracy, zakończenia, mycia oraz
-przygotowania do przejazdu. Wartości biznesowe muszą pozostać parametrami, a
-nie przypadkowymi liczbami zapisanymi na stałe w silniku.
+Wykonać **4A.3 — ustalenie wyniku niezależnego silnika pomp**. Zapisać dokładny
+kształt wyniku obejmującego przydział, okres zajętości, najwcześniejszy możliwy
+start i skutek niedoboru pomp, bez nadpisywania godzin źródłowych ani łączenia
+jeszcze korekt pomp i gruszek.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1749,3 +1749,27 @@ Test operatora standardowego wysięgu został zaliczony. Nie zamyka on jeszcze
 4C.3 ani 4I.2, ponieważ te punkty obejmują również dalsze działanie pełnej
 listy i rzeczywistych wyników silnika pomp. Następnym podetapem implementacyjnym
 jest **4A.2 — ustalenie parametrów czasu pełnej obsługi pompy**.
+
+
+## 4A.2 — parametry czasu obsługi pompy — 2026-08-25
+
+- [x] standardowa pompa `32 m` otrzymuje `20 min` na rozstawienie przed
+  rozpoczęciem pierwszego rozładunku;
+- [x] po zakończeniu ostatniego rozładunku pompa pozostaje zajęta przez `30 min`
+  na składanie, mycie i przygotowanie do wyjazdu; w tej wartości mieści się
+  założone około `20 min` samego mycia;
+- [x] dla większego wymaganego wysięgu oba czasy rosną o `5 min` za każde
+  rozpoczęte dodatkowe `10 m` ponad standard `32 m`;
+- [x] wartości wyliczone automatycznie można nadpisać osobno dla konkretnej
+  budowy, a wyłączenie wyjątku przywraca wynik zależny od wysięgu;
+- [x] właściwy czas pompowania jest wyznaczany od początku pierwszego
+  rozładunku do końca ostatniego rozładunku tej budowy;
+- [x] model zachowuje osobno wartości automatyczne i robocze, a pola robocze są
+  objęte istniejącą pamięcią planu oraz historią;
+- [x] nowy test `testy/etap_4a_2.test.js` sprawdza standard `32 m`, większe
+  wysięgi, rozpoczęte przedziały `10 m`, ręczne wyjątki, walidację i okno
+  właściwego pompowania;
+- [x] pełna lokalna regresja wszystkich `26` zestawów testów przechodzi.
+
+Podetap **4A.2** jest zakończony. Punkt 4A i cały Etap 4 pozostają otwarte.
+Następny podetap to **4A.3 — wynik niezależnego silnika pomp**.

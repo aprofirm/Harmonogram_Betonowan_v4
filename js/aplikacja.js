@@ -35,6 +35,8 @@
     "czasRozladunkuRoboczyMinuty",
     "dodatkowyCzasRozladunkuMinuty",
     "dodatkowyOdstepDostawMinuty",
+    "czasPrzygotowaniaPompyRoboczyMinuty",
+    "czasZakonczeniaObslugiPompyRoboczyMinuty",
     "zrodloCzasuDojazdu",
     "zrodloCzasuPowrotu"
   ]);
@@ -620,6 +622,42 @@
     }
   }
 
+  function obsluzZmianeCzasowPompyBudowy(idBudowy, daneCzasow) {
+    try {
+      const budowa = znajdzBudoweDoZmiany(idBudowy);
+
+      if (!budowa) {
+        throw new Error("Nie znaleziono budowy o ID „" + idBudowy + "”.");
+      }
+
+      aplikacja.pompy.zmienCzasyObslugiPompyBudowy(budowa, daneCzasow);
+      oznaczPlanJakoNieprzeliczony(true);
+      aplikacja.interfejs.pokazListeBudow(pobierzAktualnaListeBudow());
+      zapiszZdarzenieDiagnostyczne(
+        "informacja",
+        "zmiana-czasow-obslugi-pompy",
+        "Zmieniono czasy obsługi pompy dla budowy.",
+        {
+          idBudowy: idBudowy,
+          czasPrzygotowaniaPompyRoboczyMinuty:
+            budowa.czasPrzygotowaniaPompyRoboczyMinuty,
+          czasZakonczeniaObslugiPompyRoboczyMinuty:
+            budowa.czasZakonczeniaObslugiPompyRoboczyMinuty
+        }
+      );
+      return budowa;
+    } catch (blad) {
+      aplikacja.interfejs.pokazBladPompy(blad);
+      aplikacja.interfejs.pokazListeBudow(pobierzAktualnaListeBudow());
+      zapiszBladDiagnostyczny(
+        blad,
+        "blad-zmiany-czasow-obslugi-pompy",
+        "Nie udało się zapisać czasów obsługi pompy."
+      );
+      return null;
+    }
+  }
+
   function utworzStanImportuZPamieci(danePlanu) {
     return {
       nazwaPliku: danePlanu.nazwaPliku || null,
@@ -926,7 +964,8 @@
         obsluzOtwarcieHistorii,
         obsluzZmianeStartuBudowy,
         obsluzZmianePompy,
-        obsluzZmianeWymaganegoWysieguPompy
+        obsluzZmianeWymaganegoWysieguPompy,
+        obsluzZmianeCzasowPompyBudowy
       );
       aplikacja.pamiecTras.uruchomPamiecTras();
       odswiezStanPamieciTras();

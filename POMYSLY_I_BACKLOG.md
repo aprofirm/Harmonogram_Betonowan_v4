@@ -149,7 +149,7 @@ OpenStreetMap pozostaje preferowanym źródłem danych mapowych, ale konkretny d
 ## P-009 — Domyślne czasy pełnego cyklu pompy
 
 **Data:** 2026-08-23
-**Status:** DO DOPRECYZOWANIA
+**Status:** ZREALIZOWANY
 **Powiązanie:** Etap 4A.2 i 4D — Pompy
 
 Trzeba ustalić początkowe wartości i poziom konfiguracji dla:
@@ -162,6 +162,13 @@ Trzeba ustalić początkowe wartości i poziom konfiguracji dla:
 Należy rozstrzygnąć, które wartości są globalne, które zależą od konkretnej
 pompy, a które mogą być nadpisane dla pojedynczej budowy. Do czasu zatwierdzenia
 nie wpisujemy przypadkowych wartości domyślnych do silnika.
+
+**Rozstrzygnięcie 2026-08-25:** standard `32 m` ma `20 min` przygotowania i
+`30 min` czynności po ostatnim rozładunku. Większy wymagany wysięg dodaje po
+`5 min` do obu wartości za każde rozpoczęte dodatkowe `10 m`. Operator może
+nadpisać oba czasy dla konkretnej budowy. Właściwe pompowanie trwa od początku
+pierwszego do końca ostatniego rozładunku. Decyzję zapisano w punkcie 83
+`PROJECT_DECISIONS.md`, a model i test wdrożono w 4A.2.
 
 ---
 

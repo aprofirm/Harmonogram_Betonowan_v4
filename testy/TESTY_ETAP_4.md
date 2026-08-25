@@ -2,12 +2,12 @@
 
 ## Status
 
-Etap 4 jest rozpoczęty. Zakończono **4A.1**, a na zlecenie operatora wcześniej
+Etap 4 jest rozpoczęty. Zakończono **4A.1–4A.2**, a na zlecenie operatora wcześniej
 wdrożono również model **4B.1** oraz panel i pamięć **4C.1–4C.2**. Następny
-podetap pozostaje bez zmian: **4A.2 — czas obsługi pompy**. Standardowy wysięg
+podetap to **4A.3 — wynik niezależnego silnika pomp**. Standardowy wysięg
 `32 m` i zwijane pole **Większa pompa** są opublikowane na `main` i zostały
 potwierdzone przez operatora w przeglądarce. Pełna regresja obejmuje obecnie
-`25` zestawów testów.
+`26` zestawów testów.
 
 ## Cel
 
@@ -42,6 +42,12 @@ obejmować:
 - [x] pozostałe rodzaje rozładunku nie otrzymują pompy;
 - [x] starsze dane bez kolumny nie są bez ostrzeżenia uznawane za pompowane;
 - [x] kwalifikacja nie nadpisuje `StartPlanowany` ani kursów gruszek;
+- [x] standard `32 m` daje `20 min` przygotowania i `30 min` po pracy;
+- [x] większy wysięg dodaje po `5 min` za każde rozpoczęte dodatkowe `10 m`;
+- [x] oba czasy można nadpisać dla konkretnej budowy i przywrócić do wartości
+  automatycznej;
+- [x] właściwe pompowanie trwa od początku pierwszego do końca ostatniego
+  rozładunku;
 - brakujące decyzje pozostają opisane w backlogu zamiast trafiać do kodu jako
   ukryte wartości domyślne.
 

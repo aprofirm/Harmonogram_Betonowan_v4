@@ -163,6 +163,8 @@
       planowanaGodzinaRozpoczeciaRozladunku: kurs.godzinaRozpoczeciaRozladunku,
       opoznienieZPowoduGruszekMinuty: opoznienieZPowoduGruszekMinuty,
       minutaRozpoczeciaZaladunku: nowaMinutaRozpoczeciaZaladunku,
+      minutaRozpoczeciaRozladunku: minutaRozpoczeciaRozladunku,
+      minutaZakonczeniaRozladunku: minutaZakonczeniaRozladunku,
       godzinaRozpoczeciaZaladunku: formatujMinuty(
         nowaMinutaRozpoczeciaZaladunku
       ),

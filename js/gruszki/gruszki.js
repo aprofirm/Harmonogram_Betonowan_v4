@@ -243,6 +243,8 @@
       dodatkowyOdstepDostawMinuty: dodatkowyOdstepDostawMinuty,
       rytmDostawMinuty: rytmDostawMinuty,
       minutaRozpoczeciaZaladunku: rozpoczecieZaladunkuMinuty,
+      minutaRozpoczeciaRozladunku: rozpoczecieRozladunkuMinuty,
+      minutaZakonczeniaRozladunku: zakonczenieRozladunkuMinuty,
       czyNadpisanyCzasRozladunku:
         budowa.czasRozladunkuRoboczyMinuty !== null &&
         budowa.czasRozladunkuRoboczyMinuty !== undefined &&

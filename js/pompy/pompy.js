@@ -6,6 +6,10 @@
 
   const TYPY_POMP = Object.freeze(["wlasna", "zewnetrzna"]);
   const DOMYSLNY_WYSIEG_POMPY_METRY = 32;
+  const DOMYSLNY_CZAS_PRZYGOTOWANIA_POMPY_MINUTY = 20;
+  const DOMYSLNY_CZAS_ZAKONCZENIA_OBSLUGI_POMPY_MINUTY = 30;
+  const KROK_DODATKOWEGO_WYSIEGU_POMPY_METRY = 10;
+  const DODATKOWY_CZAS_NA_KROK_WYSIEGU_MINUTY = 5;
 
   function pobierzNieujemnaLiczbeCalkowita(wartosc, nazwaPola) {
     const liczba = Number(wartosc);
@@ -51,6 +55,22 @@
 
     if (!Number.isFinite(liczba) || liczba <= 0) {
       throw new Error("Pole „" + nazwaPola + "” musi zawierać liczbę większą niż 0.");
+    }
+
+    return liczba;
+  }
+
+  function pobierzNieujemnaLiczbeCalkowitaLubBrak(wartosc, nazwaPola) {
+    if (wartosc === null || wartosc === undefined || wartosc === "") {
+      return null;
+    }
+
+    const liczba = Number(wartosc);
+
+    if (!Number.isInteger(liczba) || liczba < 0) {
+      throw new Error(
+        "Pole „" + nazwaPola + "” musi zawierać nieujemną liczbę całkowitą."
+      );
     }
 
     return liczba;
@@ -264,6 +284,161 @@
     return budowa;
   }
 
+  function obliczLiczbeKrokowDodatkowegoWysiegu(wysiegMetry) {
+    const wysieg = pobierzWymaganyWysiegLubDomyslny(wysiegMetry);
+    const dodatkowyWysieg = Math.max(
+      0,
+      wysieg - DOMYSLNY_WYSIEG_POMPY_METRY
+    );
+
+    return Math.ceil(
+      dodatkowyWysieg / KROK_DODATKOWEGO_WYSIEGU_POMPY_METRY
+    );
+  }
+
+  function obliczDomyslneCzasyObslugiPompy(wysiegMetry) {
+    const liczbaKrokowWysiegu = obliczLiczbeKrokowDodatkowegoWysiegu(
+      wysiegMetry
+    );
+    const dodatkowyCzasMinuty =
+      liczbaKrokowWysiegu * DODATKOWY_CZAS_NA_KROK_WYSIEGU_MINUTY;
+
+    return {
+      liczbaKrokowWysiegu: liczbaKrokowWysiegu,
+      dodatkowyCzasMinuty: dodatkowyCzasMinuty,
+      czasPrzygotowaniaPompyMinuty:
+        DOMYSLNY_CZAS_PRZYGOTOWANIA_POMPY_MINUTY + dodatkowyCzasMinuty,
+      czasZakonczeniaObslugiPompyMinuty:
+        DOMYSLNY_CZAS_ZAKONCZENIA_OBSLUGI_POMPY_MINUTY +
+        dodatkowyCzasMinuty
+    };
+  }
+
+  function pobierzCzasyObslugiPompyBudowy(budowa) {
+    if (!czyBudowaWymagaPompy(budowa)) {
+      return null;
+    }
+
+    const wymaganyWysieg = pobierzWymaganyWysiegPompyBudowy(budowa);
+    const czasyDomyslne = obliczDomyslneCzasyObslugiPompy(wymaganyWysieg);
+    const czasPrzygotowaniaRoboczy = pobierzNieujemnaLiczbeCalkowitaLubBrak(
+      budowa.czasPrzygotowaniaPompyRoboczyMinuty,
+      "Czas rozstawiania pompy"
+    );
+    const czasZakonczeniaRoboczy = pobierzNieujemnaLiczbeCalkowitaLubBrak(
+      budowa.czasZakonczeniaObslugiPompyRoboczyMinuty,
+      "Czas po zakończeniu pompowania"
+    );
+
+    return Object.assign({}, czasyDomyslne, {
+      wymaganyWysiegPompyMetry: wymaganyWysieg,
+      czasPrzygotowaniaPompyMinuty:
+        czasPrzygotowaniaRoboczy === null
+          ? czasyDomyslne.czasPrzygotowaniaPompyMinuty
+          : czasPrzygotowaniaRoboczy,
+      czasZakonczeniaObslugiPompyMinuty:
+        czasZakonczeniaRoboczy === null
+          ? czasyDomyslne.czasZakonczeniaObslugiPompyMinuty
+          : czasZakonczeniaRoboczy,
+      czyCzasPrzygotowaniaNadpisany: czasPrzygotowaniaRoboczy !== null,
+      czyCzasZakonczeniaNadpisany: czasZakonczeniaRoboczy !== null
+    });
+  }
+
+  function zmienCzasyObslugiPompyBudowy(budowa, daneCzasow) {
+    if (!czyBudowaWymagaPompy(budowa)) {
+      throw new Error("Czasy pompy można ustawić tylko dla budowy pompowanej.");
+    }
+
+    const dane = daneCzasow || {};
+    const czasPrzygotowaniaPompyRoboczyMinuty =
+      pobierzNieujemnaLiczbeCalkowitaLubBrak(
+        dane.czasPrzygotowaniaPompyRoboczyMinuty,
+        "Czas rozstawiania pompy"
+      );
+    const czasZakonczeniaObslugiPompyRoboczyMinuty =
+      pobierzNieujemnaLiczbeCalkowitaLubBrak(
+        dane.czasZakonczeniaObslugiPompyRoboczyMinuty,
+        "Czas po zakończeniu pompowania"
+      );
+
+    budowa.czasPrzygotowaniaPompyRoboczyMinuty =
+      czasPrzygotowaniaPompyRoboczyMinuty;
+    budowa.czasZakonczeniaObslugiPompyRoboczyMinuty =
+      czasZakonczeniaObslugiPompyRoboczyMinuty;
+
+    return budowa;
+  }
+
+  function wyznaczOknoPompowaniaBudowy(budowa, listaKursow) {
+    if (!czyBudowaWymagaPompy(budowa)) {
+      return null;
+    }
+
+    const kursyBudowy = (Array.isArray(listaKursow) ? listaKursow : []).filter(
+      function (kurs) {
+        return String(kurs && kurs.idBudowy) === String(budowa.idBudowy);
+      }
+    );
+
+    if (!kursyBudowy.length) {
+      return null;
+    }
+
+    const poczatki = kursyBudowy.map(function (kurs) {
+      if (
+        kurs.minutaRozpoczeciaRozladunku === null ||
+        kurs.minutaRozpoczeciaRozladunku === undefined ||
+        kurs.minutaRozpoczeciaRozladunku === ""
+      ) {
+        throw new Error(
+          "Kurs „" + kurs.idKursu + "” nie ma początku rozładunku pompy."
+        );
+      }
+
+      const minuta = Number(kurs.minutaRozpoczeciaRozladunku);
+
+      if (!Number.isFinite(minuta)) {
+        throw new Error(
+          "Kurs „" + kurs.idKursu + "” nie ma początku rozładunku pompy."
+        );
+      }
+
+      return minuta;
+    });
+    const zakonczenia = kursyBudowy.map(function (kurs) {
+      if (
+        kurs.minutaZakonczeniaRozladunku === null ||
+        kurs.minutaZakonczeniaRozladunku === undefined ||
+        kurs.minutaZakonczeniaRozladunku === ""
+      ) {
+        throw new Error(
+          "Kurs „" + kurs.idKursu + "” nie ma końca rozładunku pompy."
+        );
+      }
+
+      const minuta = Number(kurs.minutaZakonczeniaRozladunku);
+
+      if (!Number.isFinite(minuta)) {
+        throw new Error(
+          "Kurs „" + kurs.idKursu + "” nie ma końca rozładunku pompy."
+        );
+      }
+
+      return minuta;
+    });
+    const minutaRozpoczeciaPompowania = Math.min.apply(null, poczatki);
+    const minutaZakonczeniaPompowania = Math.max.apply(null, zakonczenia);
+
+    return {
+      minutaRozpoczeciaPompowania: minutaRozpoczeciaPompowania,
+      minutaZakonczeniaPompowania: minutaZakonczeniaPompowania,
+      czasPompowaniaMinuty:
+        minutaZakonczeniaPompowania - minutaRozpoczeciaPompowania,
+      liczbaKursow: kursyBudowy.length
+    };
+  }
+
   function utworzPustyStanPomp() {
     return {
       dostepnePompy: [],
@@ -317,6 +492,14 @@
   aplikacja.pompy = {
     TYPY_POMP: TYPY_POMP,
     DOMYSLNY_WYSIEG_POMPY_METRY: DOMYSLNY_WYSIEG_POMPY_METRY,
+    DOMYSLNY_CZAS_PRZYGOTOWANIA_POMPY_MINUTY:
+      DOMYSLNY_CZAS_PRZYGOTOWANIA_POMPY_MINUTY,
+    DOMYSLNY_CZAS_ZAKONCZENIA_OBSLUGI_POMPY_MINUTY:
+      DOMYSLNY_CZAS_ZAKONCZENIA_OBSLUGI_POMPY_MINUTY,
+    KROK_DODATKOWEGO_WYSIEGU_POMPY_METRY:
+      KROK_DODATKOWEGO_WYSIEGU_POMPY_METRY,
+    DODATKOWY_CZAS_NA_KROK_WYSIEGU_MINUTY:
+      DODATKOWY_CZAS_NA_KROK_WYSIEGU_MINUTY,
     utworzPustyStanPomp: utworzPustyStanPomp,
     czyBudowaWymagaPompy: czyBudowaWymagaPompy,
     zakwalifikujBudowyDoObslugiPomp: zakwalifikujBudowyDoObslugiPomp,
@@ -327,6 +510,10 @@
     pobierzLiczbeAktywnychPomp: pobierzLiczbeAktywnychPomp,
     zmienWymaganyWysiegPompyBudowy: zmienWymaganyWysiegPompyBudowy,
     pobierzWymaganyWysiegPompyBudowy: pobierzWymaganyWysiegPompyBudowy,
-    uzupelnijWymaganyWysiegPompyBudowy: uzupelnijWymaganyWysiegPompyBudowy
+    uzupelnijWymaganyWysiegPompyBudowy: uzupelnijWymaganyWysiegPompyBudowy,
+    obliczDomyslneCzasyObslugiPompy: obliczDomyslneCzasyObslugiPompy,
+    pobierzCzasyObslugiPompyBudowy: pobierzCzasyObslugiPompyBudowy,
+    zmienCzasyObslugiPompyBudowy: zmienCzasyObslugiPompyBudowy,
+    wyznaczOknoPompowaniaBudowy: wyznaczOknoPompowaniaBudowy
   };
 })(window);

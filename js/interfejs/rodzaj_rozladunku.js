@@ -8,6 +8,7 @@
   let licznikOdbiorowWlasnych = null;
   let wierszeOdbiorowWlasnych = null;
   let obslugaZmianyWymaganegoWysieguPompy = function () {};
+  let obslugaZmianyCzasowPompyBudowy = function () {};
 
   function sprawdzZaleznosci() {
     if (!aplikacja.interfejs) {
@@ -238,6 +239,104 @@
     }
   }
 
+  function utworzPoleCzasuPompy(budowa, opis, wartosc) {
+    const etykieta = document.createElement("label");
+    const tekst = document.createElement("span");
+    const kontrolki = document.createElement("span");
+    const pole = document.createElement("input");
+    const jednostka = document.createElement("span");
+
+    etykieta.className = "czas-obslugi-pompy";
+    tekst.textContent = opis;
+    kontrolki.className = "czas-obslugi-pompy__kontrolki";
+    pole.type = "number";
+    pole.min = "0";
+    pole.step = "1";
+    pole.value = String(wartosc);
+    pole.disabled = budowa.statusRealizacji === "zrealizowana";
+    pole.setAttribute(
+      "aria-label",
+      opis + " dla budowy " + budowa.budowa + " w minutach"
+    );
+    jednostka.textContent = "min";
+    kontrolki.appendChild(pole);
+    kontrolki.appendChild(jednostka);
+    etykieta.appendChild(tekst);
+    etykieta.appendChild(kontrolki);
+
+    return {
+      etykieta: etykieta,
+      pole: pole
+    };
+  }
+
+  function utworzKontrolkiCzasowPompyBudowy(budowa, czasyPompy) {
+    const czyNadpisane =
+      czasyPompy.czyCzasPrzygotowaniaNadpisany ||
+      czasyPompy.czyCzasZakonczeniaNadpisany;
+    const przelacznik = document.createElement("label");
+    const polePrzelacznika = document.createElement("input");
+    const tekstPrzelacznika = document.createElement("span");
+    const formularz = document.createElement("span");
+    const przygotowanie = utworzPoleCzasuPompy(
+      budowa,
+      "Rozstawienie",
+      czasyPompy.czasPrzygotowaniaPompyMinuty
+    );
+    const zakonczenie = utworzPoleCzasuPompy(
+      budowa,
+      "Po pracy",
+      czasyPompy.czasZakonczeniaObslugiPompyMinuty
+    );
+
+    function zapiszCzasy() {
+      obslugaZmianyCzasowPompyBudowy(budowa.idBudowy, {
+        czasPrzygotowaniaPompyRoboczyMinuty: przygotowanie.pole.value,
+        czasZakonczeniaObslugiPompyRoboczyMinuty: zakonczenie.pole.value
+      });
+    }
+
+    przelacznik.className = "inne-czasy-pompy";
+    polePrzelacznika.type = "checkbox";
+    polePrzelacznika.checked = czyNadpisane;
+    polePrzelacznika.disabled = budowa.statusRealizacji === "zrealizowana";
+    polePrzelacznika.setAttribute(
+      "aria-label",
+      "Inne czasy pompy dla budowy " + budowa.budowa
+    );
+    polePrzelacznika.setAttribute("aria-expanded", String(czyNadpisane));
+    tekstPrzelacznika.textContent = "Inne czasy";
+    przelacznik.appendChild(polePrzelacznika);
+    przelacznik.appendChild(tekstPrzelacznika);
+
+    formularz.className = "czasy-obslugi-pompy";
+    formularz.hidden = !czyNadpisane;
+    formularz.appendChild(przygotowanie.etykieta);
+    formularz.appendChild(zakonczenie.etykieta);
+    przygotowanie.pole.addEventListener("change", zapiszCzasy);
+    zakonczenie.pole.addEventListener("change", zapiszCzasy);
+    polePrzelacznika.addEventListener("change", function () {
+      const czyPokazacPola = polePrzelacznika.checked;
+      polePrzelacznika.setAttribute("aria-expanded", String(czyPokazacPola));
+
+      if (czyPokazacPola) {
+        formularz.hidden = false;
+        przygotowanie.pole.focus();
+        return;
+      }
+
+      obslugaZmianyCzasowPompyBudowy(budowa.idBudowy, {
+        czasPrzygotowaniaPompyRoboczyMinuty: null,
+        czasZakonczeniaObslugiPompyRoboczyMinuty: null
+      });
+    });
+
+    return {
+      przelacznik: przelacznik,
+      formularz: formularz
+    };
+  }
+
   function dodajEtykieteRodzaju(wiersz, budowa) {
     const komorkaBudowy = wiersz && wiersz.children[2];
     const opis = opiszRodzajRozladunku(budowa && budowa.rodzajRozladunku);
@@ -262,6 +361,7 @@
     const domyslnyWysieg = aplikacja.pompy.DOMYSLNY_WYSIEG_POMPY_METRY;
     const wymaganyWysieg =
       aplikacja.pompy.pobierzWymaganyWysiegPompyBudowy(budowa);
+    const czasyPompy = aplikacja.pompy.pobierzCzasyObslugiPompyBudowy(budowa);
     const czyWiekszaPompa = wymaganyWysieg > domyslnyWysieg;
     const opisRodzaju = document.createElement("span");
     const przelacznik = document.createElement("label");
@@ -272,11 +372,22 @@
     const kontrolki = document.createElement("span");
     const poleWysiegu = document.createElement("input");
     const jednostka = document.createElement("span");
+    const kontrolkiCzasow = utworzKontrolkiCzasowPompyBudowy(
+      budowa,
+      czasyPompy
+    );
 
     etykieta.className += " rodzaj-rozladunku-budowy--pompa";
     opisRodzaju.className = "rodzaj-rozladunku-budowy__opis";
     opisRodzaju.textContent =
-      opis + " · " + String(wymaganyWysieg).replace(".", ",") + " m";
+      opis + " · " + String(wymaganyWysieg).replace(".", ",") + " m" +
+      " · czasy " + czasyPompy.czasPrzygotowaniaPompyMinuty + "/" +
+      czasyPompy.czasZakonczeniaObslugiPompyMinuty + " min";
+    opisRodzaju.title =
+      czasyPompy.czasPrzygotowaniaPompyMinuty +
+      " min przed pierwszym rozładunkiem i " +
+      czasyPompy.czasZakonczeniaObslugiPompyMinuty +
+      " min po ostatnim rozładunku";
     przelacznik.className = "wieksza-pompa";
     polePrzelacznika.type = "checkbox";
     polePrzelacznika.checked = czyWiekszaPompa;
@@ -291,6 +402,7 @@
     przelacznik.appendChild(tekstPrzelacznika);
     etykieta.appendChild(opisRodzaju);
     etykieta.appendChild(przelacznik);
+    etykieta.appendChild(kontrolkiCzasow.przelacznik);
 
     etykietaWysiegu.className = "wymagany-wysieg-pompy";
     etykietaWysiegu.hidden = !czyWiekszaPompa;
@@ -334,6 +446,7 @@
     });
     komorkaBudowy.appendChild(etykieta);
     komorkaBudowy.appendChild(etykietaWysiegu);
+    komorkaBudowy.appendChild(kontrolkiCzasow.formularz);
   }
 
   function pokazBrakDostawPlanowanych(kontener, liczbaOdbiorow) {
@@ -471,6 +584,9 @@
 
       obslugaZmianyWymaganegoWysieguPompy = typeof argumenty[11] === "function"
         ? argumenty[11]
+        : function () {};
+      obslugaZmianyCzasowPompyBudowy = typeof argumenty[12] === "function"
+        ? argumenty[12]
         : function () {};
 
       argumenty[3] = function (daneBudowy) {

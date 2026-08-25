@@ -33,16 +33,24 @@ assert.match(interfejs, /Wysięg \(m\)/);
 assert.match(interfejs, /karta-pompy__aktywna/);
 assert.match(aplikacja, /listaPomp: aplikacja\.pompy\.skopiujListePomp/);
 assert.match(aplikacja, /"wymaganyWysiegPompyMetry"/);
+assert.match(aplikacja, /"czasPrzygotowaniaPompyRoboczyMinuty"/);
+assert.match(aplikacja, /"czasZakonczeniaObslugiPompyRoboczyMinuty"/);
 assert.match(pompy, /DOMYSLNY_WYSIEG_POMPY_METRY = 32/);
+assert.match(pompy, /DOMYSLNY_CZAS_PRZYGOTOWANIA_POMPY_MINUTY = 20/);
+assert.match(pompy, /DOMYSLNY_CZAS_ZAKONCZENIA_OBSLUGI_POMPY_MINUTY = 30/);
 
 assert.match(interfejsRozladunku, /wymagany-wysieg-pompy/);
 assert.match(interfejsRozladunku, /Większa pompa/);
 assert.match(interfejsRozladunku, /rodzaj-rozladunku-budowy--pompa/);
 assert.match(interfejsRozladunku, /etykietaWysiegu\.hidden = !czyWiekszaPompa/);
 assert.match(interfejsRozladunku, /obslugaZmianyWymaganegoWysieguPompy/);
+assert.match(interfejsRozladunku, /Inne czasy/);
+assert.match(interfejsRozladunku, /czasPrzygotowaniaPompyRoboczyMinuty/);
+assert.match(interfejsRozladunku, /czasZakonczeniaObslugiPompyRoboczyMinuty/);
 assert.match(style, /\.karta-pompy/);
 assert.match(styleRozladunku, /\.wymagany-wysieg-pompy/);
 assert.match(styleRozladunku, /\.wieksza-pompa/);
+assert.match(styleRozladunku, /\.czasy-obslugi-pompy/);
 
 console.log(
   "✓ Panel pomp: zasoby, dostępność, wysięg i wymaganie budowy są połączone z pamięcią planu."

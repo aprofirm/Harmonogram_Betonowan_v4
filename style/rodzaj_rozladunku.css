@@ -37,7 +37,8 @@
   white-space: nowrap;
 }
 
-.wieksza-pompa {
+.wieksza-pompa,
+.inne-czasy-pompy {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -48,11 +49,61 @@
   cursor: pointer;
 }
 
-.wieksza-pompa input {
+.wieksza-pompa input,
+.inne-czasy-pompy input {
   width: 13px;
   height: 13px;
   margin: 0;
   accent-color: var(--kolor-niebieski);
+}
+
+.czasy-obslugi-pompy {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px 9px;
+  margin-top: 4px;
+  color: #7a5a2b;
+  font-size: 0.64rem;
+  font-weight: 750;
+}
+
+.czasy-obslugi-pompy[hidden] {
+  display: none;
+}
+
+.czas-obslugi-pompy {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.czas-obslugi-pompy__kontrolki {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  overflow: hidden;
+  border: 1px solid #dbc9ae;
+  border-radius: 7px;
+  background: #fffaf2;
+}
+
+.czas-obslugi-pompy__kontrolki input {
+  width: 46px;
+  min-width: 0;
+  padding: 3px 5px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 0.72rem;
+}
+
+.czas-obslugi-pompy__kontrolki > span {
+  padding-right: 6px;
+  color: #7a5a2b;
+  font-size: 0.62rem;
 }
 
 .wymagany-wysieg-pompy {

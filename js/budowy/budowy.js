@@ -184,6 +184,8 @@
       czasRozladunkuRoboczyMinuty: null,
       dodatkowyCzasRozladunkuMinuty: 0,
       dodatkowyOdstepDostawMinuty: 0,
+      czasPrzygotowaniaPompyRoboczyMinuty: null,
+      czasZakonczeniaObslugiPompyRoboczyMinuty: null,
       zrodloCzasuDojazdu: "brak",
       zrodloCzasuPowrotu: "brak"
     };

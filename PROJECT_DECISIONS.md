@@ -1559,6 +1559,30 @@ zapisywane w planie dnia. Wymagany wysięg należy do konkretnej budowy. Licznik
 potrzebnych pomp nie może być wyprowadzany z samej liczby wpisanych zasobów — ma
 pozostać nieustalony do czasu wdrożenia okresów zajętości i minimalnej floty.
 
+## 83. Czasy obsługi pompy zależą od wysięgu i mogą mieć wyjątek budowy
+
+Dla standardowej pompy i standardowego wymagania `32 m` przyjmujemy:
+
+- `20 min` na rozstawienie pompy przed rozpoczęciem pierwszego rozładunku;
+- `30 min` po zakończeniu ostatniego rozładunku na składanie, mycie i
+  przygotowanie do wyjazdu. W tym łącznym czasie mieści się około `20 min`
+  przeznaczone na samo mycie.
+
+Dla pompy o większym wymaganym wysięgu program dodaje `5 min` zarówno do czasu
+przygotowania, jak i do czasu po pracy za każde rozpoczęte dodatkowe `10 m`
+ponad `32 m`. Przykładowo wymaganie `36 m` daje czasy `25/35 min`, a wymaganie
+większe niż `42 m` rozpoczyna kolejny przedział i daje `30/40 min`.
+
+Oba wyliczone czasy są wartościami domyślnymi dla konkretnej budowy. Operator
+może je ręcznie nadpisać, ponieważ rzeczywisty czas zależy również od operatora
+pompy i warunków na miejscu. Usunięcie wyjątku przywraca automatyczne czasy
+wynikające z wymaganego wysięgu.
+
+Właściwy czas pompowania nie jest wpisywany jako stała liczba. Zaczyna się wraz
+z rozpoczęciem pierwszego rozładunku i kończy wraz z zakończeniem ostatniego
+rozładunku tej samej budowy. Utworzenie z tych składników pełnego przedziału
+zajętości pompy pozostaje zakresem 4D.
+
 ---
 
 # Powiązane tematy otwarte
