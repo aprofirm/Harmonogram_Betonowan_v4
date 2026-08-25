@@ -2,12 +2,12 @@
 
 ## Status
 
-Etap 4 jest rozpoczęty. Zakończono cały punkt **4A**, a na zlecenie operatora wcześniej
-wdrożono również model **4B.1** oraz panel i pamięć **4C.1–4C.2**. Następny
-podetap to **4B.2 — operacje na liście pomp**. Standardowy wysięg
+Etap 4 jest rozpoczęty. Zakończono cały punkt **4A** oraz **4B.1–4B.2**, a na
+zlecenie operatora wcześniej wdrożono również panel i pamięć **4C.1–4C.2**.
+Następny podetap to **4B.3 — walidacja i testy modelu pomp**. Standardowy wysięg
 `32 m` i zwijane pole **Większa pompa** są opublikowane na `main` i zostały
 potwierdzone przez operatora w przeglądarce. Pełna regresja obejmuje obecnie
-`27` zestawów testów.
+`28` zestawów testów.
 
 ## Cel
 
@@ -66,7 +66,10 @@ Test operatora czasów 4A.2 — zaliczony:
 - [x] każda pompa ma stabilne, unikalne ID;
 - [x] typ pompy jest ograniczony do wartości obsługiwanych przez model;
 - pompa nieaktywna nie może zostać przydzielona;
-- [x] dodanie, edycja, wyłączenie i zmniejszenie listy pomp daje przewidywalny wynik;
+- [x] dodanie, edycja, wyłączenie i usunięcie pojedynczej pompy jest osobną,
+  niemutującą operacją modelu;
+- [x] pole liczby pomp korzysta ze wspólnych operacji listy, zachowuje dane
+  pozostawionych pomp i nie uruchamia silnika harmonogramu;
 - [x] lista jest zapisywana w bieżącym planie i historii oraz odtwarzana po
   odświeżeniu;
 - [x] starszy zapis bez listy pomp nadal daje się bezpiecznie otworzyć;

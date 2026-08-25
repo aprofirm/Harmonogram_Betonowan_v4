@@ -205,7 +205,7 @@ function sprawdzInterfejsKorektyStartu() {
   );
 
   assert.match(html, /<th>Start do przeliczenia<\/th>/);
-  assert.match(html, /4A\.4 · kontrakt wyniku pomp/);
+  assert.match(html, /4B\.2 · operacje na liście pomp/);
   assert.match(interfejs, /className = "pole-startu-budowy"/);
   assert.match(interfejs, /type = "time"/);
   assert.match(interfejs, /step = "60"/);

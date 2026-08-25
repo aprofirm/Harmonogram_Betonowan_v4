@@ -189,27 +189,8 @@
     return wynik;
   }
 
-  function dopasujLiczbePomp(listaPomp, liczbaPomp, poczatekDnia) {
-    const oczekiwanaLiczba = pobierzNieujemnaLiczbeCalkowita(
-      liczbaPomp,
-      "Liczba pomp"
-    );
-    const wynik = normalizujListePomp(listaPomp, poczatekDnia).slice(
-      0,
-      oczekiwanaLiczba
-    );
-
-    while (wynik.length < oczekiwanaLiczba) {
-      const numer = znajdzKolejnyNumerPompy(wynik);
-      wynik.push(utworzPompe(numer, poczatekDnia));
-    }
-
-    return wynik;
-  }
-
-  function zmienDanePompy(listaPomp, idPompy, nazwaPola, wartosc) {
-    const lista = normalizujListePomp(listaPomp);
-    const pompa = lista.find(function (pozycja) {
+  function znajdzPompeDoOperacji(listaPomp, idPompy) {
+    const pompa = listaPomp.find(function (pozycja) {
       return String(pozycja.idPompy) === String(idPompy);
     });
 
@@ -217,19 +198,105 @@
       throw new Error("Nie znaleziono pompy o ID „" + idPompy + "”.");
     }
 
-    if (nazwaPola === "typ") {
-      pompa.typ = pobierzTypPompy(wartosc);
-    } else if (nazwaPola === "aktywna") {
-      pompa.aktywna = Boolean(wartosc);
-    } else if (nazwaPola === "dostepnaOd") {
-      pompa.dostepnaOd = pobierzGodzineHHMM(wartosc, "Dostępna od");
-    } else if (nazwaPola === "wysiegMetry") {
-      pompa.wysiegMetry = pobierzWysiegPompyLubDomyslny(wartosc);
-    } else {
-      throw new Error("Nie można zmienić nieznanego pola pompy „" + nazwaPola + "”.");
-    }
+    return pompa;
+  }
+
+  function dodajPompe(listaPomp, danePompy, poczatekDnia) {
+    const lista = normalizujListePomp(listaPomp, poczatekDnia);
+    const numer = znajdzKolejnyNumerPompy(lista);
+    const dane = danePompy && typeof danePompy === "object"
+      ? danePompy
+      : {};
+    const pompaDomyslna = utworzPompe(numer, poczatekDnia);
+    const nowaPompa = normalizujPompe(
+      Object.assign({}, pompaDomyslna, dane, {
+        idPompy: pompaDomyslna.idPompy
+      }),
+      numer,
+      poczatekDnia
+    );
+
+    lista.push(nowaPompa);
+    return lista;
+  }
+
+  function edytujPompe(listaPomp, idPompy, zmiany) {
+    const lista = normalizujListePomp(listaPomp);
+    const pompa = znajdzPompeDoOperacji(lista, idPompy);
+    const daneZmian = zmiany && typeof zmiany === "object" && !Array.isArray(zmiany)
+      ? zmiany
+      : {};
+
+    Object.keys(daneZmian).forEach(function (nazwaPola) {
+      const wartosc = daneZmian[nazwaPola];
+
+      if (nazwaPola === "idPompy") {
+        throw new Error("Nie można zmienić stabilnego ID pompy.");
+      }
+
+      if (nazwaPola === "nazwa") {
+        const nazwa = String(wartosc || "").trim();
+
+        if (!nazwa) {
+          throw new Error("Pompa musi mieć czytelną nazwę.");
+        }
+
+        pompa.nazwa = nazwa;
+      } else if (nazwaPola === "typ") {
+        pompa.typ = pobierzTypPompy(wartosc);
+      } else if (nazwaPola === "aktywna") {
+        pompa.aktywna = Boolean(wartosc);
+      } else if (nazwaPola === "dostepnaOd") {
+        pompa.dostepnaOd = pobierzGodzineHHMM(wartosc, "Dostępna od");
+      } else if (nazwaPola === "wysiegMetry") {
+        pompa.wysiegMetry = pobierzWysiegPompyLubDomyslny(wartosc);
+      } else {
+        throw new Error(
+          "Nie można zmienić nieznanego pola pompy „" + nazwaPola + "”."
+        );
+      }
+    });
 
     return lista;
+  }
+
+  function ustawAktywnoscPompy(listaPomp, idPompy, czyAktywna) {
+    return edytujPompe(listaPomp, idPompy, {
+      aktywna: Boolean(czyAktywna)
+    });
+  }
+
+  function usunPompe(listaPomp, idPompy) {
+    const lista = normalizujListePomp(listaPomp);
+    const pompa = znajdzPompeDoOperacji(lista, idPompy);
+
+    return lista.filter(function (pozycja) {
+      return pozycja.idPompy !== pompa.idPompy;
+    });
+  }
+
+  function dopasujLiczbePomp(listaPomp, liczbaPomp, poczatekDnia) {
+    const oczekiwanaLiczba = pobierzNieujemnaLiczbeCalkowita(
+      liczbaPomp,
+      "Liczba pomp"
+    );
+    let wynik = normalizujListePomp(listaPomp, poczatekDnia);
+
+    while (wynik.length > oczekiwanaLiczba) {
+      wynik = usunPompe(wynik, wynik[wynik.length - 1].idPompy);
+    }
+
+    while (wynik.length < oczekiwanaLiczba) {
+      wynik = dodajPompe(wynik, {}, poczatekDnia);
+    }
+
+    return wynik;
+  }
+
+  function zmienDanePompy(listaPomp, idPompy, nazwaPola, wartosc) {
+    const zmiany = {};
+    zmiany[nazwaPola] = wartosc;
+    return edytujPompe(listaPomp, idPompy, zmiany);
   }
 
   function pobierzLiczbeAktywnychPomp(listaPomp) {
@@ -565,6 +632,10 @@
     czyBudowaWymagaPompy: czyBudowaWymagaPompy,
     zakwalifikujBudowyDoObslugiPomp: zakwalifikujBudowyDoObslugiPomp,
     normalizujListePomp: normalizujListePomp,
+    dodajPompe: dodajPompe,
+    edytujPompe: edytujPompe,
+    ustawAktywnoscPompy: ustawAktywnoscPompy,
+    usunPompe: usunPompe,
     dopasujLiczbePomp: dopasujLiczbePomp,
     zmienDanePompy: zmienDanePompy,
     skopiujListePomp: skopiujListePomp,

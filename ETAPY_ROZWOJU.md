@@ -49,7 +49,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; cały 4A, 4B.1 oraz 4C.1–4C.2 zakończone**
+- [ ] Etap 4 — Pompy — **rozpoczęty; cały 4A, 4B.1–4B.2 oraz 4C.1–4C.2 zakończone**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -537,7 +537,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
   - [x] **4B.1 — model pompy:** stabilne ID, czytelna nazwa, typ własna lub
     zewnętrzna, aktywność w danym dniu, godzina **Dostępna od** i miejsce na
     rzeczywiście potrzebne parametry techniczne, np. wysięg.
-  - [ ] **4B.2 — operacje na liście:** dodawanie, edycja, wyłączanie i usuwanie
+  - [x] **4B.2 — operacje na liście:** dodawanie, edycja, wyłączanie i usuwanie
     pompy bez mieszania tych operacji z silnikiem harmonogramu.
   - [ ] **4B.3 — walidacja i testy modelu:** unikalne ID, poprawne typy, bezpieczne
     wartości puste i brak przydzielania pomp nieaktywnych.
@@ -886,9 +886,9 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **4B.2 — operacje na liście pomp**. Rozdzielić jawne dodawanie, edycję,
-wyłączanie i usuwanie pojedynczej pompy od dopasowania liczby zasobów do pola
-operatora, zachowując stabilne ID i bez uruchamiania silnika harmonogramu.
+Wykonać **4B.3 — walidację i testy modelu pomp**. Domknąć reguły unikalnych ID,
+obsługiwanych typów, bezpiecznych wartości pustych oraz przygotować zasadę, że
+pompa nieaktywna nie może trafić do późniejszego przydziału.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1797,3 +1797,24 @@ Następny podetap to **4A.3 — wynik niezależnego silnika pomp**.
 
 Cały punkt **4A** jest zakończony. Etap 4 pozostaje otwarty. Następny
 niezakończony podetap to **4B.2 — operacje na liście pomp**.
+
+
+## 4B.2 — niezależne operacje na liście pomp — 2026-08-25
+
+- [x] moduł pomp udostępnia osobne operacje dodania, pełnej edycji, zmiany
+  aktywności i usunięcia pojedynczej pompy;
+- [x] żadna z operacji nie zmienia wejściowej listy ani obiektów pomp;
+- [x] edycja nie pozwala zmienić stabilnego `idPompy`, a usunięcie jednej pompy
+  nie przenumerowuje pozostałych zasobów;
+- [x] zmiana wielu pól jest atomowa z punktu widzenia stanu wejściowego — błąd
+  walidacji nie pozostawia częściowo zapisanej zmiany;
+- [x] dotychczasowe pole liczby pomp nadal działa, ale korzysta ze wspólnych
+  operacji dodawania i usuwania zamiast utrzymywać osobną logikę listy;
+- [x] operacje pozostają niezależne od obliczania zajętości, przydziału i
+  minimalnej liczby pomp;
+- [x] test `testy/etap_4b_2.test.js` obejmuje dodawanie, edycję, wyłączanie,
+  usuwanie, stabilność ID, brak mutacji i zgodność pola liczby pomp;
+- [x] pełna lokalna regresja wszystkich `28` zestawów testów przechodzi.
+
+Podetap **4B.2** jest zakończony. Punkt 4B i cały Etap 4 pozostają otwarte.
+Następny niezakończony podetap to **4B.3 — walidacja i testy modelu pomp**.

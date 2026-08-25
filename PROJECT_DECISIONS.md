@@ -1606,6 +1606,21 @@ kopiowane, a wynik pomp nie nadpisuje `StartPlanowany`, `StartZadany` ani
 Podłączenie rzeczywistego wyniku do `przeliczCalyHarmonogram()` pozostaje
 zakresem 4I.1, a wspólne korygowanie pomp i gruszek — Etapu 5.
 
+## 85. Operacje listy pomp są niezależne od silnika harmonogramu
+
+Dodanie, edycja, włączenie lub wyłączenie oraz usunięcie pojedynczej pompy są
+osobnymi operacjami modelu. Każda z nich zwraca nową listę i nie zmienia listy
+wejściowej ani znajdujących się w niej obiektów.
+
+`idPompy` pozostaje stabilne: nie można go zmienić podczas edycji, a usunięcie
+zasobu nie przenumerowuje pozostałych pomp. Pole liczby pomp jest wygodnym
+skrótem operatora i korzysta z tych samych operacji listy, ale nie zastępuje
+ich kontraktu.
+
+Operacje listy nie uruchamiają obliczeń zajętości, przydziału ani minimalnej
+liczby pomp. Nie rozstrzygają też sposobu przydzielania pomp zewnętrznych;
+otwarty wariant P-010 pozostaje do decyzji przed etapem 4F.
+
 ---
 
 # Powiązane tematy otwarte
