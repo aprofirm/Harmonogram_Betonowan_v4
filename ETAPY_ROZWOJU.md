@@ -49,7 +49,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; cały 4A, 4B.1–4B.2 oraz 4C.1–4C.2 zakończone**
+- [ ] Etap 4 — Pompy — **rozpoczęty; cały 4A–4B oraz 4C.1–4C.2 zakończone**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -533,13 +533,13 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
   - [x] **4A.4 — zapis decyzji i test zasad:** zatwierdzone reguły trafiają do
     `PROJECT_DECISIONS.md`, a przypadki wymagające decyzji pozostają jawnie w
     `POMYSLY_I_BACKLOG.md`.
-- [ ] **4B — model danych i lista pomp.**
+- [x] **4B — model danych i lista pomp.**
   - [x] **4B.1 — model pompy:** stabilne ID, czytelna nazwa, typ własna lub
     zewnętrzna, aktywność w danym dniu, godzina **Dostępna od** i miejsce na
     rzeczywiście potrzebne parametry techniczne, np. wysięg.
   - [x] **4B.2 — operacje na liście:** dodawanie, edycja, wyłączanie i usuwanie
     pompy bez mieszania tych operacji z silnikiem harmonogramu.
-  - [ ] **4B.3 — walidacja i testy modelu:** unikalne ID, poprawne typy, bezpieczne
+  - [x] **4B.3 — walidacja i testy modelu:** unikalne ID, poprawne typy, bezpieczne
     wartości puste i brak przydzielania pomp nieaktywnych.
 - [ ] **4C — interfejs listy pomp i pamięć planu.**
   - [x] **4C.1 — panel pomp:** czytelna lista z typem, aktywnością, godziną
@@ -886,9 +886,9 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **4B.3 — walidację i testy modelu pomp**. Domknąć reguły unikalnych ID,
-obsługiwanych typów, bezpiecznych wartości pustych oraz przygotować zasadę, że
-pompa nieaktywna nie może trafić do późniejszego przydziału.
+Wykonać **4C.3 — odtworzenie i test operatora listy pomp**. Sprawdzić na
+opublikowanej stronie odświeżenie, zapis historyczny, kolejny import oraz
+wyczyszczenie planu, aby domknąć cały punkt 4C.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1818,3 +1818,25 @@ niezakończony podetap to **4B.2 — operacje na liście pomp**.
 
 Podetap **4B.2** jest zakończony. Punkt 4B i cały Etap 4 pozostają otwarte.
 Następny niezakończony podetap to **4B.3 — walidacja i testy modelu pomp**.
+
+
+## 4B.3 — walidacja modelu i zamknięcie 4B — 2026-08-25
+
+- [x] jawnie powtórzone `idPompy` są odrzucane z czytelnym komunikatem;
+- [x] brakujące i puste ID są uzupełniane bez kolizji z identyfikatorami już
+  obecnymi na liście;
+- [x] typ jest normalizowany wyłącznie do `wlasna` albo `zewnetrzna`, a wartość
+  nierozpoznana nie jest po cichu przyjmowana;
+- [x] puste ID, nazwa, typ, aktywność, dostępność i wysięg otrzymują bezpieczne
+  wartości domyślne, również gdy zapis zawiera same spacje;
+- [x] aktywność musi być prawdziwą wartością logiczną, więc tekst `"false"` nie
+  może zostać błędnie potraktowany jako aktywna pompa;
+- [x] moduł udostępnia listę kandydatów do przyszłego przydziału zawierającą
+  wyłącznie pompy aktywne i będącą kopią danych wejściowych;
+- [x] test `testy/etap_4b_3.test.js` obejmuje kolizje ID, typy, puste pola,
+  błędne wartości oraz wykluczanie nieaktywnych pomp;
+- [x] pełna lokalna regresja wszystkich `29` zestawów testów przechodzi.
+
+Cały punkt **4B — model danych i lista pomp** jest zakończony. Etap 4 pozostaje
+otwarty. Następny niezakończony podetap to **4C.3 — odtworzenie i test operatora
+listy pomp**.

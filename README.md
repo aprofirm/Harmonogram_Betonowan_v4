@@ -326,6 +326,7 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_4a_2.test.js
     node testy/etap_4a_3.test.js
     node testy/etap_4b_2.test.js
+    node testy/etap_4b_3.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
@@ -370,14 +371,16 @@ planie i po przeliczeniu również w historii, zostaje odtworzona po odświeżen
 a starsze plany bez `StartZadany` są bezpiecznie uzupełniane godziną planowaną.
 Test operatora KP-4.5 został zaliczony i cały KP-4 jest zakończony.
 
-Etap 4 ma ukończony cały punkt **4A — reguły, czasy i niezależny kontrakt
-wyniku pomp**. Gotowe są także **4B.1–4B.2** i
+Etap 4 ma ukończone całe punkty **4A — reguły, czasy i niezależny kontrakt
+wyniku pomp** oraz **4B — model danych i lista pomp**. Gotowe są również
 **4C.1–4C.2**:
 model pompy, wspólny panel zasobów, lista z dostępnością i wysięgiem oraz
 pamięć planu. Lista ma osobne, niemutujące operacje dodawania, edycji, zmiany
-aktywności i usuwania, a pole liczby pomp korzysta z tego samego kontraktu.
+aktywności i usuwania, waliduje ID, typy i puste pola, a do przyszłego
+przydziału przekazuje wyłącznie aktywne pompy. Pole liczby pomp korzysta z tego
+samego kontraktu.
 Standardowy wysięg wynosi `32 m`; przy budowie dodatkowe pole jest
 ukryte i pojawia się dopiero po zaznaczeniu **Większa pompa**. Zmiana czasów
 jest na `main` i została potwierdzona przez operatora na opublikowanej stronie.
-Następny krok to **4B.3 — walidacja i testy modelu pomp**.
+Następny krok to **4C.3 — odtworzenie i test operatora listy pomp**.
 Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.

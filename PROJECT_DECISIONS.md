@@ -1621,6 +1621,24 @@ Operacje listy nie uruchamiają obliczeń zajętości, przydziału ani minimalne
 liczby pomp. Nie rozstrzygają też sposobu przydzielania pomp zewnętrznych;
 otwarty wariant P-010 pozostaje do decyzji przed etapem 4F.
 
+## 86. Walidacja pompy nie może tworzyć pozornie poprawnego zasobu
+
+Każda znormalizowana lista pomp ma unikalne, niepuste identyfikatory. Jawne
+powtórzenie `idPompy` jest błędem, natomiast brakujące ID jest uzupełniane tak,
+aby nie kolidowało z żadnym identyfikatorem już obecnym na liście.
+
+Model dopuszcza wyłącznie typ `wlasna` albo `zewnetrzna`. Puste pola starszego
+zapisu mogą otrzymać opisane wartości domyślne: nazwę wynikającą z numeru, typ
+`wlasna`, aktywność `true`, początek dnia jako godzinę dostępności i wysięg
+`32 m`. Wartości niepuste, ale błędne, muszą zostać odrzucone zamiast cichego
+przekształcenia. Dotyczy to szczególnie aktywności — tekst `"false"` nie jest
+wartością logiczną i nie może zostać potraktowany jako `true`.
+
+Jedynym wejściem dla przyszłego algorytmu przydziału jest lista aktywnych pomp
+zwracana przez model. Pompa z `aktywna: false` nie może znaleźć się wśród
+kandydatów do przydziału. Sama decyzja, która z aktywnych pomp obsłuży budowę,
+pozostaje zakresem 4F.
+
 ---
 
 # Powiązane tematy otwarte

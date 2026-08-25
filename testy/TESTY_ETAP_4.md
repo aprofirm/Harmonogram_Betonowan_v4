@@ -2,12 +2,12 @@
 
 ## Status
 
-Etap 4 jest rozpoczęty. Zakończono cały punkt **4A** oraz **4B.1–4B.2**, a na
+Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4B**, a na
 zlecenie operatora wcześniej wdrożono również panel i pamięć **4C.1–4C.2**.
-Następny podetap to **4B.3 — walidacja i testy modelu pomp**. Standardowy wysięg
+Następny podetap to **4C.3 — odtworzenie i test operatora**. Standardowy wysięg
 `32 m` i zwijane pole **Większa pompa** są opublikowane na `main` i zostały
 potwierdzone przez operatora w przeglądarce. Pełna regresja obejmuje obecnie
-`28` zestawów testów.
+`29` zestawów testów.
 
 ## Cel
 
@@ -65,7 +65,9 @@ Test operatora czasów 4A.2 — zaliczony:
 
 - [x] każda pompa ma stabilne, unikalne ID;
 - [x] typ pompy jest ograniczony do wartości obsługiwanych przez model;
-- pompa nieaktywna nie może zostać przydzielona;
+- [x] lista kandydatów do przydziału nie zawiera pomp nieaktywnych;
+- [x] puste pola starszego zapisu dostają bezpieczne wartości domyślne, a
+  niepuste błędne wartości są odrzucane;
 - [x] dodanie, edycja, wyłączenie i usunięcie pojedynczej pompy jest osobną,
   niemutującą operacją modelu;
 - [x] pole liczby pomp korzysta ze wspólnych operacji listy, zachowuje dane

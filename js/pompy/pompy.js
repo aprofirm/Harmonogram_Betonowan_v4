@@ -11,13 +11,17 @@
   const KROK_DODATKOWEGO_WYSIEGU_POMPY_METRY = 10;
   const DODATKOWY_CZAS_NA_KROK_WYSIEGU_MINUTY = 5;
 
+  function czyBrakWartosci(wartosc) {
+    return wartosc === null ||
+      wartosc === undefined ||
+      (typeof wartosc === "string" && wartosc.trim() === "");
+  }
+
   function pobierzNieujemnaLiczbeCalkowita(wartosc, nazwaPola) {
     const liczba = Number(wartosc);
 
     if (
-      wartosc === null ||
-      wartosc === undefined ||
-      wartosc === "" ||
+      czyBrakWartosci(wartosc) ||
       !Number.isInteger(liczba) ||
       liczba < 0
     ) {
@@ -47,7 +51,7 @@
   }
 
   function pobierzDodatniaLiczbeLubBrak(wartosc, nazwaPola) {
-    if (wartosc === null || wartosc === undefined || wartosc === "") {
+    if (czyBrakWartosci(wartosc)) {
       return null;
     }
 
@@ -61,7 +65,7 @@
   }
 
   function pobierzNieujemnaLiczbeCalkowitaLubBrak(wartosc, nazwaPola) {
-    if (wartosc === null || wartosc === undefined || wartosc === "") {
+    if (czyBrakWartosci(wartosc)) {
       return null;
     }
 
@@ -74,6 +78,18 @@
     }
 
     return liczba;
+  }
+
+  function pobierzAktywnoscPompy(wartosc, wartoscDomyslna) {
+    if (czyBrakWartosci(wartosc) && typeof wartoscDomyslna === "boolean") {
+      return wartoscDomyslna;
+    }
+
+    if (typeof wartosc !== "boolean") {
+      throw new Error("Pole „Aktywna” musi mieć wartość logiczną prawda albo fałsz.");
+    }
+
+    return wartosc;
   }
 
   function pobierzWysiegPompyLubDomyslny(wartosc) {
@@ -151,20 +167,18 @@
 
   function normalizujPompe(pompa, numer, poczatekDnia) {
     const dane = pompa && typeof pompa === "object" ? pompa : {};
-    const idPompy = String(dane.idPompy || utworzIdPompy(numer)).trim();
-    const nazwa = String(dane.nazwa || "Pompa " + numer).trim();
-
-    if (!idPompy || !nazwa) {
-      throw new Error("Pompa musi mieć identyfikator i nazwę.");
-    }
+    const idZDanych = String(dane.idPompy || "").trim();
+    const nazwaZDanych = String(dane.nazwa || "").trim();
+    const typZDanych = String(dane.typ || "").trim();
+    const dostepnoscZDanych = String(dane.dostepnaOd || "").trim();
 
     return {
-      idPompy: idPompy,
-      nazwa: nazwa,
-      typ: pobierzTypPompy(dane.typ || "wlasna"),
-      aktywna: dane.aktywna !== false,
+      idPompy: idZDanych || utworzIdPompy(numer),
+      nazwa: nazwaZDanych || "Pompa " + numer,
+      typ: pobierzTypPompy(typZDanych || "wlasna"),
+      aktywna: pobierzAktywnoscPompy(dane.aktywna, true),
       dostepnaOd: pobierzGodzineHHMM(
-        dane.dostepnaOd || poczatekDnia || "07:00",
+        dostepnoscZDanych || poczatekDnia || "07:00",
         "Dostępna od"
       ),
       wysiegMetry: pobierzWysiegPompyLubDomyslny(dane.wysiegMetry)
@@ -173,20 +187,49 @@
 
   function normalizujListePomp(listaPomp, poczatekDnia) {
     const lista = Array.isArray(listaPomp) ? listaPomp : [];
-    const wynik = lista.map(function (pompa, indeks) {
-      return normalizujPompe(pompa, indeks + 1, poczatekDnia);
-    });
-    const identyfikatory = new Set();
+    const jawneIdentyfikatory = new Set();
 
-    wynik.forEach(function (pompa) {
-      if (identyfikatory.has(pompa.idPompy)) {
-        throw new Error("Lista pomp zawiera powtórzony identyfikator „" + pompa.idPompy + "”.");
+    lista.forEach(function (pompa) {
+      const dane = pompa && typeof pompa === "object" ? pompa : {};
+      const idPompy = String(dane.idPompy || "").trim();
+
+      if (!idPompy) {
+        return;
       }
 
-      identyfikatory.add(pompa.idPompy);
+      if (jawneIdentyfikatory.has(idPompy)) {
+        throw new Error(
+          "Lista pomp zawiera powtórzony identyfikator „" + idPompy + "”."
+        );
+      }
+
+      jawneIdentyfikatory.add(idPompy);
     });
 
-    return wynik;
+    const zajeteIdentyfikatory = new Set(jawneIdentyfikatory);
+
+    return lista.map(function (pompa, indeks) {
+      const dane = pompa && typeof pompa === "object" ? pompa : {};
+      const jawneIdPompy = String(dane.idPompy || "").trim();
+      let idPompy = jawneIdPompy;
+
+      if (!idPompy) {
+        let numerPompy = 1;
+
+        while (zajeteIdentyfikatory.has(utworzIdPompy(numerPompy))) {
+          numerPompy += 1;
+        }
+
+        idPompy = utworzIdPompy(numerPompy);
+        zajeteIdentyfikatory.add(idPompy);
+      }
+
+      return normalizujPompe(
+        Object.assign({}, dane, { idPompy: idPompy }),
+        indeks + 1,
+        poczatekDnia
+      );
+    });
   }
 
   function znajdzPompeDoOperacji(listaPomp, idPompy) {
@@ -245,7 +288,7 @@
       } else if (nazwaPola === "typ") {
         pompa.typ = pobierzTypPompy(wartosc);
       } else if (nazwaPola === "aktywna") {
-        pompa.aktywna = Boolean(wartosc);
+        pompa.aktywna = pobierzAktywnoscPompy(wartosc);
       } else if (nazwaPola === "dostepnaOd") {
         pompa.dostepnaOd = pobierzGodzineHHMM(wartosc, "Dostępna od");
       } else if (nazwaPola === "wysiegMetry") {
@@ -262,7 +305,7 @@
 
   function ustawAktywnoscPompy(listaPomp, idPompy, czyAktywna) {
     return edytujPompe(listaPomp, idPompy, {
-      aktywna: Boolean(czyAktywna)
+      aktywna: czyAktywna
     });
   }
 
@@ -299,10 +342,14 @@
     return edytujPompe(listaPomp, idPompy, zmiany);
   }
 
+  function pobierzPompyAktywneDoPrzydzialu(listaPomp, poczatekDnia) {
+    return normalizujListePomp(listaPomp, poczatekDnia).filter(function (pompa) {
+      return pompa.aktywna === true;
+    });
+  }
+
   function pobierzLiczbeAktywnychPomp(listaPomp) {
-    return (Array.isArray(listaPomp) ? listaPomp : []).filter(function (pompa) {
-      return pompa && pompa.aktywna !== false;
-    }).length;
+    return pobierzPompyAktywneDoPrzydzialu(listaPomp).length;
   }
 
   function zmienWymaganyWysiegPompyBudowy(budowa, wartosc) {
@@ -639,6 +686,7 @@
     dopasujLiczbePomp: dopasujLiczbePomp,
     zmienDanePompy: zmienDanePompy,
     skopiujListePomp: skopiujListePomp,
+    pobierzPompyAktywneDoPrzydzialu: pobierzPompyAktywneDoPrzydzialu,
     pobierzLiczbeAktywnychPomp: pobierzLiczbeAktywnychPomp,
     zmienWymaganyWysiegPompyBudowy: zmienWymaganyWysiegPompyBudowy,
     pobierzWymaganyWysiegPompyBudowy: pobierzWymaganyWysiegPompyBudowy,
