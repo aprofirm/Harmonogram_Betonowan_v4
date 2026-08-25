@@ -588,6 +588,110 @@ async function sprawdzPamiecKorektyStartu() {
   assert.equal(danePlanu.budowyZImportu[0].startRoboczy, "08:00");
 }
 
+async function sprawdzOdtwarzanieListyPomp() {
+  const pamiecLokalna = utworzPamiecLokalna();
+  const ustawieniaPotwierdzenia = { wynik: true };
+  const pierwszaStrona = uruchomAplikacje(
+    pamiecLokalna,
+    ustawieniaPotwierdzenia
+  );
+
+  await wczytajCsv(pierwszaStrona);
+  const poleDojazdu = znajdzPierwszePoleDojazdu(pierwszaStrona);
+  poleDojazdu.value = "25";
+  poleDojazdu.zdarzenia.change();
+
+  const poleTrybuPomp = pierwszaStrona.dokument.elementy["tryb-pomp"];
+  const poleLiczbyPomp = pierwszaStrona.dokument.elementy[
+    "liczba-dostepnych-pomp"
+  ];
+  const kontenerPomp = pierwszaStrona.dokument.elementy["lista-pomp"];
+
+  poleTrybuPomp.value = "mam-okreslona-liczbe";
+  poleTrybuPomp.zdarzenia.change();
+  poleLiczbyPomp.value = "2";
+  poleLiczbyPomp.zdarzenia.change();
+
+  let pierwszaPompa = kontenerPomp.children[0];
+  pierwszaPompa.children[2].children[1].value = "08:15";
+  pierwszaPompa.children[2].children[1].zdarzenia.change();
+  pierwszaPompa = kontenerPomp.children[0];
+  pierwszaPompa.children[3].children[1].value = "42";
+  pierwszaPompa.children[3].children[1].zdarzenia.change();
+
+  let drugaPompa = kontenerPomp.children[1];
+  drugaPompa.children[1].children[1].value = "zewnetrzna";
+  drugaPompa.children[1].children[1].zdarzenia.change();
+  drugaPompa = kontenerPomp.children[1];
+  drugaPompa.children[4].children[1].checked = false;
+  drugaPompa.children[4].children[1].zdarzenia.change();
+
+  pierwszaStrona.dokument.elementy["przycisk-przelicz"].zdarzenia.click();
+  assert.equal(odczytajHistorie(pamiecLokalna).zapisy.length, 1);
+
+  const stronaPoOdswiezeniu = uruchomAplikacje(
+    pamiecLokalna,
+    ustawieniaPotwierdzenia
+  );
+  const pompyPoOdswiezeniu = stronaPoOdswiezeniu.dokument.elementy["lista-pomp"];
+
+  assert.equal(pompyPoOdswiezeniu.children.length, 2);
+  assert.equal(
+    pompyPoOdswiezeniu.children[0].children[2].children[1].value,
+    "08:15"
+  );
+  assert.equal(
+    pompyPoOdswiezeniu.children[0].children[3].children[1].value,
+    "42"
+  );
+  assert.equal(
+    pompyPoOdswiezeniu.children[1].children[1].children[1].value,
+    "zewnetrzna"
+  );
+  assert.equal(
+    pompyPoOdswiezeniu.children[1].children[4].children[1].checked,
+    false
+  );
+
+  await wczytajCsv(stronaPoOdswiezeniu);
+  const planPoKolejnymImporcie = odczytajDanePlanu(pamiecLokalna);
+
+  assert.equal(planPoKolejnymImporcie.listaPomp.length, 2);
+  assert.equal(planPoKolejnymImporcie.listaPomp[0].dostepnaOd, "08:15");
+  assert.equal(planPoKolejnymImporcie.listaPomp[0].wysiegMetry, 42);
+  assert.equal(planPoKolejnymImporcie.listaPomp[1].typ, "zewnetrzna");
+  assert.equal(planPoKolejnymImporcie.listaPomp[1].aktywna, false);
+
+  stronaPoOdswiezeniu.dokument.elementy["przycisk-wyczysc-plan"]
+    .zdarzenia.click();
+  assert.equal(
+    stronaPoOdswiezeniu.dokument.elementy["lista-pomp"].children.length,
+    0
+  );
+  assert.equal(pamiecLokalna.getItem(kluczPlanu), null);
+  assert.equal(odczytajHistorie(pamiecLokalna).zapisy.length, 1);
+
+  stronaPoOdswiezeniu.dokument.elementy["przycisk-historia-planow"]
+    .zdarzenia.click();
+  const listaHistorii = stronaPoOdswiezeniu.dokument.elementy[
+    "lista-zapisow-historycznych"
+  ];
+  listaHistorii.children[0].children[1].zdarzenia.click();
+
+  const pompyPoHistorii = stronaPoOdswiezeniu.dokument.elementy["lista-pomp"];
+  const planPoHistorii = odczytajDanePlanu(pamiecLokalna);
+
+  assert.equal(pompyPoHistorii.children.length, 2);
+  assert.equal(planPoHistorii.listaPomp[0].dostepnaOd, "08:15");
+  assert.equal(planPoHistorii.listaPomp[0].wysiegMetry, 42);
+  assert.equal(planPoHistorii.listaPomp[1].typ, "zewnetrzna");
+  assert.equal(planPoHistorii.listaPomp[1].aktywna, false);
+
+  console.log(
+    "✓ Etap 4C.3: odświeżenie, historia, kolejny import i czyszczenie zachowują reguły listy pomp."
+  );
+}
+
 async function uruchomTest() {
   const pamiecLokalna = utworzPamiecLokalna();
   const ustawieniaPotwierdzenia = { wynik: true };
@@ -947,6 +1051,8 @@ sprawdzMigracjeTrasZeStarszegoPlanu();
 sprawdzStarszyPlanBezStartuZadanego();
 sprawdzMigracjeStandardowegoWysieguPomp();
 uruchomTest().then(function () {
+  return sprawdzOdtwarzanieListyPomp();
+}).then(function () {
   return sprawdzPamiecKorektyStartu();
 }).then(function () {
   console.log(

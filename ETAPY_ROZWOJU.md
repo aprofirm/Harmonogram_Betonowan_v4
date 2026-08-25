@@ -49,7 +49,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; cały 4A–4B oraz 4C.1–4C.2 zakończone**
+- [ ] Etap 4 — Pompy — **rozpoczęty; cały 4A–4B i 4C.1–4C.2 zakończone, 4C.3 czeka na test operatora**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -886,9 +886,9 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **4C.3 — odtworzenie i test operatora listy pomp**. Sprawdzić na
-opublikowanej stronie odświeżenie, zapis historyczny, kolejny import oraz
-wyczyszczenie planu, aby domknąć cały punkt 4C.
+Wykonać test operatora **4C.3** na opublikowanej stronie: sprawdzić odświeżenie,
+zapis historyczny, kolejny import oraz wyczyszczenie planu. Po potwierdzeniu
+zamknąć cały punkt 4C i przejść do 4D.1.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1840,3 +1840,24 @@ Następny niezakończony podetap to **4B.3 — walidacja i testy modelu pomp**.
 Cały punkt **4B — model danych i lista pomp** jest zakończony. Etap 4 pozostaje
 otwarty. Następny niezakończony podetap to **4C.3 — odtworzenie i test operatora
 listy pomp**.
+
+
+## 4C.3 — automatyczny test odtwarzania listy pomp — 2026-08-25
+
+- [x] odświeżenie strony odtwarza tryb, liczbę, typ, aktywność, godzinę
+  dostępności i wysięg każdej pompy;
+- [x] kolejny import CSV zastępuje budowy z pliku, ale zachowuje bieżącą listę
+  zasobów pomp;
+- [x] wyczyszczenie planu usuwa bieżącą listę pomp i zapis planu, pozostawiając
+  historię zgodnie z zasadami pamięci;
+- [x] odtworzenie zapisu historycznego przywraca pełną listę pomp wraz ze
+  szczegółami;
+- [x] scenariusz został dodany do `testy/pamiec_aplikacji.test.js` bez
+  dublowania istniejącego środowiska testowego pamięci;
+- [x] pełna lokalna regresja wszystkich `29` zestawów testów przechodzi;
+- [ ] test operatora na opublikowanej stronie potwierdza te same cztery
+  zachowania.
+
+Podetap **4C.3** i cały punkt 4C pozostają otwarte wyłącznie do testu operatora.
+Po jego zaliczeniu następnym podetapem będzie **4D.1 — planowane okno
+betonowania**.
