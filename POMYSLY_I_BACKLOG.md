@@ -176,7 +176,7 @@ pierwszego do końca ostatniego rozładunku. Decyzję zapisano w punkcie 83
 
 **Data:** 2026-08-23
 **Status:** DO DOPRECYZOWANIA
-**Powiązanie:** Etap 4A i 4B — Pompy
+**Powiązanie:** Etap 4B.2 i 4F — Pompy
 
 Model ma rozróżniać pompy własne i zewnętrzne, ale trzeba jeszcze ustalić, czy
 pompa zewnętrzna:
@@ -185,6 +185,9 @@ pompa zewnętrzna:
 - jest z góry przypisywana do konkretnej budowy,
 - może obsłużyć kilka budów tego samego dnia,
 - rozpoczyna dzień w bazie betoniarni, własnej bazie czy przy pierwszej budowie.
+
+Kontrakt wyniku z 4A może przechować każdy z tych wariantów bez rozstrzygania
+go przedwcześnie. Decyzja jest potrzebna przed właściwym przydziałem w 4F.
 
 ---
 

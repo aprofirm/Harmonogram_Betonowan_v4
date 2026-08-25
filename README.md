@@ -217,6 +217,12 @@ Właściwe pompowanie jest liczone od początku pierwszego rozładunku do końca
 ostatniego rozładunku. Pełny przydział pomp i przedziały ich zajętości powstaną
 w kolejnych podetapach Etapu 4.
 
+Niezależny wynik pomp ma już stały kontrakt. Dla każdej pompowanej budowy
+przechowuje osobne miejsca na przydział, okres zajętości, najwcześniejszy start,
+opóźnienie i skutek niedoboru. Do czasu wykonania właściwego obliczenia pola te
+mają wartość `null`, dzięki czemu program odróżnia brak wyniku od prawdziwego
+wyniku `0`. Utworzenie wyniku nie zmienia godzin budów ani kursów gruszek.
+
 Licznik **potrzebnych pomp** pokazuje na tym etapie `—`. Nie jest to błąd ani
 wynik `0`: rzeczywista minimalna liczba będzie obliczana dopiero po dodaniu
 pełnych czasów obsługi, zajętości i przydziału pomp w kolejnych podetapach.
@@ -318,6 +324,7 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_3e.test.js
     node testy/etap_4a_1.test.js
     node testy/etap_4a_2.test.js
+    node testy/etap_4a_3.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
@@ -362,11 +369,12 @@ planie i po przeliczeniu również w historii, zostaje odtworzona po odświeżen
 a starsze plany bez `StartZadany` są bezpiecznie uzupełniane godziną planowaną.
 Test operatora KP-4.5 został zaliczony i cały KP-4 jest zakończony.
 
-Etap 4 ma ukończone **4A.1–4A.2 — kwalifikację budów i parametry czasu obsługi
-pompy**. Gotowy jest także wcześniejszy fundament **4B.1** i **4C.1–4C.2**:
+Etap 4 ma ukończony cały punkt **4A — reguły, czasy i niezależny kontrakt
+wyniku pomp**. Gotowy jest także wcześniejszy fundament **4B.1** i
+**4C.1–4C.2**:
 model pompy, wspólny panel zasobów, lista z dostępnością i wysięgiem oraz
 pamięć planu. Standardowy wysięg wynosi `32 m`; przy budowie dodatkowe pole jest
-ukryte i pojawia się dopiero po zaznaczeniu **Większa pompa**. Zmiana jest na
-`main` i została potwierdzona przez operatora na opublikowanej stronie.
-Następny krok to **4A.3 — wynik niezależnego silnika pomp**.
+ukryte i pojawia się dopiero po zaznaczeniu **Większa pompa**. Zmiana czasów
+jest na `main` i została potwierdzona przez operatora na opublikowanej stronie.
+Następny krok to **4B.2 — operacje na liście pomp**.
 Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.

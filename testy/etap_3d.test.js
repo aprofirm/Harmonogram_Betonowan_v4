@@ -83,7 +83,7 @@ function utworzKurs(idKursu, minutaPoczatku, czasCykluMinuty) {
 const aplikacja = wczytajAplikacje();
 
 const pustyWynik = przelicz(aplikacja, []);
-assert.equal(pustyWynik.punktEtapu, "4A.2");
+assert.equal(pustyWynik.punktEtapu, "4A.4");
 assert.equal(pustyWynik.minimalnaLiczbaGruszek, 0);
 assert.equal(pustyWynik.gruszki.minimalnaLiczbaGruszek, 0);
 
@@ -119,7 +119,7 @@ const interfejs = fs.readFileSync(
 
 assert.match(html, /id="minimalna-liczba-gruszek">0<\/span>/);
 assert.match(html, /potrzebnych gruszek/i);
-assert.match(html, /Etap 4A\.2/);
+assert.match(html, /Etap 4A\.4/);
 assert.match(interfejs, /wynik\.minimalnaLiczbaGruszek/);
 assert.match(
   interfejs,

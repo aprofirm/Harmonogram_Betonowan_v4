@@ -2,12 +2,12 @@
 
 ## Status
 
-Etap 4 jest rozpoczęty. Zakończono **4A.1–4A.2**, a na zlecenie operatora wcześniej
+Etap 4 jest rozpoczęty. Zakończono cały punkt **4A**, a na zlecenie operatora wcześniej
 wdrożono również model **4B.1** oraz panel i pamięć **4C.1–4C.2**. Następny
-podetap to **4A.3 — wynik niezależnego silnika pomp**. Standardowy wysięg
+podetap to **4B.2 — operacje na liście pomp**. Standardowy wysięg
 `32 m` i zwijane pole **Większa pompa** są opublikowane na `main` i zostały
 potwierdzone przez operatora w przeglądarce. Pełna regresja obejmuje obecnie
-`26` zestawów testów.
+`27` zestawów testów.
 
 ## Cel
 
@@ -48,8 +48,18 @@ obejmować:
   automatycznej;
 - [x] właściwe pompowanie trwa od początku pierwszego do końca ostatniego
   rozładunku;
-- brakujące decyzje pozostają opisane w backlogu zamiast trafiać do kodu jako
+- [x] wynik każdej pompowanej budowy ma osobne pola na przydział, zajętość,
+  najwcześniejszy start, opóźnienie i skutek niedoboru;
+- [x] brak obliczenia jest odróżniany przez `null` od prawdziwego wyniku `0`;
+- [x] utworzenie wyniku nie zmienia godzin budów, kursów ani listy pomp;
+- [x] brakujące decyzje pozostają opisane w backlogu zamiast trafiać do kodu jako
   ukryte wartości domyślne.
+
+Test operatora czasów 4A.2 — zaliczony:
+
+1. [x] standardowa budowa pokazuje `20/30 min`;
+2. [x] przy budowie jest dostępny przełącznik **Inne czasy**;
+3. [x] układ wierszy pozostał czytelny i kompaktowy.
 
 ### 4B–4C — model, lista i pamięć
 

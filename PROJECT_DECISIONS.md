@@ -1583,6 +1583,29 @@ z rozpoczęciem pierwszego rozładunku i kończy wraz z zakończeniem ostatniego
 rozładunku tej samej budowy. Utworzenie z tych składników pełnego przedziału
 zajętości pompy pozostaje zakresem 4D.
 
+## 84. Wynik pomp jest niezależny i nie nadpisuje planu wejściowego
+
+Silnik pomp ma własny, stabilny wynik oddzielony od wyniku gruszek. Dla każdej
+budowy zakwalifikowanej do pompowania przechowuje osobno:
+
+- identyfikator budowy i status przydziału;
+- źródłowy `StartPlanowany`, bieżący `StartZadany` oraz roboczy start istniejący
+  przed uwzględnieniem pompy;
+- przydzieloną pompę;
+- pełny okres zajętości;
+- najwcześniejszy możliwy start;
+- opóźnienie oraz skutek ewentualnego niedoboru pomp.
+
+Brak wykonanego jeszcze obliczenia jest oznaczany wartością `null` i statusem
+`oczekuje-na-obliczenie`. Nie wolno używać w tym miejscu `0`, ponieważ zero ma
+oznaczać rzeczywiście obliczony brak potrzebnych pomp albo brak opóźnienia.
+
+Tworzenie wyniku nie zmienia budów, kursów ani listy pomp. Dane zasobów są
+kopiowane, a wynik pomp nie nadpisuje `StartPlanowany`, `StartZadany` ani
+`StartRoboczy`. Podetapy 4D–4H będą stopniowo wypełniały przygotowane pola.
+Podłączenie rzeczywistego wyniku do `przeliczCalyHarmonogram()` pozostaje
+zakresem 4I.1, a wspólne korygowanie pomp i gruszek — Etapu 5.
+
 ---
 
 # Powiązane tematy otwarte

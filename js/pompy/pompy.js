@@ -439,11 +439,71 @@
     };
   }
 
-  function utworzPustyStanPomp() {
+  function pobierzTekstLubBrak(wartosc) {
+    if (wartosc === null || wartosc === undefined) {
+      return null;
+    }
+
+    const tekst = String(wartosc).trim();
+    return tekst || null;
+  }
+
+  function utworzOczekujacyWynikBudowyPompy(budowa) {
+    const startPlanowany = pobierzTekstLubBrak(budowa.startPlanowany);
+    const startZadany =
+      pobierzTekstLubBrak(budowa.startZadany) || startPlanowany;
+    const startRoboczyPrzedPompa =
+      pobierzTekstLubBrak(budowa.startRoboczy) || startZadany;
+
     return {
-      dostepnePompy: [],
-      przydzieloneBetonowania: []
+      idBudowy: String(budowa.idBudowy || ""),
+      statusPrzydzialuPompy: "oczekuje-na-obliczenie",
+      startPlanowany: startPlanowany,
+      startZadany: startZadany,
+      startRoboczyPrzedPompa: startRoboczyPrzedPompa,
+      przydzialPompy: null,
+      okresZajetosci: null,
+      najwczesniejszyMozliwyStart: null,
+      opoznienieZPowoduPompMinuty: null,
+      skutekNiedoboruPomp: null
     };
+  }
+
+  function utworzWynikSilnikaPomp(listaBudow, listaPomp, daneTrybu) {
+    const ustawienia = daneTrybu && typeof daneTrybu === "object"
+      ? daneTrybu
+      : {};
+    const kwalifikacja = zakwalifikujBudowyDoObslugiPomp(listaBudow);
+    const dostepnePompy = skopiujListePomp(listaPomp);
+    const wynikiBudow = kwalifikacja.budowyWymagajacePompy.map(
+      utworzOczekujacyWynikBudowyPompy
+    );
+
+    return {
+      status: "oczekuje-na-obliczenia",
+      trybPomp: pobierzTekstLubBrak(ustawienia.trybPomp),
+      minimalnaLiczbaPomp: null,
+      liczbaDostepnychPomp:
+        ustawienia.liczbaDostepnychPomp === undefined
+          ? null
+          : ustawienia.liczbaDostepnychPomp,
+      liczbaAktywnychPomp: pobierzLiczbeAktywnychPomp(dostepnePompy),
+      dostepnePompy: dostepnePompy,
+      wynikiBudow: wynikiBudow,
+      przydzieloneBetonowania: [],
+      okresyZajetosci: [],
+      liczbaBudowWymagajacychPompy: wynikiBudow.length,
+      liczbaNieprzydzielonychBetonowan: null,
+      liczbaOpoznionychBetonowan: null,
+      maksymalneOpoznienieBetonowaniaMinuty: null,
+      czyOgraniczenieWplyneloNaPlan: null,
+      konflikty: [],
+      komunikaty: []
+    };
+  }
+
+  function utworzPustyStanPomp() {
+    return utworzWynikSilnikaPomp([], [], {});
   }
 
   function pobierzRodzajRozladunkuBudowy(budowa) {
@@ -501,6 +561,7 @@
     DODATKOWY_CZAS_NA_KROK_WYSIEGU_MINUTY:
       DODATKOWY_CZAS_NA_KROK_WYSIEGU_MINUTY,
     utworzPustyStanPomp: utworzPustyStanPomp,
+    utworzWynikSilnikaPomp: utworzWynikSilnikaPomp,
     czyBudowaWymagaPompy: czyBudowaWymagaPompy,
     zakwalifikujBudowyDoObslugiPomp: zakwalifikujBudowyDoObslugiPomp,
     normalizujListePomp: normalizujListePomp,

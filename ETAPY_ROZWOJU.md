@@ -49,7 +49,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; 4A.1–4A.2, 4B.1 oraz 4C.1–4C.2 zakończone**
+- [ ] Etap 4 — Pompy — **rozpoczęty; cały 4A, 4B.1 oraz 4C.1–4C.2 zakończone**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -519,18 +519,18 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
 
 ## Postęp podetapów Etapu 4
 
-- [ ] **4A — reguły, dane wejściowe i granice zakresu.**
+- [x] **4A — reguły, dane wejściowe i granice zakresu.**
   - [x] **4A.1 — kwalifikacja budów:** ustalić i przetestować, które budowy
     wymagają pompy na podstawie `rodzajRozladunku`, bez zmiany obsługi odbiorów
     własnych, leja, wywrotki, taczki i starszych danych bez tej kolumny.
   - [x] **4A.2 — czas obsługi pompy:** ustalić źródła czasu przygotowania,
     betonowania, zakończenia, mycia oraz przygotowania do przejazdu; wartości
     biznesowe mają być parametrami, a nie liczbami wpisanymi na stałe w kodzie.
-  - [ ] **4A.3 — wynik niezależnego silnika:** Etap 4 zwraca przydział pompy,
+  - [x] **4A.3 — wynik niezależnego silnika:** Etap 4 zwraca przydział pompy,
     okres zajętości, najwcześniejszy możliwy start i skutek niedoboru pomp, ale
     nie nadpisuje jeszcze `StartPlanowany`, nie przebudowuje kursów gruszek i nie
     rozstrzyga wspólnych konfliktów obu zasobów — ten zakres należy do Etapu 5.
-  - [ ] **4A.4 — zapis decyzji i test zasad:** zatwierdzone reguły trafiają do
+  - [x] **4A.4 — zapis decyzji i test zasad:** zatwierdzone reguły trafiają do
     `PROJECT_DECISIONS.md`, a przypadki wymagające decyzji pozostają jawnie w
     `POMYSLY_I_BACKLOG.md`.
 - [ ] **4B — model danych i lista pomp.**
@@ -886,10 +886,9 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Wykonać **4A.3 — ustalenie wyniku niezależnego silnika pomp**. Zapisać dokładny
-kształt wyniku obejmującego przydział, okres zajętości, najwcześniejszy możliwy
-start i skutek niedoboru pomp, bez nadpisywania godzin źródłowych ani łączenia
-jeszcze korekt pomp i gruszek.
+Wykonać **4B.2 — operacje na liście pomp**. Rozdzielić jawne dodawanie, edycję,
+wyłączanie i usuwanie pojedynczej pompy od dopasowania liczby zasobów do pola
+operatora, zachowując stabilne ID i bez uruchamiania silnika harmonogramu.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1773,3 +1772,28 @@ jest **4A.2 — ustalenie parametrów czasu pełnej obsługi pompy**.
 
 Podetap **4A.2** jest zakończony. Punkt 4A i cały Etap 4 pozostają otwarte.
 Następny podetap to **4A.3 — wynik niezależnego silnika pomp**.
+
+
+## 4A.3–4A.4 — kontrakt wyniku i zamknięcie reguł 4A — 2026-08-25
+
+- [x] niezależny moduł pomp udostępnia stabilny wynik z osobnymi polami na
+  przydział, okres zajętości, najwcześniejszy możliwy start, opóźnienie i skutek
+  niedoboru dla każdej zakwalifikowanej budowy;
+- [x] do czasu wykonania właściwych obliczeń pola wynikowe mają wartość `null`,
+  a nie mylące `0`; status wprost mówi `oczekuje-na-obliczenie`;
+- [x] wynik przechowuje osobno `StartPlanowany`, `StartZadany` i roboczy start
+  sprzed wpływu pompy, ale nie nadpisuje żadnej z tych wartości w budowie;
+- [x] lista pomp jest kopiowana do wyniku, więc późniejsze operacje na wyniku
+  nie zmieniają danych wejściowych;
+- [x] puste dane zachowują ten sam kontrakt, dzięki czemu centralny harmonogram
+  pozostaje zgodny ze starszymi etapami;
+- [x] test `testy/etap_4a_3.test.js` sprawdza kształt wyniku, kwalifikację,
+  wartości nieobliczone, kopie danych i brak mutowania godzin źródłowych;
+- [x] pełna lokalna regresja wszystkich `27` zestawów testów przechodzi;
+- [x] zatwierdzone granice zapisano w decyzji 84, a nierozstrzygnięte zasady
+  pomp zewnętrznych i tras pozostają jawne w P-010 oraz P-011 backlogu;
+- [x] test operatora 4A.2 potwierdził na opublikowanej stronie czasy `20/30 min`,
+  obecność wyboru innych czasów i czytelny, kompaktowy układ budów.
+
+Cały punkt **4A** jest zakończony. Etap 4 pozostaje otwarty. Następny
+niezakończony podetap to **4B.2 — operacje na liście pomp**.
