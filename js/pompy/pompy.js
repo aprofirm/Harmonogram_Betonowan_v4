@@ -484,7 +484,7 @@
     return budowa;
   }
 
-  function wyznaczOknoPompowaniaBudowy(budowa, listaKursow) {
+  function wyznaczPlanowaneOknoBetonowaniaBudowy(budowa, listaKursow) {
     if (!czyBudowaWymagaPompy(budowa)) {
       return null;
     }
@@ -541,15 +541,36 @@
 
       return minuta;
     });
-    const minutaRozpoczeciaPompowania = Math.min.apply(null, poczatki);
-    const minutaZakonczeniaPompowania = Math.max.apply(null, zakonczenia);
+    const minutaRozpoczeciaBetonowania = Math.min.apply(null, poczatki);
+    const minutaZakonczeniaBetonowania = Math.max.apply(null, zakonczenia);
 
     return {
-      minutaRozpoczeciaPompowania: minutaRozpoczeciaPompowania,
-      minutaZakonczeniaPompowania: minutaZakonczeniaPompowania,
-      czasPompowaniaMinuty:
-        minutaZakonczeniaPompowania - minutaRozpoczeciaPompowania,
+      idBudowy: String(budowa.idBudowy || ""),
+      minutaRozpoczeciaBetonowania: minutaRozpoczeciaBetonowania,
+      minutaZakonczeniaBetonowania: minutaZakonczeniaBetonowania,
+      czasBetonowaniaMinuty:
+        minutaZakonczeniaBetonowania - minutaRozpoczeciaBetonowania,
       liczbaKursow: kursyBudowy.length
+    };
+  }
+
+  function wyznaczOknoPompowaniaBudowy(budowa, listaKursow) {
+    const oknoBetonowania = wyznaczPlanowaneOknoBetonowaniaBudowy(
+      budowa,
+      listaKursow
+    );
+
+    if (!oknoBetonowania) {
+      return null;
+    }
+
+    return {
+      minutaRozpoczeciaPompowania:
+        oknoBetonowania.minutaRozpoczeciaBetonowania,
+      minutaZakonczeniaPompowania:
+        oknoBetonowania.minutaZakonczeniaBetonowania,
+      czasPompowaniaMinuty: oknoBetonowania.czasBetonowaniaMinuty,
+      liczbaKursow: oknoBetonowania.liczbaKursow
     };
   }
 
@@ -562,7 +583,7 @@
     return tekst || null;
   }
 
-  function utworzOczekujacyWynikBudowyPompy(budowa) {
+  function utworzOczekujacyWynikBudowyPompy(budowa, listaKursow) {
     const startPlanowany = pobierzTekstLubBrak(budowa.startPlanowany);
     const startZadany =
       pobierzTekstLubBrak(budowa.startZadany) || startPlanowany;
@@ -575,6 +596,8 @@
       startPlanowany: startPlanowany,
       startZadany: startZadany,
       startRoboczyPrzedPompa: startRoboczyPrzedPompa,
+      planowaneOknoBetonowania:
+        wyznaczPlanowaneOknoBetonowaniaBudowy(budowa, listaKursow),
       przydzialPompy: null,
       okresZajetosci: null,
       najwczesniejszyMozliwyStart: null,
@@ -583,14 +606,22 @@
     };
   }
 
-  function utworzWynikSilnikaPomp(listaBudow, listaPomp, daneTrybu) {
+  function utworzWynikSilnikaPomp(
+    listaBudow,
+    listaPomp,
+    daneTrybu,
+    listaKursow
+  ) {
     const ustawienia = daneTrybu && typeof daneTrybu === "object"
       ? daneTrybu
       : {};
     const kwalifikacja = zakwalifikujBudowyDoObslugiPomp(listaBudow);
     const dostepnePompy = skopiujListePomp(listaPomp);
+    const kursy = Array.isArray(listaKursow) ? listaKursow : [];
     const wynikiBudow = kwalifikacja.budowyWymagajacePompy.map(
-      utworzOczekujacyWynikBudowyPompy
+      function (budowa) {
+        return utworzOczekujacyWynikBudowyPompy(budowa, kursy);
+      }
     );
 
     return {
@@ -694,6 +725,8 @@
     obliczDomyslneCzasyObslugiPompy: obliczDomyslneCzasyObslugiPompy,
     pobierzCzasyObslugiPompyBudowy: pobierzCzasyObslugiPompyBudowy,
     zmienCzasyObslugiPompyBudowy: zmienCzasyObslugiPompyBudowy,
+    wyznaczPlanowaneOknoBetonowaniaBudowy:
+      wyznaczPlanowaneOknoBetonowaniaBudowy,
     wyznaczOknoPompowaniaBudowy: wyznaczOknoPompowaniaBudowy
   };
 })(window);

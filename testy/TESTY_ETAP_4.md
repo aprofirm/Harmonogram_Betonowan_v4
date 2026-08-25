@@ -2,12 +2,12 @@
 
 ## Status
 
-Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4C**. Następny podetap to
-**4D.1 — planowane okno betonowania**.
+Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4C** oraz podetap **4D.1**.
+Następny podetap to **4D.2 — pełny cykl pompy**.
 Standardowy wysięg
 `32 m` i zwijane pole **Większa pompa** są opublikowane na `main` i zostały
 potwierdzone przez operatora w przeglądarce. Pełna regresja obejmuje obecnie
-`29` zestawów testów.
+`30` zestawów testów.
 
 ## Cel
 
@@ -97,11 +97,13 @@ Test operatora 4C.3 — zaliczony:
 
 ### 4D — pełny okres zajętości
 
-- zajętość obejmuje przygotowanie, całe betonowanie i czynności końcowe;
-- koniec pojedynczego rozładunku gruszki nie zwalnia pompy;
-- jedna i wiele dostaw dają poprawny początek oraz koniec pracy;
-- budowa bez betonu albo niewymagająca pompy nie tworzy zajętości;
-- nieprawidłowe czasy kończą się czytelnym błędem.
+- [x] planowane okno betonowania obejmuje czas od początku pierwszego do końca
+  ostatniego rozładunku wszystkich kursów danej budowy;
+- [x] kolejność kursów i kursy innych budów nie zmieniają granic okna;
+- [ ] zajętość obejmuje przygotowanie, całe betonowanie i czynności końcowe;
+- [ ] jedna i wiele dostaw dają poprawny początek oraz koniec pracy;
+- [ ] budowa bez betonu albo niewymagająca pompy nie tworzy zajętości;
+- [ ] nieprawidłowe czasy kończą się czytelnym błędem.
 
 ### 4E — przejazdy
 

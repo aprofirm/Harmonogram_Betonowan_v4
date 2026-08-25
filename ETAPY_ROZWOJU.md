@@ -49,7 +49,8 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4C zakończone, następny podetap to 4D.1**
+- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4C i podetap 4D.1
+  zakończone, następny podetap to 4D.2**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -550,7 +551,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
   - [x] **4C.3 — odtworzenie i test operatora:** odświeżenie, historia, kolejny
     import i wyczyszczenie planu zachowują ustalone zasady pamięci.
 - [ ] **4D — okres zajętości pompy na budowie.**
-  - [ ] **4D.1 — planowane okno betonowania:** wyznaczenie początku i końca
+  - [x] **4D.1 — planowane okno betonowania:** wyznaczenie początku i końca
     obsługi budowy na podstawie danych planu, a nie czasu pojedynczej gruszki.
   - [ ] **4D.2 — pełny cykl pompy:** przygotowanie przed betonowaniem, praca,
     zakończenie i czynności po pracy tworzą jeden spójny przedział zajętości.
@@ -886,8 +887,8 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Rozpocząć **4D.1 — planowane okno betonowania**: wyznaczyć początek i koniec
-obsługi budowy na podstawie całego planu dostaw, a nie czasu pojedynczej gruszki.
+Rozpocząć **4D.2 — pełny cykl pompy**: połączyć przygotowanie, całe planowane
+okno betonowania i czynności po pracy w jeden spójny okres zajętości pompy.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1861,3 +1862,23 @@ Test operatora potwierdził odtworzenie obu pomp po odświeżeniu, zachowanie li
 po kolejnym imporcie, jej usunięcie po wyczyszczeniu planu oraz pełny powrót pomp
 z zapisu historycznego. Podetap **4C.3** i cały punkt **4C** są zakończone.
 Następny podetap to **4D.1 — planowane okno betonowania**.
+
+
+## 4D.1 — planowane okno betonowania — 2026-08-25
+
+- [x] osobna funkcja wyznacza początek betonowania z najwcześniejszego początku
+  rozładunku wszystkich kursów należących do danej budowy;
+- [x] koniec betonowania pochodzi z najpóźniejszego końca rozładunku, więc pompy
+  nie zwalnia zakończenie pojedynczej dostawy;
+- [x] kolejność kursów na liście oraz kursy innych budów nie zmieniają wyniku;
+- [x] wynik budowy silnika pomp przechowuje `planowaneOknoBetonowania`, natomiast
+  `okresZajetosci` pozostaje `null` do połączenia pełnego cyklu w 4D.2;
+- [x] obliczenie nie zmienia budowy ani listy kursów i zachowuje wcześniejszy
+  kontrakt `wyznaczOknoPompowaniaBudowy()` z 4A.2;
+- [x] nowy test `testy/etap_4d_1.test.js` sprawdza trzy dostawy rozłożone w czasie
+  oraz osadzenie okna w niezależnym wyniku silnika pomp;
+- [x] pełna lokalna regresja wszystkich `30` zestawów testów przechodzi.
+
+Podetap **4D.1** jest zakończony. Punkt 4D pozostaje otwarty, a następnym
+podetapem jest **4D.2 — pełny cykl pompy**. Ten krok nie zmienia interfejsu,
+dlatego nie wymaga osobnego testu operatora.

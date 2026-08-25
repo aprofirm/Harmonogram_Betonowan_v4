@@ -372,8 +372,8 @@ a starsze plany bez `StartZadany` są bezpiecznie uzupełniane godziną planowan
 Test operatora KP-4.5 został zaliczony i cały KP-4 jest zakończony.
 
 Etap 4 ma ukończone całe punkty **4A — reguły, czasy i niezależny kontrakt
-wyniku pomp** oraz **4B — model danych i lista pomp**. Gotowe są również
-**4C.1–4C.2**:
+wyniku pomp**, **4B — model danych i lista pomp** oraz **4C — interfejs i
+pamięć listy pomp**:
 model pompy, wspólny panel zasobów, lista z dostępnością i wysięgiem oraz
 pamięć planu. Lista ma osobne, niemutujące operacje dodawania, edycji, zmiany
 aktywności i usuwania, waliduje ID, typy i puste pola, a do przyszłego
@@ -384,6 +384,11 @@ ukryte i pojawia się dopiero po zaznaczeniu **Większa pompa**. Zmiana czasów
 jest na `main` i została potwierdzona przez operatora na opublikowanej stronie.
 Zakres **4C.3** potwierdził automatycznie i w teście operatora zachowanie listy
 pomp po odświeżeniu, kolejnym imporcie, wyczyszczeniu planu i przywróceniu
-historii. Cały punkt 4C jest zakończony. Następny krok to **4D.1 — planowane
-okno betonowania**.
+historii. Cały punkt 4C jest zakończony.
+
+Podetap **4D.1** wyznacza już planowane okno betonowania każdej pompowanej
+budowy od początku pierwszego do końca ostatniego rozładunku całego planu
+dostaw. Wynik nie zależy od kolejności kursów i nie zmienia danych wejściowych.
+Następny krok to **4D.2 — pełny cykl pompy**, który dołączy przygotowanie oraz
+czynności po pracy do jednego okresu zajętości.
 Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.

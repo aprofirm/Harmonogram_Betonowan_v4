@@ -86,6 +86,7 @@ function sprawdzKontraktWyniku(pompy) {
       startPlanowany: "08:00",
       startZadany: "08:15",
       startRoboczyPrzedPompa: "08:20",
+      planowaneOknoBetonowania: null,
       przydzialPompy: null,
       okresZajetosci: null,
       najwczesniejszyMozliwyStart: null,

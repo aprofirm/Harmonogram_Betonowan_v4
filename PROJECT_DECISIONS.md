@@ -1591,6 +1591,8 @@ budowy zakwalifikowanej do pompowania przechowuje osobno:
 - identyfikator budowy i status przydziału;
 - źródłowy `StartPlanowany`, bieżący `StartZadany` oraz roboczy start istniejący
   przed uwzględnieniem pompy;
+- planowane okno betonowania od początku pierwszego do końca ostatniego
+  rozładunku całego planu dostaw budowy;
 - przydzieloną pompę;
 - pełny okres zajętości;
 - najwcześniejszy możliwy start;
@@ -1602,7 +1604,9 @@ oznaczać rzeczywiście obliczony brak potrzebnych pomp albo brak opóźnienia.
 
 Tworzenie wyniku nie zmienia budów, kursów ani listy pomp. Dane zasobów są
 kopiowane, a wynik pomp nie nadpisuje `StartPlanowany`, `StartZadany` ani
-`StartRoboczy`. Podetapy 4D–4H będą stopniowo wypełniały przygotowane pola.
+`StartRoboczy`. Podetap 4D.1 wypełnia planowane okno betonowania, ale pełny
+`okresZajetosci` pozostaje `null` do połączenia przygotowania, pracy i czynności
+końcowych w 4D.2. Kolejne podetapy 4D–4H stopniowo wypełniają pozostałe pola.
 Podłączenie rzeczywistego wyniku do `przeliczCalyHarmonogram()` pozostaje
 zakresem 4I.1, a wspólne korygowanie pomp i gruszek — Etapu 5.
 
