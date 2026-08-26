@@ -214,14 +214,16 @@ i przygotowanie do wyjazdu. Każde rozpoczęte dodatkowe `10 m` wysięgu dodaje 
 budowy. Wyłączenie wyjątku przywraca automatyczne wartości zależne od wysięgu.
 
 Właściwe pompowanie jest liczone od początku pierwszego rozładunku do końca
-ostatniego rozładunku. Pełny przydział pomp i przedziały ich zajętości powstaną
-w kolejnych podetapach Etapu 4.
+ostatniego rozładunku. Pełny okres zajętości zaczyna się wcześniej o czas
+przygotowania pompy i kończy później o czas czynności po pracy. Przydział
+konkretnej pompy oraz przejazdy powstaną w kolejnych podetapach Etapu 4.
 
 Niezależny wynik pomp ma już stały kontrakt. Dla każdej pompowanej budowy
 przechowuje osobne miejsca na przydział, okres zajętości, najwcześniejszy start,
-opóźnienie i skutek niedoboru. Do czasu wykonania właściwego obliczenia pola te
-mają wartość `null`, dzięki czemu program odróżnia brak wyniku od prawdziwego
-wyniku `0`. Utworzenie wyniku nie zmienia godzin budów ani kursów gruszek.
+opóźnienie i skutek niedoboru. Okres zajętości jest już obliczany dla budowy z
+planem dostaw, natomiast pola oczekujące na przydział nadal mają wartość `null`.
+Dzięki temu program odróżnia brak wyniku od prawdziwego wyniku `0`. Utworzenie
+wyniku nie zmienia godzin budów ani kursów gruszek.
 
 Licznik **potrzebnych pomp** pokazuje na tym etapie `—`. Nie jest to błąd ani
 wynik `0`: rzeczywista minimalna liczba będzie obliczana dopiero po dodaniu
@@ -386,9 +388,9 @@ Zakres **4C.3** potwierdził automatycznie i w teście operatora zachowanie list
 pomp po odświeżeniu, kolejnym imporcie, wyczyszczeniu planu i przywróceniu
 historii. Cały punkt 4C jest zakończony.
 
-Podetap **4D.1** wyznacza już planowane okno betonowania każdej pompowanej
-budowy od początku pierwszego do końca ostatniego rozładunku całego planu
-dostaw. Wynik nie zależy od kolejności kursów i nie zmienia danych wejściowych.
-Następny krok to **4D.2 — pełny cykl pompy**, który dołączy przygotowanie oraz
-czynności po pracy do jednego okresu zajętości.
+Podetapy **4D.1–4D.2** wyznaczają już planowane okno betonowania każdej
+pompowanej budowy oraz pełny okres zajętości od rozpoczęcia przygotowania do
+zakończenia czynności po pracy. Wynik uwzględnia wysięg i ręczne wyjątki czasów,
+nie zależy od kolejności kursów oraz nie zmienia danych wejściowych. Następny
+krok to **4D.3 — przypadki brzegowe i testy**.
 Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.

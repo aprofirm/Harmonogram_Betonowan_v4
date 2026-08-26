@@ -49,8 +49,8 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4C i podetap 4D.1
-  zakończone, następny podetap to 4D.2**
+- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4C i podetapy 4D.1–4D.2
+  zakończone, następny podetap to 4D.3**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -553,7 +553,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
 - [ ] **4D — okres zajętości pompy na budowie.**
   - [x] **4D.1 — planowane okno betonowania:** wyznaczenie początku i końca
     obsługi budowy na podstawie danych planu, a nie czasu pojedynczej gruszki.
-  - [ ] **4D.2 — pełny cykl pompy:** przygotowanie przed betonowaniem, praca,
+  - [x] **4D.2 — pełny cykl pompy:** przygotowanie przed betonowaniem, praca,
     zakończenie i czynności po pracy tworzą jeden spójny przedział zajętości.
   - [ ] **4D.3 — przypadki brzegowe i testy:** jedna dostawa, wiele dostaw,
     zerowa ilość, budowa niewymagająca pompy i brak wymaganych czasów.
@@ -576,7 +576,8 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
     dozwolona.
   - [ ] **4F.4 — najwcześniejszy start:** gdy żadna pompa nie jest gotowa,
     wynik podaje najwcześniejszą możliwą godzinę i wielkość przesunięcia bez
-    cichego zmieniania całego harmonogramu gruszek.
+    cichego zmieniania całego harmonogramu gruszek oraz zachowuje dokładną
+    przyczynę do automatycznej notki dla operatora.
   - [ ] **4F.5 — testy integracyjne:** wiele budów, równe starty, wyłączona
     pompa, niepasujący parametr, przejazd i powtarzalny wynik.
 - [ ] **4G — minimalna liczba pomp.**
@@ -608,7 +609,9 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
   - [ ] **4I.3 — tabela pomp:** budowa, przydzielona pompa, przygotowanie,
     betonowanie, zakończenie, przejazd i gotowość do kolejnej pracy.
   - [ ] **4I.4 — komunikaty:** czytelny brak pompy, niedostępność, niezgodny
-    parametr i przesunięcie wynikające z przejazdu lub zajętości.
+    parametr i przesunięcie wynikające z przejazdu lub zajętości; jeżeli pompa
+    wymusza przesunięcie, przy budowie pojawia się automatyczna notka z liczbą
+    minut, najwcześniejszym startem i dokładną przyczyną.
   - [ ] **4I.5 — zgodność offline i dostępność interfejsu:** brak nowych
     bibliotek, CDN i obowiązkowego internetu.
 - [ ] **4J — pełna regresja, publikacja i test operatora.**
@@ -887,8 +890,9 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Rozpocząć **4D.2 — pełny cykl pompy**: połączyć przygotowanie, całe planowane
-okno betonowania i czynności po pracy w jeden spójny okres zajętości pompy.
+Rozpocząć **4D.3 — przypadki brzegowe i testy**: sprawdzić jedną i wiele
+dostaw, zerową ilość, budowę niewymagającą pompy oraz nieprawidłowe lub
+brakujące czasy.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1882,3 +1886,24 @@ Następny podetap to **4D.1 — planowane okno betonowania**.
 Podetap **4D.1** jest zakończony. Punkt 4D pozostaje otwarty, a następnym
 podetapem jest **4D.2 — pełny cykl pompy**. Ten krok nie zmienia interfejsu,
 dlatego nie wymaga osobnego testu operatora.
+
+
+## 4D.2 — pełny cykl pompy — 2026-08-26
+
+- [x] pełny okres zajętości rozpoczyna się o czas przygotowania przed początkiem
+  pierwszego rozładunku i kończy po czynnościach następujących po ostatnim
+  rozładunku;
+- [x] wynik przechowuje osobno początek i koniec zajętości, granice
+  betonowania, trzy składowe czasu oraz całkowity czas zajęcia pompy;
+- [x] standard `32 m` korzysta z czasów `20/30 min`, większy wysięg zwiększa
+  obie wartości zgodnie z regułą 4A.2, a ręczne wyjątki budowy mają
+  pierwszeństwo;
+- [x] pole `okresZajetosci` w niezależnym wyniku budowy jest wypełniane bez
+  przydzielania konkretnej pompy i bez zmiany godzin, budowy ani kursów;
+- [x] test `testy/etap_4d_2.test.js` sprawdza standardowy pełny cykl, większy
+  wysięg, ręczne czasy, brak mutacji i osadzenie okresu w wyniku silnika;
+- [x] pełna lokalna regresja wszystkich `31` zestawów testów przechodzi.
+
+Podetap **4D.2** jest zakończony. Punkt 4D pozostaje otwarty, a następnym
+podetapem jest **4D.3 — przypadki brzegowe i testy**. Zmiana nie dodaje jeszcze
+przydziału pomp ani nowego widoku, dlatego nie wymaga osobnego testu operatora.

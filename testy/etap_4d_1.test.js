@@ -97,7 +97,6 @@ function sprawdzOknoWWynikuSilnika(pompy) {
   const wynikBudowy = wynik.wynikiBudow[0];
 
   assert.equal(wynikBudowy.statusPrzydzialuPompy, "oczekuje-na-obliczenie");
-  assert.equal(wynikBudowy.okresZajetosci, null);
   assert.deepEqual(
     JSON.parse(JSON.stringify(wynikBudowy.planowaneOknoBetonowania)),
     {

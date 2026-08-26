@@ -1580,8 +1580,9 @@ wynikające z wymaganego wysięgu.
 
 Właściwy czas pompowania nie jest wpisywany jako stała liczba. Zaczyna się wraz
 z rozpoczęciem pierwszego rozładunku i kończy wraz z zakończeniem ostatniego
-rozładunku tej samej budowy. Utworzenie z tych składników pełnego przedziału
-zajętości pompy pozostaje zakresem 4D.
+rozładunku tej samej budowy. Pełny okres zajętości zaczyna się wcześniej o czas
+przygotowania i kończy później o czas czynności po pracy. Podetap 4D.2 łączy te
+składniki bez dodawania przejazdu ani przydzielania konkretnej pompy.
 
 ## 84. Wynik pomp jest niezależny i nie nadpisuje planu wejściowego
 
@@ -1604,9 +1605,10 @@ oznaczać rzeczywiście obliczony brak potrzebnych pomp albo brak opóźnienia.
 
 Tworzenie wyniku nie zmienia budów, kursów ani listy pomp. Dane zasobów są
 kopiowane, a wynik pomp nie nadpisuje `StartPlanowany`, `StartZadany` ani
-`StartRoboczy`. Podetap 4D.1 wypełnia planowane okno betonowania, ale pełny
-`okresZajetosci` pozostaje `null` do połączenia przygotowania, pracy i czynności
-końcowych w 4D.2. Kolejne podetapy 4D–4H stopniowo wypełniają pozostałe pola.
+`StartRoboczy`. Podetap 4D.1 wypełnia planowane okno betonowania, a 4D.2 tworzy
+z niego, przygotowania i czynności końcowych pełny `okresZajetosci`. Dla budowy
+bez planowanego okna okres pozostaje `null`. Kolejne podetapy 4D–4H stopniowo
+wypełniają pozostałe pola.
 Podłączenie rzeczywistego wyniku do `przeliczCalyHarmonogram()` pozostaje
 zakresem 4I.1, a wspólne korygowanie pomp i gruszek — Etapu 5.
 
@@ -1642,6 +1644,25 @@ Jedynym wejściem dla przyszłego algorytmu przydziału jest lista aktywnych pom
 zwracana przez model. Pompa z `aktywna: false` nie może znaleźć się wśród
 kandydatów do przydziału. Sama decyzja, która z aktywnych pomp obsłuży budowę,
 pozostaje zakresem 4F.
+
+## 87. Przesunięcie spowodowane pompą ma automatyczną notkę
+
+Jeżeli niezależny silnik pomp wyliczy, że betonowanie może rozpocząć się dopiero
+później z powodu pompy, wynik ma zachować dokładną przyczynę przesunięcia, a
+interfejs ma pokazać przy budowie automatyczną notkę dla operatora.
+
+Notka powinna zawierać co najmniej:
+
+- liczbę minut przesunięcia;
+- najwcześniejszą możliwą godzinę rozpoczęcia;
+- konkretną przyczynę, np. zajętość pompy, późniejszą godzinę **Dostępna od**,
+  przejazd, niewystarczający wysięg albo brak aktywnej pompy.
+
+Notka nie może zastępować ani nadpisywać źródłowego `StartPlanowany` oraz
+bieżącego `StartZadany`. Przyczynę i dane notki przygotują 4F–4H, jej
+prezentacja należy do 4I.4, a rzeczywiste wspólne przesunięcie planu pomp i
+gruszek pozostaje zakresem Etapu 5. Podetap 4D.2 jedynie dostarcza okres
+zajętości potrzebny do późniejszego wykrycia takiej sytuacji.
 
 ---
 

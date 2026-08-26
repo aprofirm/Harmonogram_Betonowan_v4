@@ -2,12 +2,12 @@
 
 ## Status
 
-Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4C** oraz podetap **4D.1**.
-Następny podetap to **4D.2 — pełny cykl pompy**.
+Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4C** oraz podetapy
+**4D.1–4D.2**. Następny podetap to **4D.3 — przypadki brzegowe i testy**.
 Standardowy wysięg
 `32 m` i zwijane pole **Większa pompa** są opublikowane na `main` i zostały
 potwierdzone przez operatora w przeglądarce. Pełna regresja obejmuje obecnie
-`30` zestawów testów.
+`31` zestawów testów.
 
 ## Cel
 
@@ -100,7 +100,7 @@ Test operatora 4C.3 — zaliczony:
 - [x] planowane okno betonowania obejmuje czas od początku pierwszego do końca
   ostatniego rozładunku wszystkich kursów danej budowy;
 - [x] kolejność kursów i kursy innych budów nie zmieniają granic okna;
-- [ ] zajętość obejmuje przygotowanie, całe betonowanie i czynności końcowe;
+- [x] zajętość obejmuje przygotowanie, całe betonowanie i czynności końcowe;
 - [ ] jedna i wiele dostaw dają poprawny początek oraz koniec pracy;
 - [ ] budowa bez betonu albo niewymagająca pompy nie tworzy zajętości;
 - [ ] nieprawidłowe czasy kończą się czytelnym błędem.
@@ -146,6 +146,8 @@ Test operatora 4C.3 — zaliczony:
 - centralne przeliczenie zwraca osobny wynik pomp;
 - wynik gruszek dla danych bez wpływu pomp pozostaje identyczny jak w Etapie 3;
 - operator widzi liczbę potrzebną, dostępną, przydziały i pełne okresy pracy;
+- przesunięcie spowodowane pompą ma automatyczną notkę z liczbą minut,
+  najwcześniejszym startem i dokładną przyczyną;
 - sterowanie pompami znajduje się pod sterowaniem gruszkami w jednym czytelnym
   panelu zasobów, a szczegółowa dostępność jest widoczna na liście pomp;
 - komunikat wyjaśnia brak pompy, nieaktywność, niezgodny parametr albo przejazd;

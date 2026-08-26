@@ -574,6 +574,47 @@
     };
   }
 
+  function utworzOkresZajetosciPompyZOkna(budowa, oknoBetonowania) {
+    if (!oknoBetonowania) {
+      return null;
+    }
+
+    const czasyObslugi = pobierzCzasyObslugiPompyBudowy(budowa);
+    const minutaRozpoczeciaZajetosci =
+      oknoBetonowania.minutaRozpoczeciaBetonowania -
+      czasyObslugi.czasPrzygotowaniaPompyMinuty;
+    const minutaZakonczeniaZajetosci =
+      oknoBetonowania.minutaZakonczeniaBetonowania +
+      czasyObslugi.czasZakonczeniaObslugiPompyMinuty;
+
+    return {
+      idBudowy: String(budowa.idBudowy || ""),
+      minutaRozpoczeciaZajetosci: minutaRozpoczeciaZajetosci,
+      minutaRozpoczeciaBetonowania:
+        oknoBetonowania.minutaRozpoczeciaBetonowania,
+      minutaZakonczeniaBetonowania:
+        oknoBetonowania.minutaZakonczeniaBetonowania,
+      minutaZakonczeniaZajetosci: minutaZakonczeniaZajetosci,
+      czasPrzygotowaniaPompyMinuty:
+        czasyObslugi.czasPrzygotowaniaPompyMinuty,
+      czasBetonowaniaMinuty: oknoBetonowania.czasBetonowaniaMinuty,
+      czasZakonczeniaObslugiPompyMinuty:
+        czasyObslugi.czasZakonczeniaObslugiPompyMinuty,
+      czasZajetosciPompyMinuty:
+        minutaZakonczeniaZajetosci - minutaRozpoczeciaZajetosci,
+      liczbaKursow: oknoBetonowania.liczbaKursow
+    };
+  }
+
+  function wyznaczPelnyOkresZajetosciPompyBudowy(budowa, listaKursow) {
+    const oknoBetonowania = wyznaczPlanowaneOknoBetonowaniaBudowy(
+      budowa,
+      listaKursow
+    );
+
+    return utworzOkresZajetosciPompyZOkna(budowa, oknoBetonowania);
+  }
+
   function pobierzTekstLubBrak(wartosc) {
     if (wartosc === null || wartosc === undefined) {
       return null;
@@ -589,6 +630,8 @@
       pobierzTekstLubBrak(budowa.startZadany) || startPlanowany;
     const startRoboczyPrzedPompa =
       pobierzTekstLubBrak(budowa.startRoboczy) || startZadany;
+    const planowaneOknoBetonowania =
+      wyznaczPlanowaneOknoBetonowaniaBudowy(budowa, listaKursow);
 
     return {
       idBudowy: String(budowa.idBudowy || ""),
@@ -596,10 +639,12 @@
       startPlanowany: startPlanowany,
       startZadany: startZadany,
       startRoboczyPrzedPompa: startRoboczyPrzedPompa,
-      planowaneOknoBetonowania:
-        wyznaczPlanowaneOknoBetonowaniaBudowy(budowa, listaKursow),
+      planowaneOknoBetonowania: planowaneOknoBetonowania,
       przydzialPompy: null,
-      okresZajetosci: null,
+      okresZajetosci: utworzOkresZajetosciPompyZOkna(
+        budowa,
+        planowaneOknoBetonowania
+      ),
       najwczesniejszyMozliwyStart: null,
       opoznienieZPowoduPompMinuty: null,
       skutekNiedoboruPomp: null
@@ -727,6 +772,8 @@
     zmienCzasyObslugiPompyBudowy: zmienCzasyObslugiPompyBudowy,
     wyznaczPlanowaneOknoBetonowaniaBudowy:
       wyznaczPlanowaneOknoBetonowaniaBudowy,
-    wyznaczOknoPompowaniaBudowy: wyznaczOknoPompowaniaBudowy
+    wyznaczOknoPompowaniaBudowy: wyznaczOknoPompowaniaBudowy,
+    wyznaczPelnyOkresZajetosciPompyBudowy:
+      wyznaczPelnyOkresZajetosciPompyBudowy
   };
 })(window);
