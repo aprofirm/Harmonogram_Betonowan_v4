@@ -67,6 +67,13 @@
     return zrodlo || "reczny";
   }
 
+  function normalizujDanePrzejazduPompy(danePrzejazdu) {
+    return {
+      czasPrzejazduMinuty: pobierzCzasPrzejazduMinuty(danePrzejazdu),
+      zrodloCzasuPrzejazdu: pobierzZrodloCzasuPrzejazdu(danePrzejazdu)
+    };
+  }
+
   function wyznaczPrzejazdPompyMiedzyBudowami(
     budowaZrodlowa,
     budowaDocelowa,
@@ -101,7 +108,8 @@
       return null;
     }
 
-    const czasPrzejazduMinuty = pobierzCzasPrzejazduMinuty(danePrzejazdu);
+    const daneRoboczePrzejazdu = normalizujDanePrzejazduPompy(danePrzejazdu);
+    const czasPrzejazduMinuty = daneRoboczePrzejazdu.czasPrzejazduMinuty;
     const minutaWyjazduZBudowy =
       okresZajetosciZrodlowy.minutaZakonczeniaZajetosci;
     const minutaPrzyjazduNaBudowe =
@@ -119,7 +127,7 @@
       rodzajTrasy: "budowa-do-budowy",
       czyWplywaNaDostepnoscPompy: true,
       czasPrzejazduMinuty: czasPrzejazduMinuty,
-      zrodloCzasuPrzejazdu: pobierzZrodloCzasuPrzejazdu(danePrzejazdu),
+      zrodloCzasuPrzejazdu: daneRoboczePrzejazdu.zrodloCzasuPrzejazdu,
       minutaWyjazduZBudowy: minutaWyjazduZBudowy,
       minutaPrzyjazduNaBudowe: minutaPrzyjazduNaBudowe,
       minutaPlanowanegoRozpoczeciaPrzygotowania:
@@ -136,6 +144,8 @@
     };
   }
 
+  aplikacja.pompy.normalizujDanePrzejazduPompy =
+    normalizujDanePrzejazduPompy;
   aplikacja.pompy.wyznaczPrzejazdPompyMiedzyBudowami =
     wyznaczPrzejazdPompyMiedzyBudowami;
 })(window);
