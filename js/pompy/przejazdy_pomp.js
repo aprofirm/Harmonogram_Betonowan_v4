@@ -35,15 +35,33 @@
     return idBudowy;
   }
 
-  function pobierzCzasPrzejazduMinuty(danePrzejazdu) {
+  function utworzOpisTrasy(idBudowyZrodlowej, idBudowyDocelowej) {
+    if (!idBudowyZrodlowej || !idBudowyDocelowej) {
+      return "pomiędzy kolejnymi budowami";
+    }
+
+    return "dla trasy „" + idBudowyZrodlowej + " → " +
+      idBudowyDocelowej + "”";
+  }
+
+  function pobierzCzasPrzejazduMinuty(
+    danePrzejazdu,
+    idBudowyZrodlowej,
+    idBudowyDocelowej
+  ) {
     const dane = danePrzejazdu && typeof danePrzejazdu === "object"
       ? danePrzejazdu
       : {};
     const wartosc = dane.czasPrzejazduMinuty;
+    const opisTrasy = utworzOpisTrasy(
+      idBudowyZrodlowej,
+      idBudowyDocelowej
+    );
 
     if (czyBrakWartosci(wartosc)) {
       throw new Error(
-        "Uzupełnij czas przejazdu pompy pomiędzy kolejnymi budowami."
+        "Brak czasu przejazdu pompy " + opisTrasy +
+          ". Uzupełnij czas ręcznie albo użyj zapisanej trasy."
       );
     }
 
@@ -51,7 +69,8 @@
 
     if (!Number.isFinite(czasPrzejazduMinuty) || czasPrzejazduMinuty < 0) {
       throw new Error(
-        "Czas przejazdu pompy między budowami musi być liczbą nie mniejszą niż 0."
+        "Czas przejazdu pompy " + opisTrasy +
+          " musi być liczbą nie mniejszą niż 0."
       );
     }
 
@@ -67,9 +86,17 @@
     return zrodlo || "reczny";
   }
 
-  function normalizujDanePrzejazduPompy(danePrzejazdu) {
+  function normalizujDanePrzejazduPompy(
+    danePrzejazdu,
+    idBudowyZrodlowej,
+    idBudowyDocelowej
+  ) {
     return {
-      czasPrzejazduMinuty: pobierzCzasPrzejazduMinuty(danePrzejazdu),
+      czasPrzejazduMinuty: pobierzCzasPrzejazduMinuty(
+        danePrzejazdu,
+        idBudowyZrodlowej,
+        idBudowyDocelowej
+      ),
       zrodloCzasuPrzejazdu: pobierzZrodloCzasuPrzejazdu(danePrzejazdu)
     };
   }
@@ -108,7 +135,11 @@
       return null;
     }
 
-    const daneRoboczePrzejazdu = normalizujDanePrzejazduPompy(danePrzejazdu);
+    const daneRoboczePrzejazdu = normalizujDanePrzejazduPompy(
+      danePrzejazdu,
+      idBudowyZrodlowej,
+      idBudowyDocelowej
+    );
     const czasPrzejazduMinuty = daneRoboczePrzejazdu.czasPrzejazduMinuty;
     const minutaWyjazduZBudowy =
       okresZajetosciZrodlowy.minutaZakonczeniaZajetosci;
@@ -118,8 +149,26 @@
       okresZajetosciDocelowy.minutaRozpoczeciaZajetosci;
     const czasPrzygotowaniaPompyMinuty =
       okresZajetosciDocelowy.czasPrzygotowaniaPompyMinuty;
+    const minutaPlanowanegoStartuBetonowania =
+      okresZajetosciDocelowy.minutaRozpoczeciaBetonowania;
+    const opoznieniePrzygotowaniaPrzezPrzejazdMinuty = Math.max(
+      0,
+      minutaPrzyjazduNaBudowe -
+        minutaPlanowanegoRozpoczeciaPrzygotowania
+    );
     const minutaGotowosciDoBetonowaniaPoPrzejezdzie =
       minutaPrzyjazduNaBudowe + czasPrzygotowaniaPompyMinuty;
+    const minutaNajwczesniejszegoStartuBetonowania = Math.max(
+      minutaPlanowanegoStartuBetonowania,
+      minutaGotowosciDoBetonowaniaPoPrzejezdzie
+    );
+    const opoznienieStartuPrzezPrzejazdMinuty = Math.max(
+      0,
+      minutaNajwczesniejszegoStartuBetonowania -
+        minutaPlanowanegoStartuBetonowania
+    );
+    const czyPrzejazdWymuszaPozniejszyStart =
+      opoznienieStartuPrzezPrzejazdMinuty > 0;
 
     return {
       idBudowyZrodlowej: idBudowyZrodlowej,
@@ -132,15 +181,29 @@
       minutaPrzyjazduNaBudowe: minutaPrzyjazduNaBudowe,
       minutaPlanowanegoRozpoczeciaPrzygotowania:
         minutaPlanowanegoRozpoczeciaPrzygotowania,
+      minutaNajwczesniejszegoRozpoczeciaPrzygotowania:
+        minutaPrzyjazduNaBudowe,
+      opoznieniePrzygotowaniaPrzezPrzejazdMinuty:
+        opoznieniePrzygotowaniaPrzezPrzejazdMinuty,
       czasPrzygotowaniaPompyNaBudowieDocelowejMinuty:
         czasPrzygotowaniaPompyMinuty,
       minutaPlanowanegoStartuBetonowania:
-        okresZajetosciDocelowy.minutaRozpoczeciaBetonowania,
+        minutaPlanowanegoStartuBetonowania,
       minutaGotowosciDoBetonowaniaPoPrzejezdzie:
         minutaGotowosciDoBetonowaniaPoPrzejezdzie,
+      minutaNajwczesniejszegoStartuBetonowania:
+        minutaNajwczesniejszegoStartuBetonowania,
+      opoznienieStartuPrzezPrzejazdMinuty:
+        opoznienieStartuPrzezPrzejazdMinuty,
       czyMoznaRozpoczacPrzygotowanieZgodnieZPlanem:
         minutaPrzyjazduNaBudowe <=
-        minutaPlanowanegoRozpoczeciaPrzygotowania
+        minutaPlanowanegoRozpoczeciaPrzygotowania,
+      czyPrzejazdWymuszaPozniejszyStart:
+        czyPrzejazdWymuszaPozniejszyStart,
+      przyczynaOgraniczeniaPrzejazdu:
+        czyPrzejazdWymuszaPozniejszyStart
+          ? "przejazd-miedzy-budowami"
+          : null
     };
   }
 

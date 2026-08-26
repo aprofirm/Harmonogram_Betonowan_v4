@@ -83,10 +83,16 @@ function sprawdzPrzejazdMiedzyBudowami(pompy) {
     minutaWyjazduZBudowy: 525,
     minutaPrzyjazduNaBudowe: 565,
     minutaPlanowanegoRozpoczeciaPrzygotowania: 580,
+    minutaNajwczesniejszegoRozpoczeciaPrzygotowania: 565,
+    opoznieniePrzygotowaniaPrzezPrzejazdMinuty: 0,
     czasPrzygotowaniaPompyNaBudowieDocelowejMinuty: 20,
     minutaPlanowanegoStartuBetonowania: 600,
     minutaGotowosciDoBetonowaniaPoPrzejezdzie: 585,
-    czyMoznaRozpoczacPrzygotowanieZgodnieZPlanem: true
+    minutaNajwczesniejszegoStartuBetonowania: 600,
+    opoznienieStartuPrzezPrzejazdMinuty: 0,
+    czyMoznaRozpoczacPrzygotowanieZgodnieZPlanem: true,
+    czyPrzejazdWymuszaPozniejszyStart: false,
+    przyczynaOgraniczeniaPrzejazdu: null
   });
 
   assert.equal(JSON.stringify(budowaA), budowaAPrzedObliczeniem);
@@ -111,6 +117,7 @@ function sprawdzBrakPrzydzialuIPrzesuniecia(pompy) {
 
   assert.equal(przejazd.zrodloCzasuPrzejazdu, "reczny");
   assert.equal(przejazd.czyWplywaNaDostepnoscPompy, true);
+  assert.equal(przejazd.opoznienieStartuPrzezPrzejazdMinuty, 0);
   assert.equal(budowaB.startPlanowany, "10:00");
   assert.equal(budowaB.startZadany, "10:00");
   assert.equal(budowaB.startRoboczy, "10:00");
