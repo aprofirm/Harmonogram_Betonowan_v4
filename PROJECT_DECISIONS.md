@@ -1607,8 +1607,10 @@ Tworzenie wyniku nie zmienia budów, kursów ani listy pomp. Dane zasobów są
 kopiowane, a wynik pomp nie nadpisuje `StartPlanowany`, `StartZadany` ani
 `StartRoboczy`. Podetap 4D.1 wypełnia planowane okno betonowania, a 4D.2 tworzy
 z niego, przygotowania i czynności końcowych pełny `okresZajetosci`. Dla budowy
-bez planowanego okna okres pozostaje `null`. Kolejne podetapy 4D–4H stopniowo
-wypełniają pozostałe pola.
+bez planowanego okna okres pozostaje `null`. Punkt 4D.3 potwierdza, że dotyczy
+to również pozycji z zerową ilością, zrealizowanych, bez ilości i
+niewymagających pompy. Kolejne podetapy 4E–4H stopniowo wypełniają pozostałe
+pola.
 Podłączenie rzeczywistego wyniku do `przeliczCalyHarmonogram()` pozostaje
 zakresem 4I.1, a wspólne korygowanie pomp i gruszek — Etapu 5.
 
@@ -1663,6 +1665,24 @@ bieżącego `StartZadany`. Przyczynę i dane notki przygotują 4F–4H, jej
 prezentacja należy do 4I.4, a rzeczywiste wspólne przesunięcie planu pomp i
 gruszek pozostaje zakresem Etapu 5. Podetap 4D.2 jedynie dostarcza okres
 zajętości potrzebny do późniejszego wykrycia takiej sytuacji.
+
+## 88. Zajętość pompy powstaje tylko dla aktywnego betonu z poprawnymi czasami
+
+Rodzaj rozładunku `pompa` nadal oznacza techniczne wymaganie budowy i dlatego
+pozycja może pozostać w wyniku pomp również po realizacji. Sam okres zajętości
+powstaje jednak wyłącznie wtedy, gdy budowa nie jest zrealizowana, ma dodatnią
+ilość betonu i co najmniej jeden należący do niej kurs.
+
+Pozycja z `0 m³`, brakiem ilości albo statusem `zrealizowana` nie tworzy okna
+ani zajętości nawet wtedy, gdy do silnika trafi stary kurs. Budowa z innym
+rodzajem rozładunku również nie zajmuje pompy. Ujemna ilość pozostaje błędem,
+tak jak w silniku gruszek.
+
+Każdy kurs użyty do wyznaczenia okna musi mieć liczbowy początek i koniec
+rozładunku, a koniec musi być późniejszy od początku. Błąd wskazuje konkretny
+kurs i zatrzymuje obliczenie zamiast tworzyć pozornie prawidłowy okres.
+Niepodane ręczne czasy przygotowania i zakończenia nie są błędem, ponieważ
+zgodnie z decyzją 83 zastępują je wartości domyślne zależne od wysięgu.
 
 ---
 

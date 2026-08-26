@@ -484,8 +484,54 @@
     return budowa;
   }
 
+  function czyBudowaMaBetonDoZaplanowania(budowa) {
+    if (!budowa || budowa.statusRealizacji === "zrealizowana") {
+      return false;
+    }
+
+    const iloscBetonuM3 = Number(budowa.iloscBetonuLiczbaM3);
+
+    if (!Number.isFinite(iloscBetonuM3)) {
+      return false;
+    }
+
+    if (iloscBetonuM3 < 0) {
+      throw new Error(
+        "Ilość betonu dla budowy „" + budowa.idBudowy +
+          "” nie może być mniejsza od 0 m³."
+      );
+    }
+
+    return iloscBetonuM3 > 0;
+  }
+
+  function pobierzMinuteRozladunkuPompy(kurs, nazwaPola, opisCzasu) {
+    const wartosc = kurs[nazwaPola];
+
+    if (czyBrakWartosci(wartosc)) {
+      throw new Error(
+        "Kurs „" + kurs.idKursu + "” nie ma " + opisCzasu +
+          " rozładunku pompy."
+      );
+    }
+
+    const minuta = Number(wartosc);
+
+    if (!Number.isFinite(minuta)) {
+      throw new Error(
+        "Kurs „" + kurs.idKursu + "” nie ma " + opisCzasu +
+          " rozładunku pompy."
+      );
+    }
+
+    return minuta;
+  }
+
   function wyznaczPlanowaneOknoBetonowaniaBudowy(budowa, listaKursow) {
-    if (!czyBudowaWymagaPompy(budowa)) {
+    if (
+      !czyBudowaWymagaPompy(budowa) ||
+      !czyBudowaMaBetonDoZaplanowania(budowa)
+    ) {
       return null;
     }
 
@@ -499,47 +545,35 @@
       return null;
     }
 
-    const poczatki = kursyBudowy.map(function (kurs) {
-      if (
-        kurs.minutaRozpoczeciaRozladunku === null ||
-        kurs.minutaRozpoczeciaRozladunku === undefined ||
-        kurs.minutaRozpoczeciaRozladunku === ""
-      ) {
+    const zakresyRozladunkow = kursyBudowy.map(function (kurs) {
+      const minutaRozpoczecia = pobierzMinuteRozladunkuPompy(
+        kurs,
+        "minutaRozpoczeciaRozladunku",
+        "początku"
+      );
+      const minutaZakonczenia = pobierzMinuteRozladunkuPompy(
+        kurs,
+        "minutaZakonczeniaRozladunku",
+        "końca"
+      );
+
+      if (minutaZakonczenia <= minutaRozpoczecia) {
         throw new Error(
-          "Kurs „" + kurs.idKursu + "” nie ma początku rozładunku pompy."
+          "Kurs „" + kurs.idKursu + "” musi kończyć rozładunek pompy " +
+            "później, niż go rozpoczyna."
         );
       }
 
-      const minuta = Number(kurs.minutaRozpoczeciaRozladunku);
-
-      if (!Number.isFinite(minuta)) {
-        throw new Error(
-          "Kurs „" + kurs.idKursu + "” nie ma początku rozładunku pompy."
-        );
-      }
-
-      return minuta;
+      return {
+        minutaRozpoczecia: minutaRozpoczecia,
+        minutaZakonczenia: minutaZakonczenia
+      };
     });
-    const zakonczenia = kursyBudowy.map(function (kurs) {
-      if (
-        kurs.minutaZakonczeniaRozladunku === null ||
-        kurs.minutaZakonczeniaRozladunku === undefined ||
-        kurs.minutaZakonczeniaRozladunku === ""
-      ) {
-        throw new Error(
-          "Kurs „" + kurs.idKursu + "” nie ma końca rozładunku pompy."
-        );
-      }
-
-      const minuta = Number(kurs.minutaZakonczeniaRozladunku);
-
-      if (!Number.isFinite(minuta)) {
-        throw new Error(
-          "Kurs „" + kurs.idKursu + "” nie ma końca rozładunku pompy."
-        );
-      }
-
-      return minuta;
+    const poczatki = zakresyRozladunkow.map(function (zakres) {
+      return zakres.minutaRozpoczecia;
+    });
+    const zakonczenia = zakresyRozladunkow.map(function (zakres) {
+      return zakres.minutaZakonczenia;
     });
     const minutaRozpoczeciaBetonowania = Math.min.apply(null, poczatki);
     const minutaZakonczeniaBetonowania = Math.max.apply(null, zakonczenia);

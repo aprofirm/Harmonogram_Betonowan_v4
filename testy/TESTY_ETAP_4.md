@@ -2,12 +2,12 @@
 
 ## Status
 
-Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4C** oraz podetapy
-**4D.1–4D.2**. Następny podetap to **4D.3 — przypadki brzegowe i testy**.
+Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4D**. Następny podetap to
+**4E.1 — baza do pierwszej budowy**.
 Standardowy wysięg
 `32 m` i zwijane pole **Większa pompa** są opublikowane na `main` i zostały
 potwierdzone przez operatora w przeglądarce. Pełna regresja obejmuje obecnie
-`31` zestawów testów.
+`32` zestawy testów.
 
 ## Cel
 
@@ -101,9 +101,9 @@ Test operatora 4C.3 — zaliczony:
   ostatniego rozładunku wszystkich kursów danej budowy;
 - [x] kolejność kursów i kursy innych budów nie zmieniają granic okna;
 - [x] zajętość obejmuje przygotowanie, całe betonowanie i czynności końcowe;
-- [ ] jedna i wiele dostaw dają poprawny początek oraz koniec pracy;
-- [ ] budowa bez betonu albo niewymagająca pompy nie tworzy zajętości;
-- [ ] nieprawidłowe czasy kończą się czytelnym błędem.
+- [x] jedna i wiele dostaw dają poprawny początek oraz koniec pracy;
+- [x] budowa bez betonu albo niewymagająca pompy nie tworzy zajętości;
+- [x] nieprawidłowe czasy kończą się czytelnym błędem.
 
 ### 4E — przejazdy
 

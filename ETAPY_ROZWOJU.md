@@ -49,8 +49,8 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4C i podetapy 4D.1–4D.2
-  zakończone, następny podetap to 4D.3**
+- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4D zakończone,
+  następny podetap to 4E.1**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -550,12 +550,12 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
     planie dnia oraz zapisach historycznych bez psucia starszych rekordów.
   - [x] **4C.3 — odtworzenie i test operatora:** odświeżenie, historia, kolejny
     import i wyczyszczenie planu zachowują ustalone zasady pamięci.
-- [ ] **4D — okres zajętości pompy na budowie.**
+- [x] **4D — okres zajętości pompy na budowie.**
   - [x] **4D.1 — planowane okno betonowania:** wyznaczenie początku i końca
     obsługi budowy na podstawie danych planu, a nie czasu pojedynczej gruszki.
   - [x] **4D.2 — pełny cykl pompy:** przygotowanie przed betonowaniem, praca,
     zakończenie i czynności po pracy tworzą jeden spójny przedział zajętości.
-  - [ ] **4D.3 — przypadki brzegowe i testy:** jedna dostawa, wiele dostaw,
+  - [x] **4D.3 — przypadki brzegowe i testy:** jedna dostawa, wiele dostaw,
     zerowa ilość, budowa niewymagająca pompy i brak wymaganych czasów.
 - [ ] **4E — przejazdy pomp.**
   - [ ] **4E.1 — baza do pierwszej budowy:** osobny czas dojazdu pompy z bazy.
@@ -890,9 +890,9 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Rozpocząć **4D.3 — przypadki brzegowe i testy**: sprawdzić jedną i wiele
-dostaw, zerową ilość, budowę niewymagającą pompy oraz nieprawidłowe lub
-brakujące czasy.
+Rozpocząć **4E.1 — baza do pierwszej budowy**: dodać osobny czas dojazdu pompy
+z bazy do pierwszego miejsca pracy bez uzależniania silnika od internetu lub
+usługi mapowej.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1907,3 +1907,23 @@ dlatego nie wymaga osobnego testu operatora.
 Podetap **4D.2** jest zakończony. Punkt 4D pozostaje otwarty, a następnym
 podetapem jest **4D.3 — przypadki brzegowe i testy**. Zmiana nie dodaje jeszcze
 przydziału pomp ani nowego widoku, dlatego nie wymaga osobnego testu operatora.
+
+
+## 4D.3 — przypadki brzegowe i testy — 2026-08-26
+
+- [x] jedna dostawa tworzy pełny okres od przygotowania przed rozładunkiem do
+  zakończenia czynności po nim, a wiele dostaw obejmuje całe wspólne okno;
+- [x] budowa z `0 m³`, oznaczona jako zrealizowana albo bez ilości nie tworzy
+  okna ani zajętości, nawet jeżeli do obliczenia trafi stary kurs;
+- [x] budowa z innym rodzajem rozładunku niż pompa nie zajmuje pompy;
+- [x] brak początku lub końca rozładunku, wartość nieliczbowa i koniec
+  niepóźniejszy od początku kończą się czytelnym błędem wskazującym kurs;
+- [x] ujemna ilość i nieprawidłowe ręczne czasy obsługi pompy są odrzucane,
+  natomiast brak ręcznych czasów nadal bezpiecznie korzysta z wartości
+  domyślnych;
+- [x] test `testy/etap_4d_3.test.js` obejmuje wszystkie powyższe granice, a
+  pełna lokalna regresja wszystkich `32` zestawów testów przechodzi.
+
+Cały punkt **4D — okres zajętości pompy na budowie** jest zakończony. Następny
+podetap to **4E.1 — baza do pierwszej budowy**. Zmiana dotyczy wyłącznie modelu
+i walidacji, dlatego nie wymaga osobnego testu operatora.

@@ -25,6 +25,7 @@ function utworzBudowe(wysiegMetry) {
     idBudowy: "POMPA-4A2",
     budowa: "Budowa testowa",
     rodzajRozladunku: "pompa",
+    iloscBetonuLiczbaM3: 16,
     wymaganyWysiegPompyMetry: wysiegMetry,
     czasPrzygotowaniaPompyRoboczyMinuty: null,
     czasZakonczeniaObslugiPompyRoboczyMinuty: null

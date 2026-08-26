@@ -388,9 +388,11 @@ Zakres **4C.3** potwierdził automatycznie i w teście operatora zachowanie list
 pomp po odświeżeniu, kolejnym imporcie, wyczyszczeniu planu i przywróceniu
 historii. Cały punkt 4C jest zakończony.
 
-Podetapy **4D.1–4D.2** wyznaczają już planowane okno betonowania każdej
-pompowanej budowy oraz pełny okres zajętości od rozpoczęcia przygotowania do
-zakończenia czynności po pracy. Wynik uwzględnia wysięg i ręczne wyjątki czasów,
-nie zależy od kolejności kursów oraz nie zmienia danych wejściowych. Następny
-krok to **4D.3 — przypadki brzegowe i testy**.
+Cały punkt **4D** jest zakończony. Planowane okno betonowania i pełny okres
+zajętości obejmują jedną albo wiele dostaw, uwzględniają wysięg oraz ręczne
+wyjątki czasów i nie zależą od kolejności kursów. Pozycja z `0 m³`, bez ilości,
+zrealizowana albo niewymagająca pompy nie zajmuje zasobu. Brakujące lub
+sprzeczne godziny kursu kończą się czytelnym błędem bez zmiany danych
+wejściowych. Następny krok to **4E.1 — dojazd pompy z bazy do pierwszej
+budowy**.
 Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.
