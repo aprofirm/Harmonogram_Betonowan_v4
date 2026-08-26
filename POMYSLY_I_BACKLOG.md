@@ -138,11 +138,22 @@ Silnik ma przeliczać realny plan przy ograniczonej liczbie obu zasobów. Dokła
 
 ## P-008 — Wybór usługi geokodowania i routingu
 
-**Data:** przeniesiono z wcześniejszych ustaleń  
+**Data:** przeniesiono z wcześniejszych ustaleń; doprecyzowano 2026-08-26  
 **Status:** DO DOPRECYZOWANIA  
 **Powiązanie:** Etap 6 — Adresy, lokalizacje i trasy
 
 OpenStreetMap pozostaje preferowanym źródłem danych mapowych, ale konkretny dostawca usług online nie jest jeszcze trwale wybrany. Warstwa usług ma być wymienna bez przebudowy silnika harmonogramu.
+
+### Pomysł interfejsu do sprawdzenia w Etapie 6
+
+- obok adresu budowy ma być mały przycisk otwierający szczegóły lokalizacji lub mapę;
+- operator powinien móc poprawić adres ręcznie, wyszukać miejsce albo wskazać punkt na mapie, gdy sam adres jest niepełny lub niejednoznaczny;
+- po zatwierdzeniu lokalizacji program może zapisać współrzędne oraz wyliczony czas i dystans w lokalnym cache;
+- mapa ma być pomocą operatora, a nie warunkiem działania harmonogramu — brak internetu nadal musi pozwalać użyć danych zapamiętanych lub wpisanych ręcznie.
+
+### Dostawca tras — pytania do rozstrzygnięcia
+
+Przed integracją trzeba porównać rozwiązania pod kątem kosztów, limitów, licencji, stabilności i możliwości wykorzystania w wersji lokalnej oraz internetowej. Należy osobno sprawdzić, czy wystarczy standardowy routing samochodowy, czy warto użyć dostawcy potrafiącego uwzględniać ciężkie pojazdy, np. ograniczenia masy, wysokości, szerokości i zakazy ruchu ciężarówek. Google Maps jest jednym z kandydatów do porównania, ale nie jest obecnie zatwierdzonym dostawcą.
 
 ---
 
@@ -197,7 +208,7 @@ zasady przypisywania i wielokrotnego używania pomp zewnętrznych.
 
 ## P-011 — Ręczne czasy przejazdów pomp przed integracją mapową
 
-**Data:** 2026-08-23
+**Data:** 2026-08-23; doprecyzowano 2026-08-26
 **Status:** CZĘŚCIOWO ROZSTRZYGNIĘTY
 **Powiązanie:** Etap 4E — Pompy
 
@@ -210,3 +221,7 @@ Część `baza → budowa` rozstrzygnięto w decyzji 89 i podetapie 4E.1: bazą 
 betoniarnia, a pompa wykorzystuje istniejący czas dojazdu gruszki do danej
 budowy. Otwarte pozostaje wyłącznie źródło czasów `budowa → budowa`, którego nie
 wolno automatycznie utożsamiać z trasą przez betoniarnię.
+
+Dla pierwszej budowy danej pompy czas przejazdu pozostaje wyłącznie informacyjny. Dopiero po zakończeniu pierwszej pracy przejazd `budowa A → budowa B` ma realnie wpływać na gotowość pompy i możliwość rozpoczęcia kolejnego betonowania.
+
+W 4E.2 trzeba zdefiniować neutralny kontrakt czasu przejazdu między dwiema budowami tak, aby dziś mógł przyjąć wartość ręczną lub zapamiętaną dla pary miejsc, a w Etapie 6 bez zmiany silnika tę samą wartość mogła dostarczyć usługa mapowa. Trasa `A → B` i `B → A` nie musi mieć tego samego czasu.
