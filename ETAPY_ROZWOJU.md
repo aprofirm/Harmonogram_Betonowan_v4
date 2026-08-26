@@ -49,8 +49,8 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4D i podetap 4E.1
-  zakończone, następny podetap to 4E.2**
+- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4E
+  zakończone, następny podetap to 4F.1**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -557,15 +557,15 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
     zakończenie i czynności po pracy tworzą jeden spójny przedział zajętości.
   - [x] **4D.3 — przypadki brzegowe i testy:** jedna dostawa, wiele dostaw,
     zerowa ilość, budowa niewymagająca pompy i brak wymaganych czasów.
-- [ ] **4E — przejazdy pomp.**
+- [x] **4E — przejazdy pomp.**
   - [x] **4E.1 — baza do pierwszej budowy:** baza pompy jest w betoniarni, a
     informacyjny wyjazd wykorzystuje istniejący czas dojazdu gruszki do budowy
     bez tworzenia drugiego pola i bez wpływu na dostępność pompy.
-  - [ ] **4E.2 — budowa do budowy:** osobny czas przejazdu pomiędzy każdą parą
+  - [x] **4E.2 — budowa do budowy:** osobny czas przejazdu pomiędzy każdą parą
     kolejnych miejsc pracy, bez założenia, że jest równy trasie z bazy.
-  - [ ] **4E.3 — niezależność od map:** silnik otrzymuje gotowy czas przejazdu
+  - [x] **4E.3 — niezależność od map:** silnik otrzymuje gotowy czas przejazdu
     i działa offline; automatyczne pozyskiwanie tras pozostaje zakresem Etapu 6.
-  - [ ] **4E.4 — testy:** brak trasy, trasa zerowa, różne czasy w obu kierunkach
+  - [x] **4E.4 — testy:** brak trasy, trasa zerowa, różne czasy w obu kierunkach
     oraz przejazd wymuszający późniejszy start następnej budowy.
 - [ ] **4F — niezależny przydział pomp.**
   - [ ] **4F.1 — stabilna kolejność:** budowy wymagające pompy są rozpatrywane
@@ -636,8 +636,8 @@ należą do Etapu 5.
 ## Kryteria zakończenia
 
 - [ ] jedna pompa nie może obsługiwać dwóch budów jednocześnie,
-- [ ] czas przejazdu pompy wpływa na możliwość rozpoczęcia następnej budowy,
-- [ ] program odróżnia przejazd z bazy od przejazdu między budowami,
+- [x] czas przejazdu pompy wpływa na możliwość rozpoczęcia następnej budowy,
+- [x] program odróżnia przejazd z bazy od przejazdu między budowami,
 - [ ] można wyłączyć pompę z dostępności,
 - [ ] można odróżnić pompę własną od zewnętrznej,
 - [ ] program potrafi wskazać minimalną potrzebną liczbę pomp,
@@ -892,9 +892,9 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Rozpocząć **4E.2 — budowa do budowy**: dodać osobny czas przejazdu pompy
-pomiędzy każdą parą kolejnych miejsc pracy, ponieważ nie można go wyprowadzić
-z trasy betoniarnia → budowa.
+Rozpocząć **4F.1 — stabilna kolejność**: budowy wymagające pompy rozpatrywać
+deterministycznie według planowanego startu i kolejności wejściowej. Ten krok
+przygotowuje kolejność do właściwego wyboru pierwszej pasującej pompy w 4F.2.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1954,3 +1954,29 @@ i walidacji, dlatego nie wymaga osobnego testu operatora.
 Podetap **4E.1** jest zakończony. Następnym krokiem jest **4E.2 — budowa do
 budowy**. Zmiana nie dodaje nowego elementu interfejsu, dlatego nie wymaga
 osobnego testu operatora.
+
+## Zamknięcie 4E.2–4E.4 i całego 4E — 2026-08-26
+
+- [x] **4E.2:** przejazd `budowa A → budowa B` ma własny, kierunkowy czas
+  i rozpoczyna się dopiero po pełnym zakończeniu zajętości pompy na A;
+- [x] **4E.3:** silnik otrzymuje gotowe minuty oraz informacyjne źródło
+  wartości i działa identycznie dla wpisu ręcznego, pamięci tras, mapy i
+  przyszłego routingu ciężarowego, bez zależności od internetu;
+- [x] **4E.4:** brak trasy daje jawny błąd z parą budów, `0 min` jest
+  poprawną wartością, `A → B` i `B → A` mogą się różnić, a przejazd
+  uniemożliwiający przygotowanie na czas wylicza najwcześniejszy start,
+  wielkość opóźnienia i przyczynę `przejazd-miedzy-budowami`;
+- [x] moduł `js/pompy/przejazdy_pomp.js` jest ładowany przez `index.html`
+  po module pomp, więc ten sam mechanizm jest dostępny również w wersji
+  przeglądarkowej, a nie tylko w testach Node.js;
+- [x] 4E nie zmienia `StartPlanowany`, `StartZadany` ani `StartRoboczy` i
+  nie przydziela jeszcze konkretnej pompy; wykorzystanie wyliczonej
+  dostępności należy do 4F, a wspólna korekta pomp i gruszek do Etapu 5;
+- [x] pełna regresja po implementacji 4E.4 zakończyła się powodzeniem —
+  wszystkie **36/36** plików `testy/*.test.js` przeszły poprawnie.
+
+Cały punkt **4E — przejazdy pomp** jest zakończony. Nie jest wymagany
+osobny test operatora, ponieważ 4E.2–4E.4 nie dodają nowego pola ani nowej
+operacji w interfejsie; dołączenie modułu do strony jest objęte testem
+automatycznym. Następny podetap to **4F.1 — stabilna kolejność**.
+

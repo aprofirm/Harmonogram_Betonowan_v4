@@ -1719,6 +1719,39 @@ dołożenia następnego betonowania.
 
 ---
 
+
+## 90. Przejazd między budowami jest kierunkowy i ogranicza gotowość pompy
+
+Po zakończeniu pierwszej pracy kolejny przejazd pompy `budowa A → budowa B`
+jest rzeczywistą częścią dostępności zasobu. Pompa może wyjechać dopiero po
+zakończeniu pełnego cyklu na A, a po przyjeździe na B musi mieć jeszcze czas
+wymagany na przygotowanie przed rozpoczęciem betonowania.
+
+Czasu `A → B` nie wolno wyprowadzać wyłącznie z dwóch odległości
+`betoniarnia → A` i `betoniarnia → B`. Same te wartości nie określają
+wzajemnego położenia budów ani rzeczywistej trasy drogowej. Nie wolno też
+po cichu zastępować przejazdu trasą przez betoniarnię ani odległością w
+linii prostej.
+
+Trasy są kierunkowe: `A → B` i `B → A` są osobnymi wartościami i mogą mieć
+różne czasy. `0 min` jest prawidłową wartością, natomiast brak czasu trasy
+ma być jawnie zgłoszony zamiast przyjęcia zera lub wartości zastępczej.
+
+Silnik pomp otrzymuje gotowe `czasPrzejazduMinuty` i informacyjne
+`zrodloCzasuPrzejazdu`. Źródłem może być wpis ręczny, lokalna pamięć tras,
+zwykła usługa mapowa albo przyszły routing dla ciężkich pojazdów. Źródło
+nie zmienia logiki obliczeń, dzięki czemu silnik działa offline, gdy czas
+jest już znany, a automatyczne pozyskiwanie tras pozostaje zakresem Etapu 6.
+
+Jeżeli przejazd powoduje spóźniony przyjazd na B, wynik zachowuje
+najwcześniejszy możliwy start betonowania, liczbę minut opóźnienia i
+przyczynę `przejazd-miedzy-budowami`. Etap 4E sam nie nadpisuje
+`StartPlanowany`, `StartZadany` ani `StartRoboczy`. Dane wykorzysta
+przydział pomp w 4F, prezentacja notki należy do 4I.4, a wspólne faktyczne
+przesunięcie planu pomp i gruszek pozostaje zakresem Etapu 5.
+
+---
+
 # Powiązane tematy otwarte
 
 Pomysły, warianty i pytania, które nie są jeszcze obowiązującymi decyzjami, są prowadzone w `POMYSLY_I_BACKLOG.md`. Dzięki temu ten dokument pozostaje jednoznacznym źródłem zatwierdzonych ustaleń.

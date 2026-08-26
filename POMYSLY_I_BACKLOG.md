@@ -208,24 +208,28 @@ zasady przypisywania i wielokrotnego używania pomp zewnętrznych.
 
 ## P-011 — Ręczne czasy przejazdów pomp przed integracją mapową
 
-**Data:** 2026-08-23; doprecyzowano 2026-08-26
-**Status:** CZĘŚCIOWO ROZSTRZYGNIĘTY
-**Powiązanie:** Etap 4E — Pompy
+**Data:** 2026-08-23; doprecyzowano 2026-08-26  
+**Status:** CZĘŚCIOWO ROZSTRZYGNIĘTY  
+**Powiązanie:** Etap 4E, 4F, 4I i Etap 6 — Pompy oraz trasy
 
-Etap 4 musi odróżnić trasę `baza → budowa` od `budowa → budowa`, a automatyczne
-trasy są dopiero zakresem Etapu 6. Trzeba wybrać najprostszy sposób ręcznego
-podania lub zapamiętania czasów pomiędzy parami budów. Niezależnie od wybranego
-interfejsu silnik pomp ma otrzymywać gotowe minuty i działać bez internetu.
+Część silnikowa została rozstrzygnięta w decyzjach 89–90 i podetapach
+4E.1–4E.4. Pierwszy przejazd `betoniarnia → budowa` pozostaje wyłącznie
+informacyjny. Każdy kolejny przejazd `budowa A → budowa B` ma osobny,
+kierunkowy czas, realnie wpływa na gotowość pompy i może wyznaczyć
+późniejszy możliwy start następnego betonowania.
 
-Część `baza → budowa` rozstrzygnięto w decyzji 89 i podetapie 4E.1: bazą jest
-betoniarnia, a pompa wykorzystuje istniejący czas dojazdu gruszki do danej
-budowy. Otwarte pozostaje wyłącznie źródło czasów `budowa → budowa`, którego nie
-wolno automatycznie utożsamiać z trasą przez betoniarnię.
+Silnik przyjmuje gotowy `czasPrzejazduMinuty` niezależnie od źródła. Brak
+wartości jest jawnym problemem, `0 min` jest dozwolone, a `A → B` i
+`B → A` nie muszą być równe. Automatyczne pozyskiwanie czasu z map nadal
+pozostaje zakresem Etapu 6 i nie może być wymagane do działania offline.
 
-Dla pierwszej budowy danej pompy czas przejazdu pozostaje wyłącznie informacyjny. Dopiero po zakończeniu pierwszej pracy przejazd `budowa A → budowa B` ma realnie wpływać na gotowość pompy i możliwość rozpoczęcia kolejnego betonowania.
-
-W 4E.2 trzeba zdefiniować neutralny kontrakt czasu przejazdu między dwiema budowami tak, aby dziś mógł przyjąć wartość ręczną lub zapamiętaną dla pary miejsc, a w Etapie 6 bez zmiany silnika tę samą wartość mogła dostarczyć usługa mapowa. Trasa `A → B` i `B → A` nie musi mieć tego samego czasu.
-
+Otwarte pozostaje rozwiązanie operatorskie: gdzie i w jaki sposób przed
+pełną integracją mapową wpisać, wybrać lub potwierdzić czas dla konkretnej
+pary budów oraz jak zapisać taką parę w lokalnej pamięci tras. Klucz
+pamięci powinien docelowo opierać się na jednoznacznej lokalizacji
+(znormalizowany adres i/lub współrzędne), a nie wyłącznie na swobodnej
+nazwie budowy. Rozwiązanie interfejsu nie może zmienić kontraktu silnika
+zbudowanego w 4E.
 ---
 
 ## P-012 — Podpowiedzi znanych budów w formularzu ręcznym
