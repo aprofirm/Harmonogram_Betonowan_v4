@@ -188,17 +188,25 @@ pompa zewnętrzna:
 
 Kontrakt wyniku z 4A może przechować każdy z tych wariantów bez rozstrzygania
 go przedwcześnie. Operacje listy z 4B.2 są neutralne wobec tych wariantów.
-Decyzja jest potrzebna przed właściwym przydziałem w 4F.
+Decyzja jest potrzebna przed właściwym przydziałem w 4F. Decyzja 89 ustala
+jedynie, że informacyjną godzinę pierwszego wyjazdu liczymy z betoniarni, ale
+sam pierwszy dojazd nie ogranicza dostępności pompy. Nadal otwarte pozostają
+zasady przypisywania i wielokrotnego używania pomp zewnętrznych.
 
 ---
 
 ## P-011 — Ręczne czasy przejazdów pomp przed integracją mapową
 
 **Data:** 2026-08-23
-**Status:** DO DOPRECYZOWANIA
+**Status:** CZĘŚCIOWO ROZSTRZYGNIĘTY
 **Powiązanie:** Etap 4E — Pompy
 
 Etap 4 musi odróżnić trasę `baza → budowa` od `budowa → budowa`, a automatyczne
 trasy są dopiero zakresem Etapu 6. Trzeba wybrać najprostszy sposób ręcznego
 podania lub zapamiętania czasów pomiędzy parami budów. Niezależnie od wybranego
 interfejsu silnik pomp ma otrzymywać gotowe minuty i działać bez internetu.
+
+Część `baza → budowa` rozstrzygnięto w decyzji 89 i podetapie 4E.1: bazą jest
+betoniarnia, a pompa wykorzystuje istniejący czas dojazdu gruszki do danej
+budowy. Otwarte pozostaje wyłącznie źródło czasów `budowa → budowa`, którego nie
+wolno automatycznie utożsamiać z trasą przez betoniarnię.

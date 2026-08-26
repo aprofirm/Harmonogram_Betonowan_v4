@@ -29,6 +29,8 @@ function utworzBudowe(dodatkoweDane) {
     startZadany: "08:00",
     startRoboczy: "08:00",
     iloscBetonuLiczbaM3: 24,
+    czasDojazduRoboczyMinuty: 25,
+    zrodloCzasuDojazdu: "mapa",
     wymaganyWysiegPompyMetry: 32,
     czasPrzygotowaniaPompyRoboczyMinuty: null,
     czasZakonczeniaObslugiPompyRoboczyMinuty: null

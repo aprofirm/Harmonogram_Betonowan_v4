@@ -2,12 +2,12 @@
 
 ## Status
 
-Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4D**. Następny podetap to
-**4E.1 — baza do pierwszej budowy**.
+Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4D** oraz podetap **4E.1**.
+Następny podetap to **4E.2 — budowa do budowy**.
 Standardowy wysięg
 `32 m` i zwijane pole **Większa pompa** są opublikowane na `main` i zostały
 potwierdzone przez operatora w przeglądarce. Pełna regresja obejmuje obecnie
-`32` zestawy testów.
+`33` zestawy testów.
 
 ## Cel
 
@@ -107,11 +107,15 @@ Test operatora 4C.3 — zaliczony:
 
 ### 4E — przejazdy
 
-- pierwszy przydział uwzględnia `baza → budowa`;
-- kolejny przydział uwzględnia `budowa A → budowa B`;
-- czasy w przeciwnych kierunkach mogą być różne;
-- brak potrzebnej trasy jest jawny i nie tworzy fikcyjnego przejazdu;
-- silnik działa dla gotowych minut bez internetu i bez usługi mapowej.
+- [x] pierwszy informacyjny przejazd uwzględnia `betoniarnia → budowa`, korzysta
+  z czasu dojazdu gruszki i wylicza wcześniejszy wyjazd, ale nie zajmuje pompy
+  ani nie wpływa na jej przydział;
+- [x] czas dojazdu `0 min` jest poprawny, a brak lub błędna wartość nie prowadzi
+  do cichego przyjęcia zera;
+- [ ] kolejny przydział uwzględnia `budowa A → budowa B`;
+- [ ] czasy w przeciwnych kierunkach mogą być różne;
+- [ ] brak potrzebnej trasy jest jawny i nie tworzy fikcyjnego przejazdu;
+- [ ] silnik działa dla gotowych minut bez internetu i bez usługi mapowej.
 
 ### 4F — przydział pomp
 

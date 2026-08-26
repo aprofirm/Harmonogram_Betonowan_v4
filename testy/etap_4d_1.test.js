@@ -28,7 +28,9 @@ function utworzBudowe() {
     startPlanowany: "08:00",
     startZadany: "08:00",
     startRoboczy: "08:00",
-    iloscBetonuLiczbaM3: 24
+    iloscBetonuLiczbaM3: 24,
+    czasDojazduRoboczyMinuty: 25,
+    zrodloCzasuDojazdu: "mapa"
   };
 }
 

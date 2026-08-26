@@ -393,6 +393,13 @@ zajętości obejmują jedną albo wiele dostaw, uwzględniają wysięg oraz ręc
 wyjątki czasów i nie zależą od kolejności kursów. Pozycja z `0 m³`, bez ilości,
 zrealizowana albo niewymagająca pompy nie zajmuje zasobu. Brakujące lub
 sprzeczne godziny kursu kończą się czytelnym błędem bez zmiany danych
-wejściowych. Następny krok to **4E.1 — dojazd pompy z bazy do pierwszej
-budowy**.
+wejściowych.
+
+Podetap **4E.1** przyjmuje informacyjnie, że baza pompy znajduje się w
+betoniarni. Wyjazd do pierwszej budowy wykorzystuje ten sam zapisany czas
+dojazdu co gruszka — bez osobnego pola dla pompy. Pierwszy dojazd nie jest
+liczony jako zajętość i nie wpływa na przydział ani liczbę pomp; pompa ma po
+prostu wyjechać odpowiednio wcześniej. Dopiero przejazd po budowie A do budowy B
+będzie wpływał na możliwość dołożenia kolejnego betonowania. Następny krok to
+**4E.2 — przejazd pompy pomiędzy budowami**.
 Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.

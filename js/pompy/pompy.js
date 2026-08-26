@@ -658,6 +658,63 @@
     return tekst || null;
   }
 
+  function pobierzCzasDojazduPompyZBetoniarni(budowa) {
+    const wartosc = budowa.czasDojazduRoboczyMinuty;
+
+    if (czyBrakWartosci(wartosc)) {
+      throw new Error(
+        "Uzupełnij „Czas dojazdu” dla budowy „" + budowa.idBudowy +
+          "” w tabeli danych. Ten sam czas jest używany dla gruszki i pompy."
+      );
+    }
+
+    const czasDojazduMinuty = Number(wartosc);
+
+    if (!Number.isFinite(czasDojazduMinuty) || czasDojazduMinuty < 0) {
+      throw new Error(
+        "Pole „Czas dojazdu” dla budowy „" + budowa.idBudowy +
+          "” musi zawierać liczbę nie mniejszą niż 0."
+      );
+    }
+
+    return czasDojazduMinuty;
+  }
+
+  function utworzInformacyjnyPrzejazdPompyZBazy(budowa, okresZajetosci) {
+    if (!okresZajetosci) {
+      return null;
+    }
+
+    const czasDojazduMinuty = pobierzCzasDojazduPompyZBetoniarni(budowa);
+    const minutaPrzyjazduNaBudowe =
+      okresZajetosci.minutaRozpoczeciaZajetosci;
+
+    return {
+      idBudowy: String(budowa.idBudowy || ""),
+      rodzajTrasy: "betoniarnia-do-budowy",
+      czyWplywaNaDostepnoscPompy: false,
+      czasDojazduMinuty: czasDojazduMinuty,
+      zrodloCzasuDojazdu:
+        pobierzTekstLubBrak(budowa.zrodloCzasuDojazdu) || "reczny",
+      minutaWyjazduZBetoniarni:
+        minutaPrzyjazduNaBudowe - czasDojazduMinuty,
+      minutaPrzyjazduNaBudowe: minutaPrzyjazduNaBudowe,
+      minutaRozpoczeciaPrzygotowaniaPompy: minutaPrzyjazduNaBudowe
+    };
+  }
+
+  function wyznaczInformacyjnyPrzejazdPompyZBazyDoBudowy(
+    budowa,
+    listaKursow
+  ) {
+    const okresZajetosci = wyznaczPelnyOkresZajetosciPompyBudowy(
+      budowa,
+      listaKursow
+    );
+
+    return utworzInformacyjnyPrzejazdPompyZBazy(budowa, okresZajetosci);
+  }
+
   function utworzOczekujacyWynikBudowyPompy(budowa, listaKursow) {
     const startPlanowany = pobierzTekstLubBrak(budowa.startPlanowany);
     const startZadany =
@@ -666,6 +723,10 @@
       pobierzTekstLubBrak(budowa.startRoboczy) || startZadany;
     const planowaneOknoBetonowania =
       wyznaczPlanowaneOknoBetonowaniaBudowy(budowa, listaKursow);
+    const okresZajetosci = utworzOkresZajetosciPompyZOkna(
+      budowa,
+      planowaneOknoBetonowania
+    );
 
     return {
       idBudowy: String(budowa.idBudowy || ""),
@@ -675,9 +736,10 @@
       startRoboczyPrzedPompa: startRoboczyPrzedPompa,
       planowaneOknoBetonowania: planowaneOknoBetonowania,
       przydzialPompy: null,
-      okresZajetosci: utworzOkresZajetosciPompyZOkna(
+      okresZajetosci: okresZajetosci,
+      informacyjnyPrzejazdZBazy: utworzInformacyjnyPrzejazdPompyZBazy(
         budowa,
-        planowaneOknoBetonowania
+        okresZajetosci
       ),
       najwczesniejszyMozliwyStart: null,
       opoznienieZPowoduPompMinuty: null,
@@ -808,6 +870,8 @@
       wyznaczPlanowaneOknoBetonowaniaBudowy,
     wyznaczOknoPompowaniaBudowy: wyznaczOknoPompowaniaBudowy,
     wyznaczPelnyOkresZajetosciPompyBudowy:
-      wyznaczPelnyOkresZajetosciPompyBudowy
+      wyznaczPelnyOkresZajetosciPompyBudowy,
+    wyznaczInformacyjnyPrzejazdPompyZBazyDoBudowy:
+      wyznaczInformacyjnyPrzejazdPompyZBazyDoBudowy
   };
 })(window);

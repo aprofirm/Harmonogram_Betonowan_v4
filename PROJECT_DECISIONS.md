@@ -1596,6 +1596,8 @@ budowy zakwalifikowanej do pompowania przechowuje osobno:
   rozładunku całego planu dostaw budowy;
 - przydzieloną pompę;
 - pełny okres zajętości;
+- informacyjny przejazd z betoniarni do budowy, gdy jest to pierwsza praca
+  pompy; ten przejazd nie wpływa na jej dostępność;
 - najwcześniejszy możliwy start;
 - opóźnienie oraz skutek ewentualnego niedoboru pomp.
 
@@ -1610,7 +1612,8 @@ z niego, przygotowania i czynności końcowych pełny `okresZajetosci`. Dla budo
 bez planowanego okna okres pozostaje `null`. Punkt 4D.3 potwierdza, że dotyczy
 to również pozycji z zerową ilością, zrealizowanych, bez ilości i
 niewymagających pompy. Kolejne podetapy 4E–4H stopniowo wypełniają pozostałe
-pola.
+pola. Podetap 4E.1 wypełnia `informacyjnyPrzejazdZBazy`, ale nadal nie oznacza
+przydzielenia konkretnej pompy ani zajęcia jej czasu.
 Podłączenie rzeczywistego wyniku do `przeliczCalyHarmonogram()` pozostaje
 zakresem 4I.1, a wspólne korygowanie pomp i gruszek — Etapu 5.
 
@@ -1683,6 +1686,36 @@ rozładunku, a koniec musi być późniejszy od początku. Błąd wskazuje konkr
 kurs i zatrzymuje obliczenie zamiast tworzyć pozornie prawidłowy okres.
 Niepodane ręczne czasy przygotowania i zakończenia nie są błędem, ponieważ
 zgodnie z decyzją 83 zastępują je wartości domyślne zależne od wysięgu.
+
+## 89. Pierwszy dojazd pompy jest wyłącznie informacyjny
+
+Do obliczenia informacyjnej godziny wyjazdu przyjmujemy, że baza pompy znajduje
+się w miejscu załadunku gruszek, czyli w betoniarni. Pierwszy dojazd danej pompy
+nie jest jednak liczony jako jej zajętość ani ograniczenie harmonogramu. Pompa ma
+po prostu wyjechać odpowiednio wcześniej i dotrzeć na swoją pierwszą budowę na
+czas przygotowania.
+
+Przejazd pierwszej pracy `betoniarnia → budowa` korzysta z istniejącego pola
+budowy `czasDojazduRoboczyMinuty`. Jest to ten sam czas, którego używa gruszka,
+wraz z tym samym źródłem: wpisem ręcznym, pamięcią tras albo mapą. Operator nie
+wpisuje drugiego czasu tylko dla pompy.
+
+Planowana minuta wyjazdu pompy jest liczona jako:
+
+`początek betonowania - przygotowanie pompy - czas dojazdu`.
+
+Przykładowo dla początku o `08:00`, przygotowania `20 min` i dojazdu `25 min`
+pompa wyjeżdża z betoniarni o `07:15`, przyjeżdża o `07:40` i rozpoczyna
+betonowanie o `08:00`.
+
+Podetap 4E.1 zapisuje godzinę wyłącznie w
+`informacyjnyPrzejazdZBazy` z jawną wartością
+`czyWplywaNaDostepnoscPompy: false`. Nie zmienia `StartPlanowany`,
+`StartZadany`, `StartRoboczy`, kursów gruszek, minimalnej liczby pomp ani
+możliwości pierwszego przydziału. Pierwszym liczonym momentem pracy jest
+przygotowanie na pierwszej budowie. Dopiero zakończenie budowy A, przejazd
+`A → B` i przygotowanie na B mają wpływać na gotowość pompy oraz możliwość
+dołożenia następnego betonowania.
 
 ---
 

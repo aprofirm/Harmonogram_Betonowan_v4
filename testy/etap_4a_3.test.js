@@ -89,6 +89,7 @@ function sprawdzKontraktWyniku(pompy) {
       planowaneOknoBetonowania: null,
       przydzialPompy: null,
       okresZajetosci: null,
+      informacyjnyPrzejazdZBazy: null,
       najwczesniejszyMozliwyStart: null,
       opoznienieZPowoduPompMinuty: null,
       skutekNiedoboruPomp: null

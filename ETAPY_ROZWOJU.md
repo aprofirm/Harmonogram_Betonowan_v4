@@ -49,8 +49,8 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4D zakończone,
-  następny podetap to 4E.1**
+- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4D i podetap 4E.1
+  zakończone, następny podetap to 4E.2**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -558,7 +558,9 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
   - [x] **4D.3 — przypadki brzegowe i testy:** jedna dostawa, wiele dostaw,
     zerowa ilość, budowa niewymagająca pompy i brak wymaganych czasów.
 - [ ] **4E — przejazdy pomp.**
-  - [ ] **4E.1 — baza do pierwszej budowy:** osobny czas dojazdu pompy z bazy.
+  - [x] **4E.1 — baza do pierwszej budowy:** baza pompy jest w betoniarni, a
+    informacyjny wyjazd wykorzystuje istniejący czas dojazdu gruszki do budowy
+    bez tworzenia drugiego pola i bez wpływu na dostępność pompy.
   - [ ] **4E.2 — budowa do budowy:** osobny czas przejazdu pomiędzy każdą parą
     kolejnych miejsc pracy, bez założenia, że jest równy trasie z bazy.
   - [ ] **4E.3 — niezależność od map:** silnik otrzymuje gotowy czas przejazdu
@@ -890,9 +892,9 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Rozpocząć **4E.1 — baza do pierwszej budowy**: dodać osobny czas dojazdu pompy
-z bazy do pierwszego miejsca pracy bez uzależniania silnika od internetu lub
-usługi mapowej.
+Rozpocząć **4E.2 — budowa do budowy**: dodać osobny czas przejazdu pompy
+pomiędzy każdą parą kolejnych miejsc pracy, ponieważ nie można go wyprowadzić
+z trasy betoniarnia → budowa.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -1927,3 +1929,28 @@ przydziału pomp ani nowego widoku, dlatego nie wymaga osobnego testu operatora.
 Cały punkt **4D — okres zajętości pompy na budowie** jest zakończony. Następny
 podetap to **4E.1 — baza do pierwszej budowy**. Zmiana dotyczy wyłącznie modelu
 i walidacji, dlatego nie wymaga osobnego testu operatora.
+
+
+## 4E.1 — betoniarnia do pierwszej budowy — 2026-08-26
+
+- [x] bazą pompy jest miejsce załadunku gruszek, czyli betoniarnia;
+- [x] przejazd pompy korzysta z istniejącego
+  `czasDojazduRoboczyMinuty` budowy oraz zachowuje jego źródło: wpis ręczny,
+  pamięć tras albo mapę;
+- [x] nie powstało drugie pole czasu ani dodatkowy obowiązek dla operatora;
+- [x] informacyjny wyjazd jest liczony od początku przygotowania pompy: dla startu
+  betonowania `08:00`, przygotowania `20 min` i dojazdu `25 min` pompa wyjeżdża
+  o `07:15` i przyjeżdża o `07:40`;
+- [x] wynik `informacyjnyPrzejazdZBazy` ma jawne
+  `czyWplywaNaDostepnoscPompy: false`; pierwszy dojazd nie przydziela i nie
+  zajmuje pompy, nie zwiększa ich minimalnej liczby oraz nie przesuwa
+  `StartPlanowany`, `StartZadany`, `StartRoboczy` ani kursów gruszek;
+- [x] brak wspólnego czasu dojazdu kończy się komunikatem kierującym operatora
+  do istniejącego pola, a czas `0 min` pozostaje poprawny;
+- [x] test `testy/etap_4e_1.test.js` potwierdza obliczenia, granice, brak mutacji
+  i osadzenie przejazdu w niezależnym wyniku pomp;
+- [x] pełna lokalna regresja wszystkich `33` zestawów testów przechodzi.
+
+Podetap **4E.1** jest zakończony. Następnym krokiem jest **4E.2 — budowa do
+budowy**. Zmiana nie dodaje nowego elementu interfejsu, dlatego nie wymaga
+osobnego testu operatora.
