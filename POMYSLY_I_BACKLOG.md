@@ -225,3 +225,17 @@ wolno automatycznie utożsamiać z trasą przez betoniarnię.
 Dla pierwszej budowy danej pompy czas przejazdu pozostaje wyłącznie informacyjny. Dopiero po zakończeniu pierwszej pracy przejazd `budowa A → budowa B` ma realnie wpływać na gotowość pompy i możliwość rozpoczęcia kolejnego betonowania.
 
 W 4E.2 trzeba zdefiniować neutralny kontrakt czasu przejazdu między dwiema budowami tak, aby dziś mógł przyjąć wartość ręczną lub zapamiętaną dla pary miejsc, a w Etapie 6 bez zmiany silnika tę samą wartość mogła dostarczyć usługa mapowa. Trasa `A → B` i `B → A` nie musi mieć tego samego czasu.
+
+---
+
+## P-012 — Podpowiedzi znanych budów w formularzu ręcznym
+
+**Data:** 2026-08-26  
+**Status:** POMYSŁ  
+**Powiązanie:** Etap 6 i Etap 7 — lokalizacje oraz interfejs operatora
+
+Podczas ręcznego dodawania budowy program powinien wykorzystywać lokalną pamięć znanych budów i tras. Po wpisaniu kilku znaków nazwy, ulicy, miejscowości albo innego fragmentu adresu ma wyświetlać pasujące propozycje z wcześniej zapisanych danych.
+
+Wybranie propozycji powinno uzupełnić znane dane lokalizacji i pozwolić ponownie wykorzystać zapisany czas lub trasę, zamiast zmuszać operatora do ponownego wpisywania tych samych informacji. Podpowiedzi mają działać całkowicie lokalnie i offline.
+
+Dopasowanie powinno być odporne na wielkość liter i typowe różnice zapisu. Program nie może jednak samodzielnie podmieniać wpisu — operator wybiera jedną z propozycji albo kontynuuje wpisywanie nowej budowy. W Etapie 6 trzeba ustalić, czy rekord pamięci reprezentuje przede wszystkim nazwę budowy, znormalizowany adres, współrzędne czy ich połączenie, aby uniknąć duplikatów i błędnego łączenia podobnych lokalizacji.
