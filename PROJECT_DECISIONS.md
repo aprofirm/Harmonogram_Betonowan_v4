@@ -1851,3 +1851,15 @@ Najpierw budujemy prosty, czytelny i poprawny silnik.
 Następnie dokładamy kolejne funkcje jako osobne, zrozumiałe moduły.
 
 Każda nowa funkcja powinna mieć jasny powód biznesowy i nie powinna niepotrzebnie zwiększać złożoności całego projektu.
+
+---
+
+## 93. Pierwsza pasująca pompa jest wybierana w kolejności listy zasobów
+
+W 4F.2 określenie „pierwsza pasująca pompa” oznacza pierwszą pompę w znormalizowanej kolejności listy zasobów, która przejdzie wszystkie obowiązujące warunki. Silnik nie sortuje pomp według nazwy, typu, wysięgu ani tego, czy są własne lub zewnętrzne.
+
+Kandydat musi być aktywny, mieć wysięg nie mniejszy od wymaganego przez budowę, móc rozpocząć pełny cykl w swoim oknie `Dostępna od/do` oraz być wolny po swojej ostatniej przydzielonej budowie. Dla ponownego użycia tej samej pompy musi być też znany kierunkowy czas przejazdu z poprzedniej budowy i przyjazd musi pozwalać rozpocząć przygotowanie zgodnie z planem.
+
+Pierwszy dojazd z betoniarni pozostaje wyłącznie informacyjny zgodnie z decyzją 89 i nie blokuje pierwszego przydziału. Rozpoczęcie cyklu dokładnie o `Dostępna do` jest dozwolone zgodnie z decyzją 91, a ewentualne przekroczenie końca dostępności jest zachowywane w wyniku do późniejszej informacji dla operatora.
+
+Brak znanej trasy między dwiema budowami nie powoduje wymyślenia czasu zastępczego. Taki kandydat otrzymuje jawny powód `brak-trasy`; silnik może sprawdzić następną pompę z listy. Niepoprawne dane trasy pozostają błędem. Jeżeli żaden kandydat nie pasuje, budowa otrzymuje status `brak-pasujacej-pompy`. Krok 4F.2 nie przesuwa godzin budów; najwcześniejszy alternatywny start jest zakresem 4F.4.

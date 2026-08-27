@@ -49,8 +49,8 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4E, przygotowawczy
-  4F.0 oraz 4F.1 zakończone, następny podetap to 4F.2**
+- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4E oraz
+  4F.0–4F.2 zakończone, następny podetap to 4F.3**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -588,7 +588,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
   - [x] **4F.1 — stabilna kolejność:** rzeczywiste prace budów wymagających
     pompy są rozpatrywane deterministycznie według planowanego początku
     betonowania, a przy remisie zachowują kolejność wejściową.
-  - [ ] **4F.2 — pierwsza pasująca pompa:** silnik wybiera pierwszą aktywną,
+  - [x] **4F.2 — pierwsza pasująca pompa:** silnik wybiera pierwszą aktywną,
     dostępną już o wymaganej godzinie, wolną i zgodną z wymaganiami pompę,
     uwzględniając pełny cykl oraz przejazd.
   - [ ] **4F.3 — brak nakładania:** jedna pompa nie może mieć dwóch kolidujących
@@ -657,7 +657,7 @@ należą do Etapu 5.
 - [ ] jedna pompa nie może obsługiwać dwóch budów jednocześnie,
 - [x] czas przejazdu pompy wpływa na możliwość rozpoczęcia następnej budowy,
 - [x] program odróżnia przejazd z bazy od przejazdu między budowami,
-- [ ] można wyłączyć pompę z dostępności,
+- [x] można wyłączyć pompę z dostępności,
 - [x] przydział nie rozróżnia pompy własnej i zewnętrznej; decydują parametry zasobu,
 - [ ] program potrafi wskazać minimalną potrzebną liczbę pomp,
 - [ ] zmniejszenie liczby pomp powoduje pełne ponowne przeliczenie.

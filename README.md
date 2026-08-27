@@ -311,6 +311,7 @@ Instrukcje testów ręcznych znajdują się w plikach:
 - [testy/TESTY_KP_4.md](testy/TESTY_KP_4.md) — ręczna korekta godziny budowy,
 - [testy/TESTY_ETAP_4.md](testy/TESTY_ETAP_4.md) — plan testów pomp,
 - [testy/TESTY_ETAP_4F_1.md](testy/TESTY_ETAP_4F_1.md) — stabilna kolejność przed przydziałem pomp,
+- [testy/TESTY_ETAP_4F_2.md](testy/TESTY_ETAP_4F_2.md) — wybór pierwszej pasującej pompy,
 - [testy/TESTY_KP_1.md](testy/TESTY_KP_1.md) — plan testu pamięci dnia,
 - [testy/TESTY_KP_2.md](testy/TESTY_KP_2.md) — plan testu pamięci tras,
 - [testy/TESTY_KP_3.md](testy/TESTY_KP_3.md) — ilość ręczna, wariant i szeroki widok,
@@ -415,9 +416,11 @@ sprzeczne godziny kursu kończą się czytelnym błędem bez zmiany danych
 wejściowych.
 
 Cały punkt **4E — przejazdy pomp** jest zakończony. Przygotowawczy **4F.0 —
-okno dostępności pomp** oraz **4F.1 — stabilna kolejność** są zakończone. Puste
-`Od/Do` oznacza brak ograniczeń, rozpoczęta na czas budowa jest dokańczana, a
-pochodzenie własna/zewnętrzna nie wpływa na algorytm. Rzeczywiste prace pompowe
-są porządkowane według planowanego początku betonowania, a przy remisie zachowują
-kolejność wejściową. Następny krok to **4F.2 — pierwsza pasująca pompa**.
-Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.
+okno dostępności pomp**, **4F.1 — stabilna kolejność** oraz **4F.2 — pierwsza
+pasująca pompa** są zakończone. Puste `Od/Do` oznacza brak ograniczeń, rozpoczęta
+na czas budowa jest dokańczana, a pochodzenie własna/zewnętrzna nie wpływa na
+algorytm. Rzeczywiste prace pompowe są porządkowane według planowanego początku
+betonowania, a następnie dostają pierwszy aktywny zasób spełniający wymagany
+wysięg, dostępność, wolny pełny cykl i warunek przejazdu. Następny krok to
+**4F.3 — brak nakładania pracy pompy**. Pełne połączenie ograniczeń pomp i
+gruszek pozostaje świadomie zakresem Etapu 5.
