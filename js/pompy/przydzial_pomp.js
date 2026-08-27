@@ -76,6 +76,314 @@
       });
   }
 
+  function utworzStanPompy(pompa) {
+    return {
+      pompa: pompa,
+      ostatniPrzydzial: null,
+      liczbaPrzydzialow: 0
+    };
+  }
+
+  function pobierzWymaganyWysiegPompy(budowa) {
+    const wymaganyWysieg = Number(
+      pompy.pobierzWymaganyWysiegPompyBudowy(budowa)
+    );
+
+    if (!Number.isFinite(wymaganyWysieg) || wymaganyWysieg <= 0) {
+      throw new Error(
+        "Budowa „" + String(budowa && budowa.idBudowy || "bez ID") +
+          "” nie ma poprawnego wymaganego wysięgu pompy."
+      );
+    }
+
+    return wymaganyWysieg;
+  }
+
+  function pobierzDanePrzejazduZOpcji(
+    opcje,
+    pompa,
+    budowaZrodlowa,
+    budowaDocelowa
+  ) {
+    if (!opcje || typeof opcje.pobierzDanePrzejazdu !== "function") {
+      return null;
+    }
+
+    const danePrzejazdu = opcje.pobierzDanePrzejazdu({
+      idPompy: pompa.idPompy,
+      pompa: pompa,
+      budowaZrodlowa: budowaZrodlowa,
+      budowaDocelowa: budowaDocelowa
+    });
+
+    if (danePrzejazdu === null || danePrzejazdu === undefined) {
+      return null;
+    }
+
+    if (
+      typeof danePrzejazdu !== "object" ||
+      Array.isArray(danePrzejazdu)
+    ) {
+      throw new Error(
+        "Dane przejazdu pompy muszą być obiektem albo wartością pustą."
+      );
+    }
+
+    return danePrzejazdu;
+  }
+
+  function utworzOdrzuceniePompy(pompa, powod, szczegoly) {
+    return Object.assign({
+      idPompy: pompa.idPompy,
+      nazwaPompy: pompa.nazwa,
+      czyPasuje: false,
+      powodOdrzucenia: powod
+    }, szczegoly || {});
+  }
+
+  function sprawdzCzyPompaPasujeDoBudowy(
+    stanPompy,
+    budowa,
+    okresZajetosci,
+    listaKursow,
+    opcje
+  ) {
+    const pompa = stanPompy.pompa;
+    const wymaganyWysiegPompyMetry = pobierzWymaganyWysiegPompy(budowa);
+
+    if (pompa.aktywna !== true) {
+      return utworzOdrzuceniePompy(pompa, "pompa-nieaktywna");
+    }
+
+    if (Number(pompa.wysiegMetry) < wymaganyWysiegPompyMetry) {
+      return utworzOdrzuceniePompy(
+        pompa,
+        "niewystarczajacy-wysieg",
+        {
+          wymaganyWysiegPompyMetry: wymaganyWysiegPompyMetry,
+          wysiegPompyMetry: Number(pompa.wysiegMetry)
+        }
+      );
+    }
+
+    const dostepnosc = pompy.sprawdzDostepnoscPompyDlaCyklu(
+      pompa,
+      okresZajetosci.minutaRozpoczeciaZajetosci,
+      okresZajetosci.minutaZakonczeniaZajetosci
+    );
+
+    if (!dostepnosc.czyMozeRozpoczac) {
+      return utworzOdrzuceniePompy(
+        pompa,
+        dostepnosc.powodBrakuDostepnosci,
+        { dostepnosc: dostepnosc }
+      );
+    }
+
+    const ostatniPrzydzial = stanPompy.ostatniPrzydzial;
+
+    if (!ostatniPrzydzial) {
+      return {
+        idPompy: pompa.idPompy,
+        nazwaPompy: pompa.nazwa,
+        czyPasuje: true,
+        powodOdrzucenia: null,
+        wymaganyWysiegPompyMetry: wymaganyWysiegPompyMetry,
+        wysiegPompyMetry: Number(pompa.wysiegMetry),
+        dostepnosc: dostepnosc,
+        przejazdZPoprzedniejBudowy: null
+      };
+    }
+
+    if (
+      ostatniPrzydzial.okresZajetosci.minutaZakonczeniaZajetosci >
+      okresZajetosci.minutaRozpoczeciaZajetosci
+    ) {
+      return utworzOdrzuceniePompy(
+        pompa,
+        "pompa-zajeta",
+        {
+          idPoprzedniejBudowy: ostatniPrzydzial.idBudowy,
+          minutaGotowosciPoPoprzedniejBudowie:
+            ostatniPrzydzial.okresZajetosci.minutaZakonczeniaZajetosci,
+          minutaRozpoczeciaZajetosci:
+            okresZajetosci.minutaRozpoczeciaZajetosci
+        }
+      );
+    }
+
+    const danePrzejazdu = pobierzDanePrzejazduZOpcji(
+      opcje,
+      pompa,
+      ostatniPrzydzial.budowa,
+      budowa
+    );
+
+    if (!danePrzejazdu) {
+      return utworzOdrzuceniePompy(
+        pompa,
+        "brak-trasy",
+        {
+          idPoprzedniejBudowy: ostatniPrzydzial.idBudowy,
+          idBudowyDocelowej: String(budowa.idBudowy || "")
+        }
+      );
+    }
+
+    let przejazd;
+
+    try {
+      przejazd = pompy.wyznaczPrzejazdPompyMiedzyBudowami(
+        ostatniPrzydzial.budowa,
+        budowa,
+        listaKursow,
+        danePrzejazdu
+      );
+    } catch (blad) {
+      const komunikatBledu = String(blad && blad.message || blad || "");
+
+      if (/Brak czasu przejazdu pompy/i.test(komunikatBledu)) {
+        return utworzOdrzuceniePompy(
+          pompa,
+          "brak-trasy",
+          {
+            idPoprzedniejBudowy: ostatniPrzydzial.idBudowy,
+            idBudowyDocelowej: String(budowa.idBudowy || ""),
+            komunikatBledu: komunikatBledu
+          }
+        );
+      }
+
+      throw blad;
+    }
+
+    if (
+      !przejazd ||
+      !przejazd.czyMoznaRozpoczacPrzygotowanieZgodnieZPlanem
+    ) {
+      return utworzOdrzuceniePompy(
+        pompa,
+        "przejazd-miedzy-budowami",
+        {
+          idPoprzedniejBudowy: ostatniPrzydzial.idBudowy,
+          przejazdZPoprzedniejBudowy: przejazd
+        }
+      );
+    }
+
+    return {
+      idPompy: pompa.idPompy,
+      nazwaPompy: pompa.nazwa,
+      czyPasuje: true,
+      powodOdrzucenia: null,
+      wymaganyWysiegPompyMetry: wymaganyWysiegPompyMetry,
+      wysiegPompyMetry: Number(pompa.wysiegMetry),
+      dostepnosc: dostepnosc,
+      przejazdZPoprzedniejBudowy: przejazd
+    };
+  }
+
+  function przydzielPierwszePasujacePompy(
+    listaBudow,
+    listaPomp,
+    listaKursow,
+    opcje
+  ) {
+    const kursy = Array.isArray(listaKursow) ? listaKursow : [];
+    const kolejnoscBudow = uporzadkujBudowyDoPrzydzialuPomp(
+      listaBudow,
+      kursy
+    );
+    const listaPompRobocza = pompy.normalizujListePomp(listaPomp);
+    const stanyPomp = listaPompRobocza.map(utworzStanPompy);
+    const wynikiBudow = kolejnoscBudow.map(function (pozycjaKolejki) {
+      const budowa = pozycjaKolejki.budowa;
+      const okresZajetosci = pompy.wyznaczPelnyOkresZajetosciPompyBudowy(
+        budowa,
+        kursy
+      );
+      const probyKandydatow = [];
+      let przydzialPompy = null;
+
+      stanyPomp.some(function (stanPompy) {
+        const ocena = sprawdzCzyPompaPasujeDoBudowy(
+          stanPompy,
+          budowa,
+          okresZajetosci,
+          kursy,
+          opcje
+        );
+        probyKandydatow.push(ocena);
+
+        if (!ocena.czyPasuje) {
+          return false;
+        }
+
+        przydzialPompy = {
+          idPompy: ocena.idPompy,
+          nazwaPompy: ocena.nazwaPompy,
+          wysiegPompyMetry: ocena.wysiegPompyMetry,
+          wymaganyWysiegPompyMetry: ocena.wymaganyWysiegPompyMetry,
+          dostepnosc: ocena.dostepnosc,
+          przejazdZPoprzedniejBudowy: ocena.przejazdZPoprzedniejBudowy
+        };
+        stanPompy.ostatniPrzydzial = {
+          idBudowy: String(budowa.idBudowy || ""),
+          budowa: budowa,
+          okresZajetosci: okresZajetosci
+        };
+        stanPompy.liczbaPrzydzialow += 1;
+        return true;
+      });
+
+      return {
+        idBudowy: String(budowa.idBudowy || ""),
+        budowa: budowa,
+        indeksWejsciowy: pozycjaKolejki.indeksWejsciowy,
+        kolejnoscPrzydzialuPompy:
+          pozycjaKolejki.kolejnoscPrzydzialuPompy,
+        minutaPlanowanegoStartuBetonowania:
+          pozycjaKolejki.minutaPlanowanegoStartuBetonowania,
+        statusPrzydzialuPompy: przydzialPompy
+          ? "przydzielona"
+          : "brak-pasujacej-pompy",
+        przydzialPompy: przydzialPompy,
+        okresZajetosci: okresZajetosci,
+        probyKandydatow: probyKandydatow
+      };
+    });
+    const liczbaPrzydzielonychBetonowan = wynikiBudow.filter(
+      function (wynikBudowy) {
+        return wynikBudowy.statusPrzydzialuPompy === "przydzielona";
+      }
+    ).length;
+
+    return {
+      status: "obliczono",
+      liczbaBudowDoPrzydzialu: kolejnoscBudow.length,
+      liczbaPrzydzielonychBetonowan: liczbaPrzydzielonychBetonowan,
+      liczbaNieprzydzielonychBetonowan:
+        kolejnoscBudow.length - liczbaPrzydzielonychBetonowan,
+      wynikiBudow: wynikiBudow,
+      przydzieloneBetonowania: wynikiBudow.filter(function (wynikBudowy) {
+        return wynikBudowy.statusPrzydzialuPompy === "przydzielona";
+      }),
+      stanPomp: stanyPomp.map(function (stanPompy) {
+        return {
+          idPompy: stanPompy.pompa.idPompy,
+          nazwaPompy: stanPompy.pompa.nazwa,
+          aktywna: stanPompy.pompa.aktywna,
+          liczbaPrzydzialow: stanPompy.liczbaPrzydzialow,
+          ostatnieIdBudowy: stanPompy.ostatniPrzydzial
+            ? stanPompy.ostatniPrzydzial.idBudowy
+            : null
+        };
+      })
+    };
+  }
+
   pompy.pobierzPlanowanyStartBetonowania = pobierzPlanowanyStartBetonowania;
   pompy.uporzadkujBudowyDoPrzydzialuPomp = uporzadkujBudowyDoPrzydzialuPomp;
+  pompy.sprawdzCzyPompaPasujeDoBudowy = sprawdzCzyPompaPasujeDoBudowy;
+  pompy.przydzielPierwszePasujacePompy = przydzielPierwszePasujacePompy;
 })(window);
