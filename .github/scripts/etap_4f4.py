@@ -1,0 +1,774 @@
+from pathlib import Path
+from textwrap import dedent, indent
+
+
+def zastap_raz(tekst, stary, nowy, opis):
+    liczba = tekst.count(stary)
+    if liczba != 1:
+        raise SystemExit(
+            f"Nie znaleziono jednoznacznego miejsca: {opis} (wystapienia: {liczba})"
+        )
+    return tekst.replace(stary, nowy, 1)
+
+
+sciezka_kodu = Path("js/pompy/przydzial_pomp.js")
+kod = sciezka_kodu.read_text(encoding="utf-8")
+
+nowe_funkcje = indent(
+    dedent(
+        r'''
+function utworzBrakNajwczesniejszegoStartuPompy(pompa, powod, szczegoly) {
+  return Object.assign({
+    idPompy: pompa.idPompy,
+    nazwaPompy: pompa.nazwa,
+    czyMoznaWyznaczyc: false,
+    powodBrakuMozliwosci: powod
+  }, szczegoly || {});
+}
+
+function wybierzGlowneOgraniczenieNajwczesniejszegoStartu(ograniczenia) {
+  return ograniczenia.reduce(function (wybrane, ograniczenie) {
+    if (!wybrane) {
+      return ograniczenie;
+    }
+
+    return ograniczenie.minutaWymaganegoRozpoczeciaPrzygotowania >
+      wybrane.minutaWymaganegoRozpoczeciaPrzygotowania
+      ? ograniczenie
+      : wybrane;
+  }, null);
+}
+
+function wyznaczNajwczesniejszyStartDlaPompy(
+  stanPompy,
+  budowa,
+  okresZajetosci,
+  listaKursow,
+  opcje
+) {
+  const pompa = stanPompy.pompa;
+  const wymaganyWysiegPompyMetry = pobierzWymaganyWysiegPompy(budowa);
+
+  if (pompa.aktywna !== true) {
+    return utworzBrakNajwczesniejszegoStartuPompy(
+      pompa,
+      "pompa-nieaktywna"
+    );
+  }
+
+  if (Number(pompa.wysiegMetry) < wymaganyWysiegPompyMetry) {
+    return utworzBrakNajwczesniejszegoStartuPompy(
+      pompa,
+      "niewystarczajacy-wysieg",
+      {
+        wymaganyWysiegPompyMetry: wymaganyWysiegPompyMetry,
+        wysiegPompyMetry: Number(pompa.wysiegMetry)
+      }
+    );
+  }
+
+  const graniceOkresu = pobierzGraniceOkresuZajetosci(
+    okresZajetosci,
+    "Planowany okres zajętości pompy"
+  );
+  const minutaPlanowanegoStartuBetonowania = Number(
+    okresZajetosci.minutaRozpoczeciaBetonowania
+  );
+
+  if (!Number.isFinite(minutaPlanowanegoStartuBetonowania)) {
+    throw new Error(
+      "Planowany okres zajętości pompy nie ma poprawnego początku betonowania."
+    );
+  }
+
+  const dostepnosc = pompy.sprawdzDostepnoscPompyDlaCyklu(
+    pompa,
+    graniceOkresu.minutaRozpoczecia,
+    graniceOkresu.minutaZakonczenia
+  );
+
+  if (
+    !dostepnosc.czyMozeRozpoczac &&
+    dostepnosc.powodBrakuDostepnosci !== "przed-dostepnoscia"
+  ) {
+    return utworzBrakNajwczesniejszegoStartuPompy(
+      pompa,
+      dostepnosc.powodBrakuDostepnosci || "po-dostepnosci",
+      { dostepnosc: dostepnosc }
+    );
+  }
+
+  const minutaPlanowanegoRozpoczeciaPrzygotowania =
+    graniceOkresu.minutaRozpoczecia;
+  let minutaNajwczesniejszegoRozpoczeciaPrzygotowania =
+    minutaPlanowanegoRozpoczeciaPrzygotowania;
+  const przyczynyOgraniczenia = [];
+
+  if (
+    dostepnosc.dostepnaOdMinuta !== null &&
+    dostepnosc.dostepnaOdMinuta >
+      minutaNajwczesniejszegoRozpoczeciaPrzygotowania
+  ) {
+    minutaNajwczesniejszegoRozpoczeciaPrzygotowania =
+      dostepnosc.dostepnaOdMinuta;
+    przyczynyOgraniczenia.push({
+      rodzaj: "przed-dostepnoscia",
+      minutaWymaganegoRozpoczeciaPrzygotowania:
+        dostepnosc.dostepnaOdMinuta
+    });
+  }
+
+  const ostatniPrzydzial = stanPompy.ostatniPrzydzial;
+  let przejazdZPoprzedniejBudowy = null;
+
+  if (ostatniPrzydzial) {
+    const minutaGotowosciPoPoprzedniejBudowie = Number(
+      ostatniPrzydzial.okresZajetosci.minutaZakonczeniaZajetosci
+    );
+
+    if (
+      minutaGotowosciPoPoprzedniejBudowie >
+        minutaPlanowanegoRozpoczeciaPrzygotowania
+    ) {
+      przyczynyOgraniczenia.push({
+        rodzaj: "pompa-zajeta",
+        idPoprzedniejBudowy: ostatniPrzydzial.idBudowy,
+        minutaGotowosciPoPoprzedniejBudowie:
+          minutaGotowosciPoPoprzedniejBudowie,
+        minutaWymaganegoRozpoczeciaPrzygotowania:
+          minutaGotowosciPoPoprzedniejBudowie
+      });
+    }
+
+    const danePrzejazdu = pobierzDanePrzejazduZOpcji(
+      opcje,
+      pompa,
+      ostatniPrzydzial.budowa,
+      budowa
+    );
+
+    if (!danePrzejazdu) {
+      return utworzBrakNajwczesniejszegoStartuPompy(
+        pompa,
+        "brak-trasy",
+        {
+          idPoprzedniejBudowy: ostatniPrzydzial.idBudowy,
+          idBudowyDocelowej: String(budowa.idBudowy || "")
+        }
+      );
+    }
+
+    try {
+      przejazdZPoprzedniejBudowy =
+        pompy.wyznaczPrzejazdPompyMiedzyBudowami(
+          ostatniPrzydzial.budowa,
+          budowa,
+          listaKursow,
+          danePrzejazdu
+        );
+    } catch (blad) {
+      const komunikatBledu = String(blad && blad.message || blad || "");
+
+      if (/Brak czasu przejazdu pompy/i.test(komunikatBledu)) {
+        return utworzBrakNajwczesniejszegoStartuPompy(
+          pompa,
+          "brak-trasy",
+          {
+            idPoprzedniejBudowy: ostatniPrzydzial.idBudowy,
+            idBudowyDocelowej: String(budowa.idBudowy || ""),
+            komunikatBledu: komunikatBledu
+          }
+        );
+      }
+
+      throw blad;
+    }
+
+    if (!przejazdZPoprzedniejBudowy) {
+      return utworzBrakNajwczesniejszegoStartuPompy(
+        pompa,
+        "brak-trasy",
+        {
+          idPoprzedniejBudowy: ostatniPrzydzial.idBudowy,
+          idBudowyDocelowej: String(budowa.idBudowy || "")
+        }
+      );
+    }
+
+    const minutaPrzyjazduNaBudowe = Number(
+      przejazdZPoprzedniejBudowy.minutaPrzyjazduNaBudowe
+    );
+
+    if (!Number.isFinite(minutaPrzyjazduNaBudowe)) {
+      throw new Error(
+        "Przejazd pompy nie ma poprawnej minuty przyjazdu na kolejną budowę."
+      );
+    }
+
+    if (
+      Number(przejazdZPoprzedniejBudowy.czasPrzejazduMinuty) > 0 &&
+      minutaPrzyjazduNaBudowe >
+        minutaPlanowanegoRozpoczeciaPrzygotowania
+    ) {
+      przyczynyOgraniczenia.push({
+        rodzaj: "przejazd-miedzy-budowami",
+        idPoprzedniejBudowy: ostatniPrzydzial.idBudowy,
+        czasPrzejazduMinuty:
+          przejazdZPoprzedniejBudowy.czasPrzejazduMinuty,
+        minutaPrzyjazduNaBudowe: minutaPrzyjazduNaBudowe,
+        minutaWymaganegoRozpoczeciaPrzygotowania:
+          minutaPrzyjazduNaBudowe
+      });
+    }
+
+    minutaNajwczesniejszegoRozpoczeciaPrzygotowania = Math.max(
+      minutaNajwczesniejszegoRozpoczeciaPrzygotowania,
+      minutaPrzyjazduNaBudowe
+    );
+  }
+
+  if (
+    dostepnosc.dostepnaDoMinuta !== null &&
+    minutaNajwczesniejszegoRozpoczeciaPrzygotowania >
+      dostepnosc.dostepnaDoMinuta
+  ) {
+    return utworzBrakNajwczesniejszegoStartuPompy(
+      pompa,
+      "po-dostepnosci",
+      {
+        dostepnosc: dostepnosc,
+        minutaNajwczesniejszegoRozpoczeciaPrzygotowania:
+          minutaNajwczesniejszegoRozpoczeciaPrzygotowania
+      }
+    );
+  }
+
+  const przesuniecieStartuMinuty = Math.max(
+    0,
+    minutaNajwczesniejszegoRozpoczeciaPrzygotowania -
+      minutaPlanowanegoRozpoczeciaPrzygotowania
+  );
+  const glowneOgraniczenie =
+    wybierzGlowneOgraniczenieNajwczesniejszegoStartu(
+      przyczynyOgraniczenia
+    );
+
+  return {
+    idPompy: pompa.idPompy,
+    nazwaPompy: pompa.nazwa,
+    czyMoznaWyznaczyc: true,
+    powodBrakuMozliwosci: null,
+    minutaPlanowanegoRozpoczeciaPrzygotowania:
+      minutaPlanowanegoRozpoczeciaPrzygotowania,
+    minutaNajwczesniejszegoRozpoczeciaPrzygotowania:
+      minutaNajwczesniejszegoRozpoczeciaPrzygotowania,
+    minutaPlanowanegoStartuBetonowania:
+      minutaPlanowanegoStartuBetonowania,
+    minutaNajwczesniejszegoStartuBetonowania:
+      minutaPlanowanegoStartuBetonowania + przesuniecieStartuMinuty,
+    przesuniecieStartuMinuty: przesuniecieStartuMinuty,
+    przyczynaOgraniczenia: glowneOgraniczenie
+      ? glowneOgraniczenie.rodzaj
+      : null,
+    przyczynyOgraniczenia: przyczynyOgraniczenia,
+    idPoprzedniejBudowy: ostatniPrzydzial
+      ? ostatniPrzydzial.idBudowy
+      : null,
+    dostepnosc: dostepnosc,
+    przejazdZPoprzedniejBudowy: przejazdZPoprzedniejBudowy
+  };
+}
+
+function skopiujProbeNajwczesniejszegoStartu(proba) {
+  const kopia = Object.assign({}, proba);
+  delete kopia.indeksPompy;
+  return kopia;
+}
+
+function wyznaczNajwczesniejszyMozliwyStartBudowy(
+  stanyPomp,
+  budowa,
+  okresZajetosci,
+  listaKursow,
+  opcje
+) {
+  const probyPomp = stanyPomp.map(function (stanPompy, indeksPompy) {
+    return Object.assign(
+      wyznaczNajwczesniejszyStartDlaPompy(
+        stanPompy,
+        budowa,
+        okresZajetosci,
+        listaKursow,
+        opcje
+      ),
+      { indeksPompy: indeksPompy }
+    );
+  });
+  let wybranaProba = null;
+
+  probyPomp.forEach(function (proba) {
+    if (!proba.czyMoznaWyznaczyc) {
+      return;
+    }
+
+    if (
+      !wybranaProba ||
+      proba.minutaNajwczesniejszegoStartuBetonowania <
+        wybranaProba.minutaNajwczesniejszegoStartuBetonowania ||
+      (
+        proba.minutaNajwczesniejszegoStartuBetonowania ===
+          wybranaProba.minutaNajwczesniejszegoStartuBetonowania &&
+        proba.indeksPompy < wybranaProba.indeksPompy
+      )
+    ) {
+      wybranaProba = proba;
+    }
+  });
+
+  const probyBezIndeksu = probyPomp.map(
+    skopiujProbeNajwczesniejszegoStartu
+  );
+
+  if (!wybranaProba) {
+    return {
+      czyMoznaWyznaczyc: false,
+      powodBrakuMozliwosci: "brak-mozliwego-kandydata",
+      probyPomp: probyBezIndeksu
+    };
+  }
+
+  const wynik = skopiujProbeNajwczesniejszegoStartu(wybranaProba);
+  wynik.probyPomp = probyBezIndeksu;
+  return wynik;
+}
+'''
+    ).strip("\n") + "\n\n",
+    "  "
+)
+
+kod = zastap_raz(
+    kod,
+    "  function przydzielPierwszePasujacePompy(\n",
+    nowe_funkcje + "  function przydzielPierwszePasujacePompy(\n",
+    "wstawienie logiki najwczesniejszego startu"
+)
+
+stary_fragment_wyniku = (
+    "      });\n\n"
+    "      return {\n"
+    "        idBudowy: String(budowa.idBudowy || \"\"),\n"
+)
+nowy_fragment_wyniku = (
+    "      });\n\n"
+    "      const najwczesniejszyMozliwyStart = przydzialPompy\n"
+    "        ? null\n"
+    "        : wyznaczNajwczesniejszyMozliwyStartBudowy(\n"
+    "          stanyPomp,\n"
+    "          budowa,\n"
+    "          okresZajetosci,\n"
+    "          kursy,\n"
+    "          opcje\n"
+    "        );\n\n"
+    "      return {\n"
+    "        idBudowy: String(budowa.idBudowy || \"\"),\n"
+)
+kod = zastap_raz(
+    kod,
+    stary_fragment_wyniku,
+    nowy_fragment_wyniku,
+    "obliczenie najwczesniejszego startu po nieudanym przydziale"
+)
+
+kod = zastap_raz(
+    kod,
+    "        okresZajetosci: okresZajetosci,\n"
+    "        probyKandydatow: probyKandydatow\n"
+    "      };\n",
+    "        okresZajetosci: okresZajetosci,\n"
+    "        probyKandydatow: probyKandydatow,\n"
+    "        najwczesniejszyMozliwyStart: najwczesniejszyMozliwyStart\n"
+    "      };\n",
+    "dodanie wyniku najwczesniejszego startu"
+)
+
+kod = zastap_raz(
+    kod,
+    "  pompy.sprawdzCzyPompaPasujeDoBudowy = sprawdzCzyPompaPasujeDoBudowy;\n"
+    "  pompy.przydzielPierwszePasujacePompy = przydzielPierwszePasujacePompy;\n",
+    "  pompy.sprawdzCzyPompaPasujeDoBudowy = sprawdzCzyPompaPasujeDoBudowy;\n"
+    "  pompy.wyznaczNajwczesniejszyStartDlaPompy =\n"
+    "    wyznaczNajwczesniejszyStartDlaPompy;\n"
+    "  pompy.wyznaczNajwczesniejszyMozliwyStartBudowy =\n"
+    "    wyznaczNajwczesniejszyMozliwyStartBudowy;\n"
+    "  pompy.przydzielPierwszePasujacePompy = przydzielPierwszePasujacePompy;\n",
+    "eksport funkcji 4F.4"
+)
+sciezka_kodu.write_text(kod, encoding="utf-8")
+
+
+test = dedent(
+    r'''\
+"use strict";
+
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+const vm = require("node:vm");
+
+const katalogProjektu = path.resolve(__dirname, "..");
+
+function wczytaj(sciezka) {
+  return fs.readFileSync(path.join(katalogProjektu, sciezka), "utf8");
+}
+
+function wczytajModulyPomp() {
+  const kontekst = { window: {} };
+  kontekst.window.window = kontekst.window;
+  vm.createContext(kontekst);
+
+  [
+    "js/pompy/pompy.js",
+    "js/pompy/dostepnosc_pomp.js",
+    "js/pompy/przejazdy_pomp.js",
+    "js/pompy/przydzial_pomp.js"
+  ].forEach(function (sciezka) {
+    new vm.Script(wczytaj(sciezka), { filename: sciezka }).runInContext(kontekst);
+  });
+
+  return kontekst.window.HarmonogramBetonowan.pompy;
+}
+
+function utworzBudowe(idBudowy, wymaganyWysiegPompyMetry) {
+  return {
+    idBudowy: idBudowy,
+    rodzajRozladunku: "pompa",
+    iloscBetonuLiczbaM3: 8,
+    statusRealizacji: "planowana",
+    wymaganyWysiegPompyMetry: wymaganyWysiegPompyMetry || 32,
+    czasPrzygotowaniaPompyRoboczyMinuty: null,
+    czasZakonczeniaObslugiPompyRoboczyMinuty: null
+  };
+}
+
+function utworzKurs(idBudowy, minutaStartu, minutaKonca) {
+  return {
+    idKursu: "KURS-" + idBudowy,
+    idBudowy: idBudowy,
+    minutaRozpoczeciaRozladunku: minutaStartu,
+    minutaZakonczeniaRozladunku: minutaKonca
+  };
+}
+
+function utworzPompe(idPompy, dane) {
+  return Object.assign({
+    idPompy: idPompy,
+    nazwa: idPompy,
+    aktywna: true,
+    dostepnaOd: "",
+    dostepnaDo: "",
+    wysiegMetry: 32
+  }, dane || {});
+}
+
+function sprawdzStartPoZajetejPompieIPrzejezdzie(pompy) {
+  const budowaA = utworzBudowe("A");
+  const budowaB = utworzBudowe("B");
+  const budowy = [budowaA, budowaB];
+  const kursy = [
+    utworzKurs("A", 480, 495),
+    utworzKurs("B", 510, 525)
+  ];
+  const pompyWejsciowe = [utworzPompe("P-1")];
+  const budowyPrzed = JSON.stringify(budowy);
+  const kursyPrzed = JSON.stringify(kursy);
+  const pompyPrzed = JSON.stringify(pompyWejsciowe);
+  const wynik = pompy.przydzielPierwszePasujacePompy(
+    budowy,
+    pompyWejsciowe,
+    kursy,
+    {
+      pobierzDanePrzejazdu: function () {
+        return {
+          czasPrzejazduMinuty: 15,
+          zrodloCzasuPrzejazdu: "test-4f4"
+        };
+      }
+    }
+  );
+  const wynikB = wynik.wynikiBudow[1];
+  const najwczesniejszy = wynikB.najwczesniejszyMozliwyStart;
+
+  assert.equal(wynikB.statusPrzydzialuPompy, "brak-pasujacej-pompy");
+  assert.equal(wynikB.probyKandydatow[0].powodOdrzucenia, "pompa-zajeta");
+  assert.equal(najwczesniejszy.czyMoznaWyznaczyc, true);
+  assert.equal(najwczesniejszy.idPompy, "P-1");
+  assert.equal(najwczesniejszy.idPoprzedniejBudowy, "A");
+  assert.equal(najwczesniejszy.minutaPlanowanegoStartuBetonowania, 510);
+  assert.equal(najwczesniejszy.minutaNajwczesniejszegoStartuBetonowania, 560);
+  assert.equal(najwczesniejszy.przesuniecieStartuMinuty, 50);
+  assert.equal(
+    najwczesniejszy.minutaNajwczesniejszegoRozpoczeciaPrzygotowania,
+    540
+  );
+  assert.equal(
+    najwczesniejszy.przyczynaOgraniczenia,
+    "przejazd-miedzy-budowami"
+  );
+  assert.equal(
+    najwczesniejszy.przejazdZPoprzedniejBudowy.czasPrzejazduMinuty,
+    15
+  );
+  assert.deepEqual(
+    Array.from(najwczesniejszy.przyczynyOgraniczenia, function (ograniczenie) {
+      return ograniczenie.rodzaj;
+    }),
+    ["pompa-zajeta", "przejazd-miedzy-budowami"]
+  );
+  assert.equal(JSON.stringify(budowy), budowyPrzed);
+  assert.equal(JSON.stringify(kursy), kursyPrzed);
+  assert.equal(JSON.stringify(pompyWejsciowe), pompyPrzed);
+}
+
+function sprawdzStartOdDostepnaOd(pompy) {
+  const budowa = utworzBudowe("B-OD");
+  const wynik = pompy.przydzielPierwszePasujacePompy(
+    [budowa],
+    [utworzPompe("P-OD", { dostepnaOd: "08:10" })],
+    [utworzKurs("B-OD", 480, 495)]
+  );
+  const najwczesniejszy = wynik.wynikiBudow[0].najwczesniejszyMozliwyStart;
+
+  assert.equal(wynik.wynikiBudow[0].statusPrzydzialuPompy, "brak-pasujacej-pompy");
+  assert.equal(najwczesniejszy.czyMoznaWyznaczyc, true);
+  assert.equal(najwczesniejszy.idPompy, "P-OD");
+  assert.equal(najwczesniejszy.minutaNajwczesniejszegoRozpoczeciaPrzygotowania, 490);
+  assert.equal(najwczesniejszy.minutaNajwczesniejszegoStartuBetonowania, 510);
+  assert.equal(najwczesniejszy.przesuniecieStartuMinuty, 30);
+  assert.equal(najwczesniejszy.przyczynaOgraniczenia, "przed-dostepnoscia");
+}
+
+function sprawdzWyborNajwczesniejszejPompy(pompy) {
+  const budowa = utworzBudowe("B-WYBOR");
+  const wynik = pompy.przydzielPierwszePasujacePompy(
+    [budowa],
+    [
+      utworzPompe("P-POZNA", { dostepnaOd: "09:00" }),
+      utworzPompe("P-WCZESNA", { dostepnaOd: "08:30" })
+    ],
+    [utworzKurs("B-WYBOR", 480, 495)]
+  );
+  const najwczesniejszy = wynik.wynikiBudow[0].najwczesniejszyMozliwyStart;
+
+  assert.equal(najwczesniejszy.czyMoznaWyznaczyc, true);
+  assert.equal(najwczesniejszy.idPompy, "P-WCZESNA");
+  assert.equal(najwczesniejszy.minutaNajwczesniejszegoStartuBetonowania, 530);
+  assert.equal(najwczesniejszy.przesuniecieStartuMinuty, 50);
+  assert.equal(najwczesniejszy.probyPomp.length, 2);
+}
+
+function sprawdzBrakWymyslonegoStartu(pompy) {
+  const budowa = utworzBudowe("B-BRAK", 42);
+  const wynik = pompy.przydzielPierwszePasujacePompy(
+    [budowa],
+    [
+      utworzPompe("P-NIEAKTYWNA", { aktywna: false, wysiegMetry: 52 }),
+      utworzPompe("P-ZA-MALA", { wysiegMetry: 32 })
+    ],
+    [utworzKurs("B-BRAK", 600, 615)]
+  );
+  const najwczesniejszy = wynik.wynikiBudow[0].najwczesniejszyMozliwyStart;
+
+  assert.equal(najwczesniejszy.czyMoznaWyznaczyc, false);
+  assert.equal(
+    najwczesniejszy.powodBrakuMozliwosci,
+    "brak-mozliwego-kandydata"
+  );
+  assert.equal(najwczesniejszy.probyPomp.length, 2);
+  assert.equal(
+    najwczesniejszy.probyPomp[0].powodBrakuMozliwosci,
+    "pompa-nieaktywna"
+  );
+  assert.equal(
+    najwczesniejszy.probyPomp[1].powodBrakuMozliwosci,
+    "niewystarczajacy-wysieg"
+  );
+}
+
+function uruchomTesty() {
+  const pompy = wczytajModulyPomp();
+
+  sprawdzStartPoZajetejPompieIPrzejezdzie(pompy);
+  sprawdzStartOdDostepnaOd(pompy);
+  sprawdzWyborNajwczesniejszejPompy(pompy);
+  sprawdzBrakWymyslonegoStartu(pompy);
+
+  console.log(
+    "✓ Etap 4F.4: silnik podaje najwcześniejszy możliwy start bez przesuwania harmonogramu gruszek."
+  );
+}
+
+uruchomTesty();
+'''
+)
+Path("testy/etap_4f_4.test.js").write_text(test, encoding="utf-8")
+
+instrukcja = dedent(
+    '''\
+# TESTY — ETAP 4F.4 — najwcześniejszy możliwy start
+
+## Zakres
+
+4F.4 nie przesuwa automatycznie budowy ani kursów gruszek. Jeżeli żadna pompa
+nie może obsłużyć planowanej godziny, silnik wylicza informację pomocniczą:
+najwcześniejszy możliwy start betonowania, liczbę minut przesunięcia, pompę,
+która może być gotowa najwcześniej, oraz dokładną przyczynę ograniczenia.
+
+## Test automatyczny
+
+Uruchom:
+
+```bash
+node testy/etap_4f_4.test.js
+```
+
+Test sprawdza:
+
+- zajętą pompę oraz czas przejazdu między budowami,
+- ograniczenie `Dostępna od`,
+- wybór pompy dającej najwcześniejszy start spośród kilku kandydatów,
+- brak wymyślania godziny, gdy nie ma aktywnej pompy o wymaganym wysięgu,
+- zachowanie dokładnej przyczyny i listy ograniczeń,
+- brak modyfikacji wejściowych budów, kursów i listy pomp.
+
+Po teście 4F.4 należy uruchomić pełną regresję wszystkich `testy/*.test.js` oraz
+kontrolę składni śledzonych plików JavaScript.
+
+## Test operatora
+
+Osobny test operatora nie jest wymagany w 4F.4, ponieważ wynik przydziału pomp
+nie jest jeszcze podłączony do centralnego wyniku harmonogramu ani interfejsu.
+Pełny test operatorski przydziału i informacji dla operatora pozostaje częścią
+4J.3.
+'''
+)
+Path("testy/TESTY_ETAP_4F_4.md").write_text(instrukcja, encoding="utf-8")
+
+sciezka_etapow = Path("ETAPY_ROZWOJU.md")
+etapy = sciezka_etapow.read_text(encoding="utf-8")
+etapy = zastap_raz(
+    etapy,
+    "4F.0–4F.3 zakończone, następny podetap to 4F.4",
+    "4F.0–4F.4 zakończone, następny podetap to 4F.5",
+    "status Etapu 4"
+)
+etapy = zastap_raz(
+    etapy,
+    "  - [ ] **4F.4 — najwcześniejszy start:**",
+    "  - [x] **4F.4 — najwcześniejszy start:**",
+    "checkbox 4F.4"
+)
+etapy = zastap_raz(
+    etapy,
+    "Rozpocząć **4F.4 — najwcześniejszy start**: gdy żadna pompa nie może wykonać\n"
+    "budowy zgodnie z planem, podać najwcześniejszą możliwą godzinę, wielkość\n"
+    "przesunięcia i dokładną przyczynę bez cichego zmieniania harmonogramu gruszek.",
+    "Rozpocząć **4F.5 — testy integracyjne**: sprawdzić razem wiele budów, równe\n"
+    "starty, pompę wyłączoną, niepasujący wysięg, przejazdy oraz powtarzalność\n"
+    "wyniku po pełnym połączeniu reguł 4F.1–4F.4.",
+    "kolejny krok po 4F.4"
+)
+etapy += dedent(
+    '''
+
+## Zamknięcie 4F.4 — najwcześniejszy możliwy start — 2026-08-27
+
+- [x] gdy żadna pompa nie pasuje do planowanej godziny, wynik zachowuje plan i
+  osobno podaje najwcześniejszą możliwą minutę rozpoczęcia betonowania;
+- [x] przesunięcie jest liczone od pełnego cyklu pompy, więc obejmuje wymagane
+  przygotowanie przed pierwszym rozładunkiem;
+- [x] ograniczenia uwzględniają `Dostępna od`, wcześniejszy przydział pompy i
+  znany kierunkowy czas przejazdu między budowami;
+- [x] wynik zachowuje główną przyczynę ograniczenia i pełną listę przyczyn do
+  późniejszego utworzenia automatycznej notki dla operatora;
+- [x] przy kilku możliwych pompach wybierany jest najwcześniejszy start, a przy
+  remisie zachowywana jest stabilna kolejność pomp;
+- [x] brak trasy, pompa nieaktywna, zbyt mały wysięg albo brak możliwości startu
+  w oknie dostępności nie powodują wymyślenia zastępczego czasu;
+- [x] budowy, kursy i lista pomp nie są modyfikowane, a harmonogram gruszek nie
+  jest cicho przesuwany;
+- [x] test `testy/etap_4f_4.test.js` oraz pełna regresja wszystkich **41/41**
+  plików `testy/*.test.js` przechodzą poprawnie;
+- [x] wszystkie śledzone pliki JavaScript przechodzą kontrolę składni.
+
+Osobny test operatora nie jest wymagany, ponieważ wynik przydziału 4F nie jest
+jeszcze podłączony do centralnego wyniku ani interfejsu. Pełny test operatorski
+pozostaje częścią 4J.3.
+
+Zamknięty podetap: **4F.4**. Punkt nadrzędny **4F** pozostaje otwarty.
+Następny nieukończony podetap: **4F.5 — testy integracyjne**.
+'''
+)
+sciezka_etapow.write_text(etapy, encoding="utf-8")
+
+sciezka_decyzji = Path("PROJECT_DECISIONS.md")
+decyzje = sciezka_decyzji.read_text(encoding="utf-8")
+decyzje += dedent(
+    '''
+
+---
+
+## 95. Najwcześniejszy możliwy start jest podpowiedzią, a nie cichą korektą planu
+
+Jeżeli żadna pompa nie może obsłużyć budowy o planowanej godzinie, silnik 4F.4
+nie przesuwa samodzielnie budowy ani kursów gruszek. Zamiast tego wyznacza
+najwcześniejszy możliwy start dla aktywnych pomp o wystarczającym wysięgu.
+
+Wyliczenie bierze pod uwagę początek okna `Dostępna od`, zakończenie poprzedniego
+pełnego cyklu pompy oraz znany kierunkowy czas przejazdu między budowami. Brak
+znanej trasy nie może być zastępowany wartością domyślną. Jeżeli wyliczony
+początek przygotowania wypada później niż `Dostępna do`, taka pompa nie daje
+możliwego późniejszego startu; rozpoczęcie dokładnie o `Dostępna do` pozostaje
+dozwolone zgodnie z wcześniejszą decyzją.
+
+Wynik podaje minutę najwcześniejszego startu betonowania, wielkość przesunięcia,
+wybraną pompę, główną przyczynę ograniczenia oraz listę wszystkich istotnych
+przyczyn. Przy kilku możliwościach wybierany jest najwcześniejszy wynik, a przy
+remisie zachowywana jest kolejność pomp. Dane wejściowe i harmonogram gruszek
+pozostają bez zmian; późniejsza decyzja o korekcie planu należy do osobnego
+mechanizmu harmonogramu i operatora.
+'''
+)
+sciezka_decyzji.write_text(decyzje, encoding="utf-8")
+
+sciezka_readme = Path("README.md")
+readme = sciezka_readme.read_text(encoding="utf-8")
+link_4f3 = (
+    "- [testy/TESTY_ETAP_4F_3.md](testy/TESTY_ETAP_4F_3.md) — "
+    "brak nakładania pełnych okresów pracy pompy,"
+)
+readme = zastap_raz(
+    readme,
+    link_4f3,
+    link_4f3 + "\n"
+    "- [testy/TESTY_ETAP_4F_4.md](testy/TESTY_ETAP_4F_4.md) — "
+    "najwcześniejszy możliwy start bez cichego przesuwania planu,",
+    "link testu 4F.4"
+)
+readme = zastap_raz(
+    readme,
+    "    node testy/etap_4f_3.test.js",
+    "    node testy/etap_4f_3.test.js\n"
+    "    node testy/etap_4f_4.test.js",
+    "polecenie testu 4F.4"
+)
+readme = zastap_raz(
+    readme,
+    "następnego jest dozwolone. Następny krok to **4F.4 — najwcześniejszy start**.\n"
+    "Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.",
+    "następnego jest dozwolone. Gdy żadna pompa nie pasuje do planowanej godziny,\n"
+    "silnik podaje najwcześniejszy możliwy start, przesunięcie i dokładne ograniczenie\n"
+    "bez zmiany kursów gruszek. Następny krok to **4F.5 — testy integracyjne**.\n"
+    "Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.",
+    "podsumowanie 4F.4 w README"
+)
+sciezka_readme.write_text(readme, encoding="utf-8")
