@@ -1,0 +1,1199 @@
+name: Jednorazowa aktualizacja 4F.0
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/jednorazowa_aktualizacja_4f0.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  aktualizacja:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Przygotuj Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Wprowadź model dostępności pomp i dokumentację 4F.0
+        shell: python
+        run: |
+          from pathlib import Path
+          from textwrap import dedent
+          import re
+
+          def zapisz(plik, tresc):
+              Path(plik).write_text(dedent(tresc).lstrip("\n"), encoding="utf-8")
+
+          # -----------------------------------------------------------------
+          # Model pomp: opcjonalne okno Dostępna od / Dostępna do.
+          # -----------------------------------------------------------------
+          zapisz("js/pompy/dostepnosc_pomp.js", r'''
+          (function (zakresGlobalny) {
+            "use strict";
+
+            const aplikacja = zakresGlobalny.HarmonogramBetonowan;
+
+            if (!aplikacja || !aplikacja.pompy) {
+              throw new Error("Moduł dostępności pomp wymaga wcześniejszego załadowania modułu pomp.");
+            }
+
+            const pompy = aplikacja.pompy;
+            const DOMYSLNY_WYSIEG_POMPY_METRY =
+              Number(pompy.DOMYSLNY_WYSIEG_POMPY_METRY) || 32;
+
+            function czyBrakWartosci(wartosc) {
+              return wartosc === null ||
+                wartosc === undefined ||
+                String(wartosc).trim() === "";
+            }
+
+            function pobierzGodzineLubBrak(wartosc, nazwaPola) {
+              if (czyBrakWartosci(wartosc)) {
+                return null;
+              }
+
+              const tekst = String(wartosc).trim();
+
+              if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(tekst)) {
+                throw new Error(nazwaPola + " musi mieć format HH:MM albo pozostać puste.");
+              }
+
+              return tekst;
+            }
+
+            function godzinaNaMinute(godzina) {
+              if (godzina === null) {
+                return null;
+              }
+
+              const czesci = godzina.split(":");
+              return Number(czesci[0]) * 60 + Number(czesci[1]);
+            }
+
+            function pobierzDodatniaLiczbeLubDomyslna(wartosc, nazwaPola, domyslna) {
+              if (czyBrakWartosci(wartosc)) {
+                return domyslna;
+              }
+
+              const liczba = Number(String(wartosc).replace(",", "."));
+
+              if (!Number.isFinite(liczba) || liczba <= 0) {
+                throw new Error(nazwaPola + " musi być liczbą większą niż 0.");
+              }
+
+              return liczba;
+            }
+
+            function pobierzAktywnosc(wartosc) {
+              if (wartosc === null || wartosc === undefined) {
+                return true;
+              }
+
+              if (typeof wartosc !== "boolean") {
+                throw new Error("Aktywność pompy musi mieć wartość logiczną true albo false.");
+              }
+
+              return wartosc;
+            }
+
+            function pobierzTypLegacy(wartosc) {
+              if (czyBrakWartosci(wartosc)) {
+                return null;
+              }
+
+              const typ = String(wartosc).trim().toLowerCase();
+              return typ === "wlasna" || typ === "zewnetrzna" ? typ : null;
+            }
+
+            function utworzIdPompy(numer) {
+              return "POMPA-" + String(numer).padStart(3, "0");
+            }
+
+            function pobierzNumerZId(idPompy) {
+              const dopasowanie = /^POMPA-(\d+)$/.exec(String(idPompy || "").trim());
+              return dopasowanie ? Number(dopasowanie[1]) : null;
+            }
+
+            function znajdzPierwszyWolnyNumer(zajeteId) {
+              let numer = 1;
+
+              while (zajeteId.has(utworzIdPompy(numer))) {
+                numer += 1;
+              }
+
+              return numer;
+            }
+
+            function sprawdzZakresDostepnosci(dostepnaOd, dostepnaDo) {
+              if (
+                dostepnaOd !== null &&
+                dostepnaDo !== null &&
+                godzinaNaMinute(dostepnaDo) < godzinaNaMinute(dostepnaOd)
+              ) {
+                throw new Error(
+                  "Godzina „Dostępna do” nie może być wcześniejsza niż „Dostępna od” w tym samym planie dnia."
+                );
+              }
+            }
+
+            function normalizujPompe(danePompy, numerDomyslny, idPompy) {
+              const dane = danePompy && typeof danePompy === "object" ? danePompy : {};
+              const dostepnaOd = pobierzGodzineLubBrak(dane.dostepnaOd, "Dostępna od");
+              const dostepnaDo = pobierzGodzineLubBrak(dane.dostepnaDo, "Dostępna do");
+              const nazwa = czyBrakWartosci(dane.nazwa)
+                ? "Pompa " + String(numerDomyslny)
+                : String(dane.nazwa).trim();
+
+              sprawdzZakresDostepnosci(dostepnaOd, dostepnaDo);
+
+              return {
+                idPompy: idPompy,
+                nazwa: nazwa,
+                typ: pobierzTypLegacy(dane.typ),
+                aktywna: pobierzAktywnosc(dane.aktywna),
+                dostepnaOd: dostepnaOd,
+                dostepnaDo: dostepnaDo,
+                wysiegMetry: pobierzDodatniaLiczbeLubDomyslna(
+                  dane.wysiegMetry,
+                  "Wysięg pompy",
+                  DOMYSLNY_WYSIEG_POMPY_METRY
+                )
+              };
+            }
+
+            function normalizujListePomp(listaPomp) {
+              const lista = Array.isArray(listaPomp) ? listaPomp : [];
+              const jawneId = new Set();
+              const zajeteId = new Set();
+
+              lista.forEach(function (pompa) {
+                const id = pompa && !czyBrakWartosci(pompa.idPompy)
+                  ? String(pompa.idPompy).trim()
+                  : "";
+
+                if (!id) {
+                  return;
+                }
+
+                if (jawneId.has(id)) {
+                  throw new Error("Lista pomp zawiera powtórzony identyfikator „" + id + "”.");
+                }
+
+                jawneId.add(id);
+                zajeteId.add(id);
+              });
+
+              return lista.map(function (pompa, indeks) {
+                let id = pompa && !czyBrakWartosci(pompa.idPompy)
+                  ? String(pompa.idPompy).trim()
+                  : "";
+
+                if (!id) {
+                  const numer = znajdzPierwszyWolnyNumer(zajeteId);
+                  id = utworzIdPompy(numer);
+                  zajeteId.add(id);
+                }
+
+                return normalizujPompe(pompa, indeks + 1, id);
+              });
+            }
+
+            function skopiujPompe(pompa) {
+              return {
+                idPompy: pompa.idPompy,
+                nazwa: pompa.nazwa,
+                typ: pompa.typ,
+                aktywna: pompa.aktywna,
+                dostepnaOd: pompa.dostepnaOd,
+                dostepnaDo: pompa.dostepnaDo,
+                wysiegMetry: pompa.wysiegMetry
+              };
+            }
+
+            function skopiujListePomp(listaPomp) {
+              return normalizujListePomp(listaPomp).map(skopiujPompe);
+            }
+
+            function dodajPompe(listaPomp, danePompy) {
+              const lista = normalizujListePomp(listaPomp);
+              const zajeteId = new Set(lista.map(function (pompa) {
+                return pompa.idPompy;
+              }));
+              const numer = znajdzPierwszyWolnyNumer(zajeteId);
+              const idPompy = utworzIdPompy(numer);
+              const noweDane = Object.assign({}, danePompy || {});
+
+              delete noweDane.idPompy;
+
+              return lista.concat([
+                normalizujPompe(noweDane, lista.length + 1, idPompy)
+              ]).map(skopiujPompe);
+            }
+
+            function edytujPompe(listaPomp, idPompy, zmiany) {
+              const lista = normalizujListePomp(listaPomp);
+              const szukaneId = String(idPompy || "").trim();
+              const indeks = lista.findIndex(function (pompa) {
+                return pompa.idPompy === szukaneId;
+              });
+
+              if (indeks < 0) {
+                throw new Error("Nie znaleziono pompy o ID „" + szukaneId + "”.");
+              }
+
+              const daneZmian = zmiany && typeof zmiany === "object" ? zmiany : {};
+
+              if (Object.prototype.hasOwnProperty.call(daneZmian, "idPompy")) {
+                throw new Error("Nie można zmieniać stabilnego ID pompy podczas edycji.");
+              }
+
+              const zmieniona = Object.assign({}, lista[indeks]);
+
+              Object.keys(daneZmian).forEach(function (pole) {
+                const wartosc = daneZmian[pole];
+
+                if (pole === "nazwa") {
+                  zmieniona.nazwa = czyBrakWartosci(wartosc)
+                    ? "Pompa " + String(indeks + 1)
+                    : String(wartosc).trim();
+                } else if (pole === "typ") {
+                  // Pole pozostaje wyłącznie dla zgodności ze starszymi zapisami.
+                  // Nie bierze udziału w przydziale ani ocenie dostępności.
+                  zmieniona.typ = pobierzTypLegacy(wartosc);
+                } else if (pole === "aktywna") {
+                  zmieniona.aktywna = pobierzAktywnosc(wartosc);
+                } else if (pole === "dostepnaOd") {
+                  zmieniona.dostepnaOd = pobierzGodzineLubBrak(wartosc, "Dostępna od");
+                } else if (pole === "dostepnaDo") {
+                  zmieniona.dostepnaDo = pobierzGodzineLubBrak(wartosc, "Dostępna do");
+                } else if (pole === "wysiegMetry") {
+                  zmieniona.wysiegMetry = pobierzDodatniaLiczbeLubDomyslna(
+                    wartosc,
+                    "Wysięg pompy",
+                    DOMYSLNY_WYSIEG_POMPY_METRY
+                  );
+                } else {
+                  throw new Error("Nieobsługiwane pole pompy: „" + pole + "”.");
+                }
+              });
+
+              sprawdzZakresDostepnosci(zmieniona.dostepnaOd, zmieniona.dostepnaDo);
+
+              const wynik = lista.map(skopiujPompe);
+              wynik[indeks] = skopiujPompe(zmieniona);
+              return wynik;
+            }
+
+            function ustawAktywnoscPompy(listaPomp, idPompy, aktywna) {
+              return edytujPompe(listaPomp, idPompy, { aktywna: aktywna });
+            }
+
+            function usunPompe(listaPomp, idPompy) {
+              const lista = normalizujListePomp(listaPomp);
+              const szukaneId = String(idPompy || "").trim();
+              const czyIstnieje = lista.some(function (pompa) {
+                return pompa.idPompy === szukaneId;
+              });
+
+              if (!czyIstnieje) {
+                throw new Error("Nie znaleziono pompy o ID „" + szukaneId + "”.");
+              }
+
+              return lista.filter(function (pompa) {
+                return pompa.idPompy !== szukaneId;
+              }).map(skopiujPompe);
+            }
+
+            function pobierzLiczbePomp(wartosc) {
+              if (czyBrakWartosci(wartosc)) {
+                throw new Error("Liczba pomp musi być liczbą całkowitą nie mniejszą niż 0.");
+              }
+
+              const liczba = Number(wartosc);
+
+              if (!Number.isInteger(liczba) || liczba < 0) {
+                throw new Error("Liczba pomp musi być liczbą całkowitą nie mniejszą niż 0.");
+              }
+
+              return liczba;
+            }
+
+            function dopasujLiczbePomp(listaPomp, liczbaPomp) {
+              let lista = normalizujListePomp(listaPomp).map(skopiujPompe);
+              const docelowaLiczba = pobierzLiczbePomp(liczbaPomp);
+
+              if (lista.length > docelowaLiczba) {
+                return lista.slice(0, docelowaLiczba).map(skopiujPompe);
+              }
+
+              while (lista.length < docelowaLiczba) {
+                lista = dodajPompe(lista, {});
+              }
+
+              return lista.map(skopiujPompe);
+            }
+
+            function zmienDanePompy(listaPomp, idPompy, nazwaPola, wartosc) {
+              const zmiany = {};
+              zmiany[nazwaPola] = wartosc;
+              return edytujPompe(listaPomp, idPompy, zmiany);
+            }
+
+            function pobierzPompyAktywneDoPrzydzialu(listaPomp) {
+              return normalizujListePomp(listaPomp).filter(function (pompa) {
+                return pompa.aktywna === true;
+              }).map(skopiujPompe);
+            }
+
+            function pobierzLiczbeAktywnychPomp(listaPomp) {
+              return pobierzPompyAktywneDoPrzydzialu(listaPomp).length;
+            }
+
+            function pobierzMinuteCyklu(wartosc, nazwaPola) {
+              const liczba = Number(wartosc);
+
+              if (!Number.isInteger(liczba) || liczba < 0) {
+                throw new Error(nazwaPola + " musi być nieujemną liczbą całkowitą minut.");
+              }
+
+              return liczba;
+            }
+
+            function sprawdzDostepnoscPompyDlaCyklu(
+              pompa,
+              minutaRozpoczeciaCyklu,
+              minutaZakonczeniaCyklu
+            ) {
+              const start = pobierzMinuteCyklu(
+                minutaRozpoczeciaCyklu,
+                "Początek cyklu pompy"
+              );
+              const koniec = pobierzMinuteCyklu(
+                minutaZakonczeniaCyklu,
+                "Koniec cyklu pompy"
+              );
+
+              if (koniec < start) {
+                throw new Error("Koniec cyklu pompy nie może być wcześniejszy niż jego początek.");
+              }
+
+              const znormalizowana = normalizujPompe(
+                pompa,
+                1,
+                pompa && !czyBrakWartosci(pompa.idPompy)
+                  ? String(pompa.idPompy).trim()
+                  : "POMPA-001"
+              );
+              const dostepnaOdMinuta = godzinaNaMinute(znormalizowana.dostepnaOd);
+              const dostepnaDoMinuta = godzinaNaMinute(znormalizowana.dostepnaDo);
+              let powodBrakuDostepnosci = null;
+
+              if (dostepnaOdMinuta !== null && start < dostepnaOdMinuta) {
+                powodBrakuDostepnosci = "przed-dostepnoscia";
+              } else if (dostepnaDoMinuta !== null && start > dostepnaDoMinuta) {
+                powodBrakuDostepnosci = "po-dostepnosci";
+              }
+
+              const czyMozeRozpoczac = powodBrakuDostepnosci === null;
+              const przekroczenieDostepnosciMinuty =
+                czyMozeRozpoczac && dostepnaDoMinuta !== null
+                  ? Math.max(0, koniec - dostepnaDoMinuta)
+                  : 0;
+
+              return {
+                idPompy: znormalizowana.idPompy,
+                czyMozeRozpoczac: czyMozeRozpoczac,
+                powodBrakuDostepnosci: powodBrakuDostepnosci,
+                dostepnaOdMinuta: dostepnaOdMinuta,
+                dostepnaDoMinuta: dostepnaDoMinuta,
+                czyPrzekraczaDostepnosc: przekroczenieDostepnosciMinuty > 0,
+                przekroczenieDostepnosciMinuty: przekroczenieDostepnosciMinuty,
+                czyWymagaInformacji: przekroczenieDostepnosciMinuty > 0
+              };
+            }
+
+            // Zastępujemy wyłącznie operacje listy i dostępności. Logika pełnego
+            // cyklu pompy z pompy.js pozostaje bez zmian.
+            pompy.normalizujListePomp = normalizujListePomp;
+            pompy.dodajPompe = dodajPompe;
+            pompy.edytujPompe = edytujPompe;
+            pompy.ustawAktywnoscPompy = ustawAktywnoscPompy;
+            pompy.usunPompe = usunPompe;
+            pompy.dopasujLiczbePomp = dopasujLiczbePomp;
+            pompy.zmienDanePompy = zmienDanePompy;
+            pompy.skopiujListePomp = skopiujListePomp;
+            pompy.pobierzPompyAktywneDoPrzydzialu = pobierzPompyAktywneDoPrzydzialu;
+            pompy.pobierzLiczbeAktywnychPomp = pobierzLiczbeAktywnychPomp;
+            pompy.sprawdzDostepnoscPompyDlaCyklu = sprawdzDostepnoscPompyDlaCyklu;
+          })(window);
+          ''')
+
+          # -----------------------------------------------------------------
+          # Panel pomp: bez pola własna/zewnętrzna, z dwoma opcjonalnymi czasami.
+          # -----------------------------------------------------------------
+          zapisz("js/interfejs/dostepnosc_pomp.js", r'''
+          (function (zakresGlobalny) {
+            "use strict";
+
+            const aplikacja = zakresGlobalny.HarmonogramBetonowan;
+
+            if (!aplikacja || !aplikacja.interfejs) {
+              throw new Error("Rozszerzenie panelu pomp wymaga wcześniejszego załadowania interfejsu.");
+            }
+
+            const interfejs = aplikacja.interfejs;
+            const oryginalneUruchomInterfejs = interfejs.uruchomInterfejs;
+            const oryginalnePokazListePomp = interfejs.pokazListePomp;
+            const oryginalnePokazWynik = interfejs.pokazWynik;
+            const oryginalneOznaczWynikJakoNieaktualny = interfejs.oznaczWynikJakoNieaktualny;
+            const oryginalnePokazPrzywroconyPlan = interfejs.pokazPrzywroconyPlan;
+            const oryginalneWyczyscPlan = interfejs.wyczyscPlan;
+            let obslugaZmianyPompy = function () {};
+            let listaPompInterfejsu = [];
+
+            function utworzPoleKartyPompy(etykieta, pole) {
+              const kontener = document.createElement("label");
+              const opis = document.createElement("span");
+
+              kontener.className = "karta-pompy__pole";
+              opis.textContent = etykieta;
+              kontener.appendChild(opis);
+              kontener.appendChild(pole);
+              return kontener;
+            }
+
+            function utworzPoleDostepnosci(pompa, nazwaPola, etykieta) {
+              const pole = document.createElement("input");
+
+              pole.type = "time";
+              pole.value = pompa[nazwaPola] || "";
+              pole.title = "Pozostaw puste, jeśli ta granica czasu nie obowiązuje.";
+              pole.setAttribute("aria-label", pompa.nazwa + " " + etykieta.toLowerCase());
+              pole.addEventListener("change", function () {
+                obslugaZmianyPompy(pompa.idPompy, nazwaPola, pole.value);
+              });
+
+              return pole;
+            }
+
+            function utworzKartePompy(pompa) {
+              const karta = document.createElement("article");
+              const nazwa = document.createElement("strong");
+              const dostepnaOd = utworzPoleDostepnosci(
+                pompa,
+                "dostepnaOd",
+                "Dostępna od"
+              );
+              const dostepnaDo = utworzPoleDostepnosci(
+                pompa,
+                "dostepnaDo",
+                "Dostępna do"
+              );
+              const wysieg = document.createElement("input");
+              const aktywnaEtykieta = document.createElement("label");
+              const aktywnaOpis = document.createElement("span");
+              const aktywna = document.createElement("input");
+
+              karta.className = "karta-pompy";
+              karta.dataset.idPompy = pompa.idPompy;
+              nazwa.className = "karta-pompy__nazwa";
+              nazwa.textContent = pompa.nazwa;
+
+              wysieg.type = "number";
+              wysieg.min = "1";
+              wysieg.step = "0.1";
+              wysieg.inputMode = "decimal";
+              wysieg.placeholder = "np. 32";
+              wysieg.value = pompa.wysiegMetry === null || pompa.wysiegMetry === undefined
+                ? ""
+                : String(pompa.wysiegMetry);
+              wysieg.setAttribute("aria-label", "Wysięg " + pompa.nazwa + " w metrach");
+              wysieg.addEventListener("change", function () {
+                obslugaZmianyPompy(pompa.idPompy, "wysiegMetry", wysieg.value);
+              });
+
+              aktywnaEtykieta.className = "karta-pompy__aktywna";
+              aktywnaOpis.textContent = "Aktywna";
+              aktywna.type = "checkbox";
+              aktywna.checked = pompa.aktywna !== false;
+              aktywna.setAttribute("aria-label", "Czy " + pompa.nazwa + " jest aktywna");
+              aktywna.addEventListener("change", function () {
+                obslugaZmianyPompy(pompa.idPompy, "aktywna", aktywna.checked);
+              });
+              aktywnaEtykieta.appendChild(aktywnaOpis);
+              aktywnaEtykieta.appendChild(aktywna);
+
+              karta.appendChild(nazwa);
+              karta.appendChild(utworzPoleKartyPompy("Dostępna od", dostepnaOd));
+              karta.appendChild(utworzPoleKartyPompy("Dostępna do", dostepnaDo));
+              karta.appendChild(utworzPoleKartyPompy("Wysięg (m)", wysieg));
+              karta.appendChild(aktywnaEtykieta);
+              return karta;
+            }
+
+            function odswiezPodsumowaniePomp() {
+              const trybPomp = document.getElementById("tryb-pomp");
+              const liczbaDostepnych = document.getElementById("liczba-dostepnych-pomp-wynik");
+              const opis = document.getElementById("podsumowanie-dostepnosci-pomp");
+
+              if (!trybPomp || !liczbaDostepnych || !opis) {
+                return;
+              }
+
+              if (trybPomp.value !== "mam-okreslona-liczbe") {
+                liczbaDostepnych.textContent = "—";
+                opis.textContent = "Po obliczeniu pokażemy potrzebną liczbę pomp.";
+                return;
+              }
+
+              const aktywne = listaPompInterfejsu.filter(function (pompa) {
+                return pompa.aktywna !== false;
+              });
+              const bezOgraniczen = aktywne.filter(function (pompa) {
+                return !pompa.dostepnaOd && !pompa.dostepnaDo;
+              }).length;
+
+              liczbaDostepnych.textContent = String(aktywne.length);
+
+              if (!listaPompInterfejsu.length) {
+                opis.textContent = "Brak pomp do dyspozycji.";
+              } else if (!aktywne.length) {
+                opis.textContent = "Wszystkie wpisane pompy są nieaktywne.";
+              } else if (bezOgraniczen === aktywne.length) {
+                opis.textContent = aktywne.length +
+                  (aktywne.length === 1 ? " aktywna · bez ograniczeń godzinowych." : " aktywne · bez ograniczeń godzinowych.");
+              } else {
+                opis.textContent = aktywne.length +
+                  (aktywne.length === 1 ? " aktywna" : " aktywne") +
+                  " · puste Od/Do = bez ograniczeń.";
+              }
+            }
+
+            function pokazListePomp(listaPomp, trybPomp) {
+              const lista = Array.isArray(listaPomp) ? listaPomp : [];
+
+              // Oryginalny renderer utrzymuje swój wewnętrzny stan zgodny z resztą
+              // interfejsu. Następnie zastępujemy tylko zawartość kart pomp.
+              oryginalnePokazListePomp(lista, trybPomp);
+              listaPompInterfejsu = lista.slice();
+
+              const kontener = document.getElementById("lista-pomp");
+              const poleTrybu = document.getElementById("tryb-pomp");
+              const tryb = trybPomp || (poleTrybu ? poleTrybu.value : "oblicz-potrzebne");
+
+              if (!kontener) {
+                return;
+              }
+
+              const fragment = document.createDocumentFragment();
+              kontener.hidden = tryb !== "mam-okreslona-liczbe";
+
+              if (tryb === "mam-okreslona-liczbe") {
+                lista.forEach(function (pompa) {
+                  fragment.appendChild(utworzKartePompy(pompa));
+                });
+              }
+
+              kontener.replaceChildren(fragment);
+              odswiezPodsumowaniePomp();
+            }
+
+            function uruchomInterfejs() {
+              const argumenty = Array.prototype.slice.call(arguments);
+              obslugaZmianyPompy = typeof argumenty[10] === "function"
+                ? argumenty[10]
+                : function () {};
+
+              const wynik = oryginalneUruchomInterfejs.apply(interfejs, argumenty);
+              const trybPomp = document.getElementById("tryb-pomp");
+              pokazListePomp([], trybPomp ? trybPomp.value : "oblicz-potrzebne");
+              return wynik;
+            }
+
+            function pokazWynik() {
+              const wynik = oryginalnePokazWynik.apply(interfejs, arguments);
+              odswiezPodsumowaniePomp();
+              return wynik;
+            }
+
+            function oznaczWynikJakoNieaktualny() {
+              const wynik = oryginalneOznaczWynikJakoNieaktualny.apply(interfejs, arguments);
+              odswiezPodsumowaniePomp();
+              return wynik;
+            }
+
+            function pokazPrzywroconyPlan() {
+              const argumenty = Array.prototype.slice.call(arguments);
+              const wynik = oryginalnePokazPrzywroconyPlan.apply(interfejs, argumenty);
+              const trybPomp = document.getElementById("tryb-pomp");
+              pokazListePomp(argumenty[4] || [], trybPomp ? trybPomp.value : undefined);
+              return wynik;
+            }
+
+            function wyczyscPlan() {
+              const wynik = oryginalneWyczyscPlan.apply(interfejs, arguments);
+              const trybPomp = document.getElementById("tryb-pomp");
+              pokazListePomp([], trybPomp ? trybPomp.value : undefined);
+              return wynik;
+            }
+
+            interfejs.uruchomInterfejs = uruchomInterfejs;
+            interfejs.pokazListePomp = pokazListePomp;
+            interfejs.pokazWynik = pokazWynik;
+            interfejs.oznaczWynikJakoNieaktualny = oznaczWynikJakoNieaktualny;
+            interfejs.pokazPrzywroconyPlan = pokazPrzywroconyPlan;
+            interfejs.wyczyscPlan = wyczyscPlan;
+          })(window);
+          ''')
+
+          # -----------------------------------------------------------------
+          # Test 4F.0: model, granice czasu, zgodność i podłączenie panelu.
+          # -----------------------------------------------------------------
+          zapisz("testy/etap_4f_0.test.js", r'''
+          "use strict";
+
+          const assert = require("node:assert/strict");
+          const fs = require("node:fs");
+          const path = require("node:path");
+          const vm = require("node:vm");
+
+          const katalogProjektu = path.resolve(__dirname, "..");
+
+          function wczytaj(sciezka) {
+            return fs.readFileSync(path.join(katalogProjektu, sciezka), "utf8");
+          }
+
+          function wczytajModulPomp() {
+            const kontekst = { window: {} };
+            kontekst.window.window = kontekst.window;
+            vm.createContext(kontekst);
+
+            ["js/pompy/pompy.js", "js/pompy/dostepnosc_pomp.js"].forEach(function (sciezka) {
+              new vm.Script(wczytaj(sciezka), { filename: sciezka }).runInContext(kontekst);
+            });
+
+            return kontekst.window.HarmonogramBetonowan.pompy;
+          }
+
+          function sprawdzPusteOkno(pompy) {
+            const lista = pompy.dopasujLiczbePomp([], 1, "06:00");
+
+            assert.equal(lista.length, 1);
+            assert.equal(lista[0].dostepnaOd, null);
+            assert.equal(lista[0].dostepnaDo, null);
+            assert.equal(lista[0].wysiegMetry, 32);
+
+            const wynik = pompy.sprawdzDostepnoscPompyDlaCyklu(lista[0], 0, 1400);
+            assert.equal(wynik.czyMozeRozpoczac, true);
+            assert.equal(wynik.czyPrzekraczaDostepnosc, false);
+            assert.equal(wynik.przekroczenieDostepnosciMinuty, 0);
+          }
+
+          function sprawdzDostepnaOd(pompy) {
+            const pompa = pompy.normalizujListePomp([{
+              idPompy: "P-OD",
+              nazwa: "Pompa od 08:00",
+              aktywna: true,
+              dostepnaOd: "08:00",
+              dostepnaDo: "",
+              wysiegMetry: 32
+            }])[0];
+
+            assert.equal(
+              pompy.sprawdzDostepnoscPompyDlaCyklu(pompa, 479, 600).powodBrakuDostepnosci,
+              "przed-dostepnoscia"
+            );
+            assert.equal(
+              pompy.sprawdzDostepnoscPompyDlaCyklu(pompa, 480, 900).czyMozeRozpoczac,
+              true
+            );
+          }
+
+          function sprawdzDostepnaDoIDokonczenie(pompy) {
+            const pompa = pompy.normalizujListePomp([{
+              idPompy: "P-DO",
+              nazwa: "Pompa do 15:00",
+              aktywna: true,
+              dostepnaOd: "",
+              dostepnaDo: "15:00",
+              wysiegMetry: 32
+            }])[0];
+
+            const naGranicy = pompy.sprawdzDostepnoscPompyDlaCyklu(pompa, 900, 950);
+            assert.equal(naGranicy.czyMozeRozpoczac, true);
+            assert.equal(naGranicy.czyPrzekraczaDostepnosc, true);
+            assert.equal(naGranicy.przekroczenieDostepnosciMinuty, 50);
+            assert.equal(naGranicy.czyWymagaInformacji, true);
+
+            const poGranicy = pompy.sprawdzDostepnoscPompyDlaCyklu(pompa, 901, 950);
+            assert.equal(poGranicy.czyMozeRozpoczac, false);
+            assert.equal(poGranicy.powodBrakuDostepnosci, "po-dostepnosci");
+            assert.equal(poGranicy.przekroczenieDostepnosciMinuty, 0);
+          }
+
+          function sprawdzPelneOknoIWysieg(pompy) {
+            const lista = pompy.normalizujListePomp([{
+              idPompy: "P-42",
+              nazwa: "Pompa 42 m",
+              typ: "zewnetrzna",
+              aktywna: true,
+              dostepnaOd: "07:00",
+              dostepnaDo: "15:00",
+              wysiegMetry: 42
+            }]);
+
+            assert.equal(lista[0].typ, "zewnetrzna");
+            assert.equal(lista[0].wysiegMetry, 42);
+            assert.equal(
+              pompy.pobierzPompyAktywneDoPrzydzialu(lista)[0].idPompy,
+              "P-42"
+            );
+            assert.equal(
+              pompy.sprawdzDostepnoscPompyDlaCyklu(lista[0], 419, 500).czyMozeRozpoczac,
+              false
+            );
+            assert.equal(
+              pompy.sprawdzDostepnoscPompyDlaCyklu(lista[0], 420, 900).czyMozeRozpoczac,
+              true
+            );
+
+            const kopia = pompy.skopiujListePomp(lista);
+            assert.equal(kopia[0].dostepnaDo, "15:00");
+            assert.equal(kopia[0].wysiegMetry, 42);
+          }
+
+          function sprawdzWalidacje(pompy) {
+            assert.throws(function () {
+              pompy.normalizujListePomp([{
+                idPompy: "P-BLAD",
+                dostepnaOd: "8:00",
+                wysiegMetry: 32
+              }]);
+            }, /HH:MM/i);
+
+            assert.throws(function () {
+              pompy.normalizujListePomp([{
+                idPompy: "P-ZAKRES",
+                dostepnaOd: "16:00",
+                dostepnaDo: "15:00",
+                wysiegMetry: 32
+              }]);
+            }, /wcześniejsza/i);
+          }
+
+          function sprawdzPanelIUruchamianie() {
+            const index = wczytaj("index.html");
+            const interfejsDostepnosci = wczytaj("js/interfejs/dostepnosc_pomp.js");
+            const pozycjaBazowegoModelu = index.indexOf("js/pompy/pompy.js");
+            const pozycjaDostepnosciModelu = index.indexOf("js/pompy/dostepnosc_pomp.js");
+            const pozycjaPrzejazdow = index.indexOf("js/pompy/przejazdy_pomp.js");
+            const pozycjaBazowegoInterfejsu = index.indexOf("js/interfejs/interfejs.js");
+            const pozycjaDostepnosciInterfejsu = index.indexOf("js/interfejs/dostepnosc_pomp.js");
+            const pozycjaAplikacji = index.indexOf("js/aplikacja.js");
+
+            assert.ok(pozycjaBazowegoModelu >= 0);
+            assert.ok(pozycjaDostepnosciModelu > pozycjaBazowegoModelu);
+            assert.ok(pozycjaPrzejazdow > pozycjaDostepnosciModelu);
+            assert.ok(pozycjaBazowegoInterfejsu >= 0);
+            assert.ok(pozycjaDostepnosciInterfejsu > pozycjaBazowegoInterfejsu);
+            assert.ok(pozycjaAplikacji > pozycjaDostepnosciInterfejsu);
+            assert.match(interfejsDostepnosci, /Dostępna od/);
+            assert.match(interfejsDostepnosci, /Dostępna do/);
+            assert.match(interfejsDostepnosci, /Wysięg \(m\)/);
+            assert.match(interfejsDostepnosci, /puste Od\/Do = bez ograniczeń/);
+            assert.doesNotMatch(interfejsDostepnosci, /utworzPoleKartyPompy\("Typ"/);
+          }
+
+          function uruchomTesty() {
+            const pompy = wczytajModulPomp();
+
+            sprawdzPusteOkno(pompy);
+            sprawdzDostepnaOd(pompy);
+            sprawdzDostepnaDoIDokonczenie(pompy);
+            sprawdzPelneOknoIWysieg(pompy);
+            sprawdzWalidacje(pompy);
+            sprawdzPanelIUruchamianie();
+
+            console.log(
+              "✓ Etap 4F.0: puste Od/Do, granice dostępności, dokończenie rozpoczętej budowy i panel pomp działają poprawnie."
+            );
+          }
+
+          uruchomTesty();
+          ''')
+
+          zapisz("testy/TESTY_ETAP_4F_0.md", r'''
+          # TESTY — ETAP 4F.0
+
+          ## Zakres
+
+          Podetap **4F.0 — okno dostępności pomp** przygotowuje model zasobu przed
+          właściwym przydziałem 4F.1–4F.2.
+
+          Test `testy/etap_4f_0.test.js` potwierdza:
+
+          1. puste **Dostępna od** i **Dostępna do** oznaczają brak ograniczeń;
+          2. samo **Dostępna od** blokuje rozpoczęcie pełnego cyklu przed wskazaną godziną;
+          3. samo **Dostępna do** pozwala rozpocząć cykl dokładnie o tej godzinie;
+          4. rozpoczęty na czas cykl może zakończyć się po **Dostępna do**, a wynik
+             zachowuje liczbę minut przekroczenia do późniejszego komunikatu operatora;
+          5. kolejny cykl rozpoczynający się po **Dostępna do** jest odrzucany;
+          6. starsze pole `typ` może zostać zachowane jako metadana, ale nie jest
+             kryterium wyboru pompy;
+          7. wysięg pozostaje właściwością zasobu i jest zachowywany w pamięci;
+          8. nowe pompy nie dziedziczą już automatycznie początku dnia jako
+             `dostepnaOd`;
+          9. panel pokazuje **Dostępna od**, **Dostępna do**, **Wysięg (m)** i
+             aktywność, bez pola wyboru własna/zewnętrzna;
+          10. oba nowe moduły są ładowane lokalnie przed `js/aplikacja.js` i nie
+              wprowadzają zależności sieciowej.
+
+          ## Test operatora
+
+          Dla 4F.0 zapisano wyjątek od osobnego testu operatorskiego: ten krok nie
+          uruchamia jeszcze przydziału pomp ani nie zmienia godzin budów. Widoczność i
+          podłączenie pól są kontrolowane automatycznie, a pełny test operatorski
+          dostępności, przydziału i ostrzeżeń pozostaje częścią 4J.3.
+          ''')
+
+          # -----------------------------------------------------------------
+          # Ładowanie nowych modułów w zwykłej wersji lokalnej/Pages.
+          # -----------------------------------------------------------------
+          index_path = Path("index.html")
+          index = index_path.read_text(encoding="utf-8")
+          stary_model = '''    <script defer src="js/pompy/pompy.js"></script>\n    <script defer src="js/pompy/przejazdy_pomp.js"></script>'''
+          nowy_model = '''    <script defer src="js/pompy/pompy.js"></script>\n    <script defer src="js/pompy/dostepnosc_pomp.js"></script>\n    <script defer src="js/pompy/przejazdy_pomp.js"></script>'''
+          if "js/pompy/dostepnosc_pomp.js" not in index:
+              if stary_model not in index:
+                  raise SystemExit("Nie znaleziono miejsca na moduł dostępności pomp.")
+              index = index.replace(stary_model, nowy_model, 1)
+
+          stary_interfejs = '''    <script defer src="js/interfejs/podglad_tras.js"></script>\n    <script defer src="js/aplikacja.js"></script>'''
+          nowy_interfejs = '''    <script defer src="js/interfejs/podglad_tras.js"></script>\n    <script defer src="js/interfejs/dostepnosc_pomp.js"></script>\n    <script defer src="js/aplikacja.js"></script>'''
+          if "js/interfejs/dostepnosc_pomp.js" not in index:
+              if stary_interfejs not in index:
+                  raise SystemExit("Nie znaleziono miejsca na rozszerzenie panelu pomp.")
+              index = index.replace(stary_interfejs, nowy_interfejs, 1)
+          index_path.write_text(index, encoding="utf-8")
+
+          # -----------------------------------------------------------------
+          # PROJECT_DECISIONS: nowa decyzja 91 + usunięcie sprzecznych zdań.
+          # -----------------------------------------------------------------
+          decyzje_path = Path("PROJECT_DECISIONS.md")
+          decyzje = decyzje_path.read_text(encoding="utf-8")
+
+          decyzje = decyzje.replace(
+              "Godzina **Dostępna od** jest cechą konkretnej pompy, a nie jedną wspólną\n"
+              "godziną całej floty. Panel może pokazać zwięzłe podsumowanie, np. ile pomp jest\n"
+              "dostępnych teraz i ile dołączy później, natomiast szczegóły pozostają na liście\n"
+              "pomp. Układ ma pozostać responsywny i nie może przenosić logiki obliczeniowej do\n"
+              "HTML ani CSS.",
+              "Godziny **Dostępna od** i **Dostępna do** są cechami konkretnej pompy, a nie\n"
+              "jedną wspólną godziną całej floty. Puste pole oznacza brak danej granicy czasu.\n"
+              "Panel może pokazać zwięzłe podsumowanie, natomiast szczegóły pozostają na liście\n"
+              "pomp. Układ ma pozostać responsywny i nie może przenosić logiki obliczeniowej do\n"
+              "HTML ani CSS.",
+              1,
+          )
+
+          decyzje = decyzje.replace(
+              "Godzina **Dostępna od**, typ, aktywność i wysięg należą do konkretnej pompy i są\n"
+              "zapisywane w planie dnia.",
+              "Godziny **Dostępna od/do**, aktywność i wysięg należą do konkretnej pompy i są\n"
+              "zapisywane w planie dnia.",
+              1,
+          )
+
+          decyzje = decyzje.replace(
+              "Operacje listy nie uruchamiają obliczeń zajętości, przydziału ani minimalnej\n"
+              "liczby pomp. Nie rozstrzygają też sposobu przydzielania pomp zewnętrznych;\n"
+              "otwarty wariant P-010 pozostaje do decyzji przed etapem 4F.",
+              "Operacje listy nie uruchamiają obliczeń zajętości, przydziału ani minimalnej\n"
+              "liczby pomp. Zgodnie z decyzją 91 pochodzenie pompy nie jest osobnym kryterium\n"
+              "przydziału; liczą się jej parametry i rzeczywista dostępność.",
+              1,
+          )
+
+          stary_86 = '''Model dopuszcza wyłącznie typ `wlasna` albo `zewnetrzna`. Puste pola starszego
+          zapisu mogą otrzymać opisane wartości domyślne: nazwę wynikającą z numeru, typ
+          `wlasna`, aktywność `true`, początek dnia jako godzinę dostępności i wysięg
+          `32 m`. Wartości niepuste, ale błędne, muszą zostać odrzucone zamiast cichego
+          przekształcenia. Dotyczy to szczególnie aktywności — tekst `"false"` nie jest
+          wartością logiczną i nie może zostać potraktowany jako `true`.'''
+          nowy_86 = '''Starsze pole `typ` może zostać odczytane dla zgodności ze starym zapisem, ale
+          zgodnie z późniejszą decyzją 91 nie jest kryterium przydziału i nie jest wymagane
+          w bieżącym interfejsie. Puste pola starszego zapisu otrzymują nazwę wynikającą z
+          numeru, aktywność `true` i wysięg `32 m`; puste `dostepnaOd` i `dostepnaDo`
+          pozostają puste i oznaczają brak ograniczeń godzinowych. Wartości niepuste, ale
+          błędne, muszą zostać odrzucone zamiast cichego przekształcenia. Dotyczy to
+          szczególnie aktywności — tekst `"false"` nie jest wartością logiczną i nie może
+          zostać potraktowany jako `true`.'''
+          if stary_86 not in decyzje:
+              raise SystemExit("Nie znaleziono starego opisu walidacji decyzji 86.")
+          decyzje = decyzje.replace(stary_86, nowy_86, 1)
+
+          decyzja_91 = dedent(r'''
+
+          ## 91. Okno dostępności pompy i brak rozróżnienia własna/zewnętrzna w przydziale
+
+          Każda pompa jest dla silnika tym samym rodzajem zasobu. Nie tworzymy osobnych
+          reguł przydziału dla pomp własnych i zewnętrznych. Starsze pole `typ` może być
+          zachowane jako neutralna metadana zgodności, ale nie wpływa na wybór pompy,
+          kolejność, przejazd ani liczbę potrzebnych zasobów. Najważniejszym parametrem
+          zgodności technicznej pozostaje wysięg: pompa może obsłużyć budowę tylko wtedy,
+          gdy jej `wysiegMetry` nie jest mniejszy od `wymaganyWysiegPompyMetry` budowy.
+
+          Każda pompa ma dwa niezależne, opcjonalne pola czasu:
+
+          - `dostepnaOd` — najwcześniejszy moment rozpoczęcia pełnego cyklu na budowie;
+          - `dostepnaDo` — najpóźniejszy moment rozpoczęcia pełnego cyklu na budowie.
+
+          Puste oba pola oznaczają dostępność bez ograniczeń godzinowych. Puste tylko
+          `dostepnaOd` oznacza brak dolnej granicy, a puste tylko `dostepnaDo` — brak
+          górnej granicy. Nowa pompa nie dziedziczy automatycznie `poczatekDnia` jako
+          godziny dostępności; oba pola pozostają puste, dopóki operator ich nie ustawi.
+
+          Za rozpoczęcie obsługi budowy uznajemy początek pełnego okresu zajętości pompy,
+          czyli rozpoczęcie przygotowania/rozstawiania przed pierwszym rozładunkiem.
+          Jeżeli ten moment wypada dokładnie o `dostepnaDo`, rozpoczęcie jest jeszcze
+          dozwolone. Jeżeli wypada później — pompa nie może rozpocząć nowej budowy.
+
+          Rozpoczęta na czas budowa musi zostać dokończona. Koniec pompowania, składanie,
+          mycie i przygotowanie do wyjazdu mogą wyjść poza `dostepnaDo`. Taki przydział
+          pozostaje poprawny, ale wynik musi zachować liczbę minut przekroczenia oraz
+          informację wymagającą pokazania operatorowi. Po zakończeniu tej budowy pompa nie
+          może dostać kolejnej pracy rozpoczynającej się po `dostepnaDo`.
+
+          Kandydat do przyszłego przydziału 4F musi zatem jednocześnie być aktywny, mieć
+          wystarczający wysięg, mieścić początek nowego pełnego cyklu w swoim oknie
+          dostępności oraz być wolny po uwzględnieniu wcześniejszej zajętości i przejazdu.
+          Sam krok 4F.0 nie przydziela jeszcze pomp ani nie przesuwa godzin budów.
+
+          Ta decyzja zastępuje wcześniejsze fragmenty decyzji 79, 82, 85 i 86 w zakresie
+          obowiązkowego typu pompy oraz automatycznego ustawiania `dostepnaOd` na początek
+          dnia. Pozostałe zasady stabilnego ID, aktywności i domyślnego wysięgu `32 m`
+          pozostają bez zmian.
+
+          ---
+          ''').lstrip("\n")
+
+          marker_decyzji = "# Powiązane tematy otwarte"
+          if "## 91. Okno dostępności pompy" not in decyzje:
+              if marker_decyzji not in decyzje:
+                  raise SystemExit("Nie znaleziono miejsca na decyzję 91.")
+              decyzje = decyzje.replace(marker_decyzji, decyzja_91 + "\n" + marker_decyzji, 1)
+          decyzje_path.write_text(decyzje, encoding="utf-8")
+
+          # -----------------------------------------------------------------
+          # Backlog: P-010 jest rozstrzygnięty.
+          # -----------------------------------------------------------------
+          backlog_path = Path("POMYSLY_I_BACKLOG.md")
+          backlog = backlog_path.read_text(encoding="utf-8")
+          nowy_p010 = dedent(r'''
+          ## P-010 — Sposób traktowania pomp zewnętrznych
+
+          **Data:** 2026-08-23; rozstrzygnięto 2026-08-27  
+          **Status:** ZREALIZOWANY  
+          **Powiązanie:** Etap 4F.0–4F — Pompy
+
+          Nie rozdzielamy pomp własnych i zewnętrznych w logice harmonogramu. Każda
+          aktywna pompa jest zwykłym zasobem wspólnej listy, a jej pochodzenie nie wpływa
+          na przydział, przejazdy ani możliwość obsługi kilku budów tego samego dnia.
+
+          O dopasowaniu decydują rzeczywiste parametry: przede wszystkim wysięg, okno
+          **Dostępna od/do**, wcześniejsza zajętość oraz przejazd do kolejnej budowy.
+          Starsze pole `typ` może pozostać neutralną metadaną zgodności, ale nie jest już
+          pokazywane operatorowi ani używane przez algorytm. Zasady zapisano w decyzji 91
+          i wdrożono w przygotowawczym kroku 4F.0.
+          ''').strip()
+          wzorzec_p010 = re.compile(
+              r"## P-010 — Sposób traktowania pomp zewnętrznych.*?(?=\n---\n\n## P-011)",
+              re.S,
+          )
+          if not wzorzec_p010.search(backlog):
+              raise SystemExit("Nie znaleziono sekcji P-010.")
+          backlog = wzorzec_p010.sub(nowy_p010, backlog, count=1)
+          backlog_path.write_text(backlog, encoding="utf-8")
+
+          # -----------------------------------------------------------------
+          # ETAPY: jawny krok przygotowawczy 4F.0 i jego zamknięcie.
+          # -----------------------------------------------------------------
+          etapy_path = Path("ETAPY_ROZWOJU.md")
+          etapy = etapy_path.read_text(encoding="utf-8")
+
+          stary_status = '''- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4E
+            zakończone, następny podetap to 4F.1**'''
+          nowy_status = '''- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4E oraz przygotowawczy
+            4F.0 zakończone, następny podetap to 4F.1**'''
+          if stary_status in etapy:
+              etapy = etapy.replace(stary_status, nowy_status, 1)
+
+          marker_4f = '''- [ ] **4F — niezależny przydział pomp.**
+            - [ ] **4F.1 — stabilna kolejność:**'''
+          wpis_4f0 = '''- [ ] **4F — niezależny przydział pomp.**
+            - [x] **4F.0 — okno dostępności pompy przed przydziałem:** model zasobu ma
+              opcjonalne granice `Dostępna od/do`, a pochodzenie własna/zewnętrzna nie
+              wpływa na algorytm.
+              - [x] **4F.0.1 — model i zgodność:** oba pola czasu mogą być puste; nowe
+                pompy nie dziedziczą początku dnia, starszy `typ` jest tylko neutralną
+                metadaną, a wysięg pozostaje podstawowym parametrem technicznym.
+              - [x] **4F.0.2 — panel i pamięć:** lista pomp pokazuje aktywność,
+                `Dostępna od`, `Dostępna do` i wysięg; nie pokazuje wyboru
+                własna/zewnętrzna, a oba czasy są zachowywane w zapisie planu.
+              - [x] **4F.0.3 — granica zakończenia pracy:** pełny cykl rozpoczęty przed
+                albo dokładnie o `Dostępna do` może zostać dokończony po tej godzinie,
+                a wynik zachowuje liczbę minut przekroczenia do informacji operatora;
+                nowy cykl po tej godzinie jest niedozwolony.
+              - [x] **4F.0.4 — testy:** przypadki bez granic, tylko `od`, tylko `do`,
+                obie granice, dokładna minuta końcowa, przekroczenie oraz podłączenie
+                panelu są objęte `testy/etap_4f_0.test.js` i pełną regresją.
+            - [ ] **4F.1 — stabilna kolejność:**'''
+          if "**4F.0 — okno dostępności pompy" not in etapy:
+              if marker_4f not in etapy:
+                  raise SystemExit("Nie znaleziono miejsca na 4F.0.")
+              etapy = etapy.replace(marker_4f, wpis_4f0, 1)
+
+          sekcja_4f0 = dedent(r'''
+
+          ## Zamknięcie 4F.0 — okno dostępności pomp — 2026-08-27
+
+          - [x] puste `Dostępna od` i `Dostępna do` oznaczają brak ograniczeń;
+          - [x] nowe pompy nie otrzymują już automatycznie początku dnia jako
+            `dostepnaOd`, natomiast jawna godzina ze starszego zapisu jest zachowywana;
+          - [x] `Dostępna do` ogranicza wyłącznie rozpoczęcie nowego pełnego cyklu;
+            rozpoczęta na czas budowa jest kończona, a przekroczenie zostaje zapisane
+            w wyniku dostępności do późniejszego komunikatu operatora;
+          - [x] typ własna/zewnętrzna nie jest kryterium przydziału; starsza wartość
+            może pozostać neutralną metadaną, a w bieżącym panelu pole typu znika;
+          - [x] wysięg pozostaje kluczowym parametrem zgodności pompy z budową;
+          - [x] model i panel działają jako osobne lokalne moduły bez CDN i internetu;
+          - [x] pełna regresja jest warunkiem utworzenia commita przez jednorazowy
+            workflow; po dodaniu `etap_4f_0.test.js` zestaw obejmuje **37** plików
+            `testy/*.test.js`.
+
+          Dla tego przygotowawczego kroku zapisano jawny wyjątek od osobnego testu
+          operatora: 4F.0 nie przydziela jeszcze pomp i nie zmienia godzin budów, a
+          obecność oraz podłączenie nowych pól są sprawdzane automatycznie. Pełny test
+          operatorski dostępności i przydziału pozostaje w 4J.3.
+
+          Zamknięty podetap: **4F.0**. Punkt nadrzędny **4F** pozostaje otwarty.
+          Następny nieukończony podetap: **4F.1 — stabilna kolejność**.
+          ''')
+          if "## Zamknięcie 4F.0 — okno dostępności pomp — 2026-08-27" not in etapy:
+              etapy = etapy.rstrip() + sekcja_4f0 + "\n"
+          etapy_path.write_text(etapy, encoding="utf-8")
+
+          # -----------------------------------------------------------------
+          # README: aktualny model pomp i faktyczny następny krok.
+          # -----------------------------------------------------------------
+          readme_path = Path("README.md")
+          readme = readme_path.read_text(encoding="utf-8")
+
+          readme = readme.replace(
+              "Wartość **Pompa** jest na razie informacją o sposobie rozładunku. Pełna logika przydziału i dostępności pomp pozostaje zakresem Etapu 4.",
+              "Wartość **Pompa** kwalifikuje budowę do niezależnego silnika pomp. Pełny przydział zasobów jest rozwijany w Etapie 4.",
+              1,
+          )
+
+          stara_lista_pomp = '''- typ **Własna** albo **Zewnętrzna**,
+          - znacznik aktywności w bieżącym planie,
+          - godzinę **Dostępna od**,
+          - wysięg w metrach, domyślnie `32 m`.'''
+          nowa_lista_pomp = '''- znacznik aktywności w bieżącym planie,
+          - opcjonalną godzinę **Dostępna od**,
+          - opcjonalną godzinę **Dostępna do**,
+          - wysięg w metrach, domyślnie `32 m`.
+
+          Puste oba pola godzin oznaczają dostępność bez ograniczeń. Pompa, która
+          rozpocznie pełny cykl obsługi budowy przed albo dokładnie o **Dostępna do**,
+          kończy tę budowę nawet wtedy, gdy składanie i mycie wyjdą poza tę godzinę;
+          wynik zachowuje wielkość przekroczenia do późniejszego komunikatu. Nowej
+          budowy rozpoczynającej się po tej granicy pompa już nie dostaje. Program nie
+          rozdziela przydziału na pompy własne i zewnętrzne — najważniejsze są wysięg,
+          aktywność, dostępność, zajętość i przejazd.'''
+          if stara_lista_pomp not in readme:
+              raise SystemExit("Nie znaleziono starej listy pól pomp w README.")
+          readme = readme.replace(stara_lista_pomp, nowa_lista_pomp, 1)
+
+          stary_nastepny_readme = '''Podetap **4E.1** przyjmuje informacyjnie, że baza pompy znajduje się w
+          betoniarni. Wyjazd do pierwszej budowy wykorzystuje ten sam zapisany czas
+          dojazdu co gruszka — bez osobnego pola dla pompy. Pierwszy dojazd nie jest
+          liczony jako zajętość i nie wpływa na przydział ani liczbę pomp; pompa ma po
+          prostu wyjechać odpowiednio wcześniej. Dopiero przejazd po budowie A do budowy B
+          będzie wpływał na możliwość dołożenia kolejnego betonowania. Następny krok to
+          **4E.2 — przejazd pompy pomiędzy budowami**.'''
+          nowy_nastepny_readme = '''Cały punkt **4E — przejazdy pomp** jest zakończony. Przed właściwym przydziałem
+          dodano przygotowawczy **4F.0 — okno dostępności pomp**: puste `Od/Do` oznacza
+          brak ograniczeń, rozpoczęta na czas budowa jest dokańczana, a pochodzenie
+          własna/zewnętrzna nie wpływa na algorytm. Następny krok to **4F.1 — stabilna
+          kolejność budów wymagających pompy**, a później 4F.2 wybierze pierwszą
+          pasującą pompę.'''
+          if stary_nastepny_readme not in readme:
+              raise SystemExit("Nie znaleziono starego opisu następnego kroku w README.")
+          readme = readme.replace(stary_nastepny_readme, nowy_nastepny_readme, 1)
+
+          if "node testy/etap_4f_0.test.js" not in readme:
+              marker_testow = "    node testy/etap_4b_3.test.js\n"
+              dodatkowe_testy = (
+                  marker_testow +
+                  "    node testy/panel_pomp.test.js\n"
+                  "    node testy/etap_4d_1.test.js\n"
+                  "    node testy/etap_4d_2.test.js\n"
+                  "    node testy/etap_4d_3.test.js\n"
+                  "    node testy/etap_4e_1.test.js\n"
+                  "    node testy/etap_4e_2.test.js\n"
+                  "    node testy/etap_4e_3.test.js\n"
+                  "    node testy/etap_4e_4.test.js\n"
+                  "    node testy/etap_4f_0.test.js\n"
+              )
+              if marker_testow not in readme:
+                  raise SystemExit("Nie znaleziono listy testów w README.")
+              readme = readme.replace(marker_testow, dodatkowe_testy, 1)
+
+          readme_path.write_text(readme, encoding="utf-8")
+
+      - name: Sprawdź pełną regresję
+        shell: bash
+        run: |
+          set -euo pipefail
+          liczba=0
+          for plik in testy/*.test.js; do
+            echo "=== $plik ==="
+            node "$plik"
+            liczba=$((liczba + 1))
+          done
+          echo "Przeszło plików testowych: $liczba"
+          test "$liczba" -eq 37
+          git diff --check
+
+      - name: Zapisz gotowy pakiet 4F.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            index.html \
+            README.md \
+            PROJECT_DECISIONS.md \
+            POMYSLY_I_BACKLOG.md \
+            ETAPY_ROZWOJU.md \
+            js/pompy/dostepnosc_pomp.js \
+            js/interfejs/dostepnosc_pomp.js \
+            testy/etap_4f_0.test.js \
+            testy/TESTY_ETAP_4F_0.md
+          if git diff --cached --quiet; then
+            echo "Brak zmian do zapisania."
+            exit 0
+          fi
+          git commit -m "Dodaj okno dostępności pomp przed 4F.1"
+          git push origin HEAD:main
