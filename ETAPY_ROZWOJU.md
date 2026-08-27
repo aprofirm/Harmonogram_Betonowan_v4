@@ -49,8 +49,8 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4E oraz
-  4F.0–4F.4 zakończone, następny podetap to 4F.5**
+- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4F zakończone,
+  następny podetap to 4G.1**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -568,7 +568,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
     i działa offline; automatyczne pozyskiwanie tras pozostaje zakresem Etapu 6.
   - [x] **4E.4 — testy:** brak trasy, trasa zerowa, różne czasy w obu kierunkach
     oraz przejazd wymuszający późniejszy start następnej budowy.
-- [ ] **4F — niezależny przydział pomp.**
+- [x] **4F — niezależny przydział pomp.**
   - [x] **4F.0 — okno dostępności pompy przed przydziałem:** model zasobu ma
     opcjonalne granice `Dostępna od/do`, a pochodzenie własna/zewnętrzna nie
     wpływa na algorytm.
@@ -598,7 +598,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
     wynik podaje najwcześniejszą możliwą godzinę i wielkość przesunięcia bez
     cichego zmieniania całego harmonogramu gruszek oraz zachowuje dokładną
     przyczynę do automatycznej notki dla operatora.
-  - [ ] **4F.5 — testy integracyjne:** wiele budów, równe starty, wyłączona
+  - [x] **4F.5 — testy integracyjne:** wiele budów, równe starty, wyłączona
     pompa, niepasujący parametr, przejazd i powtarzalny wynik.
 - [ ] **4G — minimalna liczba pomp.**
   - [ ] **4G.1 — wynik silnika:** obliczenie najmniejszej technicznej liczby
@@ -911,9 +911,8 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Rozpocząć **4F.5 — testy integracyjne**: sprawdzić razem wiele budów, równe
-starty, pompę wyłączoną, niepasujący wysięg, przejazdy oraz powtarzalność
-wyniku po pełnym połączeniu reguł 4F.1–4F.4.
+Rozpocząć **4G.1 — wynik silnika**: obliczyć najmniejszą techniczną liczbę
+pomp potrzebnych do planu bez nakładania ich pełnych cykli.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -2074,3 +2073,31 @@ pozostaje częścią 4J.3.
 
 Zamknięty podetap: **4F.4**. Punkt nadrzędny **4F** pozostaje otwarty.
 Następny nieukończony podetap: **4F.5 — testy integracyjne**.
+
+
+## Zamknięcie 4F.5 — testy integracyjne niezależnego przydziału pomp — 2026-08-27
+
+- [x] jeden scenariusz łączy wiele budów oraz pełne reguły 4F.1–4F.4;
+- [x] równe planowane starty zachowują kolejność wejściową;
+- [x] pompa wyłączona jest pomijana, a zbyt mały wysięg daje jawne odrzucenie;
+- [x] pompa 42 m zachowuje wydłużony pełny cykl wynikający z większego wysięgu;
+- [x] brak możliwości wykonania budowy zgodnie z planem daje najwcześniejszy
+  możliwy start z uwzględnieniem zakończenia poprzedniej pracy i przejazdu;
+- [x] późniejsza budowa może ponownie użyć tej samej pompy po poprawnym
+  przejeździe między budowami;
+- [x] dwa kolejne przeliczenia tych samych danych dają identyczny wynik;
+- [x] budowy, kursy i lista pomp pozostają niemodyfikowane;
+- [x] test `testy/etap_4f_5.test.js` oraz pełna regresja wszystkich **42/42**
+  plików `testy/*.test.js` przechodzą poprawnie.
+
+Pierwsze uruchomienie testu ujawniło błędne oczekiwanie testowe dla pompy 42 m:
+pełny cykl tej pompy jest dłuższy niż dla 32 m, dlatego poprawny najwcześniejszy
+start wynosi `585` minut (09:45), czyli `+45 min`. Silnik zachował się zgodnie z
+wcześniej ustalonymi regułami; kod produkcyjny nie wymagał poprawki.
+
+Osobny test operatora nie jest wymagany, ponieważ niezależny przydział pomp nie
+jest jeszcze podłączony do centralnego wyniku ani docelowego widoku. Test
+operatorski pozostaje częścią 4J.3.
+
+Zamknięty podetap: **4F.5**. Cały punkt **4F — niezależny przydział pomp** jest
+zakończony. Następny nieukończony podetap: **4G.1 — wynik silnika**.

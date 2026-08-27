@@ -314,6 +314,7 @@ Instrukcje testów ręcznych znajdują się w plikach:
 - [testy/TESTY_ETAP_4F_2.md](testy/TESTY_ETAP_4F_2.md) — wybór pierwszej pasującej pompy,
 - [testy/TESTY_ETAP_4F_3.md](testy/TESTY_ETAP_4F_3.md) — brak nakładania pełnych okresów pracy pompy,
 - [testy/TESTY_ETAP_4F_4.md](testy/TESTY_ETAP_4F_4.md) — najwcześniejszy możliwy start bez cichego przesuwania planu,
+- [testy/TESTY_ETAP_4F_5.md](testy/TESTY_ETAP_4F_5.md) — integracja wszystkich reguł niezależnego przydziału pomp,
 - [testy/TESTY_KP_1.md](testy/TESTY_KP_1.md) — plan testu pamięci dnia,
 - [testy/TESTY_KP_2.md](testy/TESTY_KP_2.md) — plan testu pamięci tras,
 - [testy/TESTY_KP_3.md](testy/TESTY_KP_3.md) — ilość ręczna, wariant i szeroki widok,
@@ -354,6 +355,7 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_4f_2.test.js
     node testy/etap_4f_3.test.js
     node testy/etap_4f_4.test.js
+    node testy/etap_4f_5.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
@@ -420,9 +422,8 @@ zrealizowana albo niewymagająca pompy nie zajmuje zasobu. Brakujące lub
 sprzeczne godziny kursu kończą się czytelnym błędem bez zmiany danych
 wejściowych.
 
-Cały punkt **4E — przejazdy pomp** jest zakończony. Przygotowawczy **4F.0 —
-okno dostępności pomp**, **4F.1 — stabilna kolejność**, **4F.2 — pierwsza
-pasująca pompa** oraz **4F.3 — brak nakładania** są zakończone. Puste `Od/Do`
+Całe punkty **4E — przejazdy pomp** i **4F — niezależny przydział pomp** są
+zakończone. Reguły 4F.0–4F.5 są objęte testami jednostkowymi i integracyjnym. Puste `Od/Do`
 oznacza brak ograniczeń, rozpoczęta na czas budowa jest dokańczana, a
 pochodzenie własna/zewnętrzna nie wpływa na algorytm. Rzeczywiste prace pompowe
 są porządkowane według planowanego początku betonowania, a następnie dostają
@@ -431,5 +432,7 @@ cykl i warunek przejazdu. Kontrola obejmuje przygotowanie, betonowanie oraz
 czynności po pracy; dokładne zetknięcie końca jednego cyklu z początkiem
 następnego jest dozwolone. Gdy żadna pompa nie pasuje do planowanej godziny,
 silnik podaje najwcześniejszy możliwy start, przesunięcie i dokładne ograniczenie
-bez zmiany kursów gruszek. Następny krok to **4F.5 — testy integracyjne**.
-Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.
+bez zmiany kursów gruszek. Test integracyjny 4F.5 potwierdził wspólne
+działanie tych reguł, w tym pompy 42 m, przejazdów i powtarzalności wyniku.
+Następny krok to **4G.1 — wynik silnika minimalnej liczby pomp**. Pełne
+połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.
