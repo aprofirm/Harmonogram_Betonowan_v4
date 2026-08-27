@@ -28,7 +28,8 @@ jobs:
           start = None
           koniec = None
           for indeks, linia in enumerate(workflow):
-              if linia == "        run: |" and indeks > 0 and "Wprowadź model dostępności pomp" in workflow[indeks - 1]:
+              poprzednie = workflow[max(0, indeks - 4):indeks]
+              if linia == "        run: |" and any("Wprowadź model dostępności pomp" in pozycja for pozycja in poprzednie):
                   start = indeks + 1
                   continue
               if start is not None and linia == "      - name: Sprawdź pełną regresję":
