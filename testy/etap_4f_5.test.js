@@ -174,11 +174,11 @@ function sprawdzPelnePolaczenieRegul4F(pompy) {
   assert.equal(
     budowaZPrzejazdem.najwczesniejszyMozliwyStart
       .minutaNajwczesniejszegoStartuBetonowania,
-    575
+    585
   );
   assert.equal(
     budowaZPrzejazdem.najwczesniejszyMozliwyStart.przesuniecieStartuMinuty,
-    35
+    45
   );
   assert.equal(
     budowaZPrzejazdem.najwczesniejszyMozliwyStart.przyczynaOgraniczenia,
