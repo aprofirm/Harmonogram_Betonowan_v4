@@ -50,6 +50,22 @@ jobs:
               tresc = tresc.replace(stary, nowy, 1)
           test.write_text(tresc, encoding="utf-8")
 
+          index = Path("index.html")
+          tresc_index = index.read_text(encoding="utf-8")
+          stary_badge = '<span class="znacznik-etapu">Etap 4F.1</span>'
+          nowy_badge = '<span class="znacznik-etapu">Etap 4F.2</span>'
+          if stary_badge not in tresc_index:
+              raise SystemExit("Nie znaleziono górnego znacznika Etap 4F.1.")
+          index.write_text(tresc_index.replace(stary_badge, nowy_badge, 1), encoding="utf-8")
+
+          kp4 = Path("testy/kp_4.test.js")
+          tresc_kp4 = kp4.read_text(encoding="utf-8")
+          stary_wzorzec = r'assert.match(html, /4F\.1 · stabilna kolejność pomp/);'
+          nowy_wzorzec = r'assert.match(html, /4F\.2 · pierwsza pasująca pompa/);'
+          if stary_wzorzec not in tresc_kp4:
+              raise SystemExit("Nie znaleziono starego oczekiwania etykiety w teście KP-4.")
+          kp4.write_text(tresc_kp4.replace(stary_wzorzec, nowy_wzorzec, 1), encoding="utf-8")
+
       - name: Sprawdź 4F.1 i pełną regresję
         shell: bash
         run: |
@@ -79,6 +95,7 @@ jobs:
             ETAPY_ROZWOJU.md \
             js/pompy/przydzial_pomp.js \
             testy/etap_4f_1.test.js \
-            testy/TESTY_ETAP_4F_1.md
+            testy/TESTY_ETAP_4F_1.md \
+            testy/kp_4.test.js
           git commit -m "Zrealizuj 4F.1 stabilną kolejność pomp"
           git push origin HEAD:main
