@@ -1884,3 +1884,26 @@ Silnik zachowuje listę wszystkich przydziałów każdej pompy i sprawdza nowy
 okres względem całej tej listy. Wykryty konflikt ma jawny powód `pompa-zajeta`
 oraz wskazuje budowę i okres powodujący kolizję. Krok 4F.3 nie przesuwa godzin;
 wyliczenie najwcześniejszego alternatywnego startu należy do 4F.4.
+
+
+---
+
+## 95. Najwcześniejszy możliwy start jest podpowiedzią, a nie cichą korektą planu
+
+Jeżeli żadna pompa nie może obsłużyć budowy o planowanej godzinie, silnik 4F.4
+nie przesuwa samodzielnie budowy ani kursów gruszek. Zamiast tego wyznacza
+najwcześniejszy możliwy start dla aktywnych pomp o wystarczającym wysięgu.
+
+Wyliczenie bierze pod uwagę początek okna `Dostępna od`, zakończenie poprzedniego
+pełnego cyklu pompy oraz znany kierunkowy czas przejazdu między budowami. Brak
+znanej trasy nie może być zastępowany wartością domyślną. Jeżeli wyliczony
+początek przygotowania wypada później niż `Dostępna do`, taka pompa nie daje
+możliwego późniejszego startu; rozpoczęcie dokładnie o `Dostępna do` pozostaje
+dozwolone zgodnie z wcześniejszą decyzją.
+
+Wynik podaje minutę najwcześniejszego startu betonowania, wielkość przesunięcia,
+wybraną pompę, główną przyczynę ograniczenia oraz listę wszystkich istotnych
+przyczyn. Przy kilku możliwościach wybierany jest najwcześniejszy wynik, a przy
+remisie zachowywana jest kolejność pomp. Dane wejściowe i harmonogram gruszek
+pozostają bez zmian; późniejsza decyzja o korekcie planu należy do osobnego
+mechanizmu harmonogramu i operatora.

@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4E oraz
-  4F.0–4F.3 zakończone, następny podetap to 4F.4**
+  4F.0–4F.4 zakończone, następny podetap to 4F.5**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -594,7 +594,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
   - [x] **4F.3 — brak nakładania:** jedna pompa nie może mieć dwóch kolidujących
     okresów pracy, a granica `gotowa == kolejny start przygotowania` jest
     dozwolona.
-  - [ ] **4F.4 — najwcześniejszy start:** gdy żadna pompa nie jest gotowa,
+  - [x] **4F.4 — najwcześniejszy start:** gdy żadna pompa nie jest gotowa,
     wynik podaje najwcześniejszą możliwą godzinę i wielkość przesunięcia bez
     cichego zmieniania całego harmonogramu gruszek oraz zachowuje dokładną
     przyczynę do automatycznej notki dla operatora.
@@ -911,9 +911,9 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Rozpocząć **4F.4 — najwcześniejszy start**: gdy żadna pompa nie może wykonać
-budowy zgodnie z planem, podać najwcześniejszą możliwą godzinę, wielkość
-przesunięcia i dokładną przyczynę bez cichego zmieniania harmonogramu gruszek.
+Rozpocząć **4F.5 — testy integracyjne**: sprawdzić razem wiele budów, równe
+starty, pompę wyłączoną, niepasujący wysięg, przejazdy oraz powtarzalność
+wyniku po pełnym połączeniu reguł 4F.1–4F.4.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -2046,3 +2046,31 @@ pozostaje częścią 4J.3.
 
 Zamknięty podetap: **4F.3**. Punkt nadrzędny **4F** pozostaje otwarty.
 Następny nieukończony podetap: **4F.4 — najwcześniejszy start**.
+
+
+## Zamknięcie 4F.4 — najwcześniejszy możliwy start — 2026-08-27
+
+- [x] gdy żadna pompa nie pasuje do planowanej godziny, wynik zachowuje plan i
+  osobno podaje najwcześniejszą możliwą minutę rozpoczęcia betonowania;
+- [x] przesunięcie jest liczone od pełnego cyklu pompy, więc obejmuje wymagane
+  przygotowanie przed pierwszym rozładunkiem;
+- [x] ograniczenia uwzględniają `Dostępna od`, wcześniejszy przydział pompy i
+  znany kierunkowy czas przejazdu między budowami;
+- [x] wynik zachowuje główną przyczynę ograniczenia i pełną listę przyczyn do
+  późniejszego utworzenia automatycznej notki dla operatora;
+- [x] przy kilku możliwych pompach wybierany jest najwcześniejszy start, a przy
+  remisie zachowywana jest stabilna kolejność pomp;
+- [x] brak trasy, pompa nieaktywna, zbyt mały wysięg albo brak możliwości startu
+  w oknie dostępności nie powodują wymyślenia zastępczego czasu;
+- [x] budowy, kursy i lista pomp nie są modyfikowane, a harmonogram gruszek nie
+  jest cicho przesuwany;
+- [x] test `testy/etap_4f_4.test.js` oraz pełna regresja wszystkich **41/41**
+  plików `testy/*.test.js` przechodzą poprawnie;
+- [x] wszystkie śledzone pliki JavaScript przechodzą kontrolę składni.
+
+Osobny test operatora nie jest wymagany, ponieważ wynik przydziału 4F nie jest
+jeszcze podłączony do centralnego wyniku ani interfejsu. Pełny test operatorski
+pozostaje częścią 4J.3.
+
+Zamknięty podetap: **4F.4**. Punkt nadrzędny **4F** pozostaje otwarty.
+Następny nieukończony podetap: **4F.5 — testy integracyjne**.

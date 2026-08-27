@@ -313,6 +313,7 @@ Instrukcje testów ręcznych znajdują się w plikach:
 - [testy/TESTY_ETAP_4F_1.md](testy/TESTY_ETAP_4F_1.md) — stabilna kolejność przed przydziałem pomp,
 - [testy/TESTY_ETAP_4F_2.md](testy/TESTY_ETAP_4F_2.md) — wybór pierwszej pasującej pompy,
 - [testy/TESTY_ETAP_4F_3.md](testy/TESTY_ETAP_4F_3.md) — brak nakładania pełnych okresów pracy pompy,
+- [testy/TESTY_ETAP_4F_4.md](testy/TESTY_ETAP_4F_4.md) — najwcześniejszy możliwy start bez cichego przesuwania planu,
 - [testy/TESTY_KP_1.md](testy/TESTY_KP_1.md) — plan testu pamięci dnia,
 - [testy/TESTY_KP_2.md](testy/TESTY_KP_2.md) — plan testu pamięci tras,
 - [testy/TESTY_KP_3.md](testy/TESTY_KP_3.md) — ilość ręczna, wariant i szeroki widok,
@@ -352,6 +353,7 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_4f_1.test.js
     node testy/etap_4f_2.test.js
     node testy/etap_4f_3.test.js
+    node testy/etap_4f_4.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
@@ -427,5 +429,7 @@ są porządkowane według planowanego początku betonowania, a następnie dostaj
 pierwszy aktywny zasób spełniający wymagany wysięg, dostępność, wolny pełny
 cykl i warunek przejazdu. Kontrola obejmuje przygotowanie, betonowanie oraz
 czynności po pracy; dokładne zetknięcie końca jednego cyklu z początkiem
-następnego jest dozwolone. Następny krok to **4F.4 — najwcześniejszy start**.
+następnego jest dozwolone. Gdy żadna pompa nie pasuje do planowanej godziny,
+silnik podaje najwcześniejszy możliwy start, przesunięcie i dokładne ograniczenie
+bez zmiany kursów gruszek. Następny krok to **4F.5 — testy integracyjne**.
 Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.
