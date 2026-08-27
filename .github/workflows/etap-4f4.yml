@@ -24,7 +24,19 @@ jobs:
           node-version: "20"
 
       - name: Wprowadz zmiany 4F.4
-        run: python3 .github/scripts/etap_4f4.py
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/etap_4f4.py
+          python3 - <<'PY'
+          from pathlib import Path
+          for nazwa in ["testy/etap_4f_4.test.js", "testy/TESTY_ETAP_4F_4.md"]:
+              sciezka = Path(nazwa)
+              tekst = sciezka.read_text(encoding="utf-8")
+              if tekst.startswith("\\\n"):
+                  tekst = tekst[2:]
+              sciezka.write_text(tekst, encoding="utf-8")
+          PY
 
       - name: Uruchom test 4F.4
         run: node testy/etap_4f_4.test.js
