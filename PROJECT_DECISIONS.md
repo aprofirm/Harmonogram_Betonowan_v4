@@ -1500,9 +1500,9 @@ Wiersz pomp ma pokazywać co najmniej:
 - liczbę pomp, którymi operator dysponuje,
 - skróconą informację o dostępności.
 
-Godzina **Dostępna od** jest cechą konkretnej pompy, a nie jedną wspólną
-godziną całej floty. Panel może pokazać zwięzłe podsumowanie, np. ile pomp jest
-dostępnych teraz i ile dołączy później, natomiast szczegóły pozostają na liście
+Godziny **Dostępna od** i **Dostępna do** są cechami konkretnej pompy, a nie
+jedną wspólną godziną całej floty. Puste pole oznacza brak danej granicy czasu.
+Panel może pokazać zwięzłe podsumowanie, natomiast szczegóły pozostają na liście
 pomp. Układ ma pozostać responsywny i nie może przenosić logiki obliczeniowej do
 HTML ani CSS.
 
@@ -1554,7 +1554,7 @@ wysięgu; dopiero wtedy pojawia się pole przyjmujące wartość większą niż 
 Odznaczenie przywraca standard `32 m`. W przyszłym przydziale pompa będzie
 pasowała do budowy tylko wtedy, gdy jej wysięg nie jest mniejszy od wymagania.
 
-Godzina **Dostępna od**, typ, aktywność i wysięg należą do konkretnej pompy i są
+Godziny **Dostępna od/do**, aktywność i wysięg należą do konkretnej pompy i są
 zapisywane w planie dnia. Wymagany wysięg należy do konkretnej budowy. Licznik
 potrzebnych pomp nie może być wyprowadzany z samej liczby wpisanych zasobów — ma
 pozostać nieustalony do czasu wdrożenia okresów zajętości i minimalnej floty.
@@ -1629,8 +1629,8 @@ skrótem operatora i korzysta z tych samych operacji listy, ale nie zastępuje
 ich kontraktu.
 
 Operacje listy nie uruchamiają obliczeń zajętości, przydziału ani minimalnej
-liczby pomp. Nie rozstrzygają też sposobu przydzielania pomp zewnętrznych;
-otwarty wariant P-010 pozostaje do decyzji przed etapem 4F.
+liczby pomp. Zgodnie z decyzją 91 pochodzenie pompy nie jest osobnym kryterium
+przydziału; liczą się jej parametry i rzeczywista dostępność.
 
 ## 86. Walidacja pompy nie może tworzyć pozornie poprawnego zasobu
 
@@ -1638,12 +1638,14 @@ Każda znormalizowana lista pomp ma unikalne, niepuste identyfikatory. Jawne
 powtórzenie `idPompy` jest błędem, natomiast brakujące ID jest uzupełniane tak,
 aby nie kolidowało z żadnym identyfikatorem już obecnym na liście.
 
-Model dopuszcza wyłącznie typ `wlasna` albo `zewnetrzna`. Puste pola starszego
-zapisu mogą otrzymać opisane wartości domyślne: nazwę wynikającą z numeru, typ
-`wlasna`, aktywność `true`, początek dnia jako godzinę dostępności i wysięg
-`32 m`. Wartości niepuste, ale błędne, muszą zostać odrzucone zamiast cichego
-przekształcenia. Dotyczy to szczególnie aktywności — tekst `"false"` nie jest
-wartością logiczną i nie może zostać potraktowany jako `true`.
+Starsze pole `typ` może zostać odczytane dla zgodności ze starym zapisem, ale
+zgodnie z późniejszą decyzją 91 nie jest kryterium przydziału i nie jest wymagane
+w bieżącym interfejsie. Puste pola starszego zapisu otrzymują nazwę wynikającą z
+numeru, aktywność `true` i wysięg `32 m`; puste `dostepnaOd` i `dostepnaDo`
+pozostają puste i oznaczają brak ograniczeń godzinowych. Wartości niepuste, ale
+błędne, muszą zostać odrzucone zamiast cichego przekształcenia. Dotyczy to
+szczególnie aktywności — tekst `"false"` nie jest wartością logiczną i nie może
+zostać potraktowany jako `true`.
 
 Jedynym wejściem dla przyszłego algorytmu przydziału jest lista aktywnych pomp
 zwracana przez model. Pompa z `aktywna: false` nie może znaleźć się wśród
@@ -1749,6 +1751,48 @@ przyczynę `przejazd-miedzy-budowami`. Etap 4E sam nie nadpisuje
 `StartPlanowany`, `StartZadany` ani `StartRoboczy`. Dane wykorzysta
 przydział pomp w 4F, prezentacja notki należy do 4I.4, a wspólne faktyczne
 przesunięcie planu pomp i gruszek pozostaje zakresem Etapu 5.
+
+---
+
+## 91. Okno dostępności pompy i brak rozróżnienia własna/zewnętrzna w przydziale
+
+Każda pompa jest dla silnika tym samym rodzajem zasobu. Nie tworzymy osobnych
+reguł przydziału dla pomp własnych i zewnętrznych. Starsze pole `typ` może być
+zachowane jako neutralna metadana zgodności, ale nie wpływa na wybór pompy,
+kolejność, przejazd ani liczbę potrzebnych zasobów. Najważniejszym parametrem
+zgodności technicznej pozostaje wysięg: pompa może obsłużyć budowę tylko wtedy,
+gdy jej `wysiegMetry` nie jest mniejszy od `wymaganyWysiegPompyMetry` budowy.
+
+Każda pompa ma dwa niezależne, opcjonalne pola czasu:
+
+- `dostepnaOd` — najwcześniejszy moment rozpoczęcia pełnego cyklu na budowie;
+- `dostepnaDo` — najpóźniejszy moment rozpoczęcia pełnego cyklu na budowie.
+
+Puste oba pola oznaczają dostępność bez ograniczeń godzinowych. Puste tylko
+`dostepnaOd` oznacza brak dolnej granicy, a puste tylko `dostepnaDo` — brak
+górnej granicy. Nowa pompa nie dziedziczy automatycznie `poczatekDnia` jako
+godziny dostępności; oba pola pozostają puste, dopóki operator ich nie ustawi.
+
+Za rozpoczęcie obsługi budowy uznajemy początek pełnego okresu zajętości pompy,
+czyli rozpoczęcie przygotowania/rozstawiania przed pierwszym rozładunkiem.
+Jeżeli ten moment wypada dokładnie o `dostepnaDo`, rozpoczęcie jest jeszcze
+dozwolone. Jeżeli wypada później — pompa nie może rozpocząć nowej budowy.
+
+Rozpoczęta na czas budowa musi zostać dokończona. Koniec pompowania, składanie,
+mycie i przygotowanie do wyjazdu mogą wyjść poza `dostepnaDo`. Taki przydział
+pozostaje poprawny, ale wynik musi zachować liczbę minut przekroczenia oraz
+informację wymagającą pokazania operatorowi. Po zakończeniu tej budowy pompa nie
+może dostać kolejnej pracy rozpoczynającej się po `dostepnaDo`.
+
+Kandydat do przyszłego przydziału 4F musi zatem jednocześnie być aktywny, mieć
+wystarczający wysięg, mieścić początek nowego pełnego cyklu w swoim oknie
+dostępności oraz być wolny po uwzględnieniu wcześniejszej zajętości i przejazdu.
+Sam krok 4F.0 nie przydziela jeszcze pomp ani nie przesuwa godzin budów.
+
+Ta decyzja zastępuje wcześniejsze fragmenty decyzji 79, 82, 85 i 86 w zakresie
+obowiązkowego typu pompy oraz automatycznego ustawiania `dostepnaOd` na początek
+dnia. Pozostałe zasady stabilnego ID, aktywności i domyślnego wysięgu `32 m`
+pozostają bez zmian.
 
 ---
 

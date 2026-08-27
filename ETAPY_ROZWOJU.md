@@ -49,8 +49,8 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4E
-  zakończone, następny podetap to 4F.1**
+- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4E oraz przygotowawczy
+  4F.0 zakończone, następny podetap to 4F.1**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -568,6 +568,22 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
   - [x] **4E.4 — testy:** brak trasy, trasa zerowa, różne czasy w obu kierunkach
     oraz przejazd wymuszający późniejszy start następnej budowy.
 - [ ] **4F — niezależny przydział pomp.**
+  - [x] **4F.0 — okno dostępności pompy przed przydziałem:** model zasobu ma
+    opcjonalne granice `Dostępna od/do`, a pochodzenie własna/zewnętrzna nie
+    wpływa na algorytm.
+    - [x] **4F.0.1 — model i zgodność:** oba pola czasu mogą być puste; nowe
+      pompy nie dziedziczą początku dnia, starszy `typ` jest tylko neutralną
+      metadaną, a wysięg pozostaje podstawowym parametrem technicznym.
+    - [x] **4F.0.2 — panel i pamięć:** lista pomp pokazuje aktywność,
+      `Dostępna od`, `Dostępna do` i wysięg; nie pokazuje wyboru
+      własna/zewnętrzna, a oba czasy są zachowywane w zapisie planu.
+    - [x] **4F.0.3 — granica zakończenia pracy:** pełny cykl rozpoczęty przed
+      albo dokładnie o `Dostępna do` może zostać dokończony po tej godzinie,
+      a wynik zachowuje liczbę minut przekroczenia do informacji operatora;
+      nowy cykl po tej godzinie jest niedozwolony.
+    - [x] **4F.0.4 — testy:** przypadki bez granic, tylko `od`, tylko `do`,
+      obie granice, dokładna minuta końcowa, przekroczenie oraz podłączenie
+      panelu są objęte `testy/etap_4f_0.test.js` i pełną regresją.
   - [ ] **4F.1 — stabilna kolejność:** budowy wymagające pompy są rozpatrywane
     deterministycznie według planowanego startu i kolejności wejściowej.
   - [ ] **4F.2 — pierwsza pasująca pompa:** silnik wybiera pierwszą aktywną,
@@ -1979,4 +1995,28 @@ Cały punkt **4E — przejazdy pomp** jest zakończony. Nie jest wymagany
 osobny test operatora, ponieważ 4E.2–4E.4 nie dodają nowego pola ani nowej
 operacji w interfejsie; dołączenie modułu do strony jest objęte testem
 automatycznym. Następny podetap to **4F.1 — stabilna kolejność**.
+
+## Zamknięcie 4F.0 — okno dostępności pomp — 2026-08-27
+
+- [x] puste `Dostępna od` i `Dostępna do` oznaczają brak ograniczeń;
+- [x] nowe pompy nie otrzymują już automatycznie początku dnia jako
+  `dostepnaOd`, natomiast jawna godzina ze starszego zapisu jest zachowywana;
+- [x] `Dostępna do` ogranicza wyłącznie rozpoczęcie nowego pełnego cyklu;
+  rozpoczęta na czas budowa jest kończona, a przekroczenie zostaje zapisane
+  w wyniku dostępności do późniejszego komunikatu operatora;
+- [x] typ własna/zewnętrzna nie jest kryterium przydziału; starsza wartość
+  może pozostać neutralną metadaną, a w bieżącym panelu pole typu znika;
+- [x] wysięg pozostaje kluczowym parametrem zgodności pompy z budową;
+- [x] model i panel działają jako osobne lokalne moduły bez CDN i internetu;
+- [x] pełna regresja jest warunkiem utworzenia commita przez jednorazowy
+  workflow; po dodaniu `etap_4f_0.test.js` zestaw obejmuje **37** plików
+  `testy/*.test.js`.
+
+Dla tego przygotowawczego kroku zapisano jawny wyjątek od osobnego testu
+operatora: 4F.0 nie przydziela jeszcze pomp i nie zmienia godzin budów, a
+obecność oraz podłączenie nowych pól są sprawdzane automatycznie. Pełny test
+operatorski dostępności i przydziału pozostaje w 4J.3.
+
+Zamknięty podetap: **4F.0**. Punkt nadrzędny **4F** pozostaje otwarty.
+Następny nieukończony podetap: **4F.1 — stabilna kolejność**.
 

@@ -78,7 +78,7 @@ Odbiór własny jest zamówieniem dnia, ale nie jest automatycznie układany jak
 
 Dla czytelności odbiory własne są oddzielone od głównej tabeli dostaw planowanych i trafiają do osobnej, domyślnie zwiniętej sekcji **Odbiory własne** poniżej harmonogramu. Przy budowie dodawanej ręcznie wybór rodzaju rozładunku jest wymagany.
 
-Wartość **Pompa** jest na razie informacją o sposobie rozładunku. Pełna logika przydziału i dostępności pomp pozostaje zakresem Etapu 4.
+Wartość **Pompa** kwalifikuje budowę do niezależnego silnika pomp. Pełny przydział zasobów jest rozwijany w Etapie 4.
 
 ## Ilość betonu i wariant roboczy
 
@@ -193,10 +193,18 @@ bezpośrednio pod nimi pompy. Dla pomp można wybrać tryb pracy i podać liczb�
 zasobów rzeczywiście pozostających do dyspozycji. Program tworzy wtedy
 czytelną listę, na której każda pompa ma osobno:
 
-- typ **Własna** albo **Zewnętrzna**,
 - znacznik aktywności w bieżącym planie,
-- godzinę **Dostępna od**,
+- opcjonalną godzinę **Dostępna od**,
+- opcjonalną godzinę **Dostępna do**,
 - wysięg w metrach, domyślnie `32 m`.
+
+Puste oba pola godzin oznaczają dostępność bez ograniczeń. Pompa, która
+rozpocznie pełny cykl obsługi budowy przed albo dokładnie o **Dostępna do**,
+kończy tę budowę nawet wtedy, gdy składanie i mycie wyjdą poza tę godzinę;
+wynik zachowuje wielkość przekroczenia do późniejszego komunikatu. Nowej
+budowy rozpoczynającej się po tej granicy pompa już nie dostaje. Program nie
+rozdziela przydziału na pompy własne i zewnętrzne — najważniejsze są wysięg,
+aktywność, dostępność, zajętość i przejazd.
 
 Przy budowie z rodzajem rozładunku **Pompa** program przyjmuje standardowy
 wymagany wysięg `32 m` i pokazuje go w kompaktowym opisie. Pole do wpisania
@@ -329,6 +337,15 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_4a_3.test.js
     node testy/etap_4b_2.test.js
     node testy/etap_4b_3.test.js
+    node testy/panel_pomp.test.js
+    node testy/etap_4d_1.test.js
+    node testy/etap_4d_2.test.js
+    node testy/etap_4d_3.test.js
+    node testy/etap_4e_1.test.js
+    node testy/etap_4e_2.test.js
+    node testy/etap_4e_3.test.js
+    node testy/etap_4e_4.test.js
+    node testy/etap_4f_0.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
@@ -395,11 +412,10 @@ zrealizowana albo niewymagająca pompy nie zajmuje zasobu. Brakujące lub
 sprzeczne godziny kursu kończą się czytelnym błędem bez zmiany danych
 wejściowych.
 
-Podetap **4E.1** przyjmuje informacyjnie, że baza pompy znajduje się w
-betoniarni. Wyjazd do pierwszej budowy wykorzystuje ten sam zapisany czas
-dojazdu co gruszka — bez osobnego pola dla pompy. Pierwszy dojazd nie jest
-liczony jako zajętość i nie wpływa na przydział ani liczbę pomp; pompa ma po
-prostu wyjechać odpowiednio wcześniej. Dopiero przejazd po budowie A do budowy B
-będzie wpływał na możliwość dołożenia kolejnego betonowania. Następny krok to
-**4E.2 — przejazd pompy pomiędzy budowami**.
+Cały punkt **4E — przejazdy pomp** jest zakończony. Przed właściwym przydziałem
+dodano przygotowawczy **4F.0 — okno dostępności pomp**: puste `Od/Do` oznacza
+brak ograniczeń, rozpoczęta na czas budowa jest dokańczana, a pochodzenie
+własna/zewnętrzna nie wpływa na algorytm. Następny krok to **4F.1 — stabilna
+kolejność budów wymagających pompy**, a później 4F.2 wybierze pierwszą
+pasującą pompę.
 Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.

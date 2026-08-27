@@ -185,25 +185,19 @@ pierwszego do końca ostatniego rozładunku. Decyzję zapisano w punkcie 83
 
 ## P-010 — Sposób traktowania pomp zewnętrznych
 
-**Data:** 2026-08-23
-**Status:** DO DOPRECYZOWANIA
-**Powiązanie:** Etap 4F — Pompy
+**Data:** 2026-08-23; rozstrzygnięto 2026-08-27
+**Status:** ZREALIZOWANY
+**Powiązanie:** Etap 4F.0–4F — Pompy
 
-Model ma rozróżniać pompy własne i zewnętrzne, ale trzeba jeszcze ustalić, czy
-pompa zewnętrzna:
+Nie rozdzielamy pomp własnych i zewnętrznych w logice harmonogramu. Każda
+aktywna pompa jest zwykłym zasobem wspólnej listy, a jej pochodzenie nie wpływa
+na przydział, przejazdy ani możliwość obsługi kilku budów tego samego dnia.
 
-- jest zwykłym zasobem wspólnej listy,
-- jest z góry przypisywana do konkretnej budowy,
-- może obsłużyć kilka budów tego samego dnia,
-- rozpoczyna dzień w bazie betoniarni, własnej bazie czy przy pierwszej budowie.
-
-Kontrakt wyniku z 4A może przechować każdy z tych wariantów bez rozstrzygania
-go przedwcześnie. Operacje listy z 4B.2 są neutralne wobec tych wariantów.
-Decyzja jest potrzebna przed właściwym przydziałem w 4F. Decyzja 89 ustala
-jedynie, że informacyjną godzinę pierwszego wyjazdu liczymy z betoniarni, ale
-sam pierwszy dojazd nie ogranicza dostępności pompy. Nadal otwarte pozostają
-zasady przypisywania i wielokrotnego używania pomp zewnętrznych.
-
+O dopasowaniu decydują rzeczywiste parametry: przede wszystkim wysięg, okno
+**Dostępna od/do**, wcześniejsza zajętość oraz przejazd do kolejnej budowy.
+Starsze pole `typ` może pozostać neutralną metadaną zgodności, ale nie jest już
+pokazywane operatorowi ani używane przez algorytm. Zasady zapisano w decyzji 91
+i wdrożono w przygotowawczym kroku 4F.0.
 ---
 
 ## P-011 — Ręczne czasy przejazdów pomp przed integracją mapową
