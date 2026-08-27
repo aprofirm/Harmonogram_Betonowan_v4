@@ -58,21 +58,31 @@ jobs:
               raise SystemExit("Nie znaleziono górnego znacznika Etap 4F.1.")
           index.write_text(tresc_index.replace(stary_badge, nowy_badge, 1), encoding="utf-8")
 
-          kp4 = Path("testy/kp_4.test.js")
-          tresc_kp4 = kp4.read_text(encoding="utf-8")
-          stary_wzorzec = r'assert.match(html, /4F\.1 · stabilna kolejność pomp/);'
-          nowy_wzorzec = r'assert.match(html, /4F\.2 · pierwsza pasująca pompa/);'
-          if stary_wzorzec not in tresc_kp4:
-              raise SystemExit("Nie znaleziono starego oczekiwania etykiety w teście KP-4.")
-          kp4.write_text(tresc_kp4.replace(stary_wzorzec, nowy_wzorzec, 1), encoding="utf-8")
+          zamiany_testow = {
+              "testy/kp_4.test.js": (
+                  r'assert.match(html, /4F\.1 · stabilna kolejność pomp/);',
+                  r'assert.match(html, /4F\.2 · pierwsza pasująca pompa/);'
+              ),
+              "testy/etap_3d.test.js": (
+                  r'assert.match(html, /Etap 4F\.1/);',
+                  r'assert.match(html, /Etap 4F\.2/);'
+              ),
+              "testy/etap_3e.test.js": (
+                  r'assert.match(html, /4F\.1/);',
+                  r'assert.match(html, /4F\.2/);'
+              ),
+          }
+          for nazwa, (stary, nowy) in zamiany_testow.items():
+              sciezka = Path(nazwa)
+              tresc_testu = sciezka.read_text(encoding="utf-8")
+              if stary not in tresc_testu:
+                  raise SystemExit("Nie znaleziono starego oczekiwania etapu w " + nazwa + ".")
+              sciezka.write_text(tresc_testu.replace(stary, nowy, 1), encoding="utf-8")
 
-          etap3d = Path("testy/etap_3d.test.js")
-          tresc_3d = etap3d.read_text(encoding="utf-8")
-          stary_3d = r'assert.match(html, /Etap 4F\.1/);'
-          nowy_3d = r'assert.match(html, /Etap 4F\.2/);'
-          if stary_3d not in tresc_3d:
-              raise SystemExit("Nie znaleziono starego znacznika etapu w teście 3D.")
-          etap3d.write_text(tresc_3d.replace(stary_3d, nowy_3d, 1), encoding="utf-8")
+      - name: Pokaż pozostałe stare oczekiwania 4F.1
+        shell: bash
+        run: |
+          grep -R -n -E '4F\\\.1|Etap 4F\.1|stabilna kolejność pomp' testy --include='*.test.js' || true
 
       - name: Sprawdź 4F.1 i pełną regresję
         shell: bash
@@ -105,6 +115,7 @@ jobs:
             testy/etap_4f_1.test.js \
             testy/TESTY_ETAP_4F_1.md \
             testy/kp_4.test.js \
-            testy/etap_3d.test.js
+            testy/etap_3d.test.js \
+            testy/etap_3e.test.js
           git commit -m "Zrealizuj 4F.1 stabilną kolejność pomp"
           git push origin HEAD:main
