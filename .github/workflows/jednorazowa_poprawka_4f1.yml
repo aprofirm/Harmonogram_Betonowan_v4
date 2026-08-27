@@ -1,0 +1,49 @@
+name: Jednorazowa poprawka 4F.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/jednorazowa_poprawka_4f1.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  poprawka:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Popraw test pustej kolejki
+        shell: python
+        run: |
+          from pathlib import Path
+
+          sciezka = Path(".github/workflows/jednorazowe_4f1.yml")
+          tresc = sciezka.read_text(encoding="utf-8")
+          stary = '''          function sprawdzPusteDane(pompy) {
+            assert.deepEqual(pompy.uporzadkujBudowyDoPrzydzialuPomp([], []), []);
+            assert.deepEqual(pompy.uporzadkujBudowyDoPrzydzialuPomp(null, null), []);
+          }'''
+          nowy = '''          function sprawdzPusteDane(pompy) {
+            assert.equal(pompy.uporzadkujBudowyDoPrzydzialuPomp([], []).length, 0);
+            assert.equal(pompy.uporzadkujBudowyDoPrzydzialuPomp(null, null).length, 0);
+          }'''
+          if stary not in tresc:
+              raise SystemExit("Nie znaleziono testu pustej kolejki do poprawy.")
+          sciezka.write_text(tresc.replace(stary, nowy, 1), encoding="utf-8")
+
+      - name: Zapisz poprawkę i usuń workflow techniczny
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/jednorazowe_4f1.yml
+          git rm .github/workflows/jednorazowa_poprawka_4f1.yml
+          git commit -m "Popraw test pustej kolejki 4F.1"
+          git push origin HEAD:main
