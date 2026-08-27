@@ -1863,3 +1863,24 @@ Kandydat musi być aktywny, mieć wysięg nie mniejszy od wymaganego przez budow
 Pierwszy dojazd z betoniarni pozostaje wyłącznie informacyjny zgodnie z decyzją 89 i nie blokuje pierwszego przydziału. Rozpoczęcie cyklu dokładnie o `Dostępna do` jest dozwolone zgodnie z decyzją 91, a ewentualne przekroczenie końca dostępności jest zachowywane w wyniku do późniejszej informacji dla operatora.
 
 Brak znanej trasy między dwiema budowami nie powoduje wymyślenia czasu zastępczego. Taki kandydat otrzymuje jawny powód `brak-trasy`; silnik może sprawdzić następną pompę z listy. Niepoprawne dane trasy pozostają błędem. Jeżeli żaden kandydat nie pasuje, budowa otrzymuje status `brak-pasujacej-pompy`. Krok 4F.2 nie przesuwa godzin budów; najwcześniejszy alternatywny start jest zakresem 4F.4.
+
+---
+
+## 94. Pełne okresy pracy jednej pompy nie mogą się nakładać
+
+Kontrola zajętości w 4F.3 obejmuje cały okres od rozpoczęcia przygotowania
+pompy przed pierwszym rozładunkiem do zakończenia czynności po ostatnim
+rozładunku. Dwie budowy nie mogą otrzymać tej samej pompy, jeżeli dowolna część
+tych pełnych okresów zachodzi na siebie. Nie wystarczy porównanie samych godzin
+betonowania.
+
+Okresy traktujemy jak przedziały domknięte z lewej i otwarte z prawej strony.
+Jeżeli poprzedni okres kończy się dokładnie w minucie rozpoczęcia kolejnego
+przygotowania, nie ma kolizji. Ponowne użycie pompy nadal musi osobno spełnić
+warunek kierunkowego przejazdu, więc przy wspólnej granicy jest możliwe tylko
+wtedy, gdy przejazd pozwala dotrzeć na czas, np. trwa `0 min`.
+
+Silnik zachowuje listę wszystkich przydziałów każdej pompy i sprawdza nowy
+okres względem całej tej listy. Wykryty konflikt ma jawny powód `pompa-zajeta`
+oraz wskazuje budowę i okres powodujący kolizję. Krok 4F.3 nie przesuwa godzin;
+wyliczenie najwcześniejszego alternatywnego startu należy do 4F.4.

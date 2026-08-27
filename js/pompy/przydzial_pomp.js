@@ -80,8 +80,75 @@
     return {
       pompa: pompa,
       ostatniPrzydzial: null,
+      przydzialy: [],
       liczbaPrzydzialow: 0
     };
+  }
+
+  function pobierzGraniceOkresuZajetosci(okresZajetosci, opisOkresu) {
+    const okres = okresZajetosci && typeof okresZajetosci === "object"
+      ? okresZajetosci
+      : {};
+    const minutaRozpoczecia = Number(okres.minutaRozpoczeciaZajetosci);
+    const minutaZakonczenia = Number(okres.minutaZakonczeniaZajetosci);
+    const opis = opisOkresu || "Okres zajętości pompy";
+
+    if (
+      !Number.isFinite(minutaRozpoczecia) ||
+      !Number.isFinite(minutaZakonczenia) ||
+      minutaZakonczenia < minutaRozpoczecia
+    ) {
+      throw new Error(
+        opis + " musi mieć poprawny początek i koniec pełnego cyklu pompy."
+      );
+    }
+
+    return {
+      minutaRozpoczecia: minutaRozpoczecia,
+      minutaZakonczenia: minutaZakonczenia
+    };
+  }
+
+  function czyOkresyZajetosciPompKoliduja(
+    pierwszyOkres,
+    drugiOkres
+  ) {
+    const pierwszeGranice = pobierzGraniceOkresuZajetosci(
+      pierwszyOkres,
+      "Pierwszy okres zajętości pompy"
+    );
+    const drugieGranice = pobierzGraniceOkresuZajetosci(
+      drugiOkres,
+      "Drugi okres zajętości pompy"
+    );
+
+    // Traktujemy okresy jak przedziały domknięte z lewej i otwarte z prawej.
+    // Dzięki temu koniec poprzedniej pracy może być początkiem kolejnej.
+    return pierwszeGranice.minutaRozpoczecia <
+        drugieGranice.minutaZakonczenia &&
+      drugieGranice.minutaRozpoczecia <
+        pierwszeGranice.minutaZakonczenia;
+  }
+
+  function pobierzPrzydzialyZeStanuPompy(stanPompy) {
+    if (Array.isArray(stanPompy && stanPompy.przydzialy)) {
+      return stanPompy.przydzialy;
+    }
+
+    return stanPompy && stanPompy.ostatniPrzydzial
+      ? [stanPompy.ostatniPrzydzial]
+      : [];
+  }
+
+  function znajdzKolidujacyPrzydzialPompy(stanPompy, okresZajetosci) {
+    return pobierzPrzydzialyZeStanuPompy(stanPompy).find(
+      function (przydzial) {
+        return czyOkresyZajetosciPompKoliduja(
+          przydzial.okresZajetosci,
+          okresZajetosci
+        );
+      }
+    ) || null;
   }
 
   function pobierzWymaganyWysiegPompy(budowa) {
@@ -180,6 +247,27 @@
       );
     }
 
+    const kolidujacyPrzydzial = znajdzKolidujacyPrzydzialPompy(
+      stanPompy,
+      okresZajetosci
+    );
+
+    if (kolidujacyPrzydzial) {
+      return utworzOdrzuceniePompy(
+        pompa,
+        "pompa-zajeta",
+        {
+          idPoprzedniejBudowy: kolidujacyPrzydzial.idBudowy,
+          minutaGotowosciPoPoprzedniejBudowie:
+            kolidujacyPrzydzial.okresZajetosci.minutaZakonczeniaZajetosci,
+          minutaRozpoczeciaZajetosci:
+            okresZajetosci.minutaRozpoczeciaZajetosci,
+          kolidujacyOkresZajetosci:
+            Object.assign({}, kolidujacyPrzydzial.okresZajetosci)
+        }
+      );
+    }
+
     const ostatniPrzydzial = stanPompy.ostatniPrzydzial;
 
     if (!ostatniPrzydzial) {
@@ -193,23 +281,6 @@
         dostepnosc: dostepnosc,
         przejazdZPoprzedniejBudowy: null
       };
-    }
-
-    if (
-      ostatniPrzydzial.okresZajetosci.minutaZakonczeniaZajetosci >
-      okresZajetosci.minutaRozpoczeciaZajetosci
-    ) {
-      return utworzOdrzuceniePompy(
-        pompa,
-        "pompa-zajeta",
-        {
-          idPoprzedniejBudowy: ostatniPrzydzial.idBudowy,
-          minutaGotowosciPoPoprzedniejBudowie:
-            ostatniPrzydzial.okresZajetosci.minutaZakonczeniaZajetosci,
-          minutaRozpoczeciaZajetosci:
-            okresZajetosci.minutaRozpoczeciaZajetosci
-        }
-      );
     }
 
     const danePrzejazdu = pobierzDanePrzejazduZOpcji(
@@ -327,11 +398,13 @@
           dostepnosc: ocena.dostepnosc,
           przejazdZPoprzedniejBudowy: ocena.przejazdZPoprzedniejBudowy
         };
-        stanPompy.ostatniPrzydzial = {
+        const zapisPrzydzialu = {
           idBudowy: String(budowa.idBudowy || ""),
           budowa: budowa,
           okresZajetosci: okresZajetosci
         };
+        stanPompy.ostatniPrzydzial = zapisPrzydzialu;
+        stanPompy.przydzialy.push(zapisPrzydzialu);
         stanPompy.liczbaPrzydzialow += 1;
         return true;
       });
@@ -376,7 +449,13 @@
           liczbaPrzydzialow: stanPompy.liczbaPrzydzialow,
           ostatnieIdBudowy: stanPompy.ostatniPrzydzial
             ? stanPompy.ostatniPrzydzial.idBudowy
-            : null
+            : null,
+          przydzialy: stanPompy.przydzialy.map(function (przydzial) {
+            return {
+              idBudowy: przydzial.idBudowy,
+              okresZajetosci: Object.assign({}, przydzial.okresZajetosci)
+            };
+          })
         };
       })
     };
@@ -384,6 +463,10 @@
 
   pompy.pobierzPlanowanyStartBetonowania = pobierzPlanowanyStartBetonowania;
   pompy.uporzadkujBudowyDoPrzydzialuPomp = uporzadkujBudowyDoPrzydzialuPomp;
+  pompy.czyOkresyZajetosciPompKoliduja =
+    czyOkresyZajetosciPompKoliduja;
+  pompy.znajdzKolidujacyPrzydzialPompy =
+    znajdzKolidujacyPrzydzialPompy;
   pompy.sprawdzCzyPompaPasujeDoBudowy = sprawdzCzyPompaPasujeDoBudowy;
   pompy.przydzielPierwszePasujacePompy = przydzielPierwszePasujacePompy;
 })(window);

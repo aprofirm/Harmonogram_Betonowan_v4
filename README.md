@@ -312,6 +312,7 @@ Instrukcje testów ręcznych znajdują się w plikach:
 - [testy/TESTY_ETAP_4.md](testy/TESTY_ETAP_4.md) — plan testów pomp,
 - [testy/TESTY_ETAP_4F_1.md](testy/TESTY_ETAP_4F_1.md) — stabilna kolejność przed przydziałem pomp,
 - [testy/TESTY_ETAP_4F_2.md](testy/TESTY_ETAP_4F_2.md) — wybór pierwszej pasującej pompy,
+- [testy/TESTY_ETAP_4F_3.md](testy/TESTY_ETAP_4F_3.md) — brak nakładania pełnych okresów pracy pompy,
 - [testy/TESTY_KP_1.md](testy/TESTY_KP_1.md) — plan testu pamięci dnia,
 - [testy/TESTY_KP_2.md](testy/TESTY_KP_2.md) — plan testu pamięci tras,
 - [testy/TESTY_KP_3.md](testy/TESTY_KP_3.md) — ilość ręczna, wariant i szeroki widok,
@@ -349,6 +350,8 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_4e_4.test.js
     node testy/etap_4f_0.test.js
     node testy/etap_4f_1.test.js
+    node testy/etap_4f_2.test.js
+    node testy/etap_4f_3.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
@@ -416,11 +419,13 @@ sprzeczne godziny kursu kończą się czytelnym błędem bez zmiany danych
 wejściowych.
 
 Cały punkt **4E — przejazdy pomp** jest zakończony. Przygotowawczy **4F.0 —
-okno dostępności pomp**, **4F.1 — stabilna kolejność** oraz **4F.2 — pierwsza
-pasująca pompa** są zakończone. Puste `Od/Do` oznacza brak ograniczeń, rozpoczęta
-na czas budowa jest dokańczana, a pochodzenie własna/zewnętrzna nie wpływa na
-algorytm. Rzeczywiste prace pompowe są porządkowane według planowanego początku
-betonowania, a następnie dostają pierwszy aktywny zasób spełniający wymagany
-wysięg, dostępność, wolny pełny cykl i warunek przejazdu. Następny krok to
-**4F.3 — brak nakładania pracy pompy**. Pełne połączenie ograniczeń pomp i
-gruszek pozostaje świadomie zakresem Etapu 5.
+okno dostępności pomp**, **4F.1 — stabilna kolejność**, **4F.2 — pierwsza
+pasująca pompa** oraz **4F.3 — brak nakładania** są zakończone. Puste `Od/Do`
+oznacza brak ograniczeń, rozpoczęta na czas budowa jest dokańczana, a
+pochodzenie własna/zewnętrzna nie wpływa na algorytm. Rzeczywiste prace pompowe
+są porządkowane według planowanego początku betonowania, a następnie dostają
+pierwszy aktywny zasób spełniający wymagany wysięg, dostępność, wolny pełny
+cykl i warunek przejazdu. Kontrola obejmuje przygotowanie, betonowanie oraz
+czynności po pracy; dokładne zetknięcie końca jednego cyklu z początkiem
+następnego jest dozwolone. Następny krok to **4F.4 — najwcześniejszy start**.
+Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.

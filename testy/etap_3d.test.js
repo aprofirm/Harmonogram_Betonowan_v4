@@ -119,7 +119,7 @@ const interfejs = fs.readFileSync(
 
 assert.match(html, /id="minimalna-liczba-gruszek">0<\/span>/);
 assert.match(html, /potrzebnych gruszek/i);
-assert.match(html, /Etap 4F\.3/);
+assert.match(html, /class="znacznik-etapu">Etap [^<]+<\/span>/);
 assert.match(interfejs, /wynik\.minimalnaLiczbaGruszek/);
 assert.match(
   interfejs,

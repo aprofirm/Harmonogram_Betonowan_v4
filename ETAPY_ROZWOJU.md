@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4E oraz
-  4F.0–4F.2 zakończone, następny podetap to 4F.3**
+  4F.0–4F.3 zakończone, następny podetap to 4F.4**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -591,7 +591,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
   - [x] **4F.2 — pierwsza pasująca pompa:** silnik wybiera pierwszą aktywną,
     dostępną już o wymaganej godzinie, wolną i zgodną z wymaganiami pompę,
     uwzględniając pełny cykl oraz przejazd.
-  - [ ] **4F.3 — brak nakładania:** jedna pompa nie może mieć dwóch kolidujących
+  - [x] **4F.3 — brak nakładania:** jedna pompa nie może mieć dwóch kolidujących
     okresów pracy, a granica `gotowa == kolejny start przygotowania` jest
     dozwolona.
   - [ ] **4F.4 — najwcześniejszy start:** gdy żadna pompa nie jest gotowa,
@@ -911,9 +911,9 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Rozpocząć **4F.1 — stabilna kolejność**: budowy wymagające pompy rozpatrywać
-deterministycznie według planowanego startu i kolejności wejściowej. Ten krok
-przygotowuje kolejność do właściwego wyboru pierwszej pasującej pompy w 4F.2.
+Rozpocząć **4F.4 — najwcześniejszy start**: gdy żadna pompa nie może wykonać
+budowy zgodnie z planem, podać najwcześniejszą możliwą godzinę, wielkość
+przesunięcia i dokładną przyczynę bez cichego zmieniania harmonogramu gruszek.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -2023,3 +2023,26 @@ operatorski dostępności i przydziału pozostaje w 4J.3.
 Zamknięty podetap: **4F.0**. Punkt nadrzędny **4F** pozostaje otwarty.
 Następny nieukończony podetap: **4F.1 — stabilna kolejność**.
 
+## Zamknięcie 4F.3 — brak nakładania pracy pompy — 2026-08-27
+
+- [x] kolizja jest sprawdzana dla całego okresu od rozpoczęcia przygotowania
+  do końca czynności po ostatnim rozładunku, a nie tylko dla pompowania;
+- [x] każda pompa zachowuje pełną listę przydziałów, dzięki czemu nowy okres
+  jest kontrolowany względem wszystkich wcześniejszych okresów tego zasobu;
+- [x] kolidująca budowa nie otrzymuje zajętej pompy i zachowuje jawny powód
+  `pompa-zajeta` wraz z budową oraz okresem powodującym konflikt;
+- [x] dokładna granica `koniec poprzedniego okresu == początek następnego`
+  nie jest kolizją; przy przejeździe `0 min` ta sama pompa może zostać użyta;
+- [x] wejściowe budowy, kursy i lista pomp nie są modyfikowane;
+- [x] 4F.3 nie przesuwa godzin budów ani kursów gruszek — najwcześniejszy
+  alternatywny start pozostaje zakresem 4F.4;
+- [x] test `testy/etap_4f_3.test.js` oraz pełna regresja wszystkich **40/40**
+  plików `testy/*.test.js` przechodzą poprawnie;
+- [x] wszystkie śledzone pliki JavaScript przechodzą kontrolę składni.
+
+Osobny test operatora nie jest wymagany, ponieważ wynik przydziału 4F nie jest
+jeszcze podłączony do centralnego wyniku ani interfejsu. Pełny test operatorski
+pozostaje częścią 4J.3.
+
+Zamknięty podetap: **4F.3**. Punkt nadrzędny **4F** pozostaje otwarty.
+Następny nieukończony podetap: **4F.4 — najwcześniejszy start**.

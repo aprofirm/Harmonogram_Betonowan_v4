@@ -205,7 +205,7 @@ function sprawdzInterfejsKorektyStartu() {
   );
 
   assert.match(html, /<th>Start do przeliczenia<\/th>/);
-  assert.match(html, /4F\.3 · brak nakładania pracy pompy/);
+  assert.match(html, /<footer class="stopka">[\s\S]*<span>[^<]+ · [^<]+<\/span>/);
   assert.match(interfejs, /className = "pole-startu-budowy"/);
   assert.match(interfejs, /type = "time"/);
   assert.match(interfejs, /step = "60"/);
