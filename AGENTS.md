@@ -80,6 +80,8 @@ Nie należy czekać wyłącznie na zdanie „kończymy rozmowę”. Zatwierdzon�
 - Uruchom testy nowej funkcji oraz właściwe testy regresji.
 - Zachowaj działanie offline podstawowej wersji programu.
 - Po publikacji sprawdź docelową gałąź. Jeżeli zadanie miało trafić do `main`, nie kończ pracy z wynikiem pozostawionym wyłącznie na gałęzi roboczej.
+- Ukończoną i bezpieczną zmianę, która przeszła właściwe testy, commituj i wysyłaj na `main` bez osobnego pytania operatora.
+- Zatrzymaj publikację i poproś operatora o decyzję tylko wtedy, gdy testy nie przechodzą, zdalna gałąź zawiera nieuzgodnione zmiany lub konflikt, potrzebny byłby `force-push`, zakres jest niejasny albo operacja mogłaby usunąć lub nadpisać cudzą pracę.
 
 ## 6. Bezpieczeństwo dokumentacji
 
