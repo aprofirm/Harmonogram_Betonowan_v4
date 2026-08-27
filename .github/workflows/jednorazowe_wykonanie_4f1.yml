@@ -66,6 +66,14 @@ jobs:
               raise SystemExit("Nie znaleziono starego oczekiwania etykiety w teście KP-4.")
           kp4.write_text(tresc_kp4.replace(stary_wzorzec, nowy_wzorzec, 1), encoding="utf-8")
 
+          etap3d = Path("testy/etap_3d.test.js")
+          tresc_3d = etap3d.read_text(encoding="utf-8")
+          stary_3d = r'assert.match(html, /Etap 4F\.1/);'
+          nowy_3d = r'assert.match(html, /Etap 4F\.2/);'
+          if stary_3d not in tresc_3d:
+              raise SystemExit("Nie znaleziono starego znacznika etapu w teście 3D.")
+          etap3d.write_text(tresc_3d.replace(stary_3d, nowy_3d, 1), encoding="utf-8")
+
       - name: Sprawdź 4F.1 i pełną regresję
         shell: bash
         run: |
@@ -96,6 +104,7 @@ jobs:
             js/pompy/przydzial_pomp.js \
             testy/etap_4f_1.test.js \
             testy/TESTY_ETAP_4F_1.md \
-            testy/kp_4.test.js
+            testy/kp_4.test.js \
+            testy/etap_3d.test.js
           git commit -m "Zrealizuj 4F.1 stabilną kolejność pomp"
           git push origin HEAD:main
