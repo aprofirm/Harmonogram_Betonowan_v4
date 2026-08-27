@@ -1,0 +1,85 @@
+name: Jednorazowa aktualizacja 4F.0 - poprawka
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/jednorazowa_aktualizacja_4f0_poprawka.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  aktualizacja:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Odtwórz przygotowany pakiet 4F.0
+        shell: python
+        run: |
+          from pathlib import Path
+          import subprocess
+
+          workflow = Path(".github/workflows/jednorazowa_aktualizacja_4f0.yml").read_text(encoding="utf-8").splitlines()
+          start = None
+          koniec = None
+          for indeks, linia in enumerate(workflow):
+              if linia == "        run: |" and indeks > 0 and "Wprowadź model dostępności pomp" in workflow[indeks - 1]:
+                  start = indeks + 1
+                  continue
+              if start is not None and linia == "      - name: Sprawdź pełną regresję":
+                  koniec = indeks
+                  break
+
+          if start is None or koniec is None:
+              raise SystemExit("Nie udało się odczytać przygotowanego skryptu 4F.0.")
+
+          kod = "\n".join(
+              linia[10:] if linia.startswith("          ") else linia
+              for linia in workflow[start:koniec]
+          ) + "\n"
+          Path("/tmp/aktualizacja_4f0.py").write_text(kod, encoding="utf-8")
+          subprocess.run(["python", "/tmp/aktualizacja_4f0.py"], check=True)
+
+          backlog = Path("POMYSLY_I_BACKLOG.md")
+          tresc = backlog.read_text(encoding="utf-8")
+          tresc = tresc.replace("**Data:** 2026-08-23; rozstrzygnięto 2026-08-27  \n", "**Data:** 2026-08-23; rozstrzygnięto 2026-08-27\n")
+          tresc = tresc.replace("**Status:** ZREALIZOWANY  \n", "**Status:** ZREALIZOWANY\n")
+          backlog.write_text(tresc, encoding="utf-8")
+
+      - name: Sprawdź pełną regresję
+        shell: bash
+        run: |
+          set -euo pipefail
+          liczba=0
+          for plik in testy/*.test.js; do
+            echo "=== $plik ==="
+            node "$plik"
+            liczba=$((liczba + 1))
+          done
+          echo "Przeszło plików testowych: $liczba"
+          test "$liczba" -eq 37
+          git diff --check
+
+      - name: Zapisz gotowy pakiet 4F.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            index.html \
+            README.md \
+            PROJECT_DECISIONS.md \
+            POMYSLY_I_BACKLOG.md \
+            ETAPY_ROZWOJU.md \
+            js/pompy/dostepnosc_pomp.js \
+            js/interfejs/dostepnosc_pomp.js \
+            testy/etap_4f_0.test.js \
+            testy/TESTY_ETAP_4F_0.md
+          git commit -m "Dodaj okno dostępności pomp przed 4F.1"
+          git push origin HEAD:main
