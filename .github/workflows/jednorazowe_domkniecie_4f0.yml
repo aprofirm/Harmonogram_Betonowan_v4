@@ -1,0 +1,76 @@
+name: Jednorazowe domknięcie 4F.0
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/jednorazowe_domkniecie_4f0.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  domkniecie:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ujednolić plan Etapu 4
+        shell: python
+        run: |
+          from pathlib import Path
+
+          sciezka = Path("ETAPY_ROZWOJU.md")
+          tresc = sciezka.read_text(encoding="utf-8")
+
+          stary_opis = (
+              "    Szczegółowa godzina **Dostępna od** pozostaje przypisana do konkretnej pompy."
+          )
+          nowy_opis = (
+              "    Szczegółowe godziny **Dostępna od** i **Dostępna do** pozostają przypisane\n"
+              "    do konkretnej pompy."
+          )
+          if stary_opis not in tresc:
+              raise SystemExit("Nie znaleziono starego opisu dostępności w 4I.2.")
+          tresc = tresc.replace(stary_opis, nowy_opis, 1)
+
+          stare_kryterium = "- [ ] można odróżnić pompę własną od zewnętrznej,"
+          nowe_kryterium = (
+              "- [x] przydział nie rozróżnia pompy własnej i zewnętrznej; "
+              "decydują parametry zasobu,"
+          )
+          if stare_kryterium not in tresc:
+              raise SystemExit("Nie znaleziono starego kryterium typu pompy.")
+          tresc = tresc.replace(stare_kryterium, nowe_kryterium, 1)
+
+          sciezka.write_text(tresc, encoding="utf-8")
+
+      - name: Sprawdź pełną regresję
+        shell: bash
+        run: |
+          set -euo pipefail
+          liczba=0
+          for plik in testy/*.test.js; do
+            node "$plik"
+            liczba=$((liczba + 1))
+          done
+          echo "Przeszło plików testowych: $liczba"
+          test "$liczba" -eq 37
+          git diff --check
+
+      - name: Usuń jednorazowe workflowy i zapisz domknięcie
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ETAPY_ROZWOJU.md
+          git rm \
+            .github/workflows/jednorazowa_aktualizacja_4f0.yml \
+            .github/workflows/jednorazowa_aktualizacja_4f0_poprawka.yml \
+            .github/workflows/jednorazowe_domkniecie_4f0.yml
+          git commit -m "Domknij dokumentację dostępności pomp 4F.0"
+          git push origin HEAD:main
