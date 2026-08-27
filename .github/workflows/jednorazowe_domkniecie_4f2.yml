@@ -1,0 +1,159 @@
+name: Jednorazowe domknięcie 4F.2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/jednorazowe_domkniecie_4f2.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  domkniecie:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Przygotuj Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Zaktualizuj dokumentację i etykiety po 4F.2
+        shell: python
+        run: |
+          from pathlib import Path
+
+          def zamien_raz(sciezka, stary, nowy, opis):
+              plik = Path(sciezka)
+              tresc = plik.read_text(encoding="utf-8")
+              if stary not in tresc:
+                  raise SystemExit("Nie znaleziono: " + opis + " w " + sciezka)
+              plik.write_text(tresc.replace(stary, nowy, 1), encoding="utf-8")
+
+          zamien_raz(
+              "ETAPY_ROZWOJU.md",
+              "- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4E, przygotowawczy\n  4F.0 oraz 4F.1 zakończone, następny podetap to 4F.2**",
+              "- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4E oraz\n  4F.0–4F.2 zakończone, następny podetap to 4F.3**",
+              "status Etapu 4"
+          )
+          zamien_raz(
+              "ETAPY_ROZWOJU.md",
+              "  - [ ] **4F.2 — pierwsza pasująca pompa:** silnik wybiera pierwszą aktywną,",
+              "  - [x] **4F.2 — pierwsza pasująca pompa:** silnik wybiera pierwszą aktywną,",
+              "checkbox 4F.2"
+          )
+          zamien_raz(
+              "ETAPY_ROZWOJU.md",
+              "- [ ] można wyłączyć pompę z dostępności,",
+              "- [x] można wyłączyć pompę z dostępności,",
+              "kryterium wyłączenia pompy"
+          )
+
+          decyzje = Path("PROJECT_DECISIONS.md")
+          tresc_decyzji = decyzje.read_text(encoding="utf-8")
+          if "## 93. Pierwsza pasująca pompa" not in tresc_decyzji:
+              decyzje.write_text(
+                  tresc_decyzji.rstrip() + "\n\n---\n\n"
+                  "## 93. Pierwsza pasująca pompa jest wybierana w kolejności listy zasobów\n\n"
+                  "W 4F.2 określenie „pierwsza pasująca pompa” oznacza pierwszą pompę w "
+                  "znormalizowanej kolejności listy zasobów, która przejdzie wszystkie obowiązujące "
+                  "warunki. Silnik nie sortuje pomp według nazwy, typu, wysięgu ani tego, czy są "
+                  "własne lub zewnętrzne.\n\n"
+                  "Kandydat musi być aktywny, mieć wysięg nie mniejszy od wymaganego przez budowę, "
+                  "móc rozpocząć pełny cykl w swoim oknie `Dostępna od/do` oraz być wolny po swojej "
+                  "ostatniej przydzielonej budowie. Dla ponownego użycia tej samej pompy musi być też "
+                  "znany kierunkowy czas przejazdu z poprzedniej budowy i przyjazd musi pozwalać "
+                  "rozpocząć przygotowanie zgodnie z planem.\n\n"
+                  "Pierwszy dojazd z betoniarni pozostaje wyłącznie informacyjny zgodnie z decyzją 89 "
+                  "i nie blokuje pierwszego przydziału. Rozpoczęcie cyklu dokładnie o `Dostępna do` "
+                  "jest dozwolone zgodnie z decyzją 91, a ewentualne przekroczenie końca dostępności "
+                  "jest zachowywane w wyniku do późniejszej informacji dla operatora.\n\n"
+                  "Brak znanej trasy między dwiema budowami nie powoduje wymyślenia czasu zastępczego. "
+                  "Taki kandydat otrzymuje jawny powód `brak-trasy`; silnik może sprawdzić następną "
+                  "pompę z listy. Niepoprawne dane trasy pozostają błędem. Jeżeli żaden kandydat nie "
+                  "pasuje, budowa otrzymuje status `brak-pasujacej-pompy`. Krok 4F.2 nie przesuwa "
+                  "godzin budów; najwcześniejszy alternatywny start jest zakresem 4F.4.\n",
+                  encoding="utf-8"
+              )
+
+          zamien_raz(
+              "README.md",
+              "- [testy/TESTY_ETAP_4F_1.md](testy/TESTY_ETAP_4F_1.md) — stabilna kolejność przed przydziałem pomp,",
+              "- [testy/TESTY_ETAP_4F_1.md](testy/TESTY_ETAP_4F_1.md) — stabilna kolejność przed przydziałem pomp,\n- [testy/TESTY_ETAP_4F_2.md](testy/TESTY_ETAP_4F_2.md) — wybór pierwszej pasującej pompy,",
+              "link do testów 4F.2"
+          )
+          zamien_raz(
+              "README.md",
+              "Cały punkt **4E — przejazdy pomp** jest zakończony. Przygotowawczy **4F.0 —\nokno dostępności pomp** oraz **4F.1 — stabilna kolejność** są zakończone. Puste\n`Od/Do` oznacza brak ograniczeń, rozpoczęta na czas budowa jest dokańczana, a\npochodzenie własna/zewnętrzna nie wpływa na algorytm. Rzeczywiste prace pompowe\nsą porządkowane według planowanego początku betonowania, a przy remisie zachowują\nkolejność wejściową. Następny krok to **4F.2 — pierwsza pasująca pompa**.\nPełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.",
+              "Cały punkt **4E — przejazdy pomp** jest zakończony. Przygotowawczy **4F.0 —\nokno dostępności pomp**, **4F.1 — stabilna kolejność** oraz **4F.2 — pierwsza\npasująca pompa** są zakończone. Puste `Od/Do` oznacza brak ograniczeń, rozpoczęta\nna czas budowa jest dokańczana, a pochodzenie własna/zewnętrzna nie wpływa na\nalgorytm. Rzeczywiste prace pompowe są porządkowane według planowanego początku\nbetonowania, a następnie dostają pierwszy aktywny zasób spełniający wymagany\nwysięg, dostępność, wolny pełny cykl i warunek przejazdu. Następny krok to\n**4F.3 — brak nakładania pracy pompy**. Pełne połączenie ograniczeń pomp i\ngruszek pozostaje świadomie zakresem Etapu 5.",
+              "aktualny stan README"
+          )
+
+          zamien_raz(
+              "index.html",
+              '<span class="znacznik-etapu">Etap 4F.2</span>',
+              '<span class="znacznik-etapu">Etap 4F.3</span>',
+              "górny znacznik etapu"
+          )
+          zamien_raz(
+              "index.html",
+              '<span>4F.2 · pierwsza pasująca pompa</span>',
+              '<span>4F.3 · brak nakładania pracy pompy</span>',
+              "stopka etapu"
+          )
+
+          zamien_raz(
+              "testy/kp_4.test.js",
+              r'assert.match(html, /4F\.2 · pierwsza pasująca pompa/);',
+              r'assert.match(html, /4F\.3 · brak nakładania pracy pompy/);',
+              "etykieta KP-4"
+          )
+          zamien_raz(
+              "testy/etap_3d.test.js",
+              r'assert.match(html, /Etap 4F\.2/);',
+              r'assert.match(html, /Etap 4F\.3/);',
+              "etykieta Etapu 3D"
+          )
+          zamien_raz(
+              "testy/etap_3e.test.js",
+              r'assert.match(html, /4F\.2/);',
+              r'assert.match(html, /4F\.3/);',
+              "etykieta Etapu 3E"
+          )
+
+      - name: Uruchom pełną regresję
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check js/pompy/przydzial_pomp.js
+          liczba=0
+          for plik in testy/*.test.js; do
+            echo "=== $plik ==="
+            node "$plik"
+            liczba=$((liczba + 1))
+          done
+          echo "Przeszło plików testowych: $liczba"
+          test "$liczba" -eq 39
+          git diff --check
+
+      - name: Zapisz domknięcie 4F.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            ETAPY_ROZWOJU.md \
+            PROJECT_DECISIONS.md \
+            README.md \
+            index.html \
+            testy/kp_4.test.js \
+            testy/etap_3d.test.js \
+            testy/etap_3e.test.js
+          git commit -m "Domknij dokumentację etapu 4F.2"
+          git push origin HEAD:main
