@@ -623,7 +623,8 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
   - [ ] **4I.2 — wspólne sterowanie zasobami:** w nagłówku harmonogramu pod
     sterowaniem gruszkami pojawia się estetyczny, kompaktowy wiersz pomp z
     trybem pracy, liczbą potrzebną, liczbą dostępną i skrótem dostępności.
-    Szczegółowa godzina **Dostępna od** pozostaje przypisana do konkretnej pompy.
+    Szczegółowe godziny **Dostępna od** i **Dostępna do** pozostają przypisane
+    do konkretnej pompy.
   - [ ] **4I.3 — tabela pomp:** budowa, przydzielona pompa, przygotowanie,
     betonowanie, zakończenie, przejazd i gotowość do kolejnej pracy.
   - [ ] **4I.4 — komunikaty:** czytelny brak pompy, niedostępność, niezgodny
@@ -655,7 +656,7 @@ należą do Etapu 5.
 - [x] czas przejazdu pompy wpływa na możliwość rozpoczęcia następnej budowy,
 - [x] program odróżnia przejazd z bazy od przejazdu między budowami,
 - [ ] można wyłączyć pompę z dostępności,
-- [ ] można odróżnić pompę własną od zewnętrznej,
+- [x] przydział nie rozróżnia pompy własnej i zewnętrznej; decydują parametry zasobu,
 - [ ] program potrafi wskazać minimalną potrzebną liczbę pomp,
 - [ ] zmniejszenie liczby pomp powoduje pełne ponowne przeliczenie.
 
