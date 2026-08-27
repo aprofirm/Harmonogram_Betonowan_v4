@@ -1,0 +1,84 @@
+name: Jednorazowe wykonanie 4F.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/jednorazowe_wykonanie_4f1.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  wdrozenie:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Przygotuj Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Odtwórz implementację 4F.1 z przygotowanego skryptu
+        shell: python
+        run: |
+          from pathlib import Path
+          from textwrap import dedent
+
+          workflow = Path(".github/workflows/jednorazowe_4f1.yml").read_text(encoding="utf-8")
+          poczatek_kroku = workflow.index("      - name: Wprowadź 4F.1")
+          poczatek_run = workflow.index("        run: |\n", poczatek_kroku) + len("        run: |\n")
+          koniec_run = workflow.index("\n      - name: Sprawdź 4F.1 i pełną regresję", poczatek_run)
+          skrypt = dedent(workflow[poczatek_run:koniec_run])
+          exec(compile(skrypt, "wprowadzenie_4f1.py", "exec"), {})
+
+          test = Path("testy/etap_4f_1.test.js")
+          tresc = test.read_text(encoding="utf-8")
+          zamiany = {
+              'assert.deepEqual(pompy.uporzadkujBudowyDoPrzydzialuPomp([], []), []);':
+                  'assert.equal(pompy.uporzadkujBudowyDoPrzydzialuPomp([], []).length, 0);',
+              'assert.deepEqual(pompy.uporzadkujBudowyDoPrzydzialuPomp(null, null), []);':
+                  'assert.equal(pompy.uporzadkujBudowyDoPrzydzialuPomp(null, null).length, 0);',
+          }
+          for stary, nowy in zamiany.items():
+              if stary not in tresc:
+                  raise SystemExit("Nie znaleziono oczekiwanej linii w teście 4F.1.")
+              tresc = tresc.replace(stary, nowy, 1)
+          test.write_text(tresc, encoding="utf-8")
+
+      - name: Sprawdź 4F.1 i pełną regresję
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check js/pompy/przydzial_pomp.js
+          node testy/etap_4f_1.test.js
+          liczba=0
+          for plik in testy/*.test.js; do
+            echo "=== $plik ==="
+            node "$plik"
+            liczba=$((liczba + 1))
+          done
+          echo "Przeszło plików testowych: $liczba"
+          test "$liczba" -eq 38
+          git diff --check
+
+      - name: Zapisz 4F.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            index.html \
+            README.md \
+            PROJECT_DECISIONS.md \
+            ETAPY_ROZWOJU.md \
+            js/pompy/przydzial_pomp.js \
+            testy/etap_4f_1.test.js \
+            testy/TESTY_ETAP_4F_1.md
+          git commit -m "Zrealizuj 4F.1 stabilną kolejność pomp"
+          git push origin HEAD:main
