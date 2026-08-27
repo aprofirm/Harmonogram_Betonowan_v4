@@ -310,6 +310,7 @@ Instrukcje testów ręcznych znajdują się w plikach:
 - [testy/TESTY_ETAP_3E.md](testy/TESTY_ETAP_3E.md) — tryb „mam X gruszek”,
 - [testy/TESTY_KP_4.md](testy/TESTY_KP_4.md) — ręczna korekta godziny budowy,
 - [testy/TESTY_ETAP_4.md](testy/TESTY_ETAP_4.md) — plan testów pomp,
+- [testy/TESTY_ETAP_4F_1.md](testy/TESTY_ETAP_4F_1.md) — stabilna kolejność przed przydziałem pomp,
 - [testy/TESTY_KP_1.md](testy/TESTY_KP_1.md) — plan testu pamięci dnia,
 - [testy/TESTY_KP_2.md](testy/TESTY_KP_2.md) — plan testu pamięci tras,
 - [testy/TESTY_KP_3.md](testy/TESTY_KP_3.md) — ilość ręczna, wariant i szeroki widok,
@@ -346,6 +347,7 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_4e_3.test.js
     node testy/etap_4e_4.test.js
     node testy/etap_4f_0.test.js
+    node testy/etap_4f_1.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
@@ -395,9 +397,9 @@ wyniku pomp**, **4B — model danych i lista pomp** oraz **4C — interfejs i
 pamięć listy pomp**:
 model pompy, wspólny panel zasobów, lista z dostępnością i wysięgiem oraz
 pamięć planu. Lista ma osobne, niemutujące operacje dodawania, edycji, zmiany
-aktywności i usuwania, waliduje ID, typy i puste pola, a do przyszłego
-przydziału przekazuje wyłącznie aktywne pompy. Pole liczby pomp korzysta z tego
-samego kontraktu.
+aktywności i usuwania, waliduje ID, aktywność, dostępność oraz wysięg, a do
+przydziału przekazuje wyłącznie aktywne pompy. Starszy typ własna/zewnętrzna
+pozostaje neutralną metadaną zgodności i nie jest pokazywany operatorowi.
 Standardowy wysięg wynosi `32 m`; przy budowie dodatkowe pole jest
 ukryte i pojawia się dopiero po zaznaczeniu **Większa pompa**. Zmiana czasów
 jest na `main` i została potwierdzona przez operatora na opublikowanej stronie.
@@ -412,10 +414,10 @@ zrealizowana albo niewymagająca pompy nie zajmuje zasobu. Brakujące lub
 sprzeczne godziny kursu kończą się czytelnym błędem bez zmiany danych
 wejściowych.
 
-Cały punkt **4E — przejazdy pomp** jest zakończony. Przed właściwym przydziałem
-dodano przygotowawczy **4F.0 — okno dostępności pomp**: puste `Od/Do` oznacza
-brak ograniczeń, rozpoczęta na czas budowa jest dokańczana, a pochodzenie
-własna/zewnętrzna nie wpływa na algorytm. Następny krok to **4F.1 — stabilna
-kolejność budów wymagających pompy**, a później 4F.2 wybierze pierwszą
-pasującą pompę.
+Cały punkt **4E — przejazdy pomp** jest zakończony. Przygotowawczy **4F.0 —
+okno dostępności pomp** oraz **4F.1 — stabilna kolejność** są zakończone. Puste
+`Od/Do` oznacza brak ograniczeń, rozpoczęta na czas budowa jest dokańczana, a
+pochodzenie własna/zewnętrzna nie wpływa na algorytm. Rzeczywiste prace pompowe
+są porządkowane według planowanego początku betonowania, a przy remisie zachowują
+kolejność wejściową. Następny krok to **4F.2 — pierwsza pasująca pompa**.
 Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.

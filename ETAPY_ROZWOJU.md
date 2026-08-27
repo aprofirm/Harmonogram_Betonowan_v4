@@ -49,8 +49,8 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4E oraz przygotowawczy
-  4F.0 zakończone, następny podetap to 4F.1**
+- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4E, przygotowawczy
+  4F.0 oraz 4F.1 zakończone, następny podetap to 4F.2**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -535,17 +535,18 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
     `PROJECT_DECISIONS.md`, a przypadki wymagające decyzji pozostają jawnie w
     `POMYSLY_I_BACKLOG.md`.
 - [x] **4B — model danych i lista pomp.**
-  - [x] **4B.1 — model pompy:** stabilne ID, czytelna nazwa, typ własna lub
-    zewnętrzna, aktywność w danym dniu, godzina **Dostępna od** i miejsce na
-    rzeczywiście potrzebne parametry techniczne, np. wysięg.
+  - [x] **4B.1 — model pompy:** stabilne ID, czytelna nazwa, aktywność w danym
+    dniu, dostępność godzinowa i parametry techniczne, przede wszystkim wysięg.
+    Starszy typ własna/zewnętrzna pozostaje wyłącznie metadaną zgodności.
   - [x] **4B.2 — operacje na liście:** dodawanie, edycja, wyłączanie i usuwanie
     pompy bez mieszania tych operacji z silnikiem harmonogramu.
-  - [x] **4B.3 — walidacja i testy modelu:** unikalne ID, poprawne typy, bezpieczne
-    wartości puste i brak przydzielania pomp nieaktywnych.
+  - [x] **4B.3 — walidacja i testy modelu:** unikalne ID, poprawna aktywność,
+    dostępność i wysięg, bezpieczne wartości puste oraz brak przydzielania
+    pomp nieaktywnych.
 - [x] **4C — interfejs listy pomp i pamięć planu.**
-  - [x] **4C.1 — panel pomp:** czytelna lista z typem, aktywnością, godziną
-    **Dostępna od** i podstawowymi parametrami, działająca również na węższym
-    ekranie.
+  - [x] **4C.1 — panel pomp:** czytelna lista z aktywnością, godzinami
+    **Dostępna od/do** i wysięgiem, bez rozdzielania pomp własnych i
+    zewnętrznych, działająca również na węższym ekranie.
   - [x] **4C.2 — pamięć:** lista pomp i ich bieżąca dostępność są zapisywane w
     planie dnia oraz zapisach historycznych bez psucia starszych rekordów.
   - [x] **4C.3 — odtworzenie i test operatora:** odświeżenie, historia, kolejny
@@ -584,8 +585,9 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
     - [x] **4F.0.4 — testy:** przypadki bez granic, tylko `od`, tylko `do`,
       obie granice, dokładna minuta końcowa, przekroczenie oraz podłączenie
       panelu są objęte `testy/etap_4f_0.test.js` i pełną regresją.
-  - [ ] **4F.1 — stabilna kolejność:** budowy wymagające pompy są rozpatrywane
-    deterministycznie według planowanego startu i kolejności wejściowej.
+  - [x] **4F.1 — stabilna kolejność:** rzeczywiste prace budów wymagających
+    pompy są rozpatrywane deterministycznie według planowanego początku
+    betonowania, a przy remisie zachowują kolejność wejściową.
   - [ ] **4F.2 — pierwsza pasująca pompa:** silnik wybiera pierwszą aktywną,
     dostępną już o wymaganej godzinie, wolną i zgodną z wymaganiami pompę,
     uwzględniając pełny cykl oraz przejazd.

@@ -1796,6 +1796,27 @@ pozostają bez zmian.
 
 ---
 
+## 92. Stabilna kolejność budów przed wyborem pompy
+
+Przed wyborem konkretnego zasobu silnik tworzy deterministyczną kolejność
+rzeczywistych prac wymagających pompy. Do kolejki trafiają tylko budowy,
+dla których zgodnie z zasadami 4D istnieje planowane okno betonowania;
+pozycje niewymagające pompy, z `0 m³`, zrealizowane albo bez rzeczywistego
+okna pracy nie są kandydatami do przydziału.
+
+Podstawowym kluczem kolejności jest minuta planowanego rozpoczęcia
+betonowania, czyli początek pierwszego rozładunku w planowanym oknie.
+Nie sortujemy według początku rozstawiania pompy, nazwy budowy, ID,
+pochodzenia pompy ani długości wysięgu. Jeżeli dwie budowy mają tę samą
+minutę planowanego rozpoczęcia betonowania, zachowują kolejność wejściową.
+
+Ustalenie kolejności nie zmienia budów ani kursów i nie przydziela jeszcze
+pompy. Wynik zawiera indeks wejściowy, kolejny numer rozpatrywania i minutę
+planowanego startu, aby 4F.2 mogło użyć dokładnie tej samej kolejności przy
+wyborze pierwszej pasującej pompy.
+
+---
+
 # Powiązane tematy otwarte
 
 Pomysły, warianty i pytania, które nie są jeszcze obowiązującymi decyzjami, są prowadzone w `POMYSLY_I_BACKLOG.md`. Dzięki temu ten dokument pozostaje jednoznacznym źródłem zatwierdzonych ustaleń.
