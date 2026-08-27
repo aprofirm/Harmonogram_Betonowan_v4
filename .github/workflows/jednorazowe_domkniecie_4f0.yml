@@ -1,4 +1,5 @@
 name: Jednorazowe domknięcie 4F.0
+# Jednorazowy plik techniczny — usuwa się sam po udanym przebiegu.
 
 on:
   push:
