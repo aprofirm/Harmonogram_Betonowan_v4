@@ -2,12 +2,11 @@
 
 ## Status
 
-Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4D** oraz podetap **4E.1**.
-Następny podetap to **4E.2 — budowa do budowy**.
-Standardowy wysięg
-`32 m` i zwijane pole **Większa pompa** są opublikowane na `main` i zostały
-potwierdzone przez operatora w przeglądarce. Pełna regresja obejmuje obecnie
-`33` zestawy testów.
+Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4F** oraz podetap
+**4G.1 — wynik silnika minimalnej liczby pomp**. Następny podetap to
+**4G.2 — widok operatora**. Standardowy wysięg `32 m`, pełne okresy pracy,
+przejazdy i niezależny przydział pomp pozostają objęte regresją. Pełna
+regresja obejmuje obecnie `43` pliki `testy/*.test.js`.
 
 ## Cel
 
