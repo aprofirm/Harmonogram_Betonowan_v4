@@ -357,6 +357,7 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_4f_4.test.js
     node testy/etap_4f_5.test.js
     node testy/etap_4g_1.test.js
+    node testy/etap_4g_2.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
@@ -435,8 +436,8 @@ następnego jest dozwolone. Gdy żadna pompa nie pasuje do planowanej godziny,
 silnik podaje najwcześniejszy możliwy start, przesunięcie i dokładne ograniczenie
 bez zmiany kursów gruszek. Test integracyjny 4F.5 potwierdził wspólne
 działanie tych reguł, w tym pompy 42 m, przejazdów i powtarzalności wyniku.
-Podetap **4G.1 — wynik silnika minimalnej liczby pomp** jest zakończony.
-Silnik tworzy techniczne przydziały pełnych okresów i zwraca najmniejszą liczbę
-pomp potrzebną bez nakładania cykli, niezależnie od rzeczywistej listy zasobów.
-Następny krok to **4G.2 — widok operatora minimalnej liczby pomp**. Pełne
-połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.
+Podetapy **4G.1–4G.2** są zakończone. Silnik wyznacza najmniejszą liczbę
+pomp potrzebną bez nakładania pełnych cykli, a istniejący licznik wyniku pokazuje
+tę wartość operatorowi. Plan bez pompowania pokazuje `0` i czytelny komunikat.
+Następny krok to **4G.3 — testy minimalnej liczby pomp**. Pełne połączenie
+ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.
