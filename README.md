@@ -440,8 +440,10 @@ następnego jest dozwolone. Gdy żadna pompa nie pasuje do planowanej godziny,
 silnik podaje najwcześniejszy możliwy start, przesunięcie i dokładne ograniczenie
 bez zmiany kursów gruszek. Test integracyjny 4F.5 potwierdził wspólne
 działanie tych reguł, w tym pompy 42 m, przejazdów i powtarzalności wyniku.
-Podetapy **4G.1–4G.2** są zakończone. Silnik wyznacza najmniejszą liczbę
-pomp potrzebną bez nakładania pełnych cykli, a istniejący licznik wyniku pokazuje
-tę wartość operatorowi. Plan bez pompowania pokazuje `0` i czytelny komunikat.
-Następny krok to **4G.3 — testy minimalnej liczby pomp**. Pełne połączenie
-ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.
+Cały punkt **4G — minimalna liczba pomp** jest zakończony. Silnik wyznacza
+najmniejszą liczbę pomp potrzebną bez nakładania pełnych cykli, a istniejący
+licznik wyniku pokazuje tę wartość operatorowi. Plan bez pompowania pokazuje
+`0` i czytelny komunikat. Test 4G.3 potwierdza wyniki `0`, `1` i wielu pomp
+oraz zgodność z technicznymi przydziałami bez nakładania pracy jednego zasobu.
+Następny krok to **4H.1 — dwa tryby pracy pomp**. Pełne połączenie ograniczeń
+pomp i gruszek pozostaje świadomie zakresem Etapu 5.
