@@ -601,7 +601,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
   - [x] **4F.5 — testy integracyjne:** wiele budów, równe starty, wyłączona
     pompa, niepasujący parametr, przejazd i powtarzalny wynik.
 - [ ] **4G — minimalna liczba pomp.**
-  - [ ] **4G.1 — wynik silnika:** obliczenie najmniejszej technicznej liczby
+  - [x] **4G.1 — wynik silnika:** obliczenie najmniejszej technicznej liczby
     pomp potrzebnych do planu bez nakładania ich pełnych cykli.
   - [ ] **4G.2 — widok operatora:** osobny licznik potrzebnych pomp i czytelna
     informacja dla planu bez budów pompowanych.
@@ -654,12 +654,12 @@ należą do Etapu 5.
 
 ## Kryteria zakończenia
 
-- [ ] jedna pompa nie może obsługiwać dwóch budów jednocześnie,
+- [x] jedna pompa nie może obsługiwać dwóch budów jednocześnie,
 - [x] czas przejazdu pompy wpływa na możliwość rozpoczęcia następnej budowy,
 - [x] program odróżnia przejazd z bazy od przejazdu między budowami,
 - [x] można wyłączyć pompę z dostępności,
 - [x] przydział nie rozróżnia pompy własnej i zewnętrznej; decydują parametry zasobu,
-- [ ] program potrafi wskazać minimalną potrzebną liczbę pomp,
+- [x] program potrafi wskazać minimalną potrzebną liczbę pomp,
 - [ ] zmniejszenie liczby pomp powoduje pełne ponowne przeliczenie.
 
 ## Test regresji
@@ -911,8 +911,8 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Rozpocząć **4G.1 — wynik silnika**: obliczyć najmniejszą techniczną liczbę
-pomp potrzebnych do planu bez nakładania ich pełnych cykli.
+Rozpocząć **4G.2 — widok operatora**: podłączyć wynik minimalnej liczby
+pomp do istniejącego licznika i czytelnie pokazać `0` dla planu bez pompowania.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -2101,3 +2101,20 @@ operatorski pozostaje częścią 4J.3.
 
 Zamknięty podetap: **4F.5**. Cały punkt **4F — niezależny przydział pomp** jest
 zakończony. Następny nieukończony podetap: **4G.1 — wynik silnika**.
+
+
+## Zamknięcie 4G.1 — minimalna techniczna liczba pomp — 2026-08-28
+
+- [x] silnik tworzy techniczne pompy niezależnie od rzeczywistej listy zasobów;
+- [x] bierze pod uwagę pełne okresy zajętości tylko budów wymagających pompy;
+- [x] ponownie używa pompy technicznej, gdy poprzedni cykl już się zakończył;
+- [x] wynik zawiera `minimalnaLiczbaPomp` i techniczne przydziały bez mutowania wejścia;
+- [x] moduł jest ładowany lokalnie przez `index.html`, bez zależności internetowych;
+- [x] test `testy/etap_4g_1.test.js` i pełna regresja **43/43** przechodzą poprawnie;
+- [x] wszystkie śledzone pliki JavaScript przechodzą kontrolę składni.
+
+Osobny test operatora nie jest wymagany w 4G.1, ponieważ ten podetap tworzy wynik silnika.
+Wyświetlenie licznika należy do 4G.2, a pełny test operatorski pozostaje częścią 4J.3.
+
+Zamknięty podetap: **4G.1**. Punkt nadrzędny **4G** pozostaje otwarty.
+Następny nieukończony podetap: **4G.2 — widok operatora**.
