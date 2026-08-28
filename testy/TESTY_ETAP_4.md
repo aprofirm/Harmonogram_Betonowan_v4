@@ -130,7 +130,10 @@ Test operatora 4C.3 — zaliczony:
 - pusty plan i plan bez pompowania wymagają `0` pomp;
 - pojedyncza budowa wymagająca pompy daje wynik `1`;
 - kilka nakładających się zajętości daje oczekiwaną większą liczbę;
-- wynik jest zgodny z najwyższym technicznym numerem przydzielonej pompy.
+- wynik jest zgodny z najwyższym technicznym numerem przydzielonej pompy;
+- `testy/etap_4g_3.test.js` formalnie sprawdza przypadki `0`, `1` i wielu pomp,
+  ciągłość numeracji zasobów, zgodność liczby przydziałów oraz brak nakładania
+  okresów jednej pompy.
 
 ### 4H — tryb „mam X pomp”
 

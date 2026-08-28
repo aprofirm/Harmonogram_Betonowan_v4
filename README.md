@@ -233,9 +233,12 @@ planem dostaw, natomiast pola oczekujące na przydział nadal mają wartość `n
 Dzięki temu program odróżnia brak wyniku od prawdziwego wyniku `0`. Utworzenie
 wyniku nie zmienia godzin budów ani kursów gruszek.
 
-Licznik **potrzebnych pomp** pokazuje na tym etapie `—`. Nie jest to błąd ani
-wynik `0`: rzeczywista minimalna liczba będzie obliczana dopiero po dodaniu
-pełnych czasów obsługi, zajętości i przydziału pomp w kolejnych podetapach.
+Licznik **potrzebnych pomp** pokazuje po przeliczeniu najmniejszą techniczną
+liczbę pomp potrzebnych do obsługi planu bez nakładania pełnych okresów pracy.
+Dla planu bez budów pompowanych pokazuje `0` i komunikat **Plan nie wymaga
+pompy.** Wyniki `0`, `1` i wielu pomp oraz zgodność z technicznymi przydziałami
+są objęte testami 4G.1–4G.3. Ograniczenie przydziału do rzeczywistej liczby
+pomp operatora pozostaje zakresem 4H.
 
 ## Diagnostyka i raport błędów
 
@@ -358,6 +361,7 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_4f_5.test.js
     node testy/etap_4g_1.test.js
     node testy/etap_4g_2.test.js
+    node testy/etap_4g_3.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js

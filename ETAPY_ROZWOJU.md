@@ -600,12 +600,12 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
     przyczynę do automatycznej notki dla operatora.
   - [x] **4F.5 — testy integracyjne:** wiele budów, równe starty, wyłączona
     pompa, niepasujący parametr, przejazd i powtarzalny wynik.
-- [ ] **4G — minimalna liczba pomp.**
+- [x] **4G — minimalna liczba pomp.**
   - [x] **4G.1 — wynik silnika:** obliczenie najmniejszej technicznej liczby
     pomp potrzebnych do planu bez nakładania ich pełnych cykli.
   - [x] **4G.2 — widok operatora:** osobny licznik potrzebnych pomp i czytelna
     informacja dla planu bez budów pompowanych.
-  - [ ] **4G.3 — testy:** wyniki `0`, `1` i wiele pomp oraz zgodność z
+  - [x] **4G.3 — testy:** wyniki `0`, `1` i wiele pomp oraz zgodność z
     przydziałami technicznymi.
 - [ ] **4H — tryb „mam X pomp”.**
   - [ ] **4H.1 — dwa tryby pracy:** `Oblicz, ile potrzeba` oraz
