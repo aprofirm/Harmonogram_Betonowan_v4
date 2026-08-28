@@ -48,7 +48,7 @@ function utworzKurs(idBudowy, minutaStartu, minutaKonca) {
 }
 
 function pobierzNumeryPompTechnicznych(wynik) {
-  return wynik.przydzialyTechniczne.map(function (przydzial) {
+  return Array.from(wynik.przydzialyTechniczne, function (przydzial) {
     return przydzial.numerPompyTechnicznej;
   });
 }
@@ -78,7 +78,7 @@ function sprawdzMinimalnaFloteTechniczna(pompy) {
   assert.equal(pierwszyWynik.minimalnaLiczbaPomp, 2);
   assert.equal(pierwszyWynik.liczbaBudowDoPrzydzialu, 3);
   assert.deepEqual(
-    pierwszyWynik.przydzialyTechniczne.map(function (przydzial) {
+    Array.from(pierwszyWynik.przydzialyTechniczne, function (przydzial) {
       return przydzial.idBudowy;
     }),
     ["A", "B", "C"]
@@ -109,8 +109,8 @@ function sprawdzPustyPlan(pompy) {
 
   assert.equal(wynik.minimalnaLiczbaPomp, 0);
   assert.equal(wynik.liczbaBudowDoPrzydzialu, 0);
-  assert.deepEqual(wynik.przydzialyTechniczne, []);
-  assert.deepEqual(wynik.pompyTechniczne, []);
+  assert.equal(wynik.przydzialyTechniczne.length, 0);
+  assert.equal(wynik.pompyTechniczne.length, 0);
 }
 
 function uruchomTesty() {
