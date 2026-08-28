@@ -1,5 +1,6 @@
 "use strict";
 
+// 4G.3 formalnie sprawdza wyniki 0, 1 i wielu technicznych pomp.
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
