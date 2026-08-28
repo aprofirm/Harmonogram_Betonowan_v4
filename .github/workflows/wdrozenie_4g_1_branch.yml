@@ -62,109 +62,49 @@ jobs:
           index_sciezka = Path("index.html")
           index = index_sciezka.read_text(encoding="utf-8")
           stary_skrypt = '    <script defer src="js/pompy/przydzial_pomp.js"></script>\n'
-          nowy_skrypt = (
-              stary_skrypt +
-              '    <script defer src="js/pompy/minimalna_liczba_pomp.js"></script>\n'
-          )
+          nowy_skrypt = stary_skrypt + '    <script defer src="js/pompy/minimalna_liczba_pomp.js"></script>\n'
           index = zamien_raz(index, stary_skrypt, nowy_skrypt, "skrypt pomp w index.html")
-          index = zamien_raz(
-              index,
-              "        <span>4G.1 · minimalna liczba pomp</span>",
-              "        <span>4G.2 · widok minimalnej liczby pomp</span>",
-              "stopka 4G.1"
-          )
+          index = zamien_raz(index, "        <span>4G.1 · minimalna liczba pomp</span>", "        <span>4G.2 · widok minimalnej liczby pomp</span>", "stopka 4G.1")
           index_sciezka.write_text(index, encoding="utf-8")
 
           etapy_sciezka = Path("ETAPY_ROZWOJU.md")
           etapy = etapy_sciezka.read_text(encoding="utf-8")
-          etapy = zamien_raz(
-              etapy,
-              "- [ ] **4G.1 — wynik silnika:** obliczenie najmniejszej technicznej liczby\n",
-              "- [x] **4G.1 — wynik silnika:** obliczenie najmniejszej technicznej liczby\n",
-              "checkbox 4G.1"
-          )
-          etapy = zamien_raz(
-              etapy,
-              "- [ ] jedna pompa nie może obsługiwać dwóch budów jednocześnie,",
-              "- [x] jedna pompa nie może obsługiwać dwóch budów jednocześnie,",
-              "kryterium braku nakładania pomp"
-          )
-          etapy = zamien_raz(
-              etapy,
-              "- [ ] program potrafi wskazać minimalną potrzebną liczbę pomp,",
-              "- [x] program potrafi wskazać minimalną potrzebną liczbę pomp,",
-              "kryterium minimalnej liczby pomp"
-          )
-          etapy = zamien_raz(
-              etapy,
-              "Rozpocząć **4G.1 — wynik silnika**: obliczyć najmniejszą techniczną liczbę\npomp potrzebnych do planu bez nakładania ich pełnych cykli.",
-              "Rozpocząć **4G.2 — widok operatora**: podłączyć wynik minimalnej liczby\npomp do istniejącego licznika i czytelnie pokazać `0` dla planu bez pompowania.",
-              "kolejny krok"
-          )
-          zamkniecie = """## Zamknięcie 4G.1 — minimalna techniczna liczba pomp — 2026-08-28
-
-- [x] niezależny moduł tworzy techniczne pompy wyłącznie na potrzeby wyznaczenia
-  minimalnej floty i nie zależy od liczby rzeczywistych pomp wpisanych przez operatora;
-- [x] do obliczenia trafiają tylko budowy z rzeczywistym pełnym okresem zajętości
-  pompy; budowy niewymagające pompy, z zerową ilością albo bez okresu są pomijane;
-- [x] pełne okresy są porządkowane według początku zajętości, a przy remisie
-  zachowują kolejność wejściową;
-- [x] pierwsza wolna pompa techniczna jest ponownie używana, gdy jej poprzedni
-  pełny cykl kończy się przed albo dokładnie w chwili rozpoczęcia kolejnego;
-- [x] nowy numer pompy technicznej powstaje tylko wtedy, gdy wszystkie wcześniej
-  utworzone pompy techniczne są jeszcze zajęte;
-- [x] wynik zawiera `minimalnaLiczbaPomp`, techniczne przydziały oraz listę
-  technicznych pomp, bez zmiany budów i kursów wejściowych;
-- [x] moduł jest ładowany lokalnie przez `index.html` i nie dodaje żadnej
-  zależności od internetu, map ani zewnętrznych bibliotek;
-- [x] test `testy/etap_4g_1.test.js` oraz pełna regresja wszystkich **43/43**
-  plików `testy/*.test.js` przechodzą poprawnie;
-- [x] wszystkie śledzone pliki JavaScript przechodzą kontrolę składni.
-
-Osobny test operatora nie jest wymagany, ponieważ 4G.1 tworzy wyłącznie wynik
-silnika. Wyświetlenie licznika należy do 4G.2, a pełny test operatorski pozostaje
-częścią 4J.3.
-
-Zamknięty podetap: **4G.1**. Punkt nadrzędny **4G** pozostaje otwarty.
-Następny nieukończony podetap: **4G.2 — widok operatora**.
-"""
+          etapy = zamien_raz(etapy, "- [ ] **4G.1 — wynik silnika:** obliczenie najmniejszej technicznej liczby\n", "- [x] **4G.1 — wynik silnika:** obliczenie najmniejszej technicznej liczby\n", "checkbox 4G.1")
+          etapy = zamien_raz(etapy, "- [ ] jedna pompa nie może obsługiwać dwóch budów jednocześnie,", "- [x] jedna pompa nie może obsługiwać dwóch budów jednocześnie,", "kryterium braku nakładania pomp")
+          etapy = zamien_raz(etapy, "- [ ] program potrafi wskazać minimalną potrzebną liczbę pomp,", "- [x] program potrafi wskazać minimalną potrzebną liczbę pomp,", "kryterium minimalnej liczby pomp")
+          etapy = zamien_raz(etapy, "Rozpocząć **4G.1 — wynik silnika**: obliczyć najmniejszą techniczną liczbę\npomp potrzebnych do planu bez nakładania ich pełnych cykli.", "Rozpocząć **4G.2 — widok operatora**: podłączyć wynik minimalnej liczby\npomp do istniejącego licznika i czytelnie pokazać `0` dla planu bez pompowania.", "kolejny krok")
+          zamkniecie = "\n".join([
+              "## Zamknięcie 4G.1 — minimalna techniczna liczba pomp — 2026-08-28",
+              "",
+              "- [x] silnik tworzy techniczne pompy niezależnie od rzeczywistej listy zasobów;",
+              "- [x] bierze pod uwagę pełne okresy zajętości tylko budów wymagających pompy;",
+              "- [x] ponownie używa pompy technicznej, gdy poprzedni cykl już się zakończył;",
+              "- [x] wynik zawiera `minimalnaLiczbaPomp` i techniczne przydziały bez mutowania wejścia;",
+              "- [x] moduł jest ładowany lokalnie przez `index.html`, bez zależności internetowych;",
+              "- [x] test `testy/etap_4g_1.test.js` i pełna regresja **43/43** przechodzą poprawnie;",
+              "- [x] wszystkie śledzone pliki JavaScript przechodzą kontrolę składni.",
+              "",
+              "Osobny test operatora nie jest wymagany w 4G.1, ponieważ ten podetap tworzy wynik silnika.",
+              "Wyświetlenie licznika należy do 4G.2, a pełny test operatorski pozostaje częścią 4J.3.",
+              "",
+              "Zamknięty podetap: **4G.1**. Punkt nadrzędny **4G** pozostaje otwarty.",
+              "Następny nieukończony podetap: **4G.2 — widok operatora**.",
+              ""
+          ])
           if "## Zamknięcie 4G.1 — minimalna techniczna liczba pomp — 2026-08-28" in etapy:
               raise SystemExit("Wpis zamknięcia 4G.1 już istnieje.")
           etapy_sciezka.write_text(etapy.rstrip() + "\n\n\n" + zamkniecie, encoding="utf-8")
 
           readme_sciezka = Path("README.md")
           readme = readme_sciezka.read_text(encoding="utf-8")
-          readme = zamien_raz(
-              readme,
-              "    node testy/etap_4f_5.test.js\n",
-              "    node testy/etap_4f_5.test.js\n    node testy/etap_4g_1.test.js\n",
-              "lista testów README"
-          )
-          readme = zamien_raz(
-              readme,
-              "Następny krok to **4G.1 — wynik silnika minimalnej liczby pomp**. Pełne\npołączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.",
-              "Podetap **4G.1 — wynik silnika minimalnej liczby pomp** jest zakończony.\nSilnik tworzy techniczne przydziały pełnych okresów i zwraca najmniejszą liczbę\npomp potrzebną bez nakładania cykli, niezależnie od rzeczywistej listy zasobów.\nNastępny krok to **4G.2 — widok operatora minimalnej liczby pomp**. Pełne\npołączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.",
-              "stan README po 4G.1"
-          )
+          readme = zamien_raz(readme, "    node testy/etap_4f_5.test.js\n", "    node testy/etap_4f_5.test.js\n    node testy/etap_4g_1.test.js\n", "lista testów README")
+          readme = zamien_raz(readme, "Następny krok to **4G.1 — wynik silnika minimalnej liczby pomp**. Pełne\npołączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.", "Podetap **4G.1 — wynik silnika minimalnej liczby pomp** jest zakończony.\nSilnik tworzy techniczne przydziały pełnych okresów i zwraca najmniejszą liczbę\npomp potrzebną bez nakładania cykli, niezależnie od rzeczywistej listy zasobów.\nNastępny krok to **4G.2 — widok operatora minimalnej liczby pomp**. Pełne\npołączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.", "stan README po 4G.1")
           readme_sciezka.write_text(readme, encoding="utf-8")
 
           testy_sciezka = Path("testy/TESTY_ETAP_4.md")
           testy = testy_sciezka.read_text(encoding="utf-8")
-          stary_status = (
-              "Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4D** oraz podetap **4E.1**.\n"
-              "Następny podetap to **4E.2 — budowa do budowy**.\n"
-              "Standardowy wysięg\n"
-              "`32 m` i zwijane pole **Większa pompa** są opublikowane na `main` i zostały\n"
-              "potwierdzone przez operatora w przeglądarce. Pełna regresja obejmuje obecnie\n"
-              "`33` zestawy testów."
-          )
-          nowy_status = (
-              "Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4F** oraz podetap\n"
-              "**4G.1 — wynik silnika minimalnej liczby pomp**. Następny podetap to\n"
-              "**4G.2 — widok operatora**. Standardowy wysięg `32 m`, pełne okresy pracy,\n"
-              "przejazdy i niezależny przydział pomp pozostają objęte regresją. Pełna\n"
-              "regresja obejmuje obecnie `43` pliki `testy/*.test.js`."
-          )
+          stary_status = "Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4D** oraz podetap **4E.1**.\nNastępny podetap to **4E.2 — budowa do budowy**.\nStandardowy wysięg\n`32 m` i zwijane pole **Większa pompa** są opublikowane na `main` i zostały\npotwierdzone przez operatora w przeglądarce. Pełna regresja obejmuje obecnie\n`33` zestawy testów."
+          nowy_status = "Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4F** oraz podetap\n**4G.1 — wynik silnika minimalnej liczby pomp**. Następny podetap to\n**4G.2 — widok operatora**. Standardowy wysięg `32 m`, pełne okresy pracy,\nprzejazdy i niezależny przydział pomp pozostają objęte regresją. Pełna\nregresja obejmuje obecnie `43` pliki `testy/*.test.js`."
           testy = zamien_raz(testy, stary_status, nowy_status, "status TESTY_ETAP_4")
           testy_sciezka.write_text(testy, encoding="utf-8")
           PY
