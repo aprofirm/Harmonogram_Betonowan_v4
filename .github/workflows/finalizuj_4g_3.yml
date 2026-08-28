@@ -9,7 +9,6 @@ permissions:
 
 jobs:
   finalizacja:
-    if: github.event.head_commit.message == '4G.3: uruchom finalizacje dokumentacji'
     runs-on: ubuntu-latest
     steps:
       - name: Pobierz repozytorium
