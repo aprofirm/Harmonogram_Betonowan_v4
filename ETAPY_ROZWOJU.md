@@ -603,7 +603,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
 - [ ] **4G — minimalna liczba pomp.**
   - [x] **4G.1 — wynik silnika:** obliczenie najmniejszej technicznej liczby
     pomp potrzebnych do planu bez nakładania ich pełnych cykli.
-  - [ ] **4G.2 — widok operatora:** osobny licznik potrzebnych pomp i czytelna
+  - [x] **4G.2 — widok operatora:** osobny licznik potrzebnych pomp i czytelna
     informacja dla planu bez budów pompowanych.
   - [ ] **4G.3 — testy:** wyniki `0`, `1` i wiele pomp oraz zgodność z
     przydziałami technicznymi.
@@ -911,8 +911,8 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Rozpocząć **4G.2 — widok operatora**: podłączyć wynik minimalnej liczby
-pomp do istniejącego licznika i czytelnie pokazać `0` dla planu bez pompowania.
+Rozpocząć **4G.3 — testy minimalnej liczby pomp**: potwierdzić wyniki `0`, `1`
+i wiele pomp oraz zgodność licznika z przydziałami technicznymi.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -2118,3 +2118,17 @@ Wyświetlenie licznika należy do 4G.2, a pełny test operatorski pozostaje czę
 
 Zamknięty podetap: **4G.1**. Punkt nadrzędny **4G** pozostaje otwarty.
 Następny nieukończony podetap: **4G.2 — widok operatora**.
+
+
+## Zamknięcie 4G.2 — widok minimalnej liczby pomp — 2026-08-28
+
+- [x] istniejący licznik `minimalna-liczba-pomp` pokazuje wynik silnika 4G.1 po przeliczeniu;
+- [x] przed przeliczeniem i po zmianie danych licznik pozostaje nieaktualny jako `—`;
+- [x] plan bez budów wymagających pompy pokazuje `0` oraz komunikat `Plan nie wymaga pompy.`;
+- [x] tryb z określoną liczbą pomp zachowuje osobny opis rzeczywistej dostępności floty;
+- [x] logika prezentacji jest osobnym modułem i nie zmienia jeszcze centralnego wyniku `przeliczCalyHarmonogram()`;
+- [x] test `testy/etap_4g_2.test.js` i pełna regresja **44/44** przechodzą poprawnie;
+- [x] wszystkie śledzone pliki JavaScript przechodzą kontrolę składni.
+
+Zamknięty podetap: **4G.2**. Punkt nadrzędny **4G** pozostaje otwarty.
+Następny nieukończony podetap: **4G.3 — testy minimalnej liczby pomp**.

@@ -2,11 +2,10 @@
 
 ## Status
 
-Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4F** oraz podetap
-**4G.1 — wynik silnika minimalnej liczby pomp**. Następny podetap to
-**4G.2 — widok operatora**. Standardowy wysięg `32 m`, pełne okresy pracy,
-przejazdy i niezależny przydział pomp pozostają objęte regresją. Pełna
-regresja obejmuje obecnie `43` pliki `testy/*.test.js`.
+Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4F** oraz podetapy
+**4G.1–4G.2**. Następny podetap to **4G.3 — testy minimalnej liczby pomp**.
+Minimalna liczba pomp jest już liczona i pokazywana operatorowi, w tym `0` dla
+planu bez pompowania. Pełna regresja obejmuje obecnie `44` pliki `testy/*.test.js`.
 
 ## Cel
 
