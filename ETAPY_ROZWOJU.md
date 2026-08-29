@@ -49,8 +49,8 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4I oraz 4J.1 zakończone;
-  następny podetap to 4J.2 — publikacja**
+- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4I oraz 4J.1–4J.2 zakończone;
+  następny podetap to 4J.3 — test operatora**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -640,7 +640,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
 - [ ] **4J — pełna regresja, publikacja i test operatora.**
   - [x] **4J.1 — testy automatyczne:** wszystkie scenariusze Etapu 4 oraz pełna
     regresja importu, pamięci, rodzajów rozładunku i całego Etapu 3.
-  - [ ] **4J.2 — publikacja:** commit na `main`, GitHub Actions i GitHub Pages.
+  - [x] **4J.2 — publikacja:** commit na `main`, GitHub Actions i GitHub Pages.
   - [ ] **4J.3 — test operatora:** rzeczywisty plan z brakiem pomp, jedną pompą,
     kilkoma budowami, pompą nieaktywną, zbyt małą flotą i przejazdem między
     budowami; dopiero wtedy zamknięcie Etapu 4.
@@ -1014,9 +1014,21 @@ Następny niezakończony podetap: **4J.1 — testy automatyczne**.
 Zamknięty podetap: **4J.1**. Punkt nadrzędny **4J** i cały **Etap 4** pozostają otwarte.
 Następny niezakończony podetap: **4J.2 — publikacja**.
 
+## Zamknięcie 4J.2 — publikacja — 2026-08-29
+
+- [x] stan po końcowej regresji 4J.1 znajduje się na `main` w commicie `0a26a72`;
+- [x] GitHub Actions `Testy automatyczne` dla tego commita zakończył się statusem `success` (run `33270058614`);
+- [x] GitHub Pages opublikował ten sam commit `0a26a72` z wynikiem `success` (run `33270057938`);
+- [x] publikacja korzysta z gałęzi `main` i nie wprowadza dodatkowej zależności potrzebnej do pracy offline;
+- [x] adres wersji webowej pozostaje `https://aprofirm.github.io/Harmonogram_Betonowan_v4/`;
+- [x] 4J.2 nie zmienia logiki harmonogramu ani granicy Etapu 4.
+
+Zamknięty podetap: **4J.2**. Punkt nadrzędny **4J** i cały **Etap 4** pozostają otwarte do testu operatora.
+Następny niezakończony podetap: **4J.3 — test operatora**.
+
 # Kolejny krok
 
-Rozpocząć **4J.2 — publikacja**: opublikować stan po końcowej regresji na `main`, potwierdzić GitHub Actions i GitHub Pages, a następnie przygotować test operatora 4J.3.
+Rozpocząć **4J.3 — test operatora** na opublikowanej stronie: sprawdzić rzeczywisty plan dla braku aktywnych pomp, jednej pompy i kilku budów, kilku pomp bez kolizji, pompy nieaktywnej, zbyt małej floty, przejazdu między budowami oraz odtworzenia ustawień po odświeżeniu. Dopiero po tym teście można zamknąć Etap 4.
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
 
