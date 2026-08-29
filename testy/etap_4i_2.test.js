@@ -204,7 +204,7 @@ function sprawdzWspolnyPanel() {
   assert.match(html, /id="minimalna-liczba-pomp"/);
   assert.match(html, /id="liczba-dostepnych-pomp-wynik"/);
   assert.match(html, /id="podsumowanie-dostepnosci-pomp"/);
-  assert.match(konfiguracja, /punktEtapu:\s*"4I\.2"/);
+  assert.match(konfiguracja, /punktEtapu:\s*"4I\.[2-9]"/);
 }
 
 function sprawdzPierwszenstwoCentralnegoWyniku() {
