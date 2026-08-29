@@ -185,7 +185,10 @@ function sprawdzTrybOffline() {
   assert.equal(faviconPng.includes(Buffer.from("IEND")), true);
 
   plikiJavaScript.forEach(function (sciezkaPliku) {
-    assert.equal(dokumentHtml.includes("src=\"" + sciezkaPliku + "\""), true, sciezkaPliku);
+    const czyJestLokalnySkrypt =
+      dokumentHtml.includes("src=\"" + sciezkaPliku + "\"") ||
+      dokumentHtml.includes("src=\"" + sciezkaPliku + "?");
+    assert.equal(czyJestLokalnySkrypt, true, sciezkaPliku);
   });
 }
 

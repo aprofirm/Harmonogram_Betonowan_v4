@@ -55,6 +55,8 @@ Opcjonalne kolumny `CzasDojazdu` i `CzasPowrotu` podają czasy w minutach i są 
 
 Do testów operatora 4J.3 można dodatkowo użyć kolumny `PrzejazdyPompy`. Wartość ma format `ID=MINUTY|ID=MINUTY`, np. `B-002=30|B-003=20`, i opisuje czasy przejazdu pompy z bieżącej budowy do wskazanych budów. Jest to źródło pomocnicze do testów. Jeżeli silnik dostanie jawny provider przejazdów, np. późniejszy routing na podstawie adresów, ma on pierwszeństwo przed danymi z CSV.
 
+> GitHub Pages: skrypty zmieniane dla przejazdów pomp mają parametr wersji w `index.html`, aby po publikacji przeglądarka nie uruchamiała starszej kopii JavaScript z cache. Nie zmienia to działania wersji offline `file://`.
+
 Rozpoznawane są również typowe warianty nazw, np. `ID obiektu`, `Klient`, `Nazwa budowy` i `Godzina`. Przykładowy plik znajduje się w [przyklady/przykladowe_budowy.csv](przyklady/przykladowe_budowy.csv).
 
 ### Zmienne kolumny eksportu KDX
