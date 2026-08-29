@@ -738,20 +738,29 @@
 
     panel.id = "panel-wyniku-pomp";
     panel.className = "panel panel-kursow panel-pomp-wynik";
+    panel.setAttribute("aria-labelledby", "tytul-wyniku-pomp");
     naglowek.className = "panel__naglowek panel__naglowek--harmonogram";
     etykieta.className = "etykieta-sekcji";
     etykieta.textContent = "PEŁNY CYKL POMPY";
+    tytul.id = "tytul-wyniku-pomp";
     tytul.textContent = "Praca pomp";
     opis.id = "opis-tabeli-pomp";
     opis.className = "opis-panelu";
     opis.textContent = "Tabela pomp pojawi się po przeliczeniu harmonogramu.";
-    przewijanie.className = "tabela-przewijana";
+    opis.setAttribute("aria-live", "polite");
+    przewijanie.className = "tabela-przewijana tabela-przewijana--pomp";
+    przewijanie.tabIndex = 0;
+    przewijanie.setAttribute("role", "region");
+    przewijanie.setAttribute("aria-labelledby", "tytul-wyniku-pomp");
+    przewijanie.setAttribute("aria-describedby", "opis-tabeli-pomp");
     tabela.className = "tabela-kursow tabela-pomp-wynik";
+    tabela.setAttribute("aria-describedby", "opis-tabeli-pomp");
     tbody.id = "wiersze-pomp-wynik";
 
     naglowki.forEach(function (tekstNaglowka) {
       const th = document.createElement("th");
       th.textContent = tekstNaglowka;
+      th.setAttribute("scope", "col");
       wierszNaglowka.appendChild(th);
     });
 
@@ -954,19 +963,6 @@
       notka.textContent = komunikat.tekst;
       notka.setAttribute("role", komunikat.rodzaj === "blad" ? "alert" : "status");
 
-      if (notka.style) {
-        notka.style.display = "block";
-        notka.style.marginTop = "4px";
-        notka.style.maxWidth = "260px";
-        notka.style.whiteSpace = "normal";
-        notka.style.fontSize = "0.66rem";
-        notka.style.fontWeight = "700";
-        notka.style.lineHeight = "1.25";
-        notka.style.color = komunikat.rodzaj === "blad"
-          ? "var(--kolor-czerwony)"
-          : "#a65e1e";
-      }
-
       wiersz.lastElementChild.appendChild(notka);
       if (wiersz.dataset) {
         wiersz.dataset.statusPompy = komunikat.rodzaj;
@@ -976,7 +972,7 @@
     return komunikaty;
   }
 
-  function ustawOznaczenieEtapu4I4() {
+  function ustawOznaczenieEtapu4I5() {
     if (typeof document.querySelector !== "function") {
       return;
     }
@@ -985,11 +981,11 @@
     const stopka = document.querySelector(".stopka");
 
     if (znacznikEtapu) {
-      znacznikEtapu.textContent = "Etap 4I.4";
+      znacznikEtapu.textContent = "Etap 4I.5";
     }
 
     if (stopka && stopka.lastElementChild) {
-      stopka.lastElementChild.textContent = "4I.4 · komunikaty pomp";
+      stopka.lastElementChild.textContent = "4I.5 · offline i dostępność";
     }
   }
 
@@ -1025,7 +1021,7 @@
     return wynik;
   }
 
-  ustawOznaczenieEtapu4I4();
+  ustawOznaczenieEtapu4I5();
 
   interfejs.pokazWynik = pokazWynik;
   interfejs.oznaczWynikJakoNieaktualny = oznaczWynikJakoNieaktualny;

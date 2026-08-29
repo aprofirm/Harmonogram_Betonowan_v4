@@ -229,7 +229,7 @@ function sprawdzTabeleIKraniceEtapu() {
   assert.equal(techniczny.length, 0);
   assert.match(kod, /notka-pompy/);
   assert.match(kod, /"Komunikat"/);
-  assert.match(konfiguracja, /punktEtapu:\s*"4I\.4"/);
+  assert.match(konfiguracja, /punktEtapu:\s*"4I\.[4-9]"/);
   assert.doesNotMatch(kod, /startRoboczy\s*=/);
 }
 
