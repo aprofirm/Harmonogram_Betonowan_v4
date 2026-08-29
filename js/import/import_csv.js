@@ -46,6 +46,11 @@
       "czaspowrotuminuty",
       "powrot",
       "powrotmin"
+    ],
+    przejazdyPompy: [
+      "przejazdypompy",
+      "czasyprzejazdowpompy",
+      "trasypompy"
     ]
   });
 
@@ -207,7 +212,8 @@
       "dataPlanowana",
       "rodzajRozladunku",
       "czasDojazduMinuty",
-      "czasPowrotuMinuty"
+      "czasPowrotuMinuty",
+      "przejazdyPompy"
     ].forEach(function (nazwaPola) {
       indeksyKolumn[nazwaPola] = znajdzIndeksKolumny(
         naglowkiZnormalizowane,
@@ -291,6 +297,57 @@
       idBudowy: idBudowy,
       nastepnyNumer: numer + 1
     };
+  }
+
+  function parsujPrzejazdyPompy(wartosc, numerWiersza) {
+    const tekst = String(wartosc || "").trim();
+
+    if (!tekst) {
+      return null;
+    }
+
+    const wynik = {};
+
+    tekst.split("|").forEach(function (surowyWpis) {
+      const wpis = String(surowyWpis || "").trim();
+      const indeksRownosci = wpis.indexOf("=");
+
+      if (indeksRownosci <= 0 || indeksRownosci === wpis.length - 1) {
+        throw new Error(
+          "Wiersz " + numerWiersza +
+            " ma niepoprawny wpis w kolumnie PrzejazdyPompy. " +
+            "Użyj formatu ID=MINUTY, np. B-002=30|B-003=20."
+        );
+      }
+
+      const idBudowyDocelowej = wpis.slice(0, indeksRownosci).trim();
+      const tekstCzasu = wpis.slice(indeksRownosci + 1).trim().replace(",", ".");
+      const czasPrzejazduMinuty = Number(tekstCzasu);
+
+      if (
+        !idBudowyDocelowej ||
+        !Number.isFinite(czasPrzejazduMinuty) ||
+        czasPrzejazduMinuty < 0
+      ) {
+        throw new Error(
+          "Wiersz " + numerWiersza +
+            " ma niepoprawny czas w kolumnie PrzejazdyPompy dla budowy „" +
+            idBudowyDocelowej + "”. Czas musi być liczbą nie mniejszą niż 0."
+        );
+      }
+
+      if (Object.prototype.hasOwnProperty.call(wynik, idBudowyDocelowej)) {
+        throw new Error(
+          "Wiersz " + numerWiersza +
+            " zawiera powtórzony cel „" + idBudowyDocelowej +
+            "” w kolumnie PrzejazdyPompy."
+        );
+      }
+
+      wynik[idBudowyDocelowej] = czasPrzejazduMinuty;
+    });
+
+    return wynik;
   }
 
   function utworzOstrzezeniaId(indeksKolumnyId, liczbaAutomatycznychId) {
@@ -406,6 +463,14 @@
       const czasPowrotuZImportu = String(
         pobierzWartoscOpcjonalna(wiersz, indeksyKolumn.czasPowrotuMinuty)
       ).trim();
+      const przejazdyPompyZImportu = parsujPrzejazdyPompy(
+        pobierzWartoscOpcjonalna(wiersz, indeksyKolumn.przejazdyPompy),
+        numerWiersza
+      );
+
+      if (przejazdyPompyZImportu) {
+        budowa.przejazdyPompyMinuty = przejazdyPompyZImportu;
+      }
 
       if (czasDojazduZImportu || czasPowrotuZImportu) {
         aplikacja.budowy.ustawCzasyRobocze(budowa, {
