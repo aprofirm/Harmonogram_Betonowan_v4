@@ -972,7 +972,7 @@
     return komunikaty;
   }
 
-  function ustawOznaczenieEtapu4I5() {
+  function ustawOznaczenieEtapu4J1() {
     if (typeof document.querySelector !== "function") {
       return;
     }
@@ -981,11 +981,11 @@
     const stopka = document.querySelector(".stopka");
 
     if (znacznikEtapu) {
-      znacznikEtapu.textContent = "Etap 4I.5";
+      znacznikEtapu.textContent = "Etap 4J.1";
     }
 
     if (stopka && stopka.lastElementChild) {
-      stopka.lastElementChild.textContent = "4I.5 · offline i dostępność";
+      stopka.lastElementChild.textContent = "4J.1 · pełna regresja automatyczna";
     }
   }
 
@@ -1021,7 +1021,7 @@
     return wynik;
   }
 
-  ustawOznaczenieEtapu4I5();
+  ustawOznaczenieEtapu4J1();
 
   interfejs.pokazWynik = pokazWynik;
   interfejs.oznaczWynikJakoNieaktualny = oznaczWynikJakoNieaktualny;
