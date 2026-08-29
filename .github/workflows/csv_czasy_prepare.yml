@@ -20,7 +20,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python .github/csv_czasy_patch.py
+          python .github/csv_czasy_patch_v2.py
 
       - name: Uruchom pełną regresję
         shell: bash
@@ -35,7 +35,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          rm -f .github/csv_czasy_patch.py .github/workflows/csv_czasy_prepare.yml
+          rm -f .github/csv_czasy_patch.py .github/csv_czasy_patch_v2.py .github/workflows/csv_czasy_prepare.yml
           git config user.name "PawelP"
           git config user.email "53014565+aprofirm@users.noreply.github.com"
           git add -A
