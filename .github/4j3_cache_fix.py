@@ -1,24 +1,25 @@
 from pathlib import Path
-import re
 
-WERSJA = "4j3-przejazdy-20260829b"
+WERSJA = "4j3-przejazdy-20260829c"
+SKRYPTY_WERSJONOWANE = [
+    "js/import/import_csv.js",
+    "js/harmonogram/harmonogram.js",
+    "js/aplikacja.js",
+]
 
-# 1. Wersjonowanie lokalnych skryptów: świeży JS na GitHub Pages, nadal lokalne file://.
+# 1. Wersjonuj tylko skrypty zmienione dla przejazdów pomp.
 p = Path("index.html")
 html = p.read_text(encoding="utf-8")
-html2 = re.sub(
-    r'<script defer src="([^"]+\.js)(?:\?v=[^"]+)?"></script>',
-    lambda m: f'<script defer src="{m.group(1)}?v={WERSJA}"></script>',
-    html,
-)
-if html2 == html:
-    raise RuntimeError("index.html: nie znaleziono skryptów do wersjonowania")
-for wymagany in ["js/import/import_csv.js", "js/harmonogram/harmonogram.js", "js/aplikacja.js"]:
-    if wymagany + "?v=" + WERSJA not in html2:
-        raise RuntimeError("index.html: brak wersji dla " + wymagany)
+html2 = html
+for sciezka in SKRYPTY_WERSJONOWANE:
+    stary = f'<script defer src="{sciezka}"></script>'
+    nowy = f'<script defer src="{sciezka}?v={WERSJA}"></script>'
+    if stary not in html2:
+        raise RuntimeError("index.html: brak oczekiwanego skryptu " + sciezka)
+    html2 = html2.replace(stary, nowy, 1)
 p.write_text(html2, encoding="utf-8")
 
-# 2. Stary test Etapu 1 ma dalej pilnować lokalności, ale query string jest dozwolony.
+# 2. Stary test Etapu 1: nadal lokalne pliki, ale query string jest dozwolony.
 p = Path("testy/etap_1.test.js")
 t = p.read_text(encoding="utf-8")
 old = '''  plikiJavaScript.forEach(function (sciezkaPliku) {\n    assert.equal(dokumentHtml.includes("src=\\\"" + sciezkaPliku + "\\\""), true, sciezkaPliku);\n  });\n'''
@@ -90,13 +91,13 @@ function sprawdzDwiePompyICzteryBudowy(aplikacja) {
 
 function sprawdzWersjonowanieSkryptow() {
   const html = fs.readFileSync(path.join(katalogProjektu, "index.html"), "utf8");
-  const skrypty = Array.from(
-    html.matchAll(/<script defer src="([^"]+\.js\?v=[^"]+)"><\/script>/g),
-    function (m) { return m[1]; }
-  );
-  assert.ok(skrypty.length >= 20);
-  assert.ok(skrypty.some(function (src) { return src.startsWith("js/import/import_csv.js?v="); }));
-  assert.ok(skrypty.some(function (src) { return src.startsWith("js/harmonogram/harmonogram.js?v="); }));
+  [
+    "js/import/import_csv.js?v=",
+    "js/harmonogram/harmonogram.js?v=",
+    "js/aplikacja.js?v="
+  ].forEach(function (fragment) {
+    assert.ok(html.includes(fragment), "Brak wersjonowanego skryptu: " + fragment);
+  });
 }
 
 '''
@@ -114,7 +115,7 @@ p.write_text(t, encoding="utf-8")
 # 4. Dokumentacja przyczyny i zabezpieczenia.
 p = Path("README.md")
 r = p.read_text(encoding="utf-8")
-note = "> GitHub Pages: lokalne skrypty mają parametr wersji w `index.html`, aby po publikacji nowej logiki przeglądarka nie uruchamiała starszej kopii JavaScript z cache. Nie zmienia to działania wersji offline `file://`.\n"
+note = "> GitHub Pages: skrypty zmieniane dla przejazdów pomp mają parametr wersji w `index.html`, aby po publikacji przeglądarka nie uruchamiała starszej kopii JavaScript z cache. Nie zmienia to działania wersji offline `file://`.\n"
 anchor = "Do testów operatora 4J.3 można dodatkowo użyć kolumny `PrzejazdyPompy`."
 if note not in r:
     pos = r.find(anchor)
