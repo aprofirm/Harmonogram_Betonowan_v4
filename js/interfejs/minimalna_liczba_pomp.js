@@ -81,8 +81,6 @@
       : null;
 
     if (!wynikPomp || wynikPomp.status !== "obliczono") {
-      // Zgodność ze starszym kontraktem 4G.2. Produkcyjny przepływ 4I
-      // zawsze przekazuje centralny wynik `wynik.pompy` z 4I.1.
       return pobierzWynikZgodnosci4G(dane);
     }
 
@@ -135,14 +133,14 @@
     if (potrzebne === 0 || wynikPomp.statusFlotyPomp === "brak-budow-pompowanych") {
       opisWyniku = "Plan nie wymaga pompy · dostępne: " + String(dostepne) + ".";
     } else if (wynikPomp.statusFlotyPomp === "brak-pomp") {
-      opisWyniku += " Brak pompy do przydziału.";
+      opisWyniku += " Brak aktywnej pompy do przydziału.";
     } else if (wynikPomp.statusFlotyPomp === "niedobor-pomp") {
       const brakujace = wynikPomp.liczbaBrakujacychPomp === null
         ? Math.max(0, potrzebne - dostepne)
         : wynikPomp.liczbaBrakujacychPomp;
       opisWyniku += " Brakuje: " + String(brakujace) + ".";
     } else if (wynikPomp.statusFlotyPomp === "ograniczenia-pomp") {
-      opisWyniku += " Dostępność pomp ogranicza plan.";
+      opisWyniku += " Dostępność albo parametry pomp ograniczają plan.";
     } else if (wynikPomp.statusFlotyPomp === "flota-wystarczajaca") {
       opisWyniku += " Flota wystarcza.";
     }
@@ -166,7 +164,7 @@
     const licznikPotrzebnych = pobierzElement("minimalna-liczba-pomp");
     const licznikDostepnych = pobierzElement("liczba-dostepnych-pomp-wynik");
     const opis = pobierzElement("podsumowanie-dostepnosci-pomp");
-    const sekcjaPomp = document.querySelector
+    const sekcjaPomp = typeof document.querySelector === "function"
       ? document.querySelector(".sterowanie-zasobu--pompy")
       : null;
     const opisDostepnosci = opis ? opis.textContent : "";
@@ -217,7 +215,7 @@
     const licznikPotrzebnych = pobierzElement("minimalna-liczba-pomp");
     const licznikDostepnych = pobierzElement("liczba-dostepnych-pomp-wynik");
     const opis = pobierzElement("podsumowanie-dostepnosci-pomp");
-    const sekcjaPomp = document.querySelector
+    const sekcjaPomp = typeof document.querySelector === "function"
       ? document.querySelector(".sterowanie-zasobu--pompy")
       : null;
     const czyTrybOgraniczony =
@@ -331,15 +329,206 @@
       " · " + zakres;
   }
 
+  function opiszPowodOdrzucenia(proba) {
+    const dane = proba && typeof proba === "object" ? proba : {};
+    const powod = String(dane.powodOdrzucenia || "").trim();
+    const dostepnosc = dane.dostepnosc && typeof dane.dostepnosc === "object"
+      ? dane.dostepnosc
+      : {};
+
+    if (powod === "niewystarczajacy-wysieg") {
+      const wysieg = Number(dane.wysiegPompyMetry);
+      const wymagany = Number(dane.wymaganyWysiegPompyMetry);
+      return "za mały wysięg: " +
+        (Number.isFinite(wysieg) ? String(wysieg) + " m" : "? m") +
+        " (wymagane " +
+        (Number.isFinite(wymagany) ? String(wymagany) + " m" : "? m") + ")";
+    }
+
+    if (powod === "przed-dostepnoscia") {
+      return "pompa dostępna dopiero od " +
+        formatujMinuteDnia(dostepnosc.dostepnaOdMinuta);
+    }
+
+    if (powod === "po-dostepnosci") {
+      return "pompa niedostępna o tej godzinie" +
+        (dostepnosc.dostepnaDoMinuta === null ||
+          dostepnosc.dostepnaDoMinuta === undefined
+          ? ""
+          : " (dostępna do " +
+            formatujMinuteDnia(dostepnosc.dostepnaDoMinuta) + ")");
+    }
+
+    if (powod === "brak-trasy") {
+      return "brak czasu przejazdu z budowy " +
+        String(dane.idPoprzedniejBudowy || "poprzedniej");
+    }
+
+    if (powod === "brak-dostepnych-pomp") {
+      return "brak dostępnej aktywnej pompy";
+    }
+
+    if (powod === "brak-mozliwego-kandydata" || powod === "brak-pasujacej-pompy") {
+      return "brak pompy spełniającej warunki tej budowy";
+    }
+
+    return powod ? powod.replace(/-/g, " ") : "brak pasującej pompy";
+  }
+
+  function opiszPrzyczynePrzesuniecia(wynikBudowy) {
+    const jawnySkutek = wynikBudowy && wynikBudowy.jawnySkutekPompy
+      ? wynikBudowy.jawnySkutekPompy
+      : {};
+    const przyczynaGlowna = String(jawnySkutek.przyczyna || "");
+    const przyczyny = Array.isArray(jawnySkutek.przyczynyOgraniczenia)
+      ? jawnySkutek.przyczynyOgraniczenia
+      : [];
+    const szczegol = przyczyny.find(function (pozycja) {
+      return pozycja && pozycja.rodzaj === przyczynaGlowna;
+    }) || przyczyny[0] || {};
+
+    if (przyczynaGlowna === "przejazd-miedzy-budowami") {
+      const czas = Number(szczegol.czasPrzejazduMinuty);
+      return "przejazd z budowy " +
+        String(szczegol.idPoprzedniejBudowy || "poprzedniej") +
+        (Number.isFinite(czas) ? " (" + String(czas) + " min)" : "");
+    }
+
+    if (przyczynaGlowna === "pompa-zajeta") {
+      return "pompa zajęta na budowie " +
+        String(szczegol.idPoprzedniejBudowy || "poprzedniej") +
+        (Number.isFinite(Number(szczegol.minutaGotowosciPoPoprzedniejBudowie))
+          ? " do " + formatujMinuteDnia(
+            szczegol.minutaGotowosciPoPoprzedniejBudowie
+          )
+          : "");
+    }
+
+    if (przyczynaGlowna === "przed-dostepnoscia") {
+      return "pompa dostępna od " +
+        formatujMinuteDnia(
+          szczegol.minutaWymaganegoRozpoczeciaPrzygotowania
+        );
+    }
+
+    if (przyczynaGlowna === "ograniczona-flota-pomp") {
+      return "ograniczona liczba dostępnych pomp";
+    }
+
+    return przyczynaGlowna
+      ? przyczynaGlowna.replace(/-/g, " ")
+      : "ograniczenie dostępności pompy";
+  }
+
+  function przygotujKomunikatBudowyPompy(wynikBudowy) {
+    const dane = wynikBudowy && typeof wynikBudowy === "object"
+      ? wynikBudowy
+      : {};
+    const jawnySkutek = dane.jawnySkutekPompy &&
+      typeof dane.jawnySkutekPompy === "object"
+      ? dane.jawnySkutekPompy
+      : null;
+    const idBudowy = String(dane.idBudowy || "");
+
+    if (!jawnySkutek) {
+      return null;
+    }
+
+    if (jawnySkutek.status === "przesunieta") {
+      const opoznienie = Number(jawnySkutek.przesuniecieStartuMinuty) || 0;
+      const start = formatujMinuteDnia(
+        jawnySkutek.minutaMozliwegoStartuBetonowania
+      );
+
+      return {
+        idBudowy: idBudowy,
+        rodzaj: "ostrzezenie",
+        tekst: "Pompa: +" + String(opoznienie) +
+          " min · najwcześniej " + start + " · " +
+          opiszPrzyczynePrzesuniecia(dane) + "."
+      };
+    }
+
+    if (jawnySkutek.status === "bez-przydzialu") {
+      const opisy = [];
+      const proby = Array.isArray(dane.probyKandydatow)
+        ? dane.probyKandydatow
+        : [];
+
+      proby.forEach(function (proba) {
+        const opis = opiszPowodOdrzucenia(proba);
+        if (opis && !opisy.includes(opis)) {
+          opisy.push(opis);
+        }
+      });
+
+      if (!opisy.length) {
+        const powody = Array.isArray(jawnySkutek.powodyOdrzuceniaPomp)
+          ? jawnySkutek.powodyOdrzuceniaPomp
+          : [];
+        powody.forEach(function (powod) {
+          const opis = opiszPowodOdrzucenia({ powodOdrzucenia: powod });
+          if (opis && !opisy.includes(opis)) {
+            opisy.push(opis);
+          }
+        });
+      }
+
+      if (!opisy.length) {
+        opisy.push(
+          opiszPowodOdrzucenia({
+            powodOdrzucenia: dane.powodBrakuPrzydzialu || jawnySkutek.przyczyna
+          })
+        );
+      }
+
+      return {
+        idBudowy: idBudowy,
+        rodzaj: "blad",
+        tekst: "Pompa: brak przydziału · " + opisy.join("; ") + "."
+      };
+    }
+
+    return null;
+  }
+
+  function przygotujKomunikatyPomp(wynikHarmonogramu) {
+    const wynik = wynikHarmonogramu && typeof wynikHarmonogramu === "object"
+      ? wynikHarmonogramu
+      : {};
+    const wynikPomp = wynik.pompy && typeof wynik.pompy === "object"
+      ? wynik.pompy
+      : null;
+
+    if (
+      !wynikPomp ||
+      wynikPomp.status !== "obliczono" ||
+      String(wynikPomp.trybPomp || wynik.trybPomp || "") !==
+        "mam-okreslona-liczbe"
+    ) {
+      return [];
+    }
+
+    return (Array.isArray(wynikPomp.wynikiBudow)
+      ? wynikPomp.wynikiBudow
+      : []
+    ).map(przygotujKomunikatBudowyPompy).filter(function (komunikat) {
+      return komunikat !== null;
+    });
+  }
+
   function utworzDaneWiersza(
+    idBudowy,
     nazwaBudowy,
     nazwaPompy,
     okres,
     przejazd,
     status,
-    opoznienieMinuty
+    opoznienieMinuty,
+    komunikat
   ) {
     return {
+      idBudowy: idBudowy,
       budowa: nazwaBudowy,
       pompa: nazwaPompy,
       przygotowanie: formatujZakres(
@@ -362,18 +551,26 @@
         ? "—"
         : formatujMinuteDnia(okres && okres.minutaZakonczeniaZajetosci),
       status: status,
-      opoznienieMinuty: Number(opoznienieMinuty) || 0
+      opoznienieMinuty: Number(opoznienieMinuty) || 0,
+      komunikat: komunikat ? komunikat.tekst : "—",
+      rodzajKomunikatu: komunikat ? komunikat.rodzaj : "brak"
     };
   }
 
   function przygotujOgraniczonyWynikTabeliPomp(wynikHarmonogramu) {
     const wynikPomp = wynikHarmonogramu.pompy;
     const mapaBudow = utworzMapeBudow(wynikHarmonogramu);
+    const komunikaty = new Map(
+      przygotujKomunikatyPomp(wynikHarmonogramu).map(function (komunikat) {
+        return [String(komunikat.idBudowy), komunikat];
+      })
+    );
     const wynikiBudow = Array.isArray(wynikPomp.wynikiBudow)
       ? wynikPomp.wynikiBudow
       : [];
 
     return wynikiBudow.map(function (wynikBudowy) {
+      const idBudowy = String(wynikBudowy.idBudowy || "");
       const przydzial = wynikBudowy.przydzialPompy;
       const czyPrzydzielona =
         wynikBudowy.statusPrzydzialuPompy === "przydzielona" && przydzial;
@@ -393,6 +590,7 @@
       }
 
       return utworzDaneWiersza(
+        idBudowy,
         pobierzNazweBudowy(wynikBudowy, mapaBudow),
         czyPrzydzielona
           ? String(przydzial.nazwaPompy || przydzial.idPompy || "Pompa")
@@ -400,7 +598,8 @@
         okres,
         przejazd,
         czyPrzydzielona ? "przydzielona" : "brak-przydzialu",
-        wynikBudowy.opoznienieZPowoduPompMinuty
+        wynikBudowy.opoznienieZPowoduPompMinuty,
+        komunikaty.get(idBudowy) || null
       );
     });
   }
@@ -439,12 +638,14 @@
       wykorzystanePompy.add(idPompy);
 
       return utworzDaneWiersza(
+        idBudowy,
         pobierzNazweBudowy(wynikBudowy, mapaBudow),
         "Pompa techniczna " + String(przydzial.numerPompyTechnicznej || "?"),
         przydzial.okresZajetosci,
         przejazd,
         "techniczny",
-        0
+        0,
+        null
       );
     });
   }
@@ -483,7 +684,7 @@
     return {
       trybPomp: trybPomp,
       opis: trybPomp === "mam-okreslona-liczbe"
-        ? "Rzeczywisty przydział pomp z pełnym cyklem pracy i przejazdami między budowami."
+        ? "Rzeczywisty przydział pomp z pełnym cyklem pracy, przejazdami i komunikatami ograniczeń."
         : "Pompy techniczne pokazują minimalny układ zajętości. Przejazdy między budowami nie są w tym trybie rozstrzygane.",
       wiersze: wiersze
     };
@@ -531,7 +732,8 @@
       "Betonowanie",
       "Zakończenie",
       "Przejazd",
-      "Gotowa ponownie"
+      "Gotowa ponownie",
+      "Komunikat"
     ];
 
     panel.id = "panel-wyniku-pomp";
@@ -607,6 +809,16 @@
     wiersz.appendChild(
       utworzKomorkeTabeliPomp(daneWiersza.gotowaPonownie, "wartosc-wazna")
     );
+    wiersz.appendChild(
+      utworzKomorkeTabeliPomp(
+        daneWiersza.komunikat,
+        daneWiersza.rodzajKomunikatu === "blad"
+          ? "skutek-floty skutek-floty--brak"
+          : daneWiersza.rodzajKomunikatu === "ostrzezenie"
+            ? "skutek-floty skutek-floty--opoznienie"
+            : "skutek-floty"
+      )
+    );
 
     return wiersz;
   }
@@ -615,7 +827,7 @@
     const wiersz = document.createElement("tr");
     const komorka = document.createElement("td");
 
-    komorka.colSpan = 7;
+    komorka.colSpan = 8;
     komorka.textContent = tekst;
     wiersz.appendChild(komorka);
     return wiersz;
@@ -684,7 +896,87 @@
     }
   }
 
-  function ustawOznaczenieEtapu4I3() {
+  function wyczyscNotkiPompPrzyBudowach() {
+    const tbody = pobierzElement("wiersze-harmonogramu");
+
+    if (!tbody || typeof tbody.querySelectorAll !== "function") {
+      return;
+    }
+
+    Array.prototype.forEach.call(
+      tbody.querySelectorAll(".notka-pompy"),
+      function (notka) {
+        if (notka && notka.parentNode) {
+          notka.parentNode.removeChild(notka);
+        }
+      }
+    );
+
+    Array.prototype.forEach.call(tbody.querySelectorAll("tr"), function (wiersz) {
+      if (wiersz && wiersz.dataset) {
+        delete wiersz.dataset.statusPompy;
+      }
+    });
+  }
+
+  function pokazNotkiPompPrzyBudowach(wynikHarmonogramu) {
+    const komunikaty = przygotujKomunikatyPomp(wynikHarmonogramu);
+    const tbody = pobierzElement("wiersze-harmonogramu");
+
+    if (
+      !tbody ||
+      typeof tbody.querySelectorAll !== "function" ||
+      typeof document.createElement !== "function"
+    ) {
+      return komunikaty;
+    }
+
+    wyczyscNotkiPompPrzyBudowach();
+    const wiersze = Array.prototype.slice.call(tbody.querySelectorAll("tr"));
+
+    komunikaty.forEach(function (komunikat) {
+      const wiersz = wiersze.find(function (kandydat) {
+        if (!kandydat || typeof kandydat.querySelector !== "function") {
+          return false;
+        }
+
+        const komorkaId = kandydat.querySelector(".identyfikator-budowy");
+        return komorkaId &&
+          String(komorkaId.textContent).trim() === String(komunikat.idBudowy);
+      });
+
+      if (!wiersz || !wiersz.lastElementChild) {
+        return;
+      }
+
+      const notka = document.createElement("small");
+      notka.className = "notka-pompy notka-pompy--" + komunikat.rodzaj;
+      notka.textContent = komunikat.tekst;
+      notka.setAttribute("role", komunikat.rodzaj === "blad" ? "alert" : "status");
+
+      if (notka.style) {
+        notka.style.display = "block";
+        notka.style.marginTop = "4px";
+        notka.style.maxWidth = "260px";
+        notka.style.whiteSpace = "normal";
+        notka.style.fontSize = "0.66rem";
+        notka.style.fontWeight = "700";
+        notka.style.lineHeight = "1.25";
+        notka.style.color = komunikat.rodzaj === "blad"
+          ? "var(--kolor-czerwony)"
+          : "#a65e1e";
+      }
+
+      wiersz.lastElementChild.appendChild(notka);
+      if (wiersz.dataset) {
+        wiersz.dataset.statusPompy = komunikat.rodzaj;
+      }
+    });
+
+    return komunikaty;
+  }
+
+  function ustawOznaczenieEtapu4I4() {
     if (typeof document.querySelector !== "function") {
       return;
     }
@@ -693,11 +985,11 @@
     const stopka = document.querySelector(".stopka");
 
     if (znacznikEtapu) {
-      znacznikEtapu.textContent = "Etap 4I.3";
+      znacznikEtapu.textContent = "Etap 4I.4";
     }
 
     if (stopka && stopka.lastElementChild) {
-      stopka.lastElementChild.textContent = "4I.3 · tabela pomp";
+      stopka.lastElementChild.textContent = "4I.4 · komunikaty pomp";
     }
   }
 
@@ -705,6 +997,7 @@
     const wynik = oryginalnePokazWynik.apply(interfejs, arguments);
     pokazCentralnyWynikPomp(wynikHarmonogramu);
     pokazTabelePomp(wynikHarmonogramu);
+    pokazNotkiPompPrzyBudowach(wynikHarmonogramu);
     return wynik;
   }
 
@@ -712,6 +1005,7 @@
     const wynik = oryginalneOznaczWynikJakoNieaktualny.apply(interfejs, arguments);
     wyczyscCentralnyWynikPomp();
     wyczyscTabelePomp();
+    wyczyscNotkiPompPrzyBudowach();
     return wynik;
   }
 
@@ -719,6 +1013,7 @@
     const wynik = oryginalnePokazPrzywroconyPlan.apply(interfejs, arguments);
     wyczyscCentralnyWynikPomp();
     wyczyscTabelePomp();
+    wyczyscNotkiPompPrzyBudowach();
     return wynik;
   }
 
@@ -726,10 +1021,11 @@
     const wynik = oryginalneWyczyscPlan.apply(interfejs, arguments);
     wyczyscCentralnyWynikPomp();
     wyczyscTabelePomp();
+    wyczyscNotkiPompPrzyBudowach();
     return wynik;
   }
 
-  ustawOznaczenieEtapu4I3();
+  ustawOznaczenieEtapu4I4();
 
   interfejs.pokazWynik = pokazWynik;
   interfejs.oznaczWynikJakoNieaktualny = oznaczWynikJakoNieaktualny;
@@ -739,4 +1035,6 @@
   interfejs.pokazCentralnyWynikPomp = pokazCentralnyWynikPomp;
   interfejs.przygotujDaneTabeliPomp = przygotujDaneTabeliPomp;
   interfejs.pokazTabelePomp = pokazTabelePomp;
+  interfejs.przygotujKomunikatyPomp = przygotujKomunikatyPomp;
+  interfejs.pokazKomunikatyPomp = pokazNotkiPompPrzyBudowach;
 })(window);
