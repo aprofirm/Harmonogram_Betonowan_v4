@@ -19,14 +19,11 @@ function uruchomTesty() {
     html,
     /ograniczony_przydzial_pomp\.js[\s\S]*jawne_konsekwencje_pomp\.js/
   );
-  assert.match(html, /Etap 4H\.3/);
-  assert.match(html, /4H\.3 · jawne konsekwencje ograniczenia pomp/);
-  assert.match(konfiguracja, /punktEtapu:\s*"4H\.3"/);
+  assert.match(konfiguracja, /punktEtapu:\s*"4[A-Z](?:\.\d+)+"/);
   assert.match(etapy, /\[x\] \*\*4H\.3 — jawne konsekwencje:/);
-  assert.match(etapy, /\[ \] \*\*4H\.4 — pamięć i ponowne przeliczenie:/);
 
   console.log(
-    "✓ Etap 4H.3 integracja: moduł jest ładowany w aplikacji, a roadmapa wskazuje 4H.4 jako kolejny krok."
+    "✓ Etap 4H.3 integracja: moduł jawnych konsekwencji pozostaje załadowany, a 4H.3 jest nadal oznaczone jako zakończone."
   );
 }
 
