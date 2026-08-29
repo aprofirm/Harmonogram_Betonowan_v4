@@ -24,7 +24,33 @@ jobs:
           node-version: 20
 
       - name: Zastosuj zmiany 4I.1
+        continue-on-error: true
         run: python3 narzedzia/aktualizuj_4i_1.py
+
+      - name: Dokończ aktualizację README i planu testów
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          readme = Path('README.md')
+          text = readme.read_text(encoding='utf-8')
+          old = '    node testy/etap_4h_5.test.js\n    node testy/pamiec_planu.test.js'
+          new = '    node testy/etap_4h_5.test.js\n    node testy/etap_4i_1.test.js\n    node testy/pamiec_planu.test.js'
+          if old in text:
+              text = text.replace(old, new, 1)
+          old = '''nakładania pracy jednej pompy. Następny krok to **4I.1 — centralny wynik pomp**.\nPełne połączenie ograniczeń pomp i gruszek należy do Etapu 5.'''
+          new = '''nakładania pracy jednej pompy. Cały punkt 4H pozostaje zakończony.\nPełne połączenie ograniczeń pomp i gruszek należy do Etapu 5.\n\n**4I.1 — centralny wynik pomp** jest zakończony. `przeliczCalyHarmonogram()`\nzwraca teraz osobny rzeczywisty wynik `pompy`. W trybie `Oblicz, ile potrzeba`\nzawiera on minimalną liczbę pomp oraz techniczny wynik minimalnej floty, a w\ntrybie `Mam określoną liczbę` korzysta z rzeczywistej listy pomp i pełnego\nkontraktu 4H. Wynik pomp jest liczony na bazowych kursach i nie zmienia\n`StartRoboczy` ani wyniku gruszek. Następny krok to **4I.2 — wspólne sterowanie\nzasobami**.'''
+          if old not in text:
+              raise SystemExit('Nie znaleziono końcowego opisu 4H w README.md')
+          readme.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          testy = Path('testy/TESTY_ETAP_4.md')
+          test_text = testy.read_text(encoding='utf-8')
+          marker = '### 4I.1 — centralny wynik pomp'
+          if marker not in test_text:
+              test_text += '''\n\n### 4I.1 — centralny wynik pomp\n\n- `przeliczCalyHarmonogram()` zwraca wynik pomp w polu `pompy`, a nie pusty placeholder;\n- tryb `Oblicz, ile potrzeba` zwraca minimalną flotę techniczną bez tworzenia rzeczywistych pomp;\n- tryb `Mam określoną liczbę` wykorzystuje przekazaną listę rzeczywistych pomp i kontrakt 4H;\n- `0` pomp pozostaje jawnym brakiem zasobu;\n- wynik pomp korzysta z bazowych kursów sprzed ewentualnych przesunięć gruszek;\n- `StartRoboczy` budów i kursy gruszek pozostają niezmienione przez obliczenie pomp;\n- `testy/etap_4i_1.test.js` sprawdza oba tryby, walidację i granicę Etapu 4.\n'''
+              testy.write_text(test_text, encoding='utf-8')
+          PY
 
       - name: Uruchom pełną regresję
         run: |
