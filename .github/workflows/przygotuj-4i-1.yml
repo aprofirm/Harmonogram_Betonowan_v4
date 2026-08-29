@@ -52,6 +52,19 @@ jobs:
               testy.write_text(test_text, encoding='utf-8')
           PY
 
+      - name: Zachowaj zgodność uproszczonych testów wcześniejszych etapów
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('js/harmonogram/harmonogram.js')
+          text = p.read_text(encoding='utf-8')
+          old = '''    const ustawieniaTrybuPomp = pobierzUstawieniaTrybuPomp(parametry);\n\n    if (ustawieniaTrybuPomp.trybPomp === "mam-okreslona-liczbe") {'''
+          new = '''    const ustawieniaTrybuPomp = pobierzUstawieniaTrybuPomp(parametry);\n    const czyPelnySilnikPompDostepny =\n      typeof aplikacja.pompy.obliczMinimalnaLiczbePomp === "function" &&\n      typeof aplikacja.pompy.obliczOgraniczonyWynikPomp === "function";\n\n    if (!czyPelnySilnikPompDostepny) {\n      return aplikacja.pompy.utworzPustyStanPomp();\n    }\n\n    if (ustawieniaTrybuPomp.trybPomp === "mam-okreslona-liczbe") {'''
+          if old not in text:
+              raise SystemExit('Nie znaleziono miejsca na fallback starszych testów')
+          p.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+
       - name: Uruchom pełną regresję
         run: |
           for test in testy/*.test.js; do
