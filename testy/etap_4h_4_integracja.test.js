@@ -11,20 +11,16 @@ function wczytaj(sciezka) {
 }
 
 function uruchomTesty() {
-  const html = wczytaj("index.html");
-  const konfiguracja = wczytaj("js/konfiguracja/konfiguracja.js");
   const etapy = wczytaj("ETAPY_ROZWOJU.md");
   const readme = wczytaj("README.md");
 
-  assert.match(html, /Etap 4H\.4/);
-  assert.match(html, /4H\.4 · pamięć i ponowne przeliczenie pomp/);
-  assert.match(konfiguracja, /punktEtapu:\s*"4H\.4"/);
+  // Test 4H.4 pilnuje trwałego faktu zakończenia tego podetapu. Nie może
+  // blokować późniejszych etapów tylko dlatego, że zmienił się znacznik wersji.
   assert.match(etapy, /\[x\] \*\*4H\.4 — pamięć i ponowne przeliczenie:/);
-  assert.match(etapy, /\[ \] \*\*4H\.5 — testy:/);
   assert.match(readme, /node testy\/etap_4h_4\.test\.js/);
 
   console.log(
-    "✓ Etap 4H.4 integracja: status projektu wskazuje zamknięte 4H.4 i następny krok 4H.5."
+    "✓ Etap 4H.4 integracja: pamięć i czysty stan ponownego przeliczenia pozostają objęte testem po przejściu do kolejnych etapów."
   );
 }
 
