@@ -135,6 +135,16 @@ Test operatora 4C.3 — zaliczony:
   ciągłość numeracji zasobów, zgodność liczby przydziałów oraz brak nakładania
   okresów jednej pompy.
 
+
+### 4H.1 — dwa tryby pracy pomp
+
+- domyślnie działa `Oblicz, ile potrzeba` bez wymaganego limitu pomp;
+- `Mam określoną liczbę` uaktywnia i wymaga pola liczby pomp;
+- poprawne są `0` oraz dodatnie liczby całkowite;
+- liczba ujemna, ułamkowa i pusta w trybie ograniczonym są odrzucane;
+- zmiana trybu lub liczby oznacza poprzedni wynik jako nieaktualny;
+- `testy/etap_4h_1.test.js` sprawdza kontrakt interfejsu i dopasowanie listy zasobów.
+
 ### 4H — tryb „mam X pomp”
 
 - tryb bez limitu zachowuje planowane godziny i wynik minimalnej floty;

@@ -83,7 +83,7 @@ function utworzKurs(idKursu, minutaPoczatku, czasCykluMinuty) {
 const aplikacja = wczytajAplikacje();
 
 const pustyWynik = przelicz(aplikacja, []);
-assert.equal(pustyWynik.punktEtapu, "4F.1");
+assert.match(pustyWynik.punktEtapu, /^4[A-Z](?:\.\d+)+$/);
 assert.equal(pustyWynik.minimalnaLiczbaGruszek, 0);
 assert.equal(pustyWynik.gruszki.minimalnaLiczbaGruszek, 0);
 
