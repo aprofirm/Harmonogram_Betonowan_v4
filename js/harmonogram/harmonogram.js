@@ -56,6 +56,82 @@
     };
   }
 
+  function pobierzUstawieniaTrybuPomp(parametry) {
+    const trybPomp = parametry.trybPomp || "oblicz-potrzebne";
+
+    if (trybPomp === "oblicz-potrzebne") {
+      return {
+        trybPomp: trybPomp,
+        liczbaDostepnychPomp: null
+      };
+    }
+
+    if (trybPomp !== "mam-okreslona-liczbe") {
+      throw new Error("Nie rozpoznano wybranego trybu pracy pomp.");
+    }
+
+    const liczbaDostepnychPomp = Number(parametry.liczbaDostepnychPomp);
+
+    if (!Number.isInteger(liczbaDostepnychPomp) || liczbaDostepnychPomp < 0) {
+      throw new Error(
+        "Liczba dostępnych pomp musi być liczbą całkowitą nie mniejszą niż 0."
+      );
+    }
+
+    return {
+      trybPomp: trybPomp,
+      liczbaDostepnychPomp: liczbaDostepnychPomp
+    };
+  }
+
+  function obliczCentralnyWynikPomp(
+    listaBudow,
+    listaPomp,
+    listaKursow,
+    parametry,
+    opcjePomp
+  ) {
+    const ustawieniaTrybuPomp = pobierzUstawieniaTrybuPomp(parametry);
+    const czyPelnySilnikPompDostepny =
+      typeof aplikacja.pompy.obliczMinimalnaLiczbePomp === "function" &&
+      typeof aplikacja.pompy.obliczOgraniczonyWynikPomp === "function";
+
+    if (!czyPelnySilnikPompDostepny) {
+      return aplikacja.pompy.utworzPustyStanPomp();
+    }
+
+    if (ustawieniaTrybuPomp.trybPomp === "mam-okreslona-liczbe") {
+      return aplikacja.pompy.obliczOgraniczonyWynikPomp(
+        listaBudow,
+        listaPomp,
+        listaKursow,
+        ustawieniaTrybuPomp.liczbaDostepnychPomp,
+        opcjePomp
+      );
+    }
+
+    const wynikBazowy = aplikacja.pompy.utworzWynikSilnikaPomp(
+      listaBudow,
+      [],
+      ustawieniaTrybuPomp,
+      listaKursow
+    );
+    const wynikMinimalnejFloty = aplikacja.pompy.obliczMinimalnaLiczbePomp(
+      listaBudow,
+      listaKursow
+    );
+
+    return Object.assign({}, wynikBazowy, {
+      status: "obliczono",
+      trybPomp: ustawieniaTrybuPomp.trybPomp,
+      minimalnaLiczbaPomp: wynikMinimalnejFloty.minimalnaLiczbaPomp,
+      liczbaDostepnychPomp: null,
+      liczbaBudowWymagajacychPompy:
+        wynikMinimalnejFloty.liczbaBudowDoPrzydzialu,
+      wynikMinimalnejFloty: wynikMinimalnejFloty
+    });
+  }
+
   function utworzDopisekOdbiorowWlasnych(listaBudow) {
     const liczbaOdbiorowWlasnych = policzOdbioryWlasne(listaBudow);
 
@@ -166,6 +242,15 @@
     const kursy = wynikPrzydzialu.kursy;
     const minimalnaLiczbaGruszek =
       wynikMinimalnejFloty.minimalnaLiczbaGruszek;
+    // 4I.1: pompy dostają bazowe kursy przed korektami ograniczonej floty
+    // gruszek. Wyniki obu zasobów są nadal niezależne; sprzężenie należy do Etapu 5.
+    const wynikPomp = obliczCentralnyWynikPomp(
+      listaBudow,
+      aktualneDane.listaPomp,
+      kursyZCzasami,
+      parametry,
+      aktualneDane.opcjePomp
+    );
     const stanGruszek = {
       trybGruszek: ustawieniaTrybuGruszek.trybGruszek,
       minimalnaLiczbaGruszek: minimalnaLiczbaGruszek,
@@ -203,7 +288,7 @@
       status: "gotowy",
       parametry: parametry,
       budowy: listaBudow,
-      pompy: aplikacja.pompy.utworzPustyStanPomp(),
+      pompy: wynikPomp,
       gruszki: stanGruszek,
       lokalizacje: aplikacja.lokalizacje.utworzPustyStanLokalizacji(),
       kursy: kursy,
@@ -211,6 +296,9 @@
       minimalnaLiczbaGruszek: minimalnaLiczbaGruszek,
       liczbaDostepnychGruszek:
         ustawieniaTrybuGruszek.liczbaDostepnychGruszek,
+      trybPomp: wynikPomp.trybPomp,
+      minimalnaLiczbaPomp: wynikPomp.minimalnaLiczbaPomp,
+      liczbaDostepnychPomp: wynikPomp.liczbaDostepnychPomp,
       konflikty: konflikty,
       komunikaty: [komunikatKursow]
     };

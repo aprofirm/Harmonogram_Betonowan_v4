@@ -622,7 +622,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
   - [x] **4H.5 — testy:** flota wystarczająca, zbyt mała, `0`, błędne dane,
     stabilność wyniku i brak nakładania pracy jednej pompy.
 - [ ] **4I — integracja wyniku i interfejs operatora.**
-  - [ ] **4I.1 — centralny wynik:** `przeliczCalyHarmonogram()` udostępnia
+  - [x] **4I.1 — centralny wynik:** `przeliczCalyHarmonogram()` udostępnia
     osobny wynik pomp, nadal bez docelowego łączenia korekt pomp i gruszek.
   - [ ] **4I.2 — wspólne sterowanie zasobami:** w nagłówku harmonogramu pod
     sterowaniem gruszkami pojawia się estetyczny, kompaktowy wiersz pomp z
@@ -936,10 +936,24 @@ Następny niezakończony podetap: **4H.5 — testy**.
 Zamknięty podetap: **4H.5**. Cały punkt **4H — tryb „mam X pomp”** jest zakończony.
 Następny niezakończony podetap: **4I.1 — centralny wynik**.
 
+## Zamknięcie 4I.1 — centralny wynik pomp — 2026-08-29
+
+- [x] `przeliczCalyHarmonogram()` zwraca rzeczywisty obiekt `pompy` zamiast pustego stanu;
+- [x] tryb `Oblicz, ile potrzeba` zwraca minimalną liczbę pomp i techniczny wynik minimalnej floty;
+- [x] tryb `Mam określoną liczbę` wykorzystuje rzeczywistą listę pomp oraz pełny wynik 4H;
+- [x] aplikacja przekazuje do centralnego silnika kopię bieżącej listy pomp;
+- [x] wynik pomp jest liczony z bazowych kursów przed korektami ograniczonej floty gruszek;
+- [x] wynik pomp nie zmienia `StartRoboczy` ani kursów gruszek; pełne sprzężenie pozostaje zakresem Etapu 5;
+- [x] test 4I.1 potwierdza oba tryby, `0`, stabilność granicy i walidację.
+
+Zamknięty podetap: **4I.1**. Punkt nadrzędny **4I** pozostaje otwarty.
+Następny niezakończony podetap: **4I.2 — wspólne sterowanie zasobami**.
+
 # Kolejny krok
 
-Rozpocząć **4I.1 — centralny wynik pomp**: podłączyć niezależny wynik pomp do
-`przeliczCalyHarmonogram()` bez docelowego łączenia korekt pomp i gruszek.
+Rozpocząć **4I.2 — wspólne sterowanie zasobami**: uporządkować w nagłówku
+harmonogramu kompaktowy wiersz pomp z trybem pracy, liczbą potrzebną, dostępną
+i skrótem dostępności, bez przenoszenia logiki obliczeniowej do interfejsu.
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
 

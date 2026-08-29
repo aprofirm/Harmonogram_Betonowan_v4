@@ -367,6 +367,7 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_4h_3.test.js
     node testy/etap_4h_4.test.js
     node testy/etap_4h_5.test.js
+    node testy/etap_4i_1.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
@@ -462,5 +463,13 @@ podłączenie pozostają zakresem 4I. 4H.4 potwierdza zapis i odtwarzanie trybu
 oraz liczby pomp, w tym `0`, a także czysty stan każdego ponownego przeliczenia
 bez odziedziczonych zajętości. Końcowy test 4H.5 potwierdza flotę wystarczającą,
 niedobór, `0`, błędne dane, stabilność wyniku, limit aktywnej listy i brak
-nakładania pracy jednej pompy. Następny krok to **4I.1 — centralny wynik pomp**.
+nakładania pracy jednej pompy. Cały punkt 4H pozostaje zakończony.
 Pełne połączenie ograniczeń pomp i gruszek należy do Etapu 5.
+
+**4I.1 — centralny wynik pomp** jest zakończony. `przeliczCalyHarmonogram()`
+zwraca teraz osobny rzeczywisty wynik `pompy`. W trybie `Oblicz, ile potrzeba`
+zawiera on minimalną liczbę pomp oraz techniczny wynik minimalnej floty, a w
+trybie `Mam określoną liczbę` korzysta z rzeczywistej listy pomp i pełnego
+kontraktu 4H. Wynik pomp jest liczony na bazowych kursach i nie zmienia
+`StartRoboczy` ani wyniku gruszek. Następny krok to **4I.2 — wspólne sterowanie
+zasobami**.

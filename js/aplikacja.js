@@ -327,7 +327,8 @@
       const wynik = aplikacja.harmonogram.przeliczCalyHarmonogram({
         parametry: parametry,
         stanImportu: stanImportu,
-        budowyReczne: budowyReczne
+        budowyReczne: budowyReczne,
+        listaPomp: aplikacja.pompy.skopiujListePomp(listaPomp)
       });
 
       czyOstatniPlanPrzeliczony = true;
