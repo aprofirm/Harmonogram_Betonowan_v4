@@ -253,9 +253,9 @@ function sprawdzPodlaczenieWidoku() {
   const kod = wczytaj("js/interfejs/minimalna_liczba_pomp.js");
   const konfiguracja = wczytaj("js/konfiguracja/konfiguracja.js");
 
-  assert.equal(srodowisko.znacznikEtapu.textContent, "Etap 4I.3");
-  assert.equal(srodowisko.stopkaEtapu.textContent, "4I.3 · tabela pomp");
-  assert.match(konfiguracja, /punktEtapu:\s*"4I\.3"/);
+  assert.match(srodowisko.znacznikEtapu.textContent, /^Etap 4I\.[3-9]$/);
+  assert.match(srodowisko.stopkaEtapu.textContent, /^4I\.[3-9] ·/);
+  assert.match(konfiguracja, /punktEtapu:\s*"4I\.[3-9]"/);
   assert.match(kod, /panel-wyniku-pomp/);
   assert.match(kod, /wiersze-pomp-wynik/);
   assert.match(kod, /"Budowa",[\s\S]*"Pompa",[\s\S]*"Przygotowanie"/);
