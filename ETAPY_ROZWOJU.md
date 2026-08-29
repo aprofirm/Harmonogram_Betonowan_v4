@@ -49,8 +49,8 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4F zakończone,
-  następny podetap to 4G.1**
+- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4G zakończone,
+  zamknięte 4H.1; następny podetap to 4H.2**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -608,7 +608,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
   - [x] **4G.3 — testy:** wyniki `0`, `1` i wiele pomp oraz zgodność z
     przydziałami technicznymi.
 - [ ] **4H — tryb „mam X pomp”.**
-  - [ ] **4H.1 — dwa tryby pracy:** `Oblicz, ile potrzeba` oraz
+  - [x] **4H.1 — dwa tryby pracy:** `Oblicz, ile potrzeba` oraz
     `Mam określoną liczbę`, z walidacją całkowitej liczby od `0` wzwyż.
   - [ ] **4H.2 — ograniczony przydział:** silnik nie tworzy pompy ponad podaną
     liczbę albo ponad aktywną listę i wylicza rzeczywisty skutek niedoboru.
@@ -911,8 +911,9 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Rozpocząć **4G.3 — testy minimalnej liczby pomp**: potwierdzić wyniki `0`, `1`
-i wiele pomp oraz zgodność licznika z przydziałami technicznymi.
+Rozpocząć **4H.2 — ograniczony przydział pomp**: wykorzystać rzeczywistą
+liczbę/listę aktywnych pomp bez tworzenia dodatkowych zasobów i wyliczyć
+jawny skutek niedoboru.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -2132,3 +2133,17 @@ Następny nieukończony podetap: **4G.2 — widok operatora**.
 
 Zamknięty podetap: **4G.2**. Punkt nadrzędny **4G** pozostaje otwarty.
 Następny nieukończony podetap: **4G.3 — testy minimalnej liczby pomp**.
+
+## Zamknięcie 4H.1 — dwa tryby pracy pomp — 2026-08-29
+
+- [x] panel pomp udostępnia tryb **Oblicz, ile potrzeba** oraz **Mam określoną liczbę**;
+- [x] pole liczby pomp jest aktywne i wymagane wyłącznie w trybie ograniczonym;
+- [x] tryb ograniczony przyjmuje wyłącznie całkowitą liczbę pomp od `0` wzwyż;
+- [x] tryb obliczania potrzebnej liczby zapisuje brak limitu jako `null`;
+- [x] zmiana trybu lub liczby unieważnia poprzedni wynik i przebudowuje listę zasobów wejściowych;
+- [x] `testy/etap_4h_1.test.js` formalnie chroni oba tryby, walidację `0`, liczb dodatnich, ujemnych i ułamkowych oraz dopasowanie listy pomp;
+- [x] pełna regresja wszystkich testów przechodzi przed publikacją podetapu.
+
+Zamknięty podetap: **4H.1**. Punkt nadrzędny **4H** pozostaje otwarty.
+Następny niezakończony podetap: **4H.2 — ograniczony przydział pomp**.
+

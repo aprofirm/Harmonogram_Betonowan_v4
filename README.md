@@ -362,6 +362,7 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_4g_1.test.js
     node testy/etap_4g_2.test.js
     node testy/etap_4g_3.test.js
+    node testy/etap_4h_1.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
@@ -445,5 +446,9 @@ najmniejszą liczbę pomp potrzebną bez nakładania pełnych cykli, a istnieją
 licznik wyniku pokazuje tę wartość operatorowi. Plan bez pompowania pokazuje
 `0` i czytelny komunikat. Test 4G.3 potwierdza wyniki `0`, `1` i wielu pomp
 oraz zgodność z technicznymi przydziałami bez nakładania pracy jednego zasobu.
-Następny krok to **4H.1 — dwa tryby pracy pomp**. Pełne połączenie ograniczeń
-pomp i gruszek pozostaje świadomie zakresem Etapu 5.
+Podetap **4H.1 — dwa tryby pracy pomp** jest zakończony. Operator może wybrać
+**Oblicz, ile potrzeba** albo **Mam określoną liczbę**; w drugim trybie liczba
+musi być całkowita i nieujemna, a `0` jest poprawną wartością. Formalny test
+`etap_4h_1.test.js` chroni ten kontrakt. Następny krok to **4H.2 — ograniczony
+przydział pomp**. Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie
+zakresem Etapu 5.
