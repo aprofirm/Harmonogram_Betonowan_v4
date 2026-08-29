@@ -1,0 +1,53 @@
+name: Prepare 4H2
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Update branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin 4h-2-ograniczony-przydzial-pomp
+          git checkout -B 4h-2-ograniczony-przydzial-pomp origin/4h-2-ograniczony-przydzial-pomp
+          python narzedzia/aktualizuj_4h_2.py
+          rm narzedzia/aktualizuj_4h_2.py
+          for plik in testy/*.test.js; do
+            node "$plik"
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "4H.2: zintegruj ograniczony przydzial pomp"
+          git push origin HEAD:4h-2-ograniczony-przydzial-pomp
+
+      - name: Clean main
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git checkout -B main origin/main
+          rm .github/workflows/przygotuj-4h-2.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: usun jednorazowy workflow 4H.2"
+          git push origin HEAD:main
