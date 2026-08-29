@@ -333,6 +333,45 @@
             </div>
           </div>
 
+          <div id="panel-przejazdow-pomp" class="panel panel-przejazdow-pomp" aria-labelledby="tytul-przejazdow-pomp">
+            <div class="panel__naglowek panel__naglowek--harmonogram panel__naglowek--przejazdy-pomp">
+              <div>
+                <p class="etykieta-sekcji">CZASY PRZEJAZDU POMPY</p>
+                <h2 id="tytul-przejazdow-pomp">Przejazdy między budowami</h2>
+              </div>
+              <div class="podsumowanie-przejazdow-pomp">
+                <span id="liczba-przejazdow-pomp">0</span>
+                <small>możliwych przejazdów</small>
+              </div>
+              <p class="opis-panelu opis-panelu--przejazdy-pomp">
+                Wartości są kierunkowe. Program pokazuje możliwe przejazdy do późniejszych budów;
+                wpis ręczny ma pierwszeństwo przy następnym przeliczeniu.
+              </p>
+            </div>
+
+            <div class="tabela-przewijana tabela-przewijana--przejazdy-pomp" tabindex="0" role="region" aria-label="Czasy przejazdów pomp między budowami">
+              <table class="tabela-przejazdow-pomp">
+                <thead>
+                  <tr>
+                    <th scope="col">Z budowy</th>
+                    <th scope="col">Do budowy</th>
+                    <th scope="col">Czas przejazdu</th>
+                    <th scope="col">Źródło</th>
+                    <th scope="col">Przywróć</th>
+                  </tr>
+                </thead>
+                <tbody id="wiersze-przejazdow-pomp">
+                  <tr class="pusty-wiersz pusty-wiersz--przejazdy-pomp">
+                    <td colspan="5">
+                      <strong>Brak budów wymagających pompy</strong>
+                      <span>Po wczytaniu planu program pokaże tutaj jawne czasy budowa → budowa.</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <div class="panel panel-kursow">
             <div class="panel__naglowek panel__naglowek--harmonogram">
               <div>
@@ -447,11 +486,12 @@
     <script defer src="js/diagnostyka/diagnostyka.js"></script>
     <script defer src="js/pamiec/pamiec_planu.js"></script>
     <script defer src="js/pamiec/pamiec_tras.js"></script>
-    <script defer src="js/import/import_csv.js?v=4j3-przejazdy-20260829c"></script>
+    <script defer src="js/import/import_csv.js?v=4j3-panel-przejazdow-20260829a"></script>
     <script defer src="js/budowy/budowy.js"></script>
     <script defer src="js/pompy/pompy.js"></script>
     <script defer src="js/pompy/dostepnosc_pomp.js"></script>
     <script defer src="js/pompy/przejazdy_pomp.js"></script>
+    <script defer src="js/pompy/edycja_przejazdow_pomp.js"></script>
     <script defer src="js/pompy/przydzial_pomp.js"></script>
     <script defer src="js/pompy/minimalna_liczba_pomp.js"></script>
     <script defer src="js/pompy/ograniczony_przydzial_pomp.js"></script>
@@ -460,13 +500,14 @@
     <script defer src="js/gruszki/przydzial_gruszek.js"></script>
     <script defer src="js/lokalizacje/lokalizacje.js"></script>
     <script defer src="js/budowy/rodzaj_rozladunku.js"></script>
-    <script defer src="js/harmonogram/harmonogram.js?v=4j3-przejazdy-20260829c"></script>
+    <script defer src="js/harmonogram/harmonogram.js?v=4j3-panel-przejazdow-20260829a"></script>
     <script defer src="js/interfejs/interfejs.js"></script>
     <script defer src="js/interfejs/odstep_dostaw.js"></script>
     <script defer src="js/interfejs/rodzaj_rozladunku.js"></script>
     <script defer src="js/interfejs/podglad_tras.js"></script>
     <script defer src="js/interfejs/dostepnosc_pomp.js"></script>
+    <script defer src="js/interfejs/przejazdy_pomp.js"></script>
     <script defer src="js/interfejs/minimalna_liczba_pomp.js"></script>
-    <script defer src="js/aplikacja.js?v=4j3-przejazdy-20260829c"></script>
+    <script defer src="js/aplikacja.js?v=4j3-panel-przejazdow-20260829a"></script>
   </body>
 </html>

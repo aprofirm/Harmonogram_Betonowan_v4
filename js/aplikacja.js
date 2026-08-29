@@ -29,6 +29,8 @@
     "rodzajRozladunku",
     "wymaganyWysiegPompyMetry",
     "przejazdyPompyMinuty",
+    "przejazdyPompyBazoweMinuty",
+    "zrodlaPrzejazdowPompy",
     "zrodlo",
     "czasDojazduRoboczyMinuty",
     "czasPowrotuRoboczyMinuty",
@@ -209,6 +211,69 @@
         blad,
         "blad-zmiany-czasow-budowy",
         "Nie udało się zapisać roboczych czasów budowy."
+      );
+      return null;
+    }
+  }
+
+  function obsluzZmianePrzejazduPompy(
+    idBudowyZrodlowej,
+    idBudowyDocelowej,
+    wartosc,
+    czyPrzywrocicBazowa
+  ) {
+    try {
+      const budowaZrodlowa = znajdzBudoweDoZmiany(idBudowyZrodlowej);
+      const budowaDocelowa = znajdzBudoweDoZmiany(idBudowyDocelowej);
+
+      if (!budowaZrodlowa || !budowaDocelowa) {
+        throw new Error("Nie znaleziono jednej z budów przejazdu pompy.");
+      }
+
+      if (
+        !aplikacja.pompy.czyBudowaWymagaPompy(budowaZrodlowa) ||
+        !aplikacja.pompy.czyBudowaWymagaPompy(budowaDocelowa)
+      ) {
+        throw new Error("Czas przejazdu pompy można ustawić tylko między budowami pompowanymi.");
+      }
+
+      if (czyPrzywrocicBazowa) {
+        aplikacja.pompy.przywrocBazowyCzasPrzejazduPompyBudowy(
+          budowaZrodlowa,
+          idBudowyDocelowej
+        );
+      } else {
+        aplikacja.pompy.ustawCzasPrzejazduPompyBudowy(
+          budowaZrodlowa,
+          idBudowyDocelowej,
+          wartosc,
+          "reczny"
+        );
+      }
+
+      oznaczPlanJakoNieprzeliczony(true);
+      aplikacja.interfejs.pokazListeBudow(pobierzAktualnaListeBudow());
+      zapiszZdarzenieDiagnostyczne(
+        "informacja",
+        czyPrzywrocicBazowa
+          ? "przywrocenie-czasu-przejazdu-pompy"
+          : "zmiana-czasu-przejazdu-pompy",
+        czyPrzywrocicBazowa
+          ? "Przywrócono bazowy czas przejazdu pompy między budowami."
+          : "Zmieniono czas przejazdu pompy między budowami.",
+        {
+          idBudowyZrodlowej: idBudowyZrodlowej,
+          idBudowyDocelowej: idBudowyDocelowej
+        }
+      );
+      return budowaZrodlowa;
+    } catch (blad) {
+      aplikacja.interfejs.pokazBladCzasow(blad);
+      aplikacja.interfejs.pokazListeBudow(pobierzAktualnaListeBudow());
+      zapiszBladDiagnostyczny(
+        blad,
+        "blad-zmiany-czasu-przejazdu-pompy",
+        "Nie udało się zmienić czasu przejazdu pompy między budowami."
       );
       return null;
     }
@@ -967,7 +1032,8 @@
         obsluzZmianeStartuBudowy,
         obsluzZmianePompy,
         obsluzZmianeWymaganegoWysieguPompy,
-        obsluzZmianeCzasowPompyBudowy
+        obsluzZmianeCzasowPompyBudowy,
+        obsluzZmianePrzejazduPompy
       );
       aplikacja.pamiecTras.uruchomPamiecTras();
       odswiezStanPamieciTras();

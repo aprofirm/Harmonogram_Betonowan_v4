@@ -2,8 +2,8 @@
 
 ## Status
 
-Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4I** oraz **4J.1 — pełną regresję automatyczną**.
-Następny podetap to **4J.2 — publikacja**. Wszystkie pliki `testy/*.test.js` są
+Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4I**, **4J.1**, **4J.2** oraz korektę operatorską **4J.3.1 — jawne czasy przejazdów pomp**.
+Następny podetap to **4J.3.2 — ponowny test operatora**. Wszystkie pliki `testy/*.test.js` są
 uruchamiane przez jeden workflow GitHub Actions, a 4J.1 dodatkowo pilnuje kompletności
 zestawu regresji i granicy między Etapem 4 a Etapem 5.
 
@@ -265,3 +265,24 @@ Dopiero po automatycznej regresji, publikacji i tym teście można zamknąć Eta
 - wynik pomp korzysta z bazowych kursów sprzed ewentualnych przesunięć gruszek;
 - `StartRoboczy` budów i kursy gruszek pozostają niezmienione przez obliczenie pomp;
 - `testy/etap_4i_1.test.js` sprawdza oba tryby, walidację i granicę Etapu 4.
+
+### 4J.3.1 — jawne czasy przejazdów pomp
+
+- [x] panel pokazuje relacje `budowa → budowa` dla kolejnych budów wymagających pompy;
+- [x] każda relacja ma jawne pole czasu w minutach i oznaczenie źródła;
+- [x] brak wartości pozostaje widoczny jako brak trasy zamiast cichego zera;
+- [x] ręczna zmiana zastępuje bieżącą wartość i jest używana przez silnik;
+- [x] wartość bazową z CSV można przywrócić przyciskiem `↺`;
+- [x] bieżąca, bazowa wartość i źródło są zachowywane w pamięci planu;
+- [x] `testy/etap_4j_3_1.test.js` sprawdza model, integrację z harmonogramem,
+  kontrakt interfejsu, pamięć i granicę Etapu 4;
+- [x] pełna regresja automatyczna przechodzi przed publikacją do ponownego testu operatora.
+
+### 4J.3.2 — ponowny test operatora
+
+- [ ] wczytać plan z co najmniej trzema budowami pompowanymi i potwierdzić widoczne relacje;
+- [ ] zmienić ręcznie jeden czas, przeliczyć i potwierdzić użycie nowej wartości;
+- [ ] przywrócić wartość z CSV i potwierdzić powrót wartości bazowej;
+- [ ] odświeżyć stronę i potwierdzić zachowanie ręcznej korekty;
+- [ ] dokończyć scenariusze 4J.3: brak pomp, jedna pompa, kilka pomp, pompa nieaktywna,
+  zbyt mała flota i rzeczywisty przejazd pompy między budowami.

@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4I oraz 4J.1–4J.2 zakończone;
-  4J.3 rozpisany na 4J.3.1–4J.3.2; następny podetap to 4J.3.1 — jawne czasy przejazdów pomp**
+  w 4J.3 zakończono 4J.3.1; następny podetap to 4J.3.2 — ponowny test operatora**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -644,7 +644,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
   - [ ] **4J.3 — test operatora:** rzeczywisty plan z brakiem pomp, jedną pompą,
     kilkoma budowami, pompą nieaktywną, zbyt małą flotą i przejazdem między
     budowami; dopiero wtedy zamknięcie Etapu 4.
-    - [ ] **4J.3.1 — jawne czasy przejazdów pomp:** dodać w obszarze roboczym
+    - [x] **4J.3.1 — jawne czasy przejazdów pomp:** dodać w obszarze roboczym
       czytelny panel relacji `budowa → budowa`, pokazywać czas i źródło oraz
       umożliwić ręczną edycję i przywrócenie wartości bazowej z CSV; zmiana ma
       oznaczać wynik jako nieaktualny i być zachowywana w pamięci planu.
@@ -1033,9 +1033,24 @@ Następny niezakończony podetap: **4J.2 — publikacja**.
 Zamknięty podetap: **4J.2**. Punkt nadrzędny **4J** i cały **Etap 4** pozostają otwarte do testu operatora.
 Następny niezakończony podetap: **4J.3 — test operatora**.
 
+## Zamknięcie 4J.3.1 — jawne czasy przejazdów pomp — 2026-08-29
+
+- [x] pod główną tabelą budów dodano osobny, kompaktowy panel **Przejazdy między budowami**;
+- [x] panel pokazuje kierunkowe relacje do późniejszych budów wymagających pompy;
+- [x] każda relacja pokazuje czas, źródło oraz pole ręcznej edycji;
+- [x] wpis ręczny ma źródło `reczny`, jest używany przez centralny silnik i oznacza wynik jako nieaktualny;
+- [x] import zachowuje bazową wartość z `PrzejazdyPompy`, a `↺` przywraca ją po ręcznej zmianie;
+- [x] wartości bieżące, bazowe i źródła są objęte pamięcią planu oraz historią;
+- [x] brak wartości pozostaje jawnym brakiem trasy, bez przyjmowania fikcyjnego zera;
+- [x] nowy test `testy/etap_4j_3_1.test.js` oraz pełna regresja chronią zmianę;
+- [x] nie zmieniono `StartRoboczy`, kursów gruszek ani granicy odpowiedzialności Etapu 4.
+
+Zamknięty podetap: **4J.3.1**. Punkt **4J.3**, punkt nadrzędny **4J** i cały **Etap 4** pozostają otwarte.
+Następny niezakończony podetap: **4J.3.2 — ponowny test operatora**.
+
 # Kolejny krok
 
-Rozpocząć **4J.3 — test operatora** na opublikowanej stronie: sprawdzić rzeczywisty plan dla braku aktywnych pomp, jednej pompy i kilku budów, kilku pomp bez kolizji, pompy nieaktywnej, zbyt małej floty, przejazdu między budowami oraz odtworzenia ustawień po odświeżeniu. Dopiero po tym teście można zamknąć Etap 4.
+Wykonać **4J.3.2 — ponowny test operatora** na opublikowanej stronie. Najpierw sprawdzić nowy panel **Przejazdy między budowami**: widoczność czasów, ręczną zmianę, użycie po przeliczeniu, przywrócenie wartości bazowej i odtworzenie po odświeżeniu. Następnie dokończyć scenariusze braku aktywnych pomp, jednej pompy i kilku budów, kilku pomp bez kolizji, pompy nieaktywnej, zbyt małej floty oraz rzeczywistego przejazdu między budowami. Dopiero po tym można zamknąć 4J.3, 4J i cały Etap 4.
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
 

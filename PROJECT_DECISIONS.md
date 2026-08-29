@@ -1907,3 +1907,24 @@ przyczyn. Przy kilku możliwościach wybierany jest najwcześniejszy wynik, a pr
 remisie zachowywana jest kolejność pomp. Dane wejściowe i harmonogram gruszek
 pozostają bez zmian; późniejsza decyzja o korekcie planu należy do osobnego
 mechanizmu harmonogramu i operatora.
+
+---
+
+## 96. Czas przejazdu pompy między budowami jest jawny i edytowalny dla operatora
+
+Relacja `budowa A → budowa B` ma własny czas przejazdu i nie może być ukryta
+wyłącznie w pliku CSV ani w wewnętrznym stanie silnika. W obszarze roboczym
+operator ma widzieć osobny panel przejazdów pomp z budową źródłową, budową
+docelową, czasem w minutach i źródłem wartości.
+
+Dla bieżącej kolejności prac pokazujemy możliwe kierunki do późniejszych budów
+wymagających pompy. Puste pole oznacza brak znanego czasu. Operator może wpisać
+nieujemną wartość ręcznie; ręczna korekta ma pierwszeństwo przed wartością
+bazową z CSV i oznacza wynik jako wymagający ponownego przeliczenia. Jeżeli CSV
+dostarczył wartość bazową, musi istnieć prosta możliwość jej przywrócenia.
+
+Wartość bieżąca, wartość bazowa oraz źródło są zapisywane w pamięci planu i
+historii. Przyszły routing mapowy z Etapu 6 ma zasilać ten sam kontrakt danych,
+a nie tworzyć osobnego ukrytego mechanizmu. Ręczna korekta operatora pozostaje
+jawnym wariantem roboczym. Zasada nie zmienia granicy Etapu 4: sama edycja czasu
+nie modyfikuje `StartRoboczy` ani kursów gruszek.

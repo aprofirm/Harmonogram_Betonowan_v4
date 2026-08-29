@@ -37,7 +37,8 @@ automatycznie całego punktu `3B`.
 4. W razie potrzeby dodaj budowę ręcznie, podając ilość betonu i wybierając **Rodzaj rozładunku**.
 5. Uzupełnij czas dojazdu i powrotu przy dostawach planowanych. Odbiory własne nie wymagają tych czasów.
 6. W razie potrzeby ustaw przy budowie dodatkowy **Odstęp dostaw**.
-7. Ustaw parametry i wybierz przycisk **Przelicz harmonogram**.
+7. Dla co najmniej dwóch budów z rozładunkiem **Pompa** sprawdź panel **Przejazdy między budowami** i uzupełnij brakujące czasy.
+8. Ustaw parametry i wybierz przycisk **Przelicz harmonogram**.
 
 Podstawowy interfejs działa lokalnie, bez instalacji, logowania, serwera i połączenia z internetem.
 
@@ -53,7 +54,7 @@ Importer wymaga informacji odpowiadających kolumnom:
 
 Opcjonalne kolumny `CzasDojazdu` i `CzasPowrotu` podają czasy w minutach i są wczytywane bezpośrednio do roboczych czasów budowy. Jeśli tych kolumn nie ma, importer zachowuje dotychczasowe działanie.
 
-Do testów operatora 4J.3 można dodatkowo użyć kolumny `PrzejazdyPompy`. Wartość ma format `ID=MINUTY|ID=MINUTY`, np. `B-002=30|B-003=20`, i opisuje czasy przejazdu pompy z bieżącej budowy do wskazanych budów. Jest to źródło pomocnicze do testów. Jeżeli silnik dostanie jawny provider przejazdów, np. późniejszy routing na podstawie adresów, ma on pierwszeństwo przed danymi z CSV.
+Opcjonalna kolumna `PrzejazdyPompy` może dostarczyć początkowe czasy przejazdów. Wartość ma format `ID=MINUTY|ID=MINUTY`, np. `B-002=30|B-003=20`. Nie jest jednak wymagana do normalnej obsługi: po wczytaniu planu operator widzi osobny panel **Przejazdy między budowami**, w którym każda potrzebna relacja ma jawne pole czasu. Wartość z CSV można ręcznie nadpisać i później przywrócić przyciskiem `↺`. Jeżeli silnik dostanie w przyszłości jawny provider przejazdów, np. routing na podstawie adresów, ma on pierwszeństwo przed danymi zapisanymi przy budowie.
 
 > GitHub Pages: skrypty zmieniane dla przejazdów pomp mają parametr wersji w `index.html`, aby po publikacji przeglądarka nie uruchamiała starszej kopii JavaScript z cache. Nie zmienia to działania wersji offline `file://`.
 
@@ -75,6 +76,25 @@ Aktualnie rozpoznawane są m.in. rzeczywiste nagłówki KDX:
 Dodatkowe, puste kolumny oraz zmiana kolejności kolumn nie powinny wpływać na import. Techniczny wiersz KDX bez danych budowy, np. `Normal`, jest pomijany. Nowe warianty nazw nagłówków należy dopisywać jako aliasy w module importu zamiast tworzyć osobne importery dla każdego układu.
 
 Program obsługuje wybór pliku i przeciąganie CSV. Kolejny poprawny import zastępuje dane z poprzedniego pliku, natomiast budowy dodane ręcznie pozostają osobną listą.
+
+## Przejazdy pomp między budowami
+
+Czas przejazdu pompy jest relacją kierunkową pomiędzy dwiema budowami, dlatego
+nie jest ukrywany w pojedynczym wierszu budowy. Pod główną listą znajduje się
+osobny panel **Przejazdy między budowami**. Dla budów wymagających pompy panel
+pokazuje wszystkie możliwe przejazdy do późniejszych pozycji w kolejności
+planowanego startu.
+
+Każdy wiersz pokazuje budowę źródłową, budowę docelową, czas w minutach i źródło
+wartości. Puste pole oznacza brak znanej trasy i może spowodować brak przydziału
+pompy. Wpisanie liczby zapisuje ręczną korektę, oznacza poprzedni wynik jako
+nieaktualny i wykorzystuje nową wartość przy następnym przeliczeniu. Jeżeli
+wartość pochodziła z CSV, przycisk `↺` przywraca jej wartość bazową.
+
+Ręczne czasy oraz wartości bazowe są częścią bieżącego planu i historii, więc
+pozostają dostępne po odświeżeniu. Docelowy moduł mapowy będzie mógł uzupełniać
+te same relacje bez zmiany kontraktu silnika; operator nadal będzie widział
+czas i jego źródło.
 
 ## Rodzaj rozładunku i odbiory własne
 
