@@ -145,6 +145,16 @@ Test operatora 4C.3 — zaliczony:
 - zmiana trybu lub liczby oznacza poprzedni wynik jako nieaktualny;
 - `testy/etap_4h_1.test.js` sprawdza kontrakt interfejsu i dopasowanie listy zasobów.
 
+### 4H.2 — ograniczony przydział pomp
+
+- silnik używa najwyżej liczby pomp podanej przez operatora i nigdy nie tworzy brakującej pompy;
+- liczba zasobów jest dodatkowo ograniczona do rzeczywiście aktywnych pomp z listy;
+- jedna pompa przy nakładających się budowach wylicza kolejne przesunięcia i rezerwuje przesunięte pełne cykle;
+- `0` pomp nie tworzy przydziału ani stanu fikcyjnego zasobu;
+- wynik zachowuje planowane i rzeczywiste okresy pracy pomp oraz wielkość i przyczynę przesunięcia;
+- ponowne obliczenie tych samych danych jest stabilne, nie nakłada pracy jednej pompy i nie modyfikuje danych wejściowych;
+- 4H.2 nie zmienia kursów gruszek ani `StartRoboczy` budów.
+
 ### 4H — tryb „mam X pomp”
 
 - tryb bez limitu zachowuje planowane godziny i wynik minimalnej floty;
