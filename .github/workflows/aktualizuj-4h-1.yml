@@ -3,13 +3,17 @@ name: Aktualizacja 4H.1
 on:
   push:
     branches: [4h-1-dwa-tryby-pomp]
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: write
 
 jobs:
   aktualizacja:
-    if: github.actor != 'github-actions[bot]'
+    if: >-
+      (github.event_name == 'push' && github.actor != 'github-actions[bot]') ||
+      (github.event_name == 'pull_request' && github.head_ref == '4h-1-dwa-tryby-pomp')
     runs-on: ubuntu-latest
     steps:
       - name: Pobierz gałąź
