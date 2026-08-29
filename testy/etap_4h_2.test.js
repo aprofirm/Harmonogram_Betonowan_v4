@@ -257,6 +257,8 @@ function sprawdzWalidacje(pompy) {
 function uruchomTesty() {
   const pompy = wczytajModulyPomp();
 
+  // Granica 4H.2: liczymy niezależny wynik pomp; kursy gruszek i StartRoboczy
+  // pozostają bez zmian aż do wspólnego silnika zasobów w Etapie 5.
   const html = wczytaj("index.html");
   assert.match(
     html,
