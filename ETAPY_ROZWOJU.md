@@ -49,8 +49,8 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4H oraz podetapy 4I.1–4I.4 zakończone;
-  następny podetap to 4I.5 — zgodność offline i dostępność interfejsu**
+- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4I zakończone;
+  następny podetap to 4J.1 — testy automatyczne całego Etapu 4**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -621,7 +621,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
     Test potwierdza także brak dziedziczenia przydziałów po zmianie limitu lub aktywnej listy pomp.
   - [x] **4H.5 — testy:** flota wystarczająca, zbyt mała, `0`, błędne dane,
     stabilność wyniku i brak nakładania pracy jednej pompy.
-- [ ] **4I — integracja wyniku i interfejs operatora.**
+- [x] **4I — integracja wyniku i interfejs operatora.**
   - [x] **4I.1 — centralny wynik:** `przeliczCalyHarmonogram()` udostępnia
     osobny wynik pomp, nadal bez docelowego łączenia korekt pomp i gruszek.
   - [x] **4I.2 — wspólne sterowanie zasobami:** w nagłówku harmonogramu pod
@@ -635,7 +635,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
     parametr i przesunięcie wynikające z przejazdu lub zajętości; jeżeli pompa
     wymusza przesunięcie, przy budowie pojawia się automatyczna notka z liczbą
     minut, najwcześniejszym startem i dokładną przyczyną.
-  - [ ] **4I.5 — zgodność offline i dostępność interfejsu:** brak nowych
+  - [x] **4I.5 — zgodność offline i dostępność interfejsu:** brak nowych
     bibliotek, CDN i obowiązkowego internetu.
 - [ ] **4J — pełna regresja, publikacja i test operatora.**
   - [ ] **4J.1 — testy automatyczne:** wszystkie scenariusze Etapu 4 oraz pełna
@@ -988,9 +988,22 @@ Następny niezakończony podetap: **4I.4 — komunikaty pomp**.
 Zamknięty podetap: **4I.4**. Punkt nadrzędny **4I** pozostaje otwarty.
 Następny niezakończony podetap: **4I.5 — zgodność offline i dostępność interfejsu**.
 
+## Zamknięcie 4I.5 i całego 4I — 2026-08-29
+
+- [x] `index.html` ładuje skrypty, style i grafiki wyłącznie z lokalnych plików repozytorium; 4I nie dodaje CDN ani biblioteki wymagającej internetu;
+- [x] tabela pomp jest opisana przez `aria-labelledby` i `aria-describedby`, a jej nagłówki mają jawne `scope="col"`;
+- [x] przewijany poziomo obszar tabeli pomp jest dostępny z klawiatury, ma widoczny fokus i pozostaje użyteczny na ekranie do 620 px;
+- [x] brak przydziału i przesunięcie mają jawny tekst oraz role `alert/status`, więc kolor pozostaje wyłącznie sygnałem pomocniczym;
+- [x] długie komunikaty pomp mogą się zawijać i nie wymuszają zwiększania wysokości podstawowych wierszy budów bez potrzeby;
+- [x] `testy/etap_4i_5.test.js` sprawdza lokalność wszystkich zasobów z `index.html`, semantykę tabeli, obsługę klawiatury, tekstowe komunikaty i granicę Etapu 4;
+- [x] pełna regresja wszystkich `testy/*.test.js` przechodzi po zmianach 4I.5.
+
+Zamknięty podetap: **4I.5**. Cały punkt **4I — integracja wyniku i interfejs operatora** jest zakończony.
+Następny niezakończony podetap: **4J.1 — testy automatyczne**.
+
 # Kolejny krok
 
-Rozpocząć **4I.5 — zgodność offline i dostępność interfejsu**: potwierdzić brak nowych bibliotek, CDN i obowiązkowego internetu oraz sprawdzić, czy tabela i komunikaty pomp pozostają czytelne bez polegania wyłącznie na kolorze i przy węższym układzie.
+Rozpocząć **4J.1 — testy automatyczne**: wykonać końcowy przegląd scenariuszy całego Etapu 4, uzupełnić ewentualne luki testowe i uruchomić pełną regresję importu, pamięci, rodzajów rozładunku, Etapu 3 oraz wszystkich funkcji pomp przed publikacją 4J.2.
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
 

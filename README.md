@@ -368,6 +368,10 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_4h_4.test.js
     node testy/etap_4h_5.test.js
     node testy/etap_4i_1.test.js
+    node testy/etap_4i_2.test.js
+    node testy/etap_4i_3.test.js
+    node testy/etap_4i_4.test.js
+    node testy/etap_4i_5.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
@@ -466,10 +470,16 @@ niedobór, `0`, błędne dane, stabilność wyniku, limit aktywnej listy i brak
 nakładania pracy jednej pompy. Cały punkt 4H pozostaje zakończony.
 Pełne połączenie ograniczeń pomp i gruszek należy do Etapu 5.
 
-**4I.1 — centralny wynik pomp** jest zakończony. `przeliczCalyHarmonogram()`
-zwraca teraz osobny rzeczywisty wynik `pompy`. W trybie `Oblicz, ile potrzeba`
-zawiera on minimalną liczbę pomp oraz techniczny wynik minimalnej floty, a w
-trybie `Mam określoną liczbę` korzysta z rzeczywistej listy pomp i pełnego
-kontraktu 4H. Wynik pomp jest liczony na bazowych kursach i nie zmienia
-`StartRoboczy` ani wyniku gruszek. Następny krok to **4I.2 — wspólne sterowanie
-zasobami**.
+Cały punkt **4I — integracja wyniku i interfejs operatora** jest zakończony.
+Centralny `wynik.pompy` zasila wspólne sterowanie zasobami, osobną tabelę pełnego
+cyklu pomp oraz komunikaty przypisane do konkretnych budów. W trybie ograniczonej
+floty operator widzi rzeczywistą pompę, przygotowanie, betonowanie, zakończenie,
+przejazd, gotowość i dokładny skutek ograniczenia. Tryb minimalnej floty nadal
+pokazuje jawne pompy techniczne bez udawania nieobliczonych przejazdów.
+
+Zakres 4I.5 potwierdza, że podstawowy interfejs nadal korzysta wyłącznie z
+lokalnych skryptów, stylów i grafik. Tabela pomp ma semantyczne opisy i nagłówki,
+poziome przewijanie można obsłużyć klawiaturą, a braki i przesunięcia są opisane
+tekstem — kolor jest tylko sygnałem pomocniczym. Wynik pomp nadal nie zmienia
+`StartRoboczy` ani kursów gruszek. Następny krok to **4J.1 — końcowe testy
+automatyczne całego Etapu 4**.

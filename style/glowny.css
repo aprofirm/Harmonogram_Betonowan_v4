@@ -1541,3 +1541,49 @@ td {
   color: #61717d;
   font-weight: 700;
 }
+
+/* 4I.5 — tabela pomp pozostaje czytelna i obsługiwana klawiaturą także na węższym ekranie. */
+.tabela-przewijana--pomp {
+  max-width: 100%;
+  scrollbar-gutter: stable;
+}
+
+.tabela-przewijana--pomp:focus-visible {
+  outline: 3px solid rgba(242, 139, 53, 0.45);
+  outline-offset: -3px;
+}
+
+.tabela-pomp-wynik {
+  min-width: 1120px;
+}
+
+.tabela-pomp-wynik td:last-child {
+  min-width: 260px;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+.notka-pompy {
+  display: block;
+  max-width: 260px;
+  margin-top: 4px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  line-height: 1.25;
+  white-space: normal;
+}
+
+.notka-pompy--ostrzezenie {
+  color: #a65e1e;
+}
+
+.notka-pompy--blad {
+  color: var(--kolor-czerwony);
+}
+
+@media (max-width: 620px) {
+  .tabela-pomp-wynik {
+    min-width: 1040px;
+  }
+}
+
