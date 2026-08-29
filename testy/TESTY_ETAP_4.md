@@ -175,6 +175,17 @@ Test operatora 4C.3 — zaliczony:
 - zmiana aktywnej listy pomp nie dziedziczy przydziału ani zajętości poprzedniej listy;
 - `testy/etap_4h_4.test.js` chroni te zachowania.
 
+### 4H.5 — końcowe testy trybu „mam X pomp”
+
+- flota wystarczająca realizuje plan bez przesunięć i bez brakujących pomp;
+- zbyt mała flota nie tworzy fikcyjnych zasobów i wylicza kaskadowe przesunięcia;
+- `0` pomp pozostawia budowę bez przydziału i bez fikcyjnego stanu pompy;
+- błędny limit oraz błędny format danych przejazdu kończą się czytelnym błędem;
+- ponowne przeliczenie tych samych danych jest identyczne także po obliczeniu innego limitu;
+- rzeczywiste okresy pracy tej samej pompy nie nakładają się;
+- nieaktywna pompa nie trafia do rzeczywistej puli przydziału;
+- `testy/etap_4h_5.test.js` jest końcowym testem kontraktu całego 4H.
+
 ### 4H — tryb „mam X pomp”
 
 - tryb bez limitu zachowuje planowane godziny i wynik minimalnej floty;

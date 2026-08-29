@@ -607,7 +607,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
     informacja dla planu bez budów pompowanych.
   - [x] **4G.3 — testy:** wyniki `0`, `1` i wiele pomp oraz zgodność z
     przydziałami technicznymi.
-- [ ] **4H — tryb „mam X pomp”.**
+- [x] **4H — tryb „mam X pomp”.**
   - [x] **4H.1 — dwa tryby pracy:** `Oblicz, ile potrzeba` oraz
     `Mam określoną liczbę`, z walidacją całkowitej liczby od `0` wzwyż.
   - [x] **4H.2 — ograniczony przydział:** silnik nie tworzy pompy ponad podaną
@@ -619,7 +619,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
   - [x] **4H.4 — pamięć i ponowne przeliczenie:** tryb oraz liczba są
     odtwarzane, a każda zmiana buduje wynik od początku bez starych zajętości.
     Test potwierdza także brak dziedziczenia przydziałów po zmianie limitu lub aktywnej listy pomp.
-  - [ ] **4H.5 — testy:** flota wystarczająca, zbyt mała, `0`, błędne dane,
+  - [x] **4H.5 — testy:** flota wystarczająca, zbyt mała, `0`, błędne dane,
     stabilność wyniku i brak nakładania pracy jednej pompy.
 - [ ] **4I — integracja wyniku i interfejs operatora.**
   - [ ] **4I.1 — centralny wynik:** `przeliczCalyHarmonogram()` udostępnia
@@ -662,13 +662,13 @@ należą do Etapu 5.
 - [x] można wyłączyć pompę z dostępności,
 - [x] przydział nie rozróżnia pompy własnej i zewnętrznej; decydują parametry zasobu,
 - [x] program potrafi wskazać minimalną potrzebną liczbę pomp,
-- [ ] zmniejszenie liczby pomp powoduje pełne ponowne przeliczenie.
+- [x] zmniejszenie liczby pomp powoduje pełne ponowne przeliczenie.
 
 ## Test regresji
 
-- [ ] silnik gruszek daje te same wyniki przy danych bez pomp jak wcześniej,
-- [ ] import CSV nadal działa,
-- [ ] zmiana liczby gruszek nadal poprawnie przebudowuje kursy.
+- [x] silnik gruszek daje te same wyniki przy danych bez pomp jak wcześniej,
+- [x] import CSV nadal działa,
+- [x] zmiana liczby gruszek nadal poprawnie przebudowuje kursy.
 
 ---
 
@@ -923,11 +923,23 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 Zamknięty podetap: **4H.4**. Punkt nadrzędny **4H** pozostaje otwarty.
 Następny niezakończony podetap: **4H.5 — testy**.
 
+## Zamknięcie 4H.5 i całego 4H — 2026-08-29
+
+- [x] flota wystarczająca nie powoduje przesunięć;
+- [x] zbyt mała flota wylicza kaskadowe przesunięcia bez tworzenia dodatkowych pomp;
+- [x] `0` pomp nie tworzy fikcyjnego zasobu ani przydziału;
+- [x] błędne dane wejściowe są odrzucane czytelnym błędem;
+- [x] ponowne przeliczenie jest stabilne i zawsze zaczyna od czystego stanu;
+- [x] pełne rzeczywiste okresy jednej pompy nie nakładają się;
+- [x] pełna regresja potwierdza brak zmian w imporcie CSV i silniku gruszek.
+
+Zamknięty podetap: **4H.5**. Cały punkt **4H — tryb „mam X pomp”** jest zakończony.
+Następny niezakończony podetap: **4I.1 — centralny wynik**.
+
 # Kolejny krok
 
-Rozpocząć **4H.5 — testy końcowe trybu „mam X pomp”**: zebrać w jednym
-zestawie flotę wystarczającą, zbyt małą, `0`, błędne dane, stabilność wyniku
-i brak nakładania pracy jednej pompy.
+Rozpocząć **4I.1 — centralny wynik pomp**: podłączyć niezależny wynik pomp do
+`przeliczCalyHarmonogram()` bez docelowego łączenia korekt pomp i gruszek.
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
 
