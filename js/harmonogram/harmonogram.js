@@ -102,6 +102,8 @@
         const budowaDocelowa = dane.budowaDocelowa;
         const mapaPrzejazdow = budowaZrodlowa &&
           budowaZrodlowa.przejazdyPompyMinuty;
+        const mapaZrodel = budowaZrodlowa &&
+          budowaZrodlowa.zrodlaPrzejazdowPompy;
         const idBudowyDocelowej = String(
           budowaDocelowa && budowaDocelowa.idBudowy || ""
         ).trim();
@@ -119,9 +121,16 @@
           return null;
         }
 
+        const zrodloCzasuPrzejazdu =
+          mapaZrodel &&
+          typeof mapaZrodel === "object" &&
+          !Array.isArray(mapaZrodel)
+            ? String(mapaZrodel[idBudowyDocelowej] || "csv").trim()
+            : "csv";
+
         return {
           czasPrzejazduMinuty: mapaPrzejazdow[idBudowyDocelowej],
-          zrodloCzasuPrzejazdu: "csv"
+          zrodloCzasuPrzejazdu: zrodloCzasuPrzejazdu || "csv"
         };
       }
     });

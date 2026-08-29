@@ -469,7 +469,15 @@
       );
 
       if (przejazdyPompyZImportu) {
-        budowa.przejazdyPompyMinuty = przejazdyPompyZImportu;
+        budowa.przejazdyPompyMinuty = Object.assign({}, przejazdyPompyZImportu);
+        budowa.przejazdyPompyBazoweMinuty = Object.assign({}, przejazdyPompyZImportu);
+        budowa.zrodlaPrzejazdowPompy = Object.keys(przejazdyPompyZImportu).reduce(
+          function (zrodla, idBudowyDocelowej) {
+            zrodla[idBudowyDocelowej] = "csv";
+            return zrodla;
+          },
+          {}
+        );
       }
 
       if (czasDojazduZImportu || czasPowrotuZImportu) {
