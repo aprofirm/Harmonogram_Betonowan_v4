@@ -612,9 +612,10 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
     `Mam określoną liczbę`, z walidacją całkowitej liczby od `0` wzwyż.
   - [x] **4H.2 — ograniczony przydział:** silnik nie tworzy pompy ponad podaną
     liczbę albo ponad aktywną listę i wylicza rzeczywisty skutek niedoboru.
-  - [ ] **4H.3 — jawne konsekwencje:** operator widzi liczbę potrzebną,
-    dostępną, przydział, przesunięcie i pierwotny plan; `0` pomp nie tworzy
-    fikcyjnych przydziałów.
+  - [x] **4H.3 — jawne konsekwencje:** wynik zawiera liczbę potrzebną,
+    rzeczywiście dostępną do przydziału, przydział, przesunięcie, dokładną
+    przyczynę i pierwotny plan; `0` pomp nie tworzy fikcyjnych przydziałów.
+    Docelowe podłączenie tego kontraktu do głównego widoku należy do 4I.
   - [ ] **4H.4 — pamięć i ponowne przeliczenie:** tryb oraz liczba są
     odtwarzane, a każda zmiana buduje wynik od początku bez starych zajętości.
   - [ ] **4H.5 — testy:** flota wystarczająca, zbyt mała, `0`, błędne dane,
@@ -911,10 +912,9 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Rozpocząć **4H.3 — jawne konsekwencje ograniczenia pomp**: pokazać operatorowi
-liczbę potrzebną i dostępną, przydział, wyliczone przesunięcie oraz pierwotny
-plan bez tworzenia fikcyjnych przydziałów dla `0` pomp.
-
+Rozpocząć **4H.4 — pamięć i ponowne przeliczenie**: potwierdzić, że tryb
+oraz liczba pomp są odtwarzane, a każda zmiana buduje wynik pomp od początku
+bez pozostawiania starych przydziałów i okresów zajętości.
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
 
