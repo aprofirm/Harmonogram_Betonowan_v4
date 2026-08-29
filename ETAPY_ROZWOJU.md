@@ -49,8 +49,8 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4H oraz podetapy 4I.1–4I.2 zakończone;
-  następny podetap to 4I.3 — tabela pomp**
+- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4H oraz podetapy 4I.1–4I.4 zakończone;
+  następny podetap to 4I.5 — zgodność offline i dostępność interfejsu**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -629,9 +629,9 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
     trybem pracy, liczbą potrzebną, liczbą dostępną i skrótem dostępności.
     Szczegółowe godziny **Dostępna od** i **Dostępna do** pozostają przypisane
     do konkretnej pompy.
-  - [ ] **4I.3 — tabela pomp:** budowa, przydzielona pompa, przygotowanie,
+  - [x] **4I.3 — tabela pomp:** budowa, przydzielona pompa, przygotowanie,
     betonowanie, zakończenie, przejazd i gotowość do kolejnej pracy.
-  - [ ] **4I.4 — komunikaty:** czytelny brak pompy, niedostępność, niezgodny
+  - [x] **4I.4 — komunikaty:** czytelny brak pompy, niedostępność, niezgodny
     parametr i przesunięcie wynikające z przejazdu lub zajętości; jeżeli pompa
     wymusza przesunięcie, przy budowie pojawia się automatyczna notka z liczbą
     minut, najwcześniejszym startem i dokładną przyczyną.
@@ -963,9 +963,34 @@ Następny niezakończony podetap: **4I.2 — wspólne sterowanie zasobami**.
 Zamknięty podetap: **4I.2**. Punkt nadrzędny **4I** pozostaje otwarty.
 Następny niezakończony podetap: **4I.3 — tabela pomp**.
 
+## Zamknięcie 4I.3 — tabela pomp — 2026-08-29
+
+- [x] osobna tabela pracy pomp korzysta z centralnego `wynik.pompy` i jest prezentowana niezależnie od tabeli kursów gruszek;
+- [x] tryb **Mam określoną liczbę** pokazuje rzeczywistą pompę, przygotowanie, betonowanie, zakończenie, przejazd i gotowość do kolejnej pracy;
+- [x] tryb **Oblicz, ile potrzeba** pokazuje pompy techniczne minimalnej floty i nie wymyśla przejazdów między budowami, których ten kontrakt nie wyznacza;
+- [x] brak przydziału pozostaje jawnie widoczny, a wynik jest czyszczony po zmianie danych, odtworzeniu albo wyczyszczeniu planu;
+- [x] 4I.3 nie zmienia `StartRoboczy`, nie przebudowuje kursów gruszek i nie wykonuje jeszcze sprzężenia zasobów z Etapu 5;
+- [x] `testy/etap_4i_3.test.js` oraz pełna regresja GitHub Actions przeszły poprawnie przed i po scaleniu do `main`.
+
+Zamknięty podetap: **4I.3**. Punkt nadrzędny **4I** pozostaje otwarty.
+Następny niezakończony podetap: **4I.4 — komunikaty pomp**.
+
+## Zamknięcie 4I.4 — komunikaty pomp — 2026-08-29
+
+- [x] interfejs korzysta z istniejącego `jawnySkutekPompy` z 4H.3 zamiast wprowadzać drugą logikę planistyczną;
+- [x] operator widzi czytelny brak aktywnej pompy, niedostępność godzinową, niewystarczający wysięg oraz brak czasu przejazdu;
+- [x] przesunięta budowa pokazuje liczbę minut, najwcześniejszy możliwy start i dokładną przyczynę, np. zajętość albo przejazd z poprzedniej budowy;
+- [x] komunikat jest widoczny w tabeli pomp oraz jako kompaktowa automatyczna notka przy konkretnej budowie;
+- [x] tryb **Oblicz, ile potrzeba** pozostaje techniczny i nie tworzy fikcyjnych ostrzeżeń o rzeczywistych pompach;
+- [x] 4I.4 nadal nie zmienia `StartRoboczy` ani kursów gruszek; pełne sprzężenie pozostaje zakresem Etapu 5;
+- [x] `testy/etap_4i_4.test.js`, pełna regresja PR oraz końcowy workflow na `main` przeszły poprawnie.
+
+Zamknięty podetap: **4I.4**. Punkt nadrzędny **4I** pozostaje otwarty.
+Następny niezakończony podetap: **4I.5 — zgodność offline i dostępność interfejsu**.
+
 # Kolejny krok
 
-Rozpocząć **4I.3 — tabela pomp**: pokazać w osobnej tabeli wynik przydziału pomp — budowę, przydzieloną pompę, przygotowanie, betonowanie, zakończenie, przejazd i gotowość do kolejnej pracy — bez łączenia jeszcze korekt pomp i gruszek.
+Rozpocząć **4I.5 — zgodność offline i dostępność interfejsu**: potwierdzić brak nowych bibliotek, CDN i obowiązkowego internetu oraz sprawdzić, czy tabela i komunikaty pomp pozostają czytelne bez polegania wyłącznie na kolorze i przy węższym układzie.
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
 
