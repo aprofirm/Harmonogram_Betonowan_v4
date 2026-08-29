@@ -50,7 +50,7 @@ function utworzSrodowisko() {
       interfejs: interfejs,
       pompy: {
         obliczMinimalnaLiczbePomp: function () {
-          throw new Error("4I.2 nie może ponownie uruchamiać silnika minimalnej floty.");
+          throw new Error("4I.2 nie może ponownie uruchamiać silnika minimalnej floty, gdy ma centralny wynik.");
         }
       }
     }
@@ -207,10 +207,11 @@ function sprawdzWspolnyPanel() {
   assert.match(konfiguracja, /punktEtapu:\s*"4I\.2"/);
 }
 
-function sprawdzBrakPonownegoLiczeniaWInterfejsie() {
+function sprawdzPierwszenstwoCentralnegoWyniku() {
   const kod = wczytaj("js/interfejs/minimalna_liczba_pomp.js");
 
-  assert.doesNotMatch(kod, /\.obliczMinimalnaLiczbePomp\s*\(/);
+  assert.match(kod, /wynikPomp\.status !== "obliczono"/);
+  assert.match(kod, /czyTrybZgodnosci4G/);
   assert.match(kod, /wynikHarmonogramu[\s\S]*\.pompy/);
 }
 
@@ -219,6 +220,6 @@ sprawdzTrybObliczPotrzebne();
 sprawdzPlanBezPompowania();
 sprawdzCzyszczenieStaregoWyniku();
 sprawdzWspolnyPanel();
-sprawdzBrakPonownegoLiczeniaWInterfejsie();
+sprawdzPierwszenstwoCentralnegoWyniku();
 
 console.log("OK — 4I.2 wspólne sterowanie zasobami korzysta z centralnego wyniku pomp.");
