@@ -6,58 +6,67 @@ const path = require("node:path");
 const vm = require("node:vm");
 
 const katalogProjektu = path.resolve(__dirname, "..");
+const plikiLogiki = [
+  "js/konfiguracja/konfiguracja.js",
+  "js/import/import_csv.js",
+  "js/budowy/budowy.js",
+  "js/pompy/pompy.js",
+  "js/gruszki/gruszki.js",
+  "js/gruszki/przydzial_gruszek.js",
+  "js/lokalizacje/lokalizacje.js",
+  "js/harmonogram/harmonogram.js"
+];
 
 function wczytajAplikacje() {
   const kontekst = {
     window: {},
-    console: console
+    TextDecoder: TextDecoder,
+    FileReader: function () {}
   };
-
   kontekst.window.window = kontekst.window;
   vm.createContext(kontekst);
 
-  [
-    "js/konfiguracja/konfiguracja.js",
-    "js/import/import_csv.js",
-    "js/budowy/budowy.js",
-    "js/gruszki/gruszki.js",
-    "js/gruszki/przydzial_gruszek.js",
-    "js/harmonogram/harmonogram.js"
-  ].forEach(function (sciezka) {
-    const kod = fs.readFileSync(path.join(katalogProjektu, sciezka), "utf8");
-    vm.runInContext(kod, kontekst, { filename: sciezka });
+  plikiLogiki.forEach(function (sciezkaPliku) {
+    const kod = fs.readFileSync(path.join(katalogProjektu, sciezkaPliku), "utf8");
+    new vm.Script(kod, { filename: sciezkaPliku }).runInContext(kontekst);
   });
 
   return kontekst.window.HarmonogramBetonowan;
 }
 
-function przelicz(aplikacja, budowy) {
-  return aplikacja.harmonogram.przeliczCalyHarmonogram({
-    parametry: aplikacja.konfiguracja.parametryDomyslne,
-    stanImportu: {
-      budowy: budowy || []
-    },
-    budowyReczne: []
-  });
-}
-
-function utworzBudowe(idBudowy, startPlanowany, iloscBetonuM3) {
+function utworzBudowe(
+  idBudowy,
+  startRoboczy,
+  iloscBetonuM3,
+  czasDojazduMinuty,
+  czasPowrotuMinuty
+) {
   return {
     idBudowy: idBudowy,
     firma: "Firma testowa",
     budowa: "Budowa " + idBudowy,
-    startPlanowany: startPlanowany,
-    startRoboczy: startPlanowany,
-    iloscBetonuM3: iloscBetonuM3,
+    startPlanowany: startRoboczy,
+    startRoboczy: startRoboczy,
     iloscBetonuLiczbaM3: iloscBetonuM3,
-    statusRealizacji: "NIEZREALIZOWANE",
-    czasDojazduRoboczyMinuty: 20,
-    czasPowrotuRoboczyMinuty: 20,
+    statusRealizacji: "do-realizacji",
+    czasDojazduRoboczyMinuty: czasDojazduMinuty,
+    czasPowrotuRoboczyMinuty: czasPowrotuMinuty,
     dodatkowyCzasZaladunkuMinuty: 0,
-    czasRozladunkuRoboczyMinuty: 15,
+    czasRozladunkuRoboczyMinuty: null,
     dodatkowyCzasRozladunkuMinuty: 0,
     dodatkowyOdstepDostawMinuty: 0
   };
+}
+
+function przelicz(aplikacja, budowy) {
+  return aplikacja.harmonogram.przeliczCalyHarmonogram({
+    stanImportu: { budowy: budowy },
+    parametry: {
+      pojemnoscGruszkiM3: 8,
+      czasZaladunkuMinuty: 10,
+      czasRozladunkuMinuty: 15
+    }
+  });
 }
 
 function utworzKurs(idKursu, minutaPoczatku, czasCykluMinuty) {
@@ -85,31 +94,38 @@ const wynikSekwencyjny = aplikacja.gruszki.przydzielGruszkiDoKursow([
 ]);
 assert.equal(wynikSekwencyjny.minimalnaLiczbaGruszek, 1);
 
-const wynikNakladajacy = aplikacja.gruszki.przydzielGruszkiDoKursow([
-  utworzKurs("KURS-001", 0, 60),
-  utworzKurs("KURS-002", 15, 60),
-  utworzKurs("KURS-003", 30, 60)
-]);
-assert.equal(wynikNakladajacy.minimalnaLiczbaGruszek, 3);
-assert.deepEqual(
-  Array.from(wynikNakladajacy.kursy, function (kurs) {
-    return kurs.numerGruszki;
-  }),
-  [1, 2, 3]
+const wieleBudow = [
+  utworzBudowe("A", "09:00", 16, 20, 20),
+  utworzBudowe("B", "09:00", 8, 20, 20),
+  utworzBudowe("C", "09:15", 16, 15, 15),
+  utworzBudowe("D", "10:00", 8, 15, 15)
+];
+const wynikWieluBudow = przelicz(aplikacja, wieleBudow);
+
+assert.equal(wynikWieluBudow.kursy.length, 6);
+assert.equal(wynikWieluBudow.minimalnaLiczbaGruszek, 5);
+assert.equal(wynikWieluBudow.gruszki.minimalnaLiczbaGruszek, 5);
+assert.equal(wynikWieluBudow.gruszki.dostepneGruszki.length, 5);
+assert.match(
+  wynikWieluBudow.komunikaty[0],
+  /Minimalna liczba gruszek potrzebna do realizacji bez nakładania kursów: 5\./
 );
 
-const wynikPlanowy = przelicz(aplikacja, [
-  utworzBudowe("BUD-001", "08:00", 24)
-]);
-assert.equal(wynikPlanowy.minimalnaLiczbaGruszek, 3);
-assert.equal(wynikPlanowy.gruszki.minimalnaLiczbaGruszek, 3);
-assert.deepEqual(
-  Array.from(wynikPlanowy.kursy, function (kurs) {
-    return kurs.numerGruszki;
-  }),
-  [1, 2, 3]
+const html = fs.readFileSync(path.join(katalogProjektu, "index.html"), "utf8");
+const interfejs = fs.readFileSync(
+  path.join(katalogProjektu, "js/interfejs/interfejs.js"),
+  "utf8"
+);
+
+assert.match(html, /id="minimalna-liczba-gruszek">0<\/span>/);
+assert.match(html, /potrzebnych gruszek/i);
+assert.match(html, /class="znacznik-etapu">Etap [^<]+<\/span>/);
+assert.match(interfejs, /wynik\.minimalnaLiczbaGruszek/);
+assert.match(
+  interfejs,
+  /elementy\.minimalnaLiczbaGruszek\.textContent = "0";/
 );
 
 console.log(
-  "✓ Etap 3D: minimalna liczba gruszek jest liczona i zwracana przez pełne przeliczenie."
+  "✓ Etap 3D: minimalna liczba gruszek jest obliczana, zwracana i pokazywana operatorowi."
 );
