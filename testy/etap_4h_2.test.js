@@ -257,6 +257,12 @@ function sprawdzWalidacje(pompy) {
 function uruchomTesty() {
   const pompy = wczytajModulyPomp();
 
+  const html = wczytaj("index.html");
+  assert.match(
+    html,
+    /js\/pompy\/minimalna_liczba_pomp\.js[\s\S]*js\/pompy\/ograniczony_przydzial_pomp\.js/
+  );
+
   sprawdzKaskadowePrzesunieciaJednejPompy(pompy);
   sprawdzZeroPomp(pompy);
   sprawdzLimityListyZasobow(pompy);

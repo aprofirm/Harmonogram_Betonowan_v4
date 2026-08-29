@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4G zakończone,
-  zamknięte 4H.1; następny podetap to 4H.2**
+  zamknięte 4H.1–4H.2; następny podetap to 4H.3**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -610,7 +610,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
 - [ ] **4H — tryb „mam X pomp”.**
   - [x] **4H.1 — dwa tryby pracy:** `Oblicz, ile potrzeba` oraz
     `Mam określoną liczbę`, z walidacją całkowitej liczby od `0` wzwyż.
-  - [ ] **4H.2 — ograniczony przydział:** silnik nie tworzy pompy ponad podaną
+  - [x] **4H.2 — ograniczony przydział:** silnik nie tworzy pompy ponad podaną
     liczbę albo ponad aktywną listę i wylicza rzeczywisty skutek niedoboru.
   - [ ] **4H.3 — jawne konsekwencje:** operator widzi liczbę potrzebną,
     dostępną, przydział, przesunięcie i pierwotny plan; `0` pomp nie tworzy
@@ -911,9 +911,9 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 # Kolejny krok
 
-Rozpocząć **4H.2 — ograniczony przydział pomp**: wykorzystać rzeczywistą
-liczbę/listę aktywnych pomp bez tworzenia dodatkowych zasobów i wyliczyć
-jawny skutek niedoboru.
+Rozpocząć **4H.3 — jawne konsekwencje ograniczenia pomp**: pokazać operatorowi
+liczbę potrzebną i dostępną, przydział, wyliczone przesunięcie oraz pierwotny
+plan bez tworzenia fikcyjnych przydziałów dla `0` pomp.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -2146,4 +2146,19 @@ Następny nieukończony podetap: **4G.3 — testy minimalnej liczby pomp**.
 
 Zamknięty podetap: **4H.1**. Punkt nadrzędny **4H** pozostaje otwarty.
 Następny niezakończony podetap: **4H.2 — ograniczony przydział pomp**.
+
+## Zamknięcie 4H.2 — ograniczony przydział pomp — 2026-08-29
+
+- [x] ograniczony przydział korzysta wyłącznie z rzeczywistych, aktywnych pomp z listy;
+- [x] liczba zasobów użytych przez silnik nie przekracza ani wartości operatora, ani liczby aktywnych pomp;
+- [x] silnik nie tworzy dodatkowych pomp w celu ukrycia niedoboru;
+- [x] zajęta pompa może otrzymać kolejną budowę z wyliczonym przesunięciem, a przesunięty pełny cykl jest rezerwowany przed rozpatrzeniem następnej budowy;
+- [x] kolejne przesunięcia mogą narastać kaskadowo i pozostają częścią niezależnego wyniku pomp;
+- [x] `0` pomp pozostawia budowy bez przydziału i nie tworzy fikcyjnego zasobu;
+- [x] ograniczony wynik zachowuje planowany okres, rzeczywisty okres pompowy, wielkość przesunięcia i jego przyczynę;
+- [x] 4H.2 nie zmienia jeszcze `StartRoboczy` ani kursów gruszek; połączenie obu zasobów pozostaje zakresem Etapu 5;
+- [x] `testy/etap_4h_2.test.js` sprawdza niedobór, kaskadowe przesunięcia, `0`, limit operatora, aktywną listę, walidację, stabilność i brak mutacji danych wejściowych.
+
+Zamknięty podetap: **4H.2**. Punkt nadrzędny **4H** pozostaje otwarty.
+Następny niezakończony podetap: **4H.3 — jawne konsekwencje**.
 
