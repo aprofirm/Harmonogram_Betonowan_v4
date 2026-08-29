@@ -34,7 +34,19 @@
       "zamomojzaklad"
     ],
     dataPlanowana: ["dataplanowana", "databetonowania", "data"],
-    rodzajRozladunku: ["rodzajrozladunku", "sposobrozladunku", "rozladunek"]
+    rodzajRozladunku: ["rodzajrozladunku", "sposobrozladunku", "rozladunek"],
+    czasDojazduMinuty: [
+      "czasdojazdu",
+      "czasdojazduminuty",
+      "dojazd",
+      "dojazdmin"
+    ],
+    czasPowrotuMinuty: [
+      "czaspowrotu",
+      "czaspowrotuminuty",
+      "powrot",
+      "powrotmin"
+    ]
   });
 
   const wymaganeKolumny = Object.freeze([
@@ -193,7 +205,9 @@
       "rodzajBetonu",
       "iloscBetonuM3",
       "dataPlanowana",
-      "rodzajRozladunku"
+      "rodzajRozladunku",
+      "czasDojazduMinuty",
+      "czasPowrotuMinuty"
     ].forEach(function (nazwaPola) {
       indeksyKolumn[nazwaPola] = znajdzIndeksKolumny(
         naglowkiZnormalizowane,
@@ -386,6 +400,22 @@
         },
         numerWiersza
       );
+      const czasDojazduZImportu = String(
+        pobierzWartoscOpcjonalna(wiersz, indeksyKolumn.czasDojazduMinuty)
+      ).trim();
+      const czasPowrotuZImportu = String(
+        pobierzWartoscOpcjonalna(wiersz, indeksyKolumn.czasPowrotuMinuty)
+      ).trim();
+
+      if (czasDojazduZImportu || czasPowrotuZImportu) {
+        aplikacja.budowy.ustawCzasyRobocze(budowa, {
+          czasDojazduRoboczyMinuty: czasDojazduZImportu,
+          czasPowrotuRoboczyMinuty: czasPowrotuZImportu,
+          zrodloCzasuDojazdu: czasDojazduZImportu ? "reczny" : "brak",
+          zrodloCzasuPowrotu: czasPowrotuZImportu ? "reczny" : "brak"
+        });
+      }
+
       wierszeZrodlowe.push(daneZrodlowe);
       budowy.push(budowa);
     });
