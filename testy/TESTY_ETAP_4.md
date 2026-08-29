@@ -155,6 +155,16 @@ Test operatora 4C.3 — zaliczony:
 - ponowne obliczenie tych samych danych jest stabilne, nie nakłada pracy jednej pompy i nie modyfikuje danych wejściowych;
 - 4H.2 nie zmienia kursów gruszek ani `StartRoboczy` budów.
 
+### 4H.3 — jawne konsekwencje ograniczenia pomp
+
+- wynik rozróżnia liczbę potrzebną, zadeklarowaną, aktywną i rzeczywiście dostępną do przydziału;
+- liczba brakujących pomp jest liczona względem technicznej floty potrzebnej bez przesunięć;
+- każda budowa zachowuje pierwotny plan oraz jawny skutek pracy pomp;
+- przydział podaje ID i nazwę pompy, możliwy start, wielkość przesunięcia i dokładną przyczynę;
+- brak przydziału zachowuje listę powodów odrzucenia kandydatów;
+- `0` pomp daje status `brak-pomp`, pusty przydział i nie tworzy fikcyjnego zasobu;
+- `testy/etap_4h_3.test.js` sprawdza niedobór, wystarczającą flotę, ograniczenie aktywnej listy i plan bez pompowania.
+
 ### 4H — tryb „mam X pomp”
 
 - tryb bez limitu zachowuje planowane godziny i wynik minimalnej floty;

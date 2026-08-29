@@ -364,6 +364,7 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_4g_3.test.js
     node testy/etap_4h_1.test.js
     node testy/etap_4h_2.test.js
+    node testy/etap_4h_3.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
@@ -447,10 +448,13 @@ najmniejszą liczbę pomp potrzebną bez nakładania pełnych cykli, a istnieją
 licznik wyniku pokazuje tę wartość operatorowi. Plan bez pompowania pokazuje
 `0` i czytelny komunikat. Test 4G.3 potwierdza wyniki `0`, `1` i wielu pomp
 oraz zgodność z technicznymi przydziałami bez nakładania pracy jednego zasobu.
-Podetapy **4H.1–4H.2** są zakończone. Operator może wybrać **Oblicz, ile
+Podetapy **4H.1–4H.3** są zakończone. Operator może wybrać **Oblicz, ile
 potrzeba** albo **Mam określoną liczbę**. W trybie ograniczonym silnik korzysta
 wyłącznie z zadanej liczby rzeczywistych aktywnych pomp, nie tworzy brakujących
-zasobów i wylicza kaskadowe przesunięcia pełnych cykli pomp. `0` pomp nie tworzy
-fikcyjnego przydziału. Wynik 4H.2 pozostaje niezależny od kursów gruszek i nie
-zmienia jeszcze `StartRoboczy`. Następny krok to **4H.3 — jawne konsekwencje**.
-Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.
+zasobów i wylicza kaskadowe przesunięcia pełnych cykli pomp. Wynik 4H.3 jawnie
+rozróżnia liczbę potrzebną, zadeklarowaną i rzeczywiście dostępną do przydziału,
+a przy każdej budowie zachowuje pierwotny plan, przydzieloną pompę, możliwy start,
+przesunięcie oraz przyczynę. `0` pomp pozostawia budowę bez fikcyjnego przydziału.
+Wynik nadal nie zmienia `StartRoboczy`; docelowe renderowanie i centralne
+podłączenie pozostają zakresem 4I. Następny krok to **4H.4 — pamięć i ponowne
+przeliczenie**. Pełne połączenie ograniczeń pomp i gruszek należy do Etapu 5.
