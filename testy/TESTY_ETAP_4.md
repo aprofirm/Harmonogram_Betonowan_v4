@@ -232,6 +232,14 @@ Przed publikacją należy uruchomić wszystkie pliki `testy/*.test.js` i potwier
 - [x] osobny `testy/etap_4j_1.test.js` pilnuje obecności krytycznych grup testów, pełnego runnera i granicy Etapu 4;
 - [x] pełna regresja przechodzi przed publikacją 4J.2.
 
+### 4J.2 — publikacja
+
+- stan po 4J.1 jest na `main`;
+- `Testy automatyczne` dla commita `0a26a72` zakończyły się `success` (run `33270058614`);
+- `pages build and deployment` dla tego samego commita zakończył się `success` (run `33270057938`);
+- wersja webowa korzysta z publikacji GitHub Pages z `main`;
+- publikacja nie zmienia logiki harmonogramu ani wymaga internetu do działania wariantu lokalnego.
+
 ## Test operatora 4J.3
 
 Po publikacji na GitHub Pages operator sprawdza ten sam rzeczywisty plan w

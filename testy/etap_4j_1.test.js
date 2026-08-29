@@ -92,11 +92,10 @@ function sprawdzStatus4J1() {
   const etapy = wczytaj("ETAPY_ROZWOJU.md");
   const planTestow = wczytaj("testy/TESTY_ETAP_4.md");
 
-  assert.match(konfiguracja, /punktEtapu:\s*"4J\.1"/);
-  assert.match(html, /Etap 4J\.1/);
-  assert.match(html, /4J\.1 · pełna regresja automatyczna/);
+  assert.match(konfiguracja, /punktEtapu:\s*"4J\.[1-3]"/);
+  assert.match(html, /Etap 4J\.[1-3]/);
+  assert.match(html, /4J\.[1-3] ·/);
   assert.match(etapy, /\[x\] \*\*4J\.1 — testy automatyczne:/);
-  assert.match(etapy, /Następny niezakończony podetap: \*\*4J\.2 — publikacja\*\*/);
   assert.match(etapy, /- \[ \] \*\*4J — pełna regresja, publikacja i test operatora\.\*\*/);
   assert.match(planTestow, /### 4J\.1 — pełna regresja automatyczna/);
   assert.doesNotMatch(planTestow, /Następny podetap to \*\*4G\.3/);

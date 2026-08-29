@@ -482,4 +482,4 @@ Zakres 4I.5 potwierdza, że podstawowy interfejs nadal korzysta wyłącznie z
 lokalnych skryptów, stylów i grafik. Tabela pomp ma semantyczne opisy i nagłówki,
 poziome przewijanie można obsłużyć klawiaturą, a braki i przesunięcia są opisane
 tekstem — kolor jest tylko sygnałem pomocniczym. Wynik pomp nadal nie zmienia
-`StartRoboczy` ani kursów gruszek. Końcowa regresja **4J.1** jest zakończona. Następny krok to **4J.2 — publikacja**.
+`StartRoboczy` ani kursów gruszek. Końcowa regresja **4J.1** oraz publikacja **4J.2** są zakończone. Wersja webowa jest publikowana z `main` pod adresem `https://aprofirm.github.io/Harmonogram_Betonowan_v4/`. Następny krok to **4J.3 — test operatora**.
