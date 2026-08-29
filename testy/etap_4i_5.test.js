@@ -93,9 +93,6 @@ function sprawdzStatusEtapuIGranice() {
   const etapy = wczytaj("ETAPY_ROZWOJU.md");
   const kod = wczytaj("js/interfejs/minimalna_liczba_pomp.js");
 
-  assert.match(html, /Etap 4I\.5/);
-  assert.match(html, /4I\.5 · offline i dostępność/);
-  assert.match(konfiguracja, /punktEtapu:\s*"4I\.5"/);
   assert.match(
     etapy,
     /\[x\] \*\*4I — integracja wyniku i interfejs operatora\.\*\*/
@@ -106,7 +103,7 @@ function sprawdzStatusEtapuIGranice() {
   );
   assert.match(
     etapy,
-    /Następny niezakończony podetap: \*\*4J\.1 — testy automatyczne\*\*/
+    /- \[ \] \*\*4J — pełna regresja, publikacja i test operatora\.\*\*/
   );
   assert.doesNotMatch(kod, /startRoboczy\s*=/);
 }

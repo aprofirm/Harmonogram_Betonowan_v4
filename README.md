@@ -372,6 +372,7 @@ Jeżeli na komputerze jest Node.js, można dodatkowo uruchomić test automatyczn
     node testy/etap_4i_3.test.js
     node testy/etap_4i_4.test.js
     node testy/etap_4i_5.test.js
+    node testy/etap_4j_1.test.js
     node testy/pamiec_planu.test.js
     node testy/pamiec_aplikacji.test.js
     node testy/pamiec_tras.test.js
@@ -481,5 +482,4 @@ Zakres 4I.5 potwierdza, że podstawowy interfejs nadal korzysta wyłącznie z
 lokalnych skryptów, stylów i grafik. Tabela pomp ma semantyczne opisy i nagłówki,
 poziome przewijanie można obsłużyć klawiaturą, a braki i przesunięcia są opisane
 tekstem — kolor jest tylko sygnałem pomocniczym. Wynik pomp nadal nie zmienia
-`StartRoboczy` ani kursów gruszek. Następny krok to **4J.1 — końcowe testy
-automatyczne całego Etapu 4**.
+`StartRoboczy` ani kursów gruszek. Końcowa regresja **4J.1** jest zakończona. Następny krok to **4J.2 — publikacja**.

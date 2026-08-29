@@ -49,8 +49,8 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4I zakończone;
-  następny podetap to 4J.1 — testy automatyczne całego Etapu 4**
+- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4I oraz 4J.1 zakończone;
+  następny podetap to 4J.2 — publikacja**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -638,7 +638,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
   - [x] **4I.5 — zgodność offline i dostępność interfejsu:** brak nowych
     bibliotek, CDN i obowiązkowego internetu.
 - [ ] **4J — pełna regresja, publikacja i test operatora.**
-  - [ ] **4J.1 — testy automatyczne:** wszystkie scenariusze Etapu 4 oraz pełna
+  - [x] **4J.1 — testy automatyczne:** wszystkie scenariusze Etapu 4 oraz pełna
     regresja importu, pamięci, rodzajów rozładunku i całego Etapu 3.
   - [ ] **4J.2 — publikacja:** commit na `main`, GitHub Actions i GitHub Pages.
   - [ ] **4J.3 — test operatora:** rzeczywisty plan z brakiem pomp, jedną pompą,
@@ -1001,9 +1001,22 @@ Następny niezakończony podetap: **4I.5 — zgodność offline i dostępność 
 Zamknięty podetap: **4I.5**. Cały punkt **4I — integracja wyniku i interfejs operatora** jest zakończony.
 Następny niezakończony podetap: **4J.1 — testy automatyczne**.
 
+## Zamknięcie 4J.1 — pełna regresja automatyczna — 2026-08-29
+
+- [x] przeprowadzono audyt wszystkich plików `testy/*.test.js` i wymaganych grup regresji;
+- [x] potwierdzono pokrycie importu CSV/KDX, rodzajów rozładunku, odbiorów własnych, pamięci oraz całego Etapu 3;
+- [x] potwierdzono pokrycie wszystkich podpunktów pomp 4A–4I;
+- [x] zsynchronizowano historycznie niezaznaczone przypadki 4E z istniejącymi testami 4E.2–4E.4;
+- [x] usunięto z testów 4I zależność od dokładnego bieżącego numeru podetapu, aby nie blokowały poprawnego rozwoju 4J i kolejnych etapów;
+- [x] dodano `testy/etap_4j_1.test.js`, który pilnuje kompletności zestawu regresji, pełnego runnera GitHub Actions i granicy Etapu 4;
+- [x] pełna regresja wszystkich `testy/*.test.js` przechodzi poprawnie.
+
+Zamknięty podetap: **4J.1**. Punkt nadrzędny **4J** i cały **Etap 4** pozostają otwarte.
+Następny niezakończony podetap: **4J.2 — publikacja**.
+
 # Kolejny krok
 
-Rozpocząć **4J.1 — testy automatyczne**: wykonać końcowy przegląd scenariuszy całego Etapu 4, uzupełnić ewentualne luki testowe i uruchomić pełną regresję importu, pamięci, rodzajów rozładunku, Etapu 3 oraz wszystkich funkcji pomp przed publikacją 4J.2.
+Rozpocząć **4J.2 — publikacja**: opublikować stan po końcowej regresji na `main`, potwierdzić GitHub Actions i GitHub Pages, a następnie przygotować test operatora 4J.3.
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
 

@@ -2,10 +2,10 @@
 
 ## Status
 
-Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4F** oraz podetapy
-**4G.1–4G.2**. Następny podetap to **4G.3 — testy minimalnej liczby pomp**.
-Minimalna liczba pomp jest już liczona i pokazywana operatorowi, w tym `0` dla
-planu bez pompowania. Pełna regresja obejmuje obecnie `44` pliki `testy/*.test.js`.
+Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4I** oraz **4J.1 — pełną regresję automatyczną**.
+Następny podetap to **4J.2 — publikacja**. Wszystkie pliki `testy/*.test.js` są
+uruchamiane przez jeden workflow GitHub Actions, a 4J.1 dodatkowo pilnuje kompletności
+zestawu regresji i granicy między Etapem 4 a Etapem 5.
 
 ## Cel
 
@@ -110,10 +110,10 @@ Test operatora 4C.3 — zaliczony:
   ani nie wpływa na jej przydział;
 - [x] czas dojazdu `0 min` jest poprawny, a brak lub błędna wartość nie prowadzi
   do cichego przyjęcia zera;
-- [ ] kolejny przydział uwzględnia `budowa A → budowa B`;
-- [ ] czasy w przeciwnych kierunkach mogą być różne;
-- [ ] brak potrzebnej trasy jest jawny i nie tworzy fikcyjnego przejazdu;
-- [ ] silnik działa dla gotowych minut bez internetu i bez usługi mapowej.
+- [x] kolejny przydział uwzględnia `budowa A → budowa B`;
+- [x] czasy w przeciwnych kierunkach mogą być różne;
+- [x] brak potrzebnej trasy jest jawny i nie tworzy fikcyjnego przejazdu;
+- [x] silnik działa dla gotowych minut bez internetu i bez usługi mapowej.
 
 ### 4F — przydział pomp
 
@@ -219,6 +219,18 @@ Przed publikacją należy uruchomić wszystkie pliki `testy/*.test.js` i potwier
 - cały silnik gruszek z Etapu 3;
 - brak starych przydziałów po kolejnym imporcie albo zmianie parametrów;
 - działanie offline bez CDN i obowiązkowego połączenia z internetem.
+
+### 4J.1 — pełna regresja automatyczna
+
+- [x] workflow uruchamia automatycznie wszystkie pliki `testy/*.test.js` i zatrzymuje się przy pierwszym błędzie;
+- [x] zestaw obejmuje import CSV i zmienne kolumny KDX;
+- [x] zestaw obejmuje rodzaje rozładunku i odbiory własne;
+- [x] zestaw obejmuje pamięć planu, historię, pamięć tras i ponowne przeliczenia;
+- [x] zestaw obejmuje pełny Etap 3: generowanie kursów, czasy, przydział i ograniczoną flotę gruszek;
+- [x] zestaw obejmuje wszystkie podpunkty pomp 4A–4I, w tym dostępność, przejazdy, minimalną flotę, limit pomp i interfejs;
+- [x] stare testy 4I chronią swoje funkcje, ale nie wymagają już, aby bieżący numer projektu pozostawał w 4I;
+- [x] osobny `testy/etap_4j_1.test.js` pilnuje obecności krytycznych grup testów, pełnego runnera i granicy Etapu 4;
+- [x] pełna regresja przechodzi przed publikacją 4J.2.
 
 ## Test operatora 4J.3
 
