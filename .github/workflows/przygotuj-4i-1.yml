@@ -1,0 +1,51 @@
+name: Przygotuj 4I1
+
+on:
+  push:
+    branches:
+      - 4i-1-centralny-wynik-pomp
+
+permissions:
+  contents: write
+
+jobs:
+  przygotuj:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          ref: 4i-1-centralny-wynik-pomp
+          fetch-depth: 0
+
+      - name: Przygotuj Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Zastosuj zmiany 4I.1
+        run: python3 narzedzia/aktualizuj_4i_1.py
+
+      - name: Uruchom pełną regresję
+        run: |
+          for test in testy/*.test.js; do
+            echo "=== $test ==="
+            node "$test"
+          done
+
+      - name: Usuń pliki pomocnicze
+        run: |
+          rm narzedzia/aktualizuj_4i_1.py
+          rm .github/workflows/przygotuj-4i-1.yml
+
+      - name: Zapisz zmiany
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Brak zmian do zapisania"
+            exit 0
+          fi
+          git commit -m "4I.1: podlacz centralny wynik pomp"
+          git push origin HEAD:4i-1-centralny-wynik-pomp
