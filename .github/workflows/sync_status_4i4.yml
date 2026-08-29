@@ -1,0 +1,107 @@
+name: Synchronizacja statusu 4I.4
+
+on:
+  push:
+    branches: [work/sync-status-4i4]
+
+permissions:
+  contents: write
+
+jobs:
+  synchronizacja:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          ref: work/sync-status-4i4
+
+      - name: Zsynchronizuj ETAPY_ROZWOJU.md
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('ETAPY_ROZWOJU.md')
+          text = path.read_text(encoding='utf-8')
+
+          replacements = [
+              (
+                  '- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4H oraz podetapy 4I.1–4I.2 zakończone;\n  następny podetap to 4I.3 — tabela pomp**',
+                  '- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4H oraz podetapy 4I.1–4I.4 zakończone;\n  następny podetap to 4I.5 — zgodność offline i dostępność interfejsu**'
+              ),
+              (
+                  '  - [ ] **4I.3 — tabela pomp:** budowa, przydzielona pompa, przygotowanie,',
+                  '  - [x] **4I.3 — tabela pomp:** budowa, przydzielona pompa, przygotowanie,'
+              ),
+              (
+                  '  - [ ] **4I.4 — komunikaty:** czytelny brak pompy, niedostępność, niezgodny',
+                  '  - [x] **4I.4 — komunikaty:** czytelny brak pompy, niedostępność, niezgodny'
+              ),
+          ]
+
+          for old, new in replacements:
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'Oczekiwano dokładnie jednego wystąpienia, znaleziono {count}: {old[:80]}')
+              text = text.replace(old, new, 1)
+
+          old_tail = '''Zamknięty podetap: **4I.2**. Punkt nadrzędny **4I** pozostaje otwarty.
+          Następny niezakończony podetap: **4I.3 — tabela pomp**.
+
+          # Kolejny krok
+
+          Rozpocząć **4I.3 — tabela pomp**: pokazać w osobnej tabeli wynik przydziału pomp — budowę, przydzieloną pompę, przygotowanie, betonowanie, zakończenie, przejazd i gotowość do kolejnej pracy — bez łączenia jeszcze korekt pomp i gruszek.'''
+
+          new_tail = '''Zamknięty podetap: **4I.2**. Punkt nadrzędny **4I** pozostaje otwarty.
+          Następny niezakończony podetap: **4I.3 — tabela pomp**.
+
+          ## Zamknięcie 4I.3 — tabela pomp — 2026-08-29
+
+          - [x] osobna tabela pracy pomp korzysta z centralnego `wynik.pompy` i jest prezentowana niezależnie od tabeli kursów gruszek;
+          - [x] tryb **Mam określoną liczbę** pokazuje rzeczywistą pompę, przygotowanie, betonowanie, zakończenie, przejazd i gotowość do kolejnej pracy;
+          - [x] tryb **Oblicz, ile potrzeba** pokazuje pompy techniczne minimalnej floty i nie wymyśla przejazdów między budowami, których ten kontrakt nie wyznacza;
+          - [x] brak przydziału pozostaje jawnie widoczny, a wynik jest czyszczony po zmianie danych, odtworzeniu albo wyczyszczeniu planu;
+          - [x] 4I.3 nie zmienia `StartRoboczy`, nie przebudowuje kursów gruszek i nie wykonuje jeszcze sprzężenia zasobów z Etapu 5;
+          - [x] `testy/etap_4i_3.test.js` oraz pełna regresja GitHub Actions przeszły poprawnie przed i po scaleniu do `main`.
+
+          Zamknięty podetap: **4I.3**. Punkt nadrzędny **4I** pozostaje otwarty.
+          Następny niezakończony podetap: **4I.4 — komunikaty pomp**.
+
+          ## Zamknięcie 4I.4 — komunikaty pomp — 2026-08-29
+
+          - [x] interfejs korzysta z istniejącego `jawnySkutekPompy` z 4H.3 zamiast wprowadzać drugą logikę planistyczną;
+          - [x] operator widzi czytelny brak aktywnej pompy, niedostępność godzinową, niewystarczający wysięg oraz brak czasu przejazdu;
+          - [x] przesunięta budowa pokazuje liczbę minut, najwcześniejszy możliwy start i dokładną przyczynę, np. zajętość albo przejazd z poprzedniej budowy;
+          - [x] komunikat jest widoczny w tabeli pomp oraz jako kompaktowa automatyczna notka przy konkretnej budowie;
+          - [x] tryb **Oblicz, ile potrzeba** pozostaje techniczny i nie tworzy fikcyjnych ostrzeżeń o rzeczywistych pompach;
+          - [x] 4I.4 nadal nie zmienia `StartRoboczy` ani kursów gruszek; pełne sprzężenie pozostaje zakresem Etapu 5;
+          - [x] `testy/etap_4i_4.test.js`, pełna regresja PR oraz końcowy workflow na `main` przeszły poprawnie.
+
+          Zamknięty podetap: **4I.4**. Punkt nadrzędny **4I** pozostaje otwarty.
+          Następny niezakończony podetap: **4I.5 — zgodność offline i dostępność interfejsu**.
+
+          # Kolejny krok
+
+          Rozpocząć **4I.5 — zgodność offline i dostępność interfejsu**: potwierdzić brak nowych bibliotek, CDN i obowiązkowego internetu oraz sprawdzić, czy tabela i komunikaty pomp pozostają czytelne bez polegania wyłącznie na kolorze i przy węższym układzie.'''
+
+          old_tail = '\n'.join(line.strip() for line in old_tail.splitlines())
+          new_tail = '\n'.join(line.strip() for line in new_tail.splitlines())
+
+          count = text.count(old_tail)
+          if count != 1:
+              raise SystemExit(f'Nie znaleziono dokładnie jednego bloku końcowego 4I.2; znaleziono {count}.')
+          text = text.replace(old_tail, new_tail, 1)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Usuń jednorazowy workflow i zapisz synchronizację
+        shell: bash
+        run: |
+          rm .github/workflows/sync_status_4i4.yml
+          git config user.name "PawelP"
+          git config user.email "53014565+aprofirm@users.noreply.github.com"
+          git add ETAPY_ROZWOJU.md .github/workflows/sync_status_4i4.yml
+          git commit -m "Docs: zsynchronizuj status do 4I.4"
+          git push origin HEAD:work/sync-status-4i4
