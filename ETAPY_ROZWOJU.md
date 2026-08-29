@@ -616,8 +616,9 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
     rzeczywiście dostępną do przydziału, przydział, przesunięcie, dokładną
     przyczynę i pierwotny plan; `0` pomp nie tworzy fikcyjnych przydziałów.
     Docelowe podłączenie tego kontraktu do głównego widoku należy do 4I.
-  - [ ] **4H.4 — pamięć i ponowne przeliczenie:** tryb oraz liczba są
+  - [x] **4H.4 — pamięć i ponowne przeliczenie:** tryb oraz liczba są
     odtwarzane, a każda zmiana buduje wynik od początku bez starych zajętości.
+    Test potwierdza także brak dziedziczenia przydziałów po zmianie limitu lub aktywnej listy pomp.
   - [ ] **4H.5 — testy:** flota wystarczająca, zbyt mała, `0`, błędne dane,
     stabilność wyniku i brak nakładania pracy jednej pompy.
 - [ ] **4I — integracja wyniku i interfejs operatora.**
@@ -910,11 +911,23 @@ Jeżeli rozmowa nie wniosła nowego ustalenia, nie tworzymy pustego wpisu. Pomys
 
 ---
 
+## Zamknięcie 4H.4 — pamięć i ponowne przeliczenie — 2026-08-29
+
+- [x] tryb oraz liczba pomp są zachowywane w bieżącym planie i historii;
+- [x] po odświeżeniu wracają tryb, liczba oraz stan aktywności pola liczby pomp;
+- [x] wartość `0` jest odtwarzana jako prawidłowy limit;
+- [x] przejście do `Oblicz, ile potrzeba` usuwa limit z zapisywanych parametrów;
+- [x] kolejne obliczenia dla różnych limitów i aktywnych list nie dziedziczą poprzednich zajętości;
+- [x] `testy/etap_4h_4.test.js` oraz pełna regresja przechodzą.
+
+Zamknięty podetap: **4H.4**. Punkt nadrzędny **4H** pozostaje otwarty.
+Następny niezakończony podetap: **4H.5 — testy**.
+
 # Kolejny krok
 
-Rozpocząć **4H.4 — pamięć i ponowne przeliczenie**: potwierdzić, że tryb
-oraz liczba pomp są odtwarzane, a każda zmiana buduje wynik pomp od początku
-bez pozostawiania starych przydziałów i okresów zajętości.
+Rozpocząć **4H.5 — testy końcowe trybu „mam X pomp”**: zebrać w jednym
+zestawie flotę wystarczającą, zbyt małą, `0`, błędne dane, stabilność wyniku
+i brak nakładania pracy jednej pompy.
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
 

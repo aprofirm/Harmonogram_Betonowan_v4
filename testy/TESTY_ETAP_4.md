@@ -165,6 +165,16 @@ Test operatora 4C.3 — zaliczony:
 - `0` pomp daje status `brak-pomp`, pusty przydział i nie tworzy fikcyjnego zasobu;
 - `testy/etap_4h_3.test.js` sprawdza niedobór, wystarczającą flotę, ograniczenie aktywnej listy i plan bez pompowania.
 
+### 4H.4 — pamięć i ponowne przeliczenie
+
+- bieżący plan i historia zachowują `trybPomp` oraz `liczbaDostepnychPomp`;
+- po odtworzeniu tryb ograniczony ponownie aktywuje i wymaga pola liczby pomp;
+- limit `0` jest zachowywany i odtwarzany bez zamiany na wartość pustą;
+- przejście do `Oblicz, ile potrzeba` zapisuje brak limitu jako `null`;
+- sekwencja przeliczeń `1 → 3 → 1` pomp daje ponownie identyczny wynik dla jednej pompy;
+- zmiana aktywnej listy pomp nie dziedziczy przydziału ani zajętości poprzedniej listy;
+- `testy/etap_4h_4.test.js` chroni te zachowania.
+
 ### 4H — tryb „mam X pomp”
 
 - tryb bez limitu zachowuje planowane godziny i wynik minimalnej floty;
