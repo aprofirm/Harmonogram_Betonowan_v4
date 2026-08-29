@@ -36,6 +36,42 @@
     return liczba;
   }
 
+  function pobierzTrybPompZInterfejsu() {
+    const poleTrybu = pobierzElement("tryb-pomp");
+    return poleTrybu && poleTrybu.value
+      ? String(poleTrybu.value)
+      : "oblicz-potrzebne";
+  }
+
+  function pobierzWynikZgodnosci4G(wynikHarmonogramu) {
+    const dane = wynikHarmonogramu && typeof wynikHarmonogramu === "object"
+      ? wynikHarmonogramu
+      : {};
+
+    if (
+      !aplikacja.pompy ||
+      typeof aplikacja.pompy.obliczMinimalnaLiczbePomp !== "function"
+    ) {
+      return null;
+    }
+
+    const wynikMinimalnejFloty = aplikacja.pompy.obliczMinimalnaLiczbePomp(
+      Array.isArray(dane.budowy) ? dane.budowy : [],
+      Array.isArray(dane.kursy) ? dane.kursy : []
+    );
+
+    return {
+      trybPomp: pobierzTrybPompZInterfejsu(),
+      minimalnaLiczbaPomp: pobierzNieujemnaLiczbeCalkowitaLubBrak(
+        wynikMinimalnejFloty.minimalnaLiczbaPomp
+      ),
+      liczbaDostepnychDoPrzydzialu: null,
+      liczbaBrakujacychPomp: null,
+      statusFlotyPomp: "",
+      czyTrybZgodnosci4G: true
+    };
+  }
+
   function pobierzCentralnyWynikPomp(wynikHarmonogramu) {
     const dane = wynikHarmonogramu && typeof wynikHarmonogramu === "object"
       ? wynikHarmonogramu
@@ -45,7 +81,9 @@
       : null;
 
     if (!wynikPomp || wynikPomp.status !== "obliczono") {
-      return null;
+      // Zgodność ze starszym kontraktem 4G.2. Produkcyjny przepływ 4I.2
+      // zawsze przekazuje centralny wynik `wynik.pompy` z 4I.1.
+      return pobierzWynikZgodnosci4G(dane);
     }
 
     const liczbaDostepnychDoPrzydzialu =
@@ -70,7 +108,8 @@
       liczbaBrakujacychPomp: pobierzNieujemnaLiczbeCalkowitaLubBrak(
         wynikPomp.liczbaBrakujacychPomp
       ),
-      statusFlotyPomp: String(wynikPomp.statusFlotyPomp || "")
+      statusFlotyPomp: String(wynikPomp.statusFlotyPomp || ""),
+      czyTrybZgodnosci4G: false
     };
   }
 
@@ -141,6 +180,13 @@
       licznikPotrzebnych.textContent = wynikPomp.minimalnaLiczbaPomp === null
         ? "—"
         : String(wynikPomp.minimalnaLiczbaPomp);
+    }
+
+    if (wynikPomp.czyTrybZgodnosci4G) {
+      if (wynikPomp.trybPomp !== "mam-okreslona-liczbe" && opis) {
+        opis.textContent = opiszCentralnyWynikPomp(wynikPomp, "");
+      }
+      return wynikPomp;
     }
 
     if (licznikDostepnych) {
