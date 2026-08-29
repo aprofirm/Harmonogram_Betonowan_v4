@@ -34,6 +34,8 @@ const interfejs = wczytaj("js/interfejs/interfejs.js");
 const aplikacjaKod = wczytaj("js/aplikacja.js");
 const aplikacja = wczytajLogikePomp();
 
+// 4H.1 sprawdza wybór i walidację limitu. Rzeczywisty skutek ograniczenia
+// przydziału pomp pozostaje osobnym zakresem 4H.2.
 assert.equal(aplikacja.konfiguracja.parametryDomyslne.trybPomp, "oblicz-potrzebne");
 assert.equal(aplikacja.konfiguracja.parametryDomyslne.liczbaDostepnychPomp, null);
 
