@@ -3,7 +3,7 @@ import re
 
 WERSJA = "4j3-przejazdy-20260829b"
 
-# Wymuś odświeżenie lokalnych skryptów na GitHub Pages bez naruszania pracy file://.
+# 1. Wersjonowanie lokalnych skryptów: świeży JS na GitHub Pages, nadal lokalne file://.
 p = Path("index.html")
 html = p.read_text(encoding="utf-8")
 html2 = re.sub(
@@ -13,18 +13,26 @@ html2 = re.sub(
 )
 if html2 == html:
     raise RuntimeError("index.html: nie znaleziono skryptów do wersjonowania")
-if "js/import/import_csv.js?v=" + WERSJA not in html2:
-    raise RuntimeError("index.html: brak wersji import_csv.js")
-if "js/harmonogram/harmonogram.js?v=" + WERSJA not in html2:
-    raise RuntimeError("index.html: brak wersji harmonogram.js")
+for wymagany in ["js/import/import_csv.js", "js/harmonogram/harmonogram.js", "js/aplikacja.js"]:
+    if wymagany + "?v=" + WERSJA not in html2:
+        raise RuntimeError("index.html: brak wersji dla " + wymagany)
 p.write_text(html2, encoding="utf-8")
 
-# Wzmocnij regresję o rzeczywisty układ ze screena: 2 pompy, 4 budowy.
+# 2. Stary test Etapu 1 ma dalej pilnować lokalności, ale query string jest dozwolony.
+p = Path("testy/etap_1.test.js")
+t = p.read_text(encoding="utf-8")
+old = '''  plikiJavaScript.forEach(function (sciezkaPliku) {\n    assert.equal(dokumentHtml.includes("src=\\\"" + sciezkaPliku + "\\\""), true, sciezkaPliku);\n  });\n'''
+new = '''  plikiJavaScript.forEach(function (sciezkaPliku) {\n    const czyJestLokalnySkrypt =\n      dokumentHtml.includes("src=\\\"" + sciezkaPliku + "\\\"") ||\n      dokumentHtml.includes("src=\\\"" + sciezkaPliku + "?");\n    assert.equal(czyJestLokalnySkrypt, true, sciezkaPliku);\n  });\n'''
+if old not in t:
+    raise RuntimeError("etap_1.test.js: nie znaleziono starego sprawdzenia src")
+p.write_text(t.replace(old, new, 1), encoding="utf-8")
+
+# 3. Mocny test dokładnie dla układu ze screena: 2 pompy + 4 budowy.
 p = Path("testy/csv_przejazdy_pomp.test.js")
 t = p.read_text(encoding="utf-8")
 marker = "function sprawdzBlednyFormat(aplikacja) {\n"
 if marker not in t:
-    raise RuntimeError("test: brak miejsca wstawienia scenariusza 2 pomp")
+    raise RuntimeError("csv_przejazdy_pomp.test.js: brak miejsca wstawienia")
 extra = r'''function utworzPompeZNumerem(numer) {
   return {
     idPompy: "P-" + String(numer),
@@ -59,7 +67,6 @@ function sprawdzDwiePompyICzteryBudowy(aplikacja) {
     listaPomp: [utworzPompeZNumerem(1), utworzPompeZNumerem(2)],
     parametry: parametry
   });
-
   const b003 = wynik.pompy.wynikiBudow.find(function (pozycja) {
     return pozycja.idBudowy === "B-003";
   });
@@ -67,30 +74,18 @@ function sprawdzDwiePompyICzteryBudowy(aplikacja) {
     return pozycja.idBudowy === "B-004";
   });
 
-  assert.ok(b003, "B-003 musi być obecna w wyniku pomp.");
+  assert.ok(b003);
   assert.equal(b003.statusPrzydzialuPompy, "przydzielona");
   assert.ok(b003.przydzialPompy.przejazdZPoprzedniejBudowy);
-  assert.equal(
-    b003.przydzialPompy.przejazdZPoprzedniejBudowy.zrodloCzasuPrzejazdu,
-    "csv"
-  );
-  assert.notEqual(
-    b003.probyKandydatow[0].powodOdrzucenia,
-    "brak-trasy",
-    "Pierwsza pompa nie może odpaść przez brak trasy B-001 → B-003."
-  );
-  assert.notEqual(
-    b003.probyKandydatow[1].powodOdrzucenia,
-    "brak-trasy",
-    "Druga pompa nie może odpaść przez brak trasy B-002 → B-003."
-  );
-  assert.ok(b004, "B-004 musi być obecna w wyniku pomp.");
+  assert.equal(b003.przydzialPompy.przejazdZPoprzedniejBudowy.zrodloCzasuPrzejazdu, "csv");
+  b003.probyKandydatow.forEach(function (proba) {
+    assert.notEqual(proba.powodOdrzucenia, "brak-trasy");
+  });
+
+  assert.ok(b004);
   assert.equal(b004.statusPrzydzialuPompy, "przydzielona");
   assert.ok(b004.przydzialPompy.przejazdZPoprzedniejBudowy);
-  assert.equal(
-    b004.przydzialPompy.przejazdZPoprzedniejBudowy.zrodloCzasuPrzejazdu,
-    "csv"
-  );
+  assert.equal(b004.przydzialPompy.przejazdZPoprzedniejBudowy.zrodloCzasuPrzejazdu, "csv");
 }
 
 function sprawdzWersjonowanieSkryptow() {
@@ -99,23 +94,16 @@ function sprawdzWersjonowanieSkryptow() {
     html.matchAll(/<script defer src="([^"]+\.js\?v=[^"]+)"><\/script>/g),
     function (m) { return m[1]; }
   );
-
-  assert.ok(skrypty.length >= 20, "Skrypty lokalne powinny mieć parametr wersji cache.");
-  assert.ok(
-    skrypty.some(function (src) { return src.startsWith("js/import/import_csv.js?v="); }),
-    "Importer CSV musi mieć wersjonowany adres."
-  );
-  assert.ok(
-    skrypty.some(function (src) { return src.startsWith("js/harmonogram/harmonogram.js?v="); }),
-    "Silnik harmonogramu musi mieć wersjonowany adres."
-  );
+  assert.ok(skrypty.length >= 20);
+  assert.ok(skrypty.some(function (src) { return src.startsWith("js/import/import_csv.js?v="); }));
+  assert.ok(skrypty.some(function (src) { return src.startsWith("js/harmonogram/harmonogram.js?v="); }));
 }
 
 '''
 t = t.replace(marker, extra + marker, 1)
 call_marker = "sprawdzPriorytetJawnegoProvidera(aplikacja);\nsprawdzBlednyFormat(aplikacja);"
 if call_marker not in t:
-    raise RuntimeError("test: brak miejsca wywołania nowych scenariuszy")
+    raise RuntimeError("csv_przejazdy_pomp.test.js: brak miejsca wywołania")
 t = t.replace(
     call_marker,
     "sprawdzPriorytetJawnegoProvidera(aplikacja);\nsprawdzDwiePompyICzteryBudowy(aplikacja);\nsprawdzWersjonowanieSkryptow();\nsprawdzBlednyFormat(aplikacja);",
@@ -123,15 +111,15 @@ t = t.replace(
 )
 p.write_text(t, encoding="utf-8")
 
-# Krótka notatka diagnostyczna w README.
+# 4. Dokumentacja przyczyny i zabezpieczenia.
 p = Path("README.md")
 r = p.read_text(encoding="utf-8")
-note = "\n> GitHub Pages: lokalne skrypty mają parametr wersji w `index.html`, aby po publikacji nowej logiki przeglądarka nie uruchamiała starszej kopii JavaScript z cache. Nie zmienia to działania wersji offline `file://`.\n"
+note = "> GitHub Pages: lokalne skrypty mają parametr wersji w `index.html`, aby po publikacji nowej logiki przeglądarka nie uruchamiała starszej kopii JavaScript z cache. Nie zmienia to działania wersji offline `file://`.\n"
 anchor = "Do testów operatora 4J.3 można dodatkowo użyć kolumny `PrzejazdyPompy`."
-if note.strip() not in r:
+if note not in r:
     pos = r.find(anchor)
     if pos == -1:
         raise RuntimeError("README: brak sekcji PrzejazdyPompy")
     end = r.find("\n", pos)
-    r = r[:end+1] + note + r[end+1:]
+    r = r[:end+1] + "\n" + note + r[end+1:]
 p.write_text(r, encoding="utf-8")
