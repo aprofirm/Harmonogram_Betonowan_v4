@@ -234,3 +234,14 @@ wariantach:
 7. odświeżenie strony i odtworzenie ustawień.
 
 Dopiero po automatycznej regresji, publikacji i tym teście można zamknąć Etap 4.
+
+
+### 4I.1 — centralny wynik pomp
+
+- `przeliczCalyHarmonogram()` zwraca wynik pomp w polu `pompy`, a nie pusty placeholder;
+- tryb `Oblicz, ile potrzeba` zwraca minimalną flotę techniczną bez tworzenia rzeczywistych pomp;
+- tryb `Mam określoną liczbę` wykorzystuje przekazaną listę rzeczywistych pomp i kontrakt 4H;
+- `0` pomp pozostaje jawnym brakiem zasobu;
+- wynik pomp korzysta z bazowych kursów sprzed ewentualnych przesunięć gruszek;
+- `StartRoboczy` budów i kursy gruszek pozostają niezmienione przez obliczenie pomp;
+- `testy/etap_4i_1.test.js` sprawdza oba tryby, walidację i granicę Etapu 4.
