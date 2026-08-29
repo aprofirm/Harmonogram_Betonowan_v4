@@ -1,0 +1,151 @@
+name: Prepare 4H3
+
+on:
+  push:
+    branches:
+      - 4h-3-jawne-konsekwencje-pomp
+    paths:
+      - .github/workflows/prepare_4h3.yml
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: 4h-3-jawne-konsekwencje-pomp
+          fetch-depth: 0
+      - name: Patch project state
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          def replace_once(path, old, new):
+              p = Path(path)
+              text = p.read_text(encoding="utf-8")
+              if old not in text:
+                  raise SystemExit(f"Brak oczekiwanego fragmentu w {path}")
+              p.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+          replace_once(
+              "index.html",
+              '<span class="znacznik-etapu">Etap 4H.2</span>',
+              '<span class="znacznik-etapu">Etap 4H.3</span>'
+          )
+          replace_once(
+              "index.html",
+              '<span>4G.3 · testy minimalnej liczby pomp</span>',
+              '<span>4H.3 · jawne konsekwencje ograniczenia pomp</span>'
+          )
+          replace_once(
+              "index.html",
+              '    <script defer src="js/pompy/ograniczony_przydzial_pomp.js"></script>\n',
+              '    <script defer src="js/pompy/ograniczony_przydzial_pomp.js"></script>\n'
+              '    <script defer src="js/pompy/jawne_konsekwencje_pomp.js"></script>\n'
+          )
+          replace_once(
+              "js/konfiguracja/konfiguracja.js",
+              'punktEtapu: "4H.2"',
+              'punktEtapu: "4H.3"'
+          )
+
+          etapy = Path("ETAPY_ROZWOJU.md")
+          text = etapy.read_text(encoding="utf-8")
+          old = (
+              '  - [ ] **4H.3 — jawne konsekwencje:** operator widzi liczbę potrzebną,\n'
+              '    dostępną, przydział, przesunięcie i pierwotny plan; `0` pomp nie tworzy\n'
+              '    fikcyjnych przydziałów.'
+          )
+          new = (
+              '  - [x] **4H.3 — jawne konsekwencje:** wynik zawiera liczbę potrzebną,\n'
+              '    rzeczywiście dostępną do przydziału, przydział, przesunięcie, dokładną\n'
+              '    przyczynę i pierwotny plan; `0` pomp nie tworzy fikcyjnych przydziałów.\n'
+              '    Docelowe podłączenie tego kontraktu do głównego widoku należy do 4I.'
+          )
+          if old not in text:
+              raise SystemExit("Brak oczekiwanego wpisu 4H.3 w ETAPY_ROZWOJU.md")
+          text = text.replace(old, new, 1)
+          pattern = re.compile(
+              r'# Kolejny krok\n\n.*?(?=\n\n## Weryfikacja produkcyjnego KDX)',
+              re.S
+          )
+          replacement = (
+              '# Kolejny krok\n\n'
+              'Rozpocząć **4H.4 — pamięć i ponowne przeliczenie**: potwierdzić, że tryb\n'
+              'oraz liczba pomp są odtwarzane, a każda zmiana buduje wynik pomp od początku\n'
+              'bez pozostawiania starych przydziałów i okresów zajętości.'
+          )
+          text, count = pattern.subn(replacement, text, count=1)
+          if count != 1:
+              raise SystemExit("Nie udało się zaktualizować sekcji Kolejny krok")
+          etapy.write_text(text, encoding="utf-8")
+
+          readme = Path("README.md")
+          text = readme.read_text(encoding="utf-8")
+          needle = '    node testy/etap_4h_2.test.js\n'
+          if needle not in text:
+              raise SystemExit("Brak testu 4H.2 w README")
+          text = text.replace(
+              needle,
+              needle + '    node testy/etap_4h_3.test.js\n',
+              1
+          )
+          old = (
+              'Podetapy **4H.1–4H.2** są zakończone. Operator może wybrać **Oblicz, ile\n'
+              'potrzeba** albo **Mam określoną liczbę**. W trybie ograniczonym silnik korzysta\n'
+              'wyłącznie z zadanej liczby rzeczywistych aktywnych pomp, nie tworzy brakujących\n'
+              'zasobów i wylicza kaskadowe przesunięcia pełnych cykli pomp. `0` pomp nie tworzy\n'
+              'fikcyjnego przydziału. Wynik 4H.2 pozostaje niezależny od kursów gruszek i nie\n'
+              'zmienia jeszcze `StartRoboczy`. Następny krok to **4H.3 — jawne konsekwencje**.\n'
+              'Pełne połączenie ograniczeń pomp i gruszek pozostaje świadomie zakresem Etapu 5.'
+          )
+          new = (
+              'Podetapy **4H.1–4H.3** są zakończone. Operator może wybrać **Oblicz, ile\n'
+              'potrzeba** albo **Mam określoną liczbę**. W trybie ograniczonym silnik korzysta\n'
+              'wyłącznie z zadanej liczby rzeczywistych aktywnych pomp, nie tworzy brakujących\n'
+              'zasobów i wylicza kaskadowe przesunięcia pełnych cykli pomp. Wynik 4H.3 jawnie\n'
+              'rozróżnia liczbę potrzebną, zadeklarowaną i rzeczywiście dostępną do przydziału,\n'
+              'a przy każdej budowie zachowuje pierwotny plan, przydzieloną pompę, możliwy start,\n'
+              'przesunięcie oraz przyczynę. `0` pomp pozostawia budowę bez fikcyjnego przydziału.\n'
+              'Wynik nadal nie zmienia `StartRoboczy`; docelowe renderowanie i centralne\n'
+              'podłączenie pozostają zakresem 4I. Następny krok to **4H.4 — pamięć i ponowne\n'
+              'przeliczenie**. Pełne połączenie ograniczeń pomp i gruszek należy do Etapu 5.'
+          )
+          if old not in text:
+              raise SystemExit("Brak oczekiwanego podsumowania 4H w README")
+          readme.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+          testy = Path("testy/TESTY_ETAP_4.md")
+          text = testy.read_text(encoding="utf-8")
+          marker = '\n### 4H — tryb „mam X pomp”\n'
+          section = (
+              '\n### 4H.3 — jawne konsekwencje ograniczenia pomp\n\n'
+              '- wynik rozróżnia liczbę potrzebną, zadeklarowaną, aktywną i rzeczywiście dostępną do przydziału;\n'
+              '- liczba brakujących pomp jest liczona względem technicznej floty potrzebnej bez przesunięć;\n'
+              '- każda budowa zachowuje pierwotny plan oraz jawny skutek pracy pomp;\n'
+              '- przydział podaje ID i nazwę pompy, możliwy start, wielkość przesunięcia i dokładną przyczynę;\n'
+              '- brak przydziału zachowuje listę powodów odrzucenia kandydatów;\n'
+              '- `0` pomp daje status `brak-pomp`, pusty przydział i nie tworzy fikcyjnego zasobu;\n'
+              '- `testy/etap_4h_3.test.js` sprawdza niedobór, wystarczającą flotę, ograniczenie aktywnej listy i plan bez pompowania.\n'
+          )
+          if marker not in text:
+              raise SystemExit("Brak miejsca na sekcję 4H.3 w TESTY_ETAP_4.md")
+          testy.write_text(text.replace(marker, section + marker, 1), encoding="utf-8")
+          PY
+      - name: Remove helper workflow
+        shell: bash
+        run: rm -f .github/workflows/prepare_4h3.yml
+      - name: Commit branch state
+        shell: bash
+        run: |
+          git config user.name "PawelP"
+          git config user.email "53014565+aprofirm@users.noreply.github.com"
+          git add -A
+          git commit -m "4H.3: podlacz kontrakt i zaktualizuj dokumentacje"
+          git push origin HEAD:4h-3-jawne-konsekwencje-pomp
