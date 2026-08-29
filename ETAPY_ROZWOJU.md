@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4I oraz 4J.1–4J.2 zakończone;
-  następny podetap to 4J.3 — test operatora**
+  4J.3 rozpisany na 4J.3.1–4J.3.2; następny podetap to 4J.3.1 — jawne czasy przejazdów pomp**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -644,6 +644,13 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
   - [ ] **4J.3 — test operatora:** rzeczywisty plan z brakiem pomp, jedną pompą,
     kilkoma budowami, pompą nieaktywną, zbyt małą flotą i przejazdem między
     budowami; dopiero wtedy zamknięcie Etapu 4.
+    - [ ] **4J.3.1 — jawne czasy przejazdów pomp:** dodać w obszarze roboczym
+      czytelny panel relacji `budowa → budowa`, pokazywać czas i źródło oraz
+      umożliwić ręczną edycję i przywrócenie wartości bazowej z CSV; zmiana ma
+      oznaczać wynik jako nieaktualny i być zachowywana w pamięci planu.
+    - [ ] **4J.3.2 — ponowny test operatora:** po publikacji sprawdzić pełną listę
+      scenariuszy 4J.3, w tym jawne wartości przejazdów, ręczną korektę,
+      przeliczenie i odtworzenie po odświeżeniu.
 
 ## Granica Etapu 4
 
