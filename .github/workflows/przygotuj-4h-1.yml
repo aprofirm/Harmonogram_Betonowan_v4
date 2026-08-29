@@ -9,7 +9,6 @@ permissions:
 
 jobs:
   przygotowanie:
-    if: github.event.head_commit.message == 'chore: uruchom aktualizacje 4H.1'
     runs-on: ubuntu-latest
     steps:
       - name: Pobierz repozytorium
