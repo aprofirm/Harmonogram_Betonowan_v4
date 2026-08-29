@@ -37,6 +37,7 @@ function utworzBudowe(idBudowy, wymaganyWysiegPompyMetry) {
     iloscBetonuLiczbaM3: 8,
     statusRealizacji: "planowana",
     wymaganyWysiegPompyMetry: wymaganyWysiegPompyMetry || 32,
+    czasDojazduRoboczyMinuty: 0,
     czasPrzygotowaniaPompyRoboczyMinuty: null,
     czasZakonczeniaObslugiPompyRoboczyMinuty: null
   };
