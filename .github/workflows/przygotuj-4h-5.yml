@@ -1,0 +1,51 @@
+name: Przygotuj 4H5
+
+on:
+  push:
+    branches:
+      - 4h-5-testy-koncowe-pomp
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  przygotuj:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Przygotuj Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Zaktualizuj status 4H.5
+        run: python3 narzedzia/aktualizuj_4h_5.py
+
+      - name: Uruchom pełną regresję
+        shell: bash
+        run: |
+          set -euo pipefail
+          for plik in testy/*.test.js; do
+            echo "=== $plik ==="
+            node "$plik"
+          done
+
+      - name: Zapisz przygotowane zmiany
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "PawelP"
+          git config user.email "53014565+aprofirm@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Brak zmian do zapisania."
+            exit 0
+          fi
+          git commit -m "4H.5: zamknij testy trybu mam X pomp"
+          git push origin HEAD:${{ github.ref_name }}
