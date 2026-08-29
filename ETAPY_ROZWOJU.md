@@ -49,8 +49,8 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4G zakończone,
-  zamknięte 4H.1–4H.2; następny podetap to 4H.3**
+- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4H oraz podetapy 4I.1–4I.2 zakończone;
+  następny podetap to 4I.3 — tabela pomp**
 - [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
@@ -624,7 +624,7 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
 - [ ] **4I — integracja wyniku i interfejs operatora.**
   - [x] **4I.1 — centralny wynik:** `przeliczCalyHarmonogram()` udostępnia
     osobny wynik pomp, nadal bez docelowego łączenia korekt pomp i gruszek.
-  - [ ] **4I.2 — wspólne sterowanie zasobami:** w nagłówku harmonogramu pod
+  - [x] **4I.2 — wspólne sterowanie zasobami:** w nagłówku harmonogramu pod
     sterowaniem gruszkami pojawia się estetyczny, kompaktowy wiersz pomp z
     trybem pracy, liczbą potrzebną, liczbą dostępną i skrótem dostępności.
     Szczegółowe godziny **Dostępna od** i **Dostępna do** pozostają przypisane
@@ -949,11 +949,23 @@ Następny niezakończony podetap: **4I.1 — centralny wynik**.
 Zamknięty podetap: **4I.1**. Punkt nadrzędny **4I** pozostaje otwarty.
 Następny niezakończony podetap: **4I.2 — wspólne sterowanie zasobami**.
 
+## Zamknięcie 4I.2 — wspólne sterowanie zasobami — 2026-08-29
+
+- [x] wspólny panel **STEROWANIE ZASOBAMI** zachowuje gruszki oraz pompy w jednym nagłówku, z pompami bezpośrednio pod gruszkami;
+- [x] widok pomp korzysta z centralnego `wynik.pompy` utworzonego w 4I.1 zamiast ponownie liczyć minimalną flotę w interfejsie;
+- [x] tryb **Oblicz, ile potrzeba** pokazuje liczbę potrzebną, a liczba dostępna pozostaje nieokreślona jako `—`;
+- [x] tryb **Mam określoną liczbę** pokazuje liczbę potrzebną oraz rzeczywistą liczbę pomp dopuszczonych do przydziału, a nie tylko wartość zadeklarowaną w polu;
+- [x] skrót statusu rozróżnia brak pomp, niedobór, ograniczenia dostępności i wystarczającą flotę oraz zachowuje pomocniczy skrót aktywnych pomp i godzin `Dostępna od/do`;
+- [x] szczegółowe pola **Dostępna od** i **Dostępna do** pozostają przypisane do kart konkretnych pomp;
+- [x] zachowano kompatybilność starszego testu 4G.2 dla dawnego wyniku bez pola `pompy`, ale przy obecnym kontrakcie centralny `wynik.pompy` ma pierwszeństwo;
+- [x] `testy/etap_4i_2.test.js` oraz pełna regresja GitHub Actions przechodzą poprawnie.
+
+Zamknięty podetap: **4I.2**. Punkt nadrzędny **4I** pozostaje otwarty.
+Następny niezakończony podetap: **4I.3 — tabela pomp**.
+
 # Kolejny krok
 
-Rozpocząć **4I.2 — wspólne sterowanie zasobami**: uporządkować w nagłówku
-harmonogramu kompaktowy wiersz pomp z trybem pracy, liczbą potrzebną, dostępną
-i skrótem dostępności, bez przenoszenia logiki obliczeniowej do interfejsu.
+Rozpocząć **4I.3 — tabela pomp**: pokazać w osobnej tabeli wynik przydziału pomp — budowę, przydzieloną pompę, przygotowanie, betonowanie, zakończenie, przejazd i gotowość do kolejnej pracy — bez łączenia jeszcze korekt pomp i gruszek.
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
 
