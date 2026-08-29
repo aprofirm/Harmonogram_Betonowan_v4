@@ -84,6 +84,49 @@
     };
   }
 
+  function utworzOpcjePompZBudow(listaBudow, opcjePomp) {
+    const opcje = opcjePomp && typeof opcjePomp === "object"
+      ? opcjePomp
+      : {};
+
+    if (typeof opcje.pobierzDanePrzejazdu === "function") {
+      return opcje;
+    }
+
+    return Object.assign({}, opcje, {
+      pobierzDanePrzejazdu: function (danePrzejazdu) {
+        const dane = danePrzejazdu && typeof danePrzejazdu === "object"
+          ? danePrzejazdu
+          : {};
+        const budowaZrodlowa = dane.budowaZrodlowa;
+        const budowaDocelowa = dane.budowaDocelowa;
+        const mapaPrzejazdow = budowaZrodlowa &&
+          budowaZrodlowa.przejazdyPompyMinuty;
+        const idBudowyDocelowej = String(
+          budowaDocelowa && budowaDocelowa.idBudowy || ""
+        ).trim();
+
+        if (
+          !mapaPrzejazdow ||
+          typeof mapaPrzejazdow !== "object" ||
+          Array.isArray(mapaPrzejazdow) ||
+          !idBudowyDocelowej ||
+          !Object.prototype.hasOwnProperty.call(
+            mapaPrzejazdow,
+            idBudowyDocelowej
+          )
+        ) {
+          return null;
+        }
+
+        return {
+          czasPrzejazduMinuty: mapaPrzejazdow[idBudowyDocelowej],
+          zrodloCzasuPrzejazdu: "csv"
+        };
+      }
+    });
+  }
+
   function obliczCentralnyWynikPomp(
     listaBudow,
     listaPomp,
@@ -249,7 +292,7 @@
       aktualneDane.listaPomp,
       kursyZCzasami,
       parametry,
-      aktualneDane.opcjePomp
+      utworzOpcjePompZBudow(listaBudow, aktualneDane.opcjePomp)
     );
     const stanGruszek = {
       trybGruszek: ustawieniaTrybuGruszek.trybGruszek,

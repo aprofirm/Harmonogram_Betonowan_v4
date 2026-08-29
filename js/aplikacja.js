@@ -28,6 +28,7 @@
     "dataPlanowana",
     "rodzajRozladunku",
     "wymaganyWysiegPompyMetry",
+    "przejazdyPompyMinuty",
     "zrodlo",
     "czasDojazduRoboczyMinuty",
     "czasPowrotuRoboczyMinuty",
