@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5D.3**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5E.1**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -715,12 +715,12 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
     korzystają wyłącznie z nowych kursów i wyliczają rzeczywiste godziny dostaw.
   - [x] **5C.3 — testy:** brak przesunięcia daje wynik zgodny z Etapem 3, a
     przesunięcie nie pozostawia żadnego kursu z poprzedniej wersji planu.
-- [ ] **5D — rzeczywiste dostawy a czas pracy pompy.**
+- [x] **5D — rzeczywiste dostawy a czas pracy pompy.**
   - [x] **5D.1 — rzeczywiste okno betonowania:** okres pracy pompy wynika z
     faktycznych godzin rozładunków po przydziale gruszek, nie tylko z planu bazowego.
   - [x] **5D.2 — wpływ na następną budowę:** wydłużenie betonowania przez gruszki
     przesuwa gotowość pompy i może wymusić dalszą korektę kolejnej budowy.
-  - [ ] **5D.3 — test kaskady:** co najmniej trzy budowy potwierdzają propagację
+  - [x] **5D.3 — test kaskady:** co najmniej trzy budowy potwierdzają propagację
     opóźnienia bez nakładania pracy jednej pompy i jednej gruszki.
 - [ ] **5E — stabilizacja sprzężonego przeliczenia.**
   - [ ] **5E.1 — deterministyczna iteracja:** powtarzać zależne obliczenia pomp,
@@ -1284,6 +1284,20 @@ Następny niezakończony podetap: **5D.2 — wpływ na następną budowę**.
 Podetap **5D.2** jest zakończony. Punkt nadrzędny **5D** i cały Etap 5 pozostają otwarte.
 Następny niezakończony podetap: **5D.3 — test kaskady**.
 
+
+## Zamknięcie 5D.3 i całego 5D — test kaskady — 2026-08-30
+
+- [x] scenariusz obejmuje trzy budowy `A → B → C`, jedną pompę i jedną gruszkę;
+- [x] rzeczywiste wydłużenie budowy A przesuwa `StartRoboczy` budowy B z `09:20` do `09:30`;
+- [x] skutek przechodzi dalej: wydłużony okres B przesuwa budowę C z `10:50` do `11:00`;
+- [x] rzeczywiste okresy pracy jednej pompy stykają się na granicach, ale nigdy się nie nakładają;
+- [x] kursy jednej gruszki nie nakładają się i każdy kolejny załadunek zaczyna się dopiero po gotowości pojazdu;
+- [x] powtórne przeliczenie identycznych danych daje identyczny wynik i nie zmienia danych źródłowych;
+- [x] `testy/etap_5d_3.test.js` oraz pełna regresja wszystkich wcześniejszych testów przechodzą poprawnie;
+- [x] 5D.3 nie wprowadza jeszcze ogólnej iteracji do stabilności — ten zakres rozpoczyna się w 5E.1.
+
+Podetap **5D.3** oraz cały punkt **5D — rzeczywiste dostawy a czas pracy pompy** są zakończone. Etap 5 pozostaje otwarty.
+Następny niezakończony podetap: **5E.1 — deterministyczna iteracja**.
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
 
