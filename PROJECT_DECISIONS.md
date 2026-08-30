@@ -1928,3 +1928,17 @@ historii. Przyszły routing mapowy z Etapu 6 ma zasilać ten sam kontrakt danych
 a nie tworzyć osobnego ukrytego mechanizmu. Ręczna korekta operatora pozostaje
 jawnym wariantem roboczym. Zasada nie zmienia granicy Etapu 4: sama edycja czasu
 nie modyfikuje `StartRoboczy` ani kursów gruszek.
+
+---
+
+## 97. Pełne przeliczenie zawsze zaczyna od StartZadany
+
+`StartPlanowany` jest niezmiennym źródłem planu, `StartZadany` przechowuje
+bieżącą decyzję operatora, a `StartRoboczy` jest wyłącznie wynikiem aktualnego
+przebiegu silnika. Rozpoczęcie nowego pełnego przeliczenia ustawia roboczą kopię
+`StartRoboczy` na `StartZadany`. Nie wolno dziedziczyć wyniku z poprzedniego
+przeliczenia ani zapisu historycznego.
+
+Silnik pracuje na niezależnych kopiach budów, także ich zagnieżdżonych danych.
+Może zmieniać kopię roboczą w kolejnych podetapach Etapu 5, ale nie może mutować
+budów źródłowych z importu ani budów ręcznych przekazanych na wejściu.

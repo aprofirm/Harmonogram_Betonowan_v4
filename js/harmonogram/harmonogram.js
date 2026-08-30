@@ -12,6 +12,45 @@
     );
   }
 
+  function skopiujDaneDoPrzeliczenia(wartosc) {
+    if (Array.isArray(wartosc)) {
+      return wartosc.map(skopiujDaneDoPrzeliczenia);
+    }
+
+    if (wartosc && typeof wartosc === "object") {
+      return Object.keys(wartosc).reduce(function (kopia, nazwaPola) {
+        kopia[nazwaPola] = skopiujDaneDoPrzeliczenia(wartosc[nazwaPola]);
+        return kopia;
+      }, {});
+    }
+
+    return wartosc;
+  }
+
+  function utworzBudowyDoPelnegoPrzeliczenia(
+    budowyZImportu,
+    budowyReczne
+  ) {
+    const kopieBudowZImportu = skopiujDaneDoPrzeliczenia(
+      Array.isArray(budowyZImportu) ? budowyZImportu : []
+    );
+    const kopieBudowRecznych = skopiujDaneDoPrzeliczenia(
+      Array.isArray(budowyReczne) ? budowyReczne : []
+    );
+    const listaBudow = aplikacja.budowy.utworzListeRobocza(
+      kopieBudowZImportu,
+      kopieBudowRecznych
+    );
+
+    return listaBudow.map(function (budowa) {
+      // Każdy pełny przebieg zaczyna od decyzji operatora. StartRoboczy jest
+      // wynikiem bieżącego silnika, więc nie wolno dziedziczyć go z poprzedniego
+      // przeliczenia ani zapisu historycznego.
+      budowa.startRoboczy = budowa.startZadany;
+      return budowa;
+    });
+  }
+
   function policzOdbioryWlasne(listaBudow) {
     if (!aplikacja.budowy ||
         typeof aplikacja.budowy.czyOdbiorWlasny !== "function") {
@@ -266,7 +305,7 @@
     const parametry = polaczParametry(aktualneDane.parametry);
     const stanImportu = aktualneDane.stanImportu ||
       aplikacja.importCsv.utworzPustyStanImportu();
-    const listaBudow = aplikacja.budowy.utworzListeRobocza(
+    const listaBudow = utworzBudowyDoPelnegoPrzeliczenia(
       stanImportu.budowy,
       aktualneDane.budowyReczne
     );
@@ -357,6 +396,8 @@
   }
 
   aplikacja.harmonogram = {
-    przeliczCalyHarmonogram: przeliczCalyHarmonogram
+    przeliczCalyHarmonogram: przeliczCalyHarmonogram,
+    utworzBudowyDoPelnegoPrzeliczenia:
+      utworzBudowyDoPelnegoPrzeliczenia
   };
 })(window);

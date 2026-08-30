@@ -3,7 +3,7 @@
 ## Status
 
 Etap 4 jest zamknięty. Etap 5 jest rozpisany przed rozpoczęciem implementacji.
-Następny podetap: **5A.1 — trzy godziny i niezmienniki pełnego silnika**.
+Podetap **5A.1** jest zakończony. Następny podetap: **5A.2 — czysty centralny przebieg**.
 
 ## Najważniejsza zasada testowa
 
@@ -14,10 +14,10 @@ konfliktem — nigdy bezgranicznym przesuwaniem.
 
 ## 5A — kontrakt i centralny przebieg
 
-- [ ] `StartPlanowany` pozostaje niezmienny;
-- [ ] `StartZadany` pozostaje decyzją operatora;
-- [ ] `StartRoboczy` jest wynikiem ograniczeń silnika;
-- [ ] pełne przeliczenie nie mutuje danych wejściowych;
+- [x] `StartPlanowany` pozostaje niezmienny;
+- [x] `StartZadany` pozostaje decyzją operatora;
+- [x] `StartRoboczy` jest wynikiem ograniczeń silnika;
+- [x] pełne przeliczenie nie mutuje danych wejściowych;
 - [ ] identyczne kolejne przeliczenia dają identyczny wynik;
 - [ ] plan bez ograniczeń zachowuje wynik zamkniętych Etapów 3–4.
 

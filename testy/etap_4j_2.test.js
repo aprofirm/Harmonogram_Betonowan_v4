@@ -17,9 +17,8 @@ function sprawdzStatusPublikacji() {
   const readme = wczytaj("README.md");
   const planTestow = wczytaj("testy/TESTY_ETAP_4.md");
 
-  assert.match(konfiguracja, /punktEtapu:\s*"4J\.2"/);
-  assert.match(html, /Etap 4J\.2/);
-  assert.match(html, /4J\.2 · publikacja/);
+  assert.match(konfiguracja, /punktEtapu:\s*"(?:4J\.[2-3]|5[A-Z](?:\.\d+)+)"/);
+  assert.match(html, /Etap (?:4J\.[2-3]|5[A-Z](?:\.\d+)+)/);
   assert.match(etapy, /\[x\] \*\*4J\.2 — publikacja:/);
   assert.match(
     etapy,

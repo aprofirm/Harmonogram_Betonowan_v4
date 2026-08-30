@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zaplanowany; następny podetap 5A.1**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5A.2**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -691,7 +691,7 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
 ## Postęp podetapów Etapu 5
 
 - [ ] **5A — kontrakt pełnego przeliczenia i granice sprzężenia.**
-  - [ ] **5A.1 — trzy godziny i niezmienniki:** `StartPlanowany` pozostaje źródłem,
+  - [x] **5A.1 — trzy godziny i niezmienniki:** `StartPlanowany` pozostaje źródłem,
     `StartZadany` decyzją operatora, a `StartRoboczy` rzeczywistym wynikiem silnika;
     ustalić kontrakt bez mutowania danych źródłowych.
   - [ ] **5A.2 — czysty centralny przebieg:** jedno `przeliczCalyHarmonogram()`
@@ -1145,7 +1145,19 @@ Przed kodowaniem rozpisano podetapy **5A–5J**. Etap 5 świadomie obejmuje sprz
 
 # Kolejny krok
 
-Rozpocząć **5A.1 — trzy godziny i niezmienniki pełnego silnika**. Najpierw formalnie zabezpieczyć kontrakt `StartPlanowany` / `StartZadany` / `StartRoboczy` i testami potwierdzić, że pełny silnik nie mutuje danych źródłowych. Dopiero potem podłączamy faktyczne przesunięcie startu przez pompy.
+Rozpocząć **5A.2 — czysty centralny przebieg pełnego silnika**. Punkt wejścia ma budować wynik od początku i wywoływać istniejące moduły we właściwej kolejności, bez przenoszenia logiki biznesowej do interfejsu.
+
+## Zamknięcie 5A.1 — trzy godziny i niezmienniki — 2026-08-30
+
+- [x] `StartPlanowany` pozostaje niezmiennym źródłem planu;
+- [x] `StartZadany` pozostaje decyzją operatora i początkiem każdego nowego przebiegu;
+- [x] `StartRoboczy` jest tworzony od nowa jako wynik bieżącego silnika i nie jest dziedziczony z poprzedniego przeliczenia;
+- [x] budowy, w tym ich zagnieżdżone dane źródłowe, są kopiowane przed rozpoczęciem obliczeń;
+- [x] test `etap_5a_1.test.js` potwierdza kontrakt trzech godzin, brak mutacji źródła i czysty ponowny start;
+- [x] pełna regresja wcześniejszych etapów przechodzi poprawnie.
+
+Zamknięty podetap: **5A.1**. Punkt nadrzędny **5A** i cały **Etap 5** pozostają otwarte.
+Następny niezakończony podetap: **5A.2 — czysty centralny przebieg**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
@@ -2393,4 +2405,3 @@ Następny niezakończony podetap: **4H.2 — ograniczony przydział pomp**.
 
 Zamknięty podetap: **4H.2**. Punkt nadrzędny **4H** pozostaje otwarty.
 Następny niezakończony podetap: **4H.3 — jawne konsekwencje**.
-

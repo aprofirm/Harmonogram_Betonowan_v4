@@ -92,13 +92,12 @@ function sprawdzStatus4J1() {
   const etapy = wczytaj("ETAPY_ROZWOJU.md");
   const planTestow = wczytaj("testy/TESTY_ETAP_4.md");
 
-  assert.match(konfiguracja, /punktEtapu:\s*"4J\.[1-3]"/);
-  assert.match(html, /Etap 4J\.[1-3]/);
-  assert.match(html, /4J\.[1-3] ·/);
+  assert.match(konfiguracja, /punktEtapu:\s*"(?:4J\.[1-3]|5[A-Z](?:\.\d+)+)"/);
+  assert.match(html, /Etap (?:4J\.[1-3]|5[A-Z](?:\.\d+)+)/);
   assert.match(etapy, /\[x\] \*\*4J\.1 — testy automatyczne:/);
   assert.match(etapy, /- \[x\] \*\*4J — pełna regresja, publikacja i test operatora\.\*\*/);
   assert.match(etapy, /- \[x\] Etap 4 — Pompy — \*\*zakończony 2026-08-30;/);
-  assert.match(etapy, /Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — \*\*zaplanowany; następny podetap 5A\.1\*\*/);
+  assert.match(etapy, /Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — \*\*(?:zaplanowany|rozpoczęty); następny podetap 5[A-Z]\.\d+\*\*/);
   assert.match(planTestow, /### 4J\.1 — pełna regresja automatyczna/);
   assert.doesNotMatch(planTestow, /Następny podetap to \*\*4G\.3/);
 }
