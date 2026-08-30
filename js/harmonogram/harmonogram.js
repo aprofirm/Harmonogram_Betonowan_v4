@@ -503,18 +503,29 @@
     return przebieg;
   }
 
+  function pobierzKursyDoPrzydzialuGruszek(przebieg) {
+    if (!Array.isArray(przebieg.kursyPoPompach)) {
+      throw new Error(
+        "Nie przygotowano nowych kursów od roboczych startów budów."
+      );
+    }
+
+    return przebieg.kursyPoPompach;
+  }
+
   function obliczGruszkiPrzebiegu(przebieg) {
     const ustawieniaTrybuGruszek = pobierzUstawieniaTrybuGruszek(
       przebieg.parametry
     );
+    const kursyDoPrzydzialu = pobierzKursyDoPrzydzialuGruszek(przebieg);
     const wynikMinimalnejFloty = aplikacja.gruszki.przydzielGruszkiDoKursow(
-      przebieg.kursyPoPompach
+      kursyDoPrzydzialu
     );
     const czyOgraniczonaFlota =
       ustawieniaTrybuGruszek.trybGruszek === "mam-okreslona-liczbe";
     const wynikPrzydzialu = czyOgraniczonaFlota
       ? aplikacja.gruszki.przydzielOgraniczonaLiczbeGruszekDoKursow(
-        przebieg.kursyPoPompach,
+        kursyDoPrzydzialu,
         ustawieniaTrybuGruszek.liczbaDostepnychGruszek
       )
       : wynikMinimalnejFloty;

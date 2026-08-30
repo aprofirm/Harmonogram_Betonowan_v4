@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5C.2**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5C.3**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -711,7 +711,7 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
 - [ ] **5C — regenerowanie kursów gruszek po zmianie startu.**
   - [x] **5C.1 — nowe kursy od `StartRoboczy`:** po przesunięciu budowy wszystkie
     jej kursy są generowane ponownie z zachowaniem rytmu dostaw i fizycznego cyklu.
-  - [ ] **5C.2 — ponowny przydział gruszek:** tryb bez limitu i `mam X gruszek`
+  - [x] **5C.2 — ponowny przydział gruszek:** tryb bez limitu i `mam X gruszek`
     korzystają wyłącznie z nowych kursów i wyliczają rzeczywiste godziny dostaw.
   - [ ] **5C.3 — testy:** brak przesunięcia daje wynik zgodny z Etapem 3, a
     przesunięcie nie pozostawia żadnego kursu z poprzedniej wersji planu.
@@ -1145,7 +1145,7 @@ Przed kodowaniem rozpisano podetapy **5A–5J**. Etap 5 świadomie obejmuje sprz
 
 # Kolejny krok
 
-Rozpocząć **5C.2 — ponowny przydział gruszek**. Trzeba potwierdzić, że tryb bez limitu i tryb `mam X gruszek` korzystają wyłącznie z kursów utworzonych od nowych godzin roboczych.
+Rozpocząć **5C.3 — testy regenerowania kursów**. Plan bez przesunięcia ma pozostać zgodny z Etapem 3, a kolejne przeliczenie nie może zachować żadnego starego kursu.
 
 ## Zamknięcie 5A.1 — trzy godziny i niezmienniki — 2026-08-30
 
@@ -1232,6 +1232,18 @@ Następny niezakończony podetap: **5C.1 — nowe kursy od `StartRoboczy`**.
 
 Podetap **5C.1** jest zakończony. Punkt nadrzędny **5C** i cały Etap 5 pozostają otwarte.
 Następny niezakończony podetap: **5C.2 — ponowny przydział gruszek**.
+
+## Zamknięcie 5C.2 — ponowny przydział gruszek — 2026-08-30
+
+- [x] oba tryby gruszek korzystają z jednej jawnie wybranej listy `kursyPoPompach`;
+- [x] tryb **Oblicz, ile potrzeba** przydziela zasoby do nowych godzin po przesunięciu pompy;
+- [x] tryb **Mam określoną liczbę** zachowuje nową godzinę po pompie jako plan dostawy i dopiero względem niej liczy opóźnienie spowodowane brakiem gruszki;
+- [x] w teście bez limitu rozładunki budowy odbywają się o `09:05` i `09:20`, a przy jednej gruszce rzeczywiste godziny wynoszą `09:05` i `09:30`;
+- [x] ograniczona flota zachowuje planowaną godzinę drugiej dostawy `09:20` oraz jawne opóźnienie `10 min`;
+- [x] test `etap_5c_2.test.js` oraz pełna regresja przechodzą poprawnie.
+
+Podetap **5C.2** jest zakończony. Punkt nadrzędny **5C** i cały Etap 5 pozostają otwarte.
+Następny niezakończony podetap: **5C.3 — testy regenerowania kursów**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14

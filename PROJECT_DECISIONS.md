@@ -2023,3 +2023,17 @@ pełny fizyczny cykl: załadunek, dojazd, rozładunek i powrót. Dodatkowy odst�
 przesuwa rytm kolejnych dostaw, ale nie wydłuża gotowości pojedynczej gruszki.
 Techniczny wynik pomp nadal korzysta z kursów bazowych; użycie rzeczywistych
 dostaw do ponownego wyznaczenia okresu pompy należy do 5D–5E.
+
+---
+
+## 104. Oba tryby gruszek korzystają wyłącznie z kursów po pompie
+
+Po utworzeniu `kursyPoPompach` ta lista jest jedynym wejściem zarówno dla
+obliczenia potrzebnej liczby gruszek, jak i dla przydziału ograniczonej floty.
+Żaden z tych trybów nie może wrócić do wcześniejszych `kursyBazowe`.
+
+W trybie ograniczonym planowana godzina kursu oznacza godzinę wynikającą z
+aktualnego `StartRoboczy`, czyli już po uwzględnieniu pompy. Dopiero brak wolnej
+gruszki może przesunąć rzeczywistą godzinę załadunku i rozładunku, a różnica
+jest zapisywana jako `opoznienieZPowoduGruszekMinuty`. Pozwala to osobno
+odczytać skutek pompy i późniejszy skutek ograniczenia floty gruszek.
