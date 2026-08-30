@@ -49,9 +49,8 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 1 — Szkielet aplikacji
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
-- [ ] Etap 4 — Pompy — **rozpoczęty; całe punkty 4A–4I oraz 4J.1–4J.2 zakończone;
-  w 4J.3 zakończono 4J.3.1; następny podetap to 4J.3.2 — ponowny test operatora**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty
+- [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zaplanowany; następny podetap 5A.1**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -637,18 +636,18 @@ Dodać pompy jako pełnoprawny, niezależny zasób harmonogramu.
     minut, najwcześniejszym startem i dokładną przyczyną.
   - [x] **4I.5 — zgodność offline i dostępność interfejsu:** brak nowych
     bibliotek, CDN i obowiązkowego internetu.
-- [ ] **4J — pełna regresja, publikacja i test operatora.**
+- [x] **4J — pełna regresja, publikacja i test operatora.**
   - [x] **4J.1 — testy automatyczne:** wszystkie scenariusze Etapu 4 oraz pełna
     regresja importu, pamięci, rodzajów rozładunku i całego Etapu 3.
   - [x] **4J.2 — publikacja:** commit na `main`, GitHub Actions i GitHub Pages.
-  - [ ] **4J.3 — test operatora:** rzeczywisty plan z brakiem pomp, jedną pompą,
+  - [x] **4J.3 — test operatora:** rzeczywisty plan z brakiem pomp, jedną pompą,
     kilkoma budowami, pompą nieaktywną, zbyt małą flotą i przejazdem między
     budowami; dopiero wtedy zamknięcie Etapu 4.
     - [x] **4J.3.1 — jawne czasy przejazdów pomp:** dodać w obszarze roboczym
       czytelny panel relacji `budowa → budowa`, pokazywać czas i źródło oraz
       umożliwić ręczną edycję i przywrócenie wartości bazowej z CSV; zmiana ma
       oznaczać wynik jako nieaktualny i być zachowywana w pamięci planu.
-    - [ ] **4J.3.2 — ponowny test operatora:** po publikacji sprawdzić pełną listę
+    - [x] **4J.3.2 — ponowny test operatora:** po publikacji sprawdzić pełną listę
       scenariuszy 4J.3, w tym jawne wartości przejazdów, ręczną korektę,
       przeliczenie i odtworzenie po odświeżeniu.
 
@@ -688,6 +687,87 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
 ## Obowiązująca kolejność pełnego przeliczenia
 
 `Budowy → dostępność i zajętość pomp → rzeczywiste starty budów → generowanie kursów → przydział gruszek → konflikty i korekty → wynik końcowy`
+
+## Postęp podetapów Etapu 5
+
+- [ ] **5A — kontrakt pełnego przeliczenia i granice sprzężenia.**
+  - [ ] **5A.1 — trzy godziny i niezmienniki:** `StartPlanowany` pozostaje źródłem,
+    `StartZadany` decyzją operatora, a `StartRoboczy` rzeczywistym wynikiem silnika;
+    ustalić kontrakt bez mutowania danych źródłowych.
+  - [ ] **5A.2 — czysty centralny przebieg:** jedno `przeliczCalyHarmonogram()`
+    buduje wynik od początku i wywołuje istniejące moduły Etapów 3–4 we właściwej
+    kolejności, bez logiki biznesowej w interfejsie.
+  - [ ] **5A.3 — test bazowy:** plan bez ograniczeń pomp i gruszek daje wynik
+    zgodny z zamkniętymi Etapami 3–4, a kolejne identyczne przeliczenia nie
+    dziedziczą starych kursów ani zajętości.
+- [ ] **5B — wpływ pomp na rzeczywisty start budowy.**
+  - [ ] **5B.1 — zastosowanie możliwego startu:** wynik przydziału pompy może
+    przesunąć `StartRoboczy`, ale nigdy `StartPlanowany` ani `StartZadany`.
+  - [ ] **5B.2 — brak możliwej pompy:** brak aktywnego lub zgodnego zasobu, brak
+    wymaganej trasy albo niemożliwe okno dostępności tworzą jawny konflikt bez
+    wymyślania zastępczej godziny.
+  - [ ] **5B.3 — testy propagacji:** wielkość przesunięcia i jego przyczyna są
+    zachowane przy budowie i stabilne przy ponownym przeliczeniu.
+- [ ] **5C — regenerowanie kursów gruszek po zmianie startu.**
+  - [ ] **5C.1 — nowe kursy od `StartRoboczy`:** po przesunięciu budowy wszystkie
+    jej kursy są generowane ponownie z zachowaniem rytmu dostaw i fizycznego cyklu.
+  - [ ] **5C.2 — ponowny przydział gruszek:** tryb bez limitu i `mam X gruszek`
+    korzystają wyłącznie z nowych kursów i wyliczają rzeczywiste godziny dostaw.
+  - [ ] **5C.3 — testy:** brak przesunięcia daje wynik zgodny z Etapem 3, a
+    przesunięcie nie pozostawia żadnego kursu z poprzedniej wersji planu.
+- [ ] **5D — rzeczywiste dostawy a czas pracy pompy.**
+  - [ ] **5D.1 — rzeczywiste okno betonowania:** okres pracy pompy wynika z
+    faktycznych godzin rozładunków po przydziale gruszek, nie tylko z planu bazowego.
+  - [ ] **5D.2 — wpływ na następną budowę:** wydłużenie betonowania przez gruszki
+    przesuwa gotowość pompy i może wymusić dalszą korektę kolejnej budowy.
+  - [ ] **5D.3 — test kaskady:** co najmniej trzy budowy potwierdzają propagację
+    opóźnienia bez nakładania pracy jednej pompy i jednej gruszki.
+- [ ] **5E — stabilizacja sprzężonego przeliczenia.**
+  - [ ] **5E.1 — deterministyczna iteracja:** powtarzać zależne obliczenia pomp,
+    startów i gruszek tylko wtedy, gdy wynik poprzedniego przebiegu zmienił plan.
+  - [ ] **5E.2 — warunek zakończenia:** stabilny wynik kończy przeliczenie bez
+    dodatkowych zmian, a identyczne dane zawsze dają identyczny rezultat.
+  - [ ] **5E.3 — zabezpieczenie przed nieskończonym przesuwaniem:** limit iteracji
+    lub równoważna osłona kończy niestabilny przypadek jawnym konfliktem zamiast
+    bezgranicznie przesuwać plan.
+- [ ] **5F — limit opóźnienia rozpoczęcia budowy.**
+  - [ ] **5F.1 — parametr globalny:** domyślny limit `30 min` jest konfiguracją,
+    nie magiczną liczbą w algorytmie.
+  - [ ] **5F.2 — limit indywidualny:** budowa może nadpisać limit, a wartość jest
+    zachowywana w bieżącym planie i historii.
+  - [ ] **5F.3 — klasyfikacja wyniku:** korekta w limicie pozostaje zwykłym
+    przesunięciem, przekroczenie staje się konfliktem z godziną i liczbą minut.
+- [ ] **5G — maksymalny przestój podczas betonowania.**
+  - [ ] **5G.1 — osobna definicja:** przestój liczyć pomiędzy rzeczywistym końcem
+    rozładunku poprzedniej dostawy a rzeczywistym początkiem następnej; nie mieszać
+    go z opóźnieniem pierwszej dostawy.
+  - [ ] **5G.2 — parametr `MaksPrzestojMin`:** ustalić wartość domyślną przed
+    implementacją i przechowywać ją jako parametr programu.
+  - [ ] **5G.3 — konflikt ciągłości:** przekroczenie limitu jest jawne przy
+    konkretnej budowie i wskazuje problematyczną parę dostaw oraz wielkość przerwy.
+- [ ] **5H — wspólny model konfliktów i przyczyn.**
+  - [ ] **5H.1 — kontrakt konfliktu:** jeden format dla braku gruszki, braku pompy,
+    niedostępności, niezgodnego parametru, kolizji, braku trasy, limitu startu i przestoju.
+  - [ ] **5H.2 — agregacja:** wynik końcowy zbiera konflikty bez dublowania i
+    zachowuje powiązanie z budową, kursem albo zasobem.
+  - [ ] **5H.3 — czytelne przyczyny:** komunikaty dla operatora są po polsku i
+    nie wymagają odczytywania danych diagnostycznych.
+- [ ] **5I — interfejs, parametry i pamięć wyniku Etapu 5.**
+  - [ ] **5I.1 — trzy godziny i przesunięcie:** tabela pokazuje plan źródłowy,
+    godzinę zadaną oraz rzeczywisty `StartRoboczy` razem z przyczyną różnicy.
+  - [ ] **5I.2 — konflikty i przestoje:** problemy są widoczne tekstowo, a kolor
+    jest tylko sygnałem pomocniczym.
+  - [ ] **5I.3 — pamięć i stan nieaktualny:** parametry oraz wyjątki budów są
+    odtwarzane, a każda istotna zmiana wymaga nowego pełnego przeliczenia.
+- [ ] **5J — pełna regresja, publikacja i test operatora.**
+  - [ ] **5J.1 — testy automatyczne:** cały Etap 5 oraz pełna regresja importu,
+    pamięci, gruszek i pomp.
+  - [ ] **5J.2 — publikacja:** `main`, GitHub Actions i GitHub Pages.
+  - [ ] **5J.3 — test operatora:** rzeczywisty plan obejmujący przesunięcie przez
+    pompę, niedobór gruszek, kaskadę, limit startu, przestój i brak możliwego zasobu.
+
+Po każdym podetapie ponownie przeglądamy tę listę. Nie zamykamy Etapu 5, dopóki
+nie przejdą pełna regresja oraz test operatora 5J.3.
 
 ## Zakres
 
@@ -1048,9 +1128,25 @@ Następny niezakończony podetap: **4J.3 — test operatora**.
 Zamknięty podetap: **4J.3.1**. Punkt **4J.3**, punkt nadrzędny **4J** i cały **Etap 4** pozostają otwarte.
 Następny niezakończony podetap: **4J.3.2 — ponowny test operatora**.
 
+## Zamknięcie 4J.3.2, 4J i całego Etapu 4 — 2026-08-30
+
+- [x] operator sprawdził jawne relacje przejazdów dla planu z co najmniej trzema budowami pompowanymi;
+- [x] ręczna zmiana czasu została użyta po przeliczeniu, a `↺` przywrócił wartość bazową z CSV;
+- [x] ręczna korekta pozostała po odświeżeniu strony;
+- [x] scenariusze braku pomp, jednej pompy, kilku pomp, pompy nieaktywnej, zbyt małej floty i rzeczywistego przejazdu zakończyły się poprawnie;
+- [x] dodatkowa poprawka szerokości okna **Zapisane trasy** została potwierdzona przez operatora;
+- [x] automatyczna regresja po poprawce UI i po zapisie zamknięcia Etapu 4 zakończyła się powodzeniem.
+
+Podetap **4J.3.2**, punkt **4J.3**, cały **4J** oraz cały **Etap 4 — Pompy** są zakończone.
+
+## Plan rozpoczęcia Etapu 5 — 2026-08-30
+
+Przed kodowaniem rozpisano podetapy **5A–5J**. Etap 5 świadomie obejmuje sprzężenie zwrotne: opóźnione dostawy gruszek mogą wydłużyć rzeczywisty okres pracy pompy, a to może przesunąć kolejną budowę. Silnik musi więc dojść do stabilnego wyniku albo zwrócić jawny konflikt, zamiast wykonać tylko jedno przejście obliczeń.
+
 # Kolejny krok
 
-Wykonać **4J.3.2 — ponowny test operatora** na opublikowanej stronie. Najpierw sprawdzić nowy panel **Przejazdy między budowami**: widoczność czasów, ręczną zmianę, użycie po przeliczeniu, przywrócenie wartości bazowej i odtworzenie po odświeżeniu. Następnie dokończyć scenariusze braku aktywnych pomp, jednej pompy i kilku budów, kilku pomp bez kolizji, pompy nieaktywnej, zbyt małej floty oraz rzeczywistego przejazdu między budowami. Dopiero po tym można zamknąć 4J.3, 4J i cały Etap 4.
+Rozpocząć **5A.1 — trzy godziny i niezmienniki pełnego silnika**. Najpierw formalnie zabezpieczyć kontrakt `StartPlanowany` / `StartZadany` / `StartRoboczy` i testami potwierdzić, że pełny silnik nie mutuje danych źródłowych. Dopiero potem podłączamy faktyczne przesunięcie startu przez pompy.
+
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
 
