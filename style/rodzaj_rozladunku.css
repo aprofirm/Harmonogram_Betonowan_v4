@@ -223,3 +223,88 @@
 .tabela-odbiorow-wlasnych td:last-child {
   white-space: nowrap;
 }
+
+/* Podgląd pamięci tras — szeroki układ tabeli bez chowania kolumny „Usuń”. */
+#okno-pamieci-tras {
+  padding: 12px;
+}
+
+#okno-pamieci-tras .okno-historii__panel {
+  width: min(1180px, 100%);
+  max-height: min(820px, calc(100vh - 24px));
+  padding: 20px;
+}
+
+#lista-zapisanych-tras .tabela-przewijana {
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-gutter: stable;
+}
+
+#lista-zapisanych-tras table {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+}
+
+#lista-zapisanych-tras th,
+#lista-zapisanych-tras td {
+  padding: 9px 8px;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+#lista-zapisanych-tras th:nth-child(1),
+#lista-zapisanych-tras td:nth-child(1) {
+  width: 28%;
+}
+
+#lista-zapisanych-tras th:nth-child(2),
+#lista-zapisanych-tras td:nth-child(2),
+#lista-zapisanych-tras th:nth-child(3),
+#lista-zapisanych-tras td:nth-child(3) {
+  width: 9%;
+}
+
+#lista-zapisanych-tras th:nth-child(4),
+#lista-zapisanych-tras td:nth-child(4) {
+  width: 14%;
+}
+
+#lista-zapisanych-tras th:nth-child(5),
+#lista-zapisanych-tras td:nth-child(5),
+#lista-zapisanych-tras th:nth-child(6),
+#lista-zapisanych-tras td:nth-child(6) {
+  width: 16%;
+}
+
+#lista-zapisanych-tras th:nth-child(7),
+#lista-zapisanych-tras td:nth-child(7) {
+  position: sticky;
+  right: 0;
+  z-index: 1;
+  width: 8%;
+  min-width: 58px;
+  text-align: center;
+  background: #ffffff;
+}
+
+#lista-zapisanych-tras th:nth-child(7) {
+  z-index: 2;
+  background: #f7f9fa;
+}
+
+@media (max-width: 680px) {
+  #okno-pamieci-tras {
+    padding: 8px;
+  }
+
+  #okno-pamieci-tras .okno-historii__panel {
+    max-height: calc(100vh - 16px);
+    padding: 16px;
+  }
+
+  #lista-zapisanych-tras table {
+    min-width: 680px;
+  }
+}
