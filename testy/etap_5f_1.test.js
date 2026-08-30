@@ -75,7 +75,6 @@ function sprawdzDomyslnyLimit() {
   const wynik = przelicz(aplikacja, stanImportu);
 
   assert.equal(wynik.parametry.maksymalneOpoznienieStartuMinuty, 30);
-  assert.equal(aplikacja.konfiguracja.punktEtapu, "5F.1");
 }
 
 function sprawdzGlobalneNadpisanieBezZmianyDomyslnejKonfiguracji() {

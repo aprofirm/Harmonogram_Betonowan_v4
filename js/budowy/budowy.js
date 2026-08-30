@@ -222,6 +222,59 @@
     return budowa;
   }
 
+  function ustawIndywidualnyLimitOpoznieniaStartuBudowy(budowa, wartosc) {
+    if (!budowa || typeof budowa !== "object") {
+      throw new Error("Nie znaleziono budowy do ustawienia limitu opóźnienia startu.");
+    }
+
+    budowa.maksymalneOpoznienieStartuBudowyMinuty =
+      pobierzNieujemnaLiczbeLubBrak(
+        wartosc,
+        "Indywidualny limit opóźnienia startu"
+      );
+    return budowa;
+  }
+
+  function uzupelnijIndywidualnyLimitOpoznieniaStartuBudowy(budowa) {
+    if (!budowa || typeof budowa !== "object") {
+      throw new Error("Nie znaleziono budowy do uzupełnienia limitu opóźnienia startu.");
+    }
+
+    if (!Object.prototype.hasOwnProperty.call(
+      budowa,
+      "maksymalneOpoznienieStartuBudowyMinuty"
+    )) {
+      budowa.maksymalneOpoznienieStartuBudowyMinuty = null;
+      return budowa;
+    }
+
+    return ustawIndywidualnyLimitOpoznieniaStartuBudowy(
+      budowa,
+      budowa.maksymalneOpoznienieStartuBudowyMinuty
+    );
+  }
+
+  function pobierzEfektywnyLimitOpoznieniaStartuMinuty(
+    budowa,
+    globalnyLimitMinuty
+  ) {
+    const globalnyLimit = pobierzNieujemnaLiczbeLubBrak(
+      globalnyLimitMinuty,
+      "Maksymalne opóźnienie startu"
+    );
+
+    if (globalnyLimit === null) {
+      throw new Error("Maksymalne opóźnienie startu musi być podane.");
+    }
+
+    const indywidualnyLimit = pobierzNieujemnaLiczbeLubBrak(
+      budowa && budowa.maksymalneOpoznienieStartuBudowyMinuty,
+      "Indywidualny limit opóźnienia startu"
+    );
+
+    return indywidualnyLimit === null ? globalnyLimit : indywidualnyLimit;
+  }
+
   function pobierzDodatniaLiczbeLubBrak(wartosc, nazwaPola) {
     if (wartosc === null || wartosc === undefined || wartosc === "") {
       return null;
@@ -331,6 +384,7 @@
       dataPlanowana: String(daneBudowy.dataPlanowana || "").trim(),
       rodzajRozladunku: String(daneBudowy.rodzajRozladunku || "").trim(),
       wymaganyWysiegPompyMetry: null,
+      maksymalneOpoznienieStartuBudowyMinuty: null,
       zrodlo: "csv",
       daneZrodlowe: daneBudowy.daneZrodlowe
     }, utworzPoczatkoweCzasyRobocze());
@@ -385,6 +439,7 @@
       dataPlanowana: "",
       rodzajRozladunku: "",
       wymaganyWysiegPompyMetry: null,
+      maksymalneOpoznienieStartuBudowyMinuty: null,
       zrodlo: "reczna",
       daneZrodlowe: null
     }, utworzPoczatkoweCzasyRobocze());
@@ -550,7 +605,8 @@
     return listaZImportu.concat(listaReczna).map(function (budowa) {
       const kopiaBudowy = Object.assign({}, budowa);
       uzupelnijStartZadanyBudowy(kopiaBudowy);
-      return uzupelnijDodatkowyOdstepDostawBudowy(kopiaBudowy);
+      uzupelnijDodatkowyOdstepDostawBudowy(kopiaBudowy);
+      return uzupelnijIndywidualnyLimitOpoznieniaStartuBudowy(kopiaBudowy);
     });
   }
 
@@ -565,6 +621,12 @@
     ustawCzasyRobocze: ustawCzasyRobocze,
     uzupelnijDodatkowyOdstepDostawBudowy:
       uzupelnijDodatkowyOdstepDostawBudowy,
+    ustawIndywidualnyLimitOpoznieniaStartuBudowy:
+      ustawIndywidualnyLimitOpoznieniaStartuBudowy,
+    uzupelnijIndywidualnyLimitOpoznieniaStartuBudowy:
+      uzupelnijIndywidualnyLimitOpoznieniaStartuBudowy,
+    pobierzEfektywnyLimitOpoznieniaStartuMinuty:
+      pobierzEfektywnyLimitOpoznieniaStartuMinuty,
     pobierzEfektywnyCzasRozladunkuMinuty: pobierzEfektywnyCzasRozladunkuMinuty,
     migrujCzasRozladunkuBudowy: migrujCzasRozladunkuBudowy,
     zmienCzasRoboczyBudowy: zmienCzasRoboczyBudowy,

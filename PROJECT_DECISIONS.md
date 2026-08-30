@@ -2119,3 +2119,23 @@ ominęło walidację formularza.
 do 5F.2, a porównanie rzeczywistego przesunięcia z limitem oraz utworzenie
 konfliktu po przekroczeniu — do 5F.3.
 
+---
+
+## 109. Indywidualny limit opóźnienia budowy jest opcjonalnym wyjątkiem
+
+Podetap 5F.2 wprowadza opcjonalne pole
+`maksymalneOpoznienieStartuBudowyMinuty`. Brak wartości nie oznacza `0` — oznacza
+korzystanie z aktualnego globalnego parametru
+`maksymalneOpoznienieStartuMinuty`. Dzięki temu późniejsza zmiana limitu
+globalnego obejmuje wszystkie budowy, które nie mają własnego wyjątku.
+
+Jeżeli operator wpisze dla konkretnej budowy wartość nieujemną, także `0`, ta
+wartość ma pierwszeństwo przed limitem globalnym wyłącznie dla tej budowy.
+Wyczyszczenie pola albo przycisk `↺` usuwa wyjątek i przywraca dziedziczenie.
+Wartość indywidualna jest elementem stanu budowy, dlatego musi być zachowywana w
+bieżącym planie i historii oraz odtwarzana po ponownym wczytaniu zapisu.
+
+5F.2 definiuje źródło skutecznego limitu, ale nie ocenia jeszcze wielkości
+przesunięcia `StartRoboczy`. Rozróżnienie zwykłej korekty od konfliktu po
+przekroczeniu skutecznego limitu należy do 5F.3.
+

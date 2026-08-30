@@ -17,6 +17,7 @@
     "startPlanowany",
     "startZadany",
     "startRoboczy",
+    "maksymalneOpoznienieStartuBudowyMinuty",
     "tolerancjaStartuMinuty",
     "najpozniejszyStart",
     "rodzajBetonu",
@@ -621,6 +622,50 @@
     );
   }
 
+  function obsluzZmianeLimituOpoznieniaBudowy(
+    idBudowy,
+    wartosc,
+    czyPrzywrocicGlobalny
+  ) {
+    try {
+      const budowa = znajdzBudoweDoZmiany(idBudowy);
+
+      if (!budowa) {
+        throw new Error("Nie znaleziono budowy o ID „" + idBudowy + "”.");
+      }
+
+      aplikacja.budowy.ustawIndywidualnyLimitOpoznieniaStartuBudowy(
+        budowa,
+        czyPrzywrocicGlobalny ? null : wartosc
+      );
+      oznaczPlanJakoNieprzeliczony(true);
+      aplikacja.interfejs.pokazListeBudow(pobierzAktualnaListeBudow());
+      zapiszZdarzenieDiagnostyczne(
+        "informacja",
+        czyPrzywrocicGlobalny
+          ? "przywrocenie-globalnego-limitu-opoznienia"
+          : "zmiana-indywidualnego-limitu-opoznienia",
+        czyPrzywrocicGlobalny
+          ? "Przywrócono globalny limit opóźnienia startu budowy."
+          : "Zmieniono indywidualny limit opóźnienia startu budowy.",
+        {
+          idBudowy: budowa.idBudowy,
+          limitMinuty: budowa.maksymalneOpoznienieStartuBudowyMinuty
+        }
+      );
+      return budowa;
+    } catch (blad) {
+      aplikacja.interfejs.pokazBladDanych(blad);
+      aplikacja.interfejs.pokazListeBudow(pobierzAktualnaListeBudow());
+      zapiszBladDiagnostyczny(
+        blad,
+        "blad-zmiany-indywidualnego-limitu-opoznienia",
+        "Nie udało się zmienić indywidualnego limitu opóźnienia startu budowy."
+      );
+      return null;
+    }
+  }
+
   function obsluzZmianePompy(idPompy, nazwaPola, wartosc) {
     try {
       listaPomp = aplikacja.pompy.zmienDanePompy(
@@ -1033,7 +1078,8 @@
         obsluzZmianePompy,
         obsluzZmianeWymaganegoWysieguPompy,
         obsluzZmianeCzasowPompyBudowy,
-        obsluzZmianePrzejazduPompy
+        obsluzZmianePrzejazduPompy,
+        obsluzZmianeLimituOpoznieniaBudowy
       );
       aplikacja.pamiecTras.uruchomPamiecTras();
       odswiezStanPamieciTras();
