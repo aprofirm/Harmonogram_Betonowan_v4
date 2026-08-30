@@ -300,6 +300,94 @@
     }];
   }
 
+  function pobierzPrzyczynyBrakuPompy(wynikBudowy) {
+    const jawnySkutek = wynikBudowy && wynikBudowy.jawnySkutekPompy;
+    const powody = jawnySkutek && Array.isArray(jawnySkutek.powodyOdrzuceniaPomp)
+      ? jawnySkutek.powodyOdrzuceniaPomp
+      : [];
+    const wszystkiePowody = [
+      wynikBudowy && wynikBudowy.powodBrakuPrzydzialu
+    ].concat(powody);
+
+    return wszystkiePowody.reduce(function (unikalne, powod) {
+      const tekst = String(powod || "").trim();
+
+      if (tekst && !unikalne.includes(tekst)) {
+        unikalne.push(tekst);
+      }
+
+      return unikalne;
+    }, []);
+  }
+
+  function wybierzGlownaPrzyczyneBrakuPompy(przyczyny) {
+    const kolejnosc = [
+      "brak-dostepnych-pomp",
+      "brak-trasy",
+      "niewystarczajacy-wysieg",
+      "po-dostepnosci",
+      "pompa-nieaktywna"
+    ];
+
+    return kolejnosc.find(function (przyczyna) {
+      return przyczyny.includes(przyczyna);
+    }) || przyczyny.find(function (przyczyna) {
+      return przyczyna !== "brak-mozliwego-kandydata";
+    }) || przyczyny[0] || "brak-mozliwej-pompy";
+  }
+
+  function opiszBrakMozliwejPompy(przyczyna, nazwaBudowy) {
+    const opisy = {
+      "brak-dostepnych-pomp": "brak dostępnej pompy",
+      "brak-trasy": "brak czasu przejazdu pompy z poprzedniej budowy",
+      "niewystarczajacy-wysieg": "żadna dostępna pompa nie ma wymaganego wysięgu",
+      "po-dostepnosci": "pompa nie jest dostępna w wymaganym czasie",
+      "pompa-nieaktywna": "pompa jest nieaktywna"
+    };
+
+    return "Budowa „" + nazwaBudowy + "” nie może otrzymać pompy: " +
+      (opisy[przyczyna] || "brak możliwej pompy") + ".";
+  }
+
+  function utworzKonfliktyPomp(przebieg) {
+    if (
+      !przebieg.wynikPomp ||
+      przebieg.wynikPomp.trybPomp !== "mam-okreslona-liczbe"
+    ) {
+      return [];
+    }
+
+    const budowyPoId = new Map(
+      przebieg.listaBudow.map(function (budowa) {
+        return [String(budowa.idBudowy || ""), budowa];
+      })
+    );
+
+    return (Array.isArray(przebieg.wynikPomp.wynikiBudow)
+      ? przebieg.wynikPomp.wynikiBudow
+      : []
+    ).filter(function (wynikBudowy) {
+      return wynikBudowy.statusPrzydzialuPompy !== "przydzielona";
+    }).map(function (wynikBudowy) {
+      const idBudowy = String(wynikBudowy.idBudowy || "");
+      const budowa = budowyPoId.get(idBudowy) || {};
+      const nazwaBudowy = String(budowa.budowa || idBudowy || "bez nazwy");
+      const przyczyny = pobierzPrzyczynyBrakuPompy(wynikBudowy);
+      const przyczyna = wybierzGlownaPrzyczyneBrakuPompy(przyczyny);
+
+      return {
+        kod: "BRAK_MOZLIWEJ_POMPY",
+        rodzaj: "pompy",
+        idBudowy: idBudowy,
+        nazwaBudowy: nazwaBudowy,
+        przyczyna: przyczyna,
+        przyczyny: przyczyny,
+        minutaMozliwegoStartuBetonowania: null,
+        opis: opiszBrakMozliwejPompy(przyczyna, nazwaBudowy)
+      };
+    });
+  }
+
   function przygotujCentralnyPrzebieg(daneWejsciowe) {
     const aktualneDane = daneWejsciowe || {};
     const parametry = polaczParametry(aktualneDane.parametry);
@@ -445,9 +533,12 @@
         przebieg.listaBudow,
         przebieg.minimalnaLiczbaGruszek
       );
-    const konflikty = przebieg.czyOgraniczonaFlotaGruszek
+    const konfliktyGruszek = przebieg.czyOgraniczonaFlotaGruszek
       ? utworzKonfliktyOgraniczonejFloty(wynikPrzydzialu)
       : [];
+    const konflikty = konfliktyGruszek.concat(
+      utworzKonfliktyPomp(przebieg)
+    );
 
     return {
       etap: aplikacja.konfiguracja.numerEtapu,

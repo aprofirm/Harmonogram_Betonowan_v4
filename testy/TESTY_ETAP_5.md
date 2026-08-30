@@ -28,7 +28,7 @@ konfliktem — nigdy bezgranicznym przesuwaniem.
 - [x] pompa dostępna na czas nie przesuwa budowy;
 - [x] zajęta pompa przesuwa tylko `StartRoboczy`;
 - [x] przejazd budowa → budowa wpływa na realny start;
-- [ ] brak możliwej pompy daje konflikt zamiast fikcyjnej godziny;
+- [x] brak możliwej pompy daje konflikt zamiast fikcyjnej godziny;
 - [ ] przyczyna i liczba minut są zachowane w wyniku.
 
 ## 5C — regenerowanie kursów gruszek

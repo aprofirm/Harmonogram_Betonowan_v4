@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5B.2**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5B.3**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -703,7 +703,7 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
 - [ ] **5B — wpływ pomp na rzeczywisty start budowy.**
   - [x] **5B.1 — zastosowanie możliwego startu:** wynik przydziału pompy może
     przesunąć `StartRoboczy`, ale nigdy `StartPlanowany` ani `StartZadany`.
-  - [ ] **5B.2 — brak możliwej pompy:** brak aktywnego lub zgodnego zasobu, brak
+  - [x] **5B.2 — brak możliwej pompy:** brak aktywnego lub zgodnego zasobu, brak
     wymaganej trasy albo niemożliwe okno dostępności tworzą jawny konflikt bez
     wymyślania zastępczej godziny.
   - [ ] **5B.3 — testy propagacji:** wielkość przesunięcia i jego przyczyna są
@@ -1145,7 +1145,7 @@ Przed kodowaniem rozpisano podetapy **5A–5J**. Etap 5 świadomie obejmuje sprz
 
 # Kolejny krok
 
-Rozpocząć **5B.2 — brak możliwej pompy**. Brak aktywnego lub zgodnego zasobu, brak wymaganej trasy albo niemożliwe okno dostępności mają utworzyć jawny konflikt bez wymyślania zastępczej godziny.
+Rozpocząć **5B.3 — testy propagacji skutku pompy**. Wielkość przesunięcia i jego przyczyna mają pozostać przy budowie oraz być stabilne przy ponownym przeliczeniu.
 
 ## Zamknięcie 5A.1 — trzy godziny i niezmienniki — 2026-08-30
 
@@ -1196,6 +1196,19 @@ Następny niezakończony podetap: **5B.1 — zastosowanie możliwego startu**.
 
 Zamknięty podetap: **5B.1**. Punkt nadrzędny **5B** i cały Etap 5 pozostają otwarte.
 Następny niezakończony podetap: **5B.2 — brak możliwej pompy**.
+
+## Zamknięcie 5B.2 — jawny konflikt braku możliwej pompy — 2026-08-30
+
+- [x] brak pompy, niewystarczający wysięg, brak trasy oraz koniec dostępności tworzą konflikt `BRAK_MOZLIWEJ_POMPY`;
+- [x] konflikt wskazuje budowę, główną przyczynę, pełną listę przyczyn i czytelny polski opis;
+- [x] brak przydziału nie tworzy fikcyjnej godziny możliwego startu;
+- [x] `StartRoboczy`, `StartPlanowany` i `StartZadany` pozostają bez zmian dla budowy bez możliwej pompy;
+- [x] tryb **Oblicz, ile potrzeba** nie tworzy fałszywych konfliktów zasobów;
+- [x] konflikty pomp są łączone z istniejącą listą konfliktów gruszek;
+- [x] test `etap_5b_2.test.js` oraz pełna regresja przechodzą poprawnie.
+
+Zamknięty podetap: **5B.2**. Punkt nadrzędny **5B** i cały Etap 5 pozostają otwarte.
+Następny niezakończony podetap: **5B.3 — testy propagacji**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14

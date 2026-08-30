@@ -1979,3 +1979,16 @@ przez operatora pozostają niezmienne.
 W 5B.1 kursy gruszek są jeszcze generowane przed zastosowaniem przesunięcia
 pompy. Ich ponowne wygenerowanie od nowego `StartRoboczy` należy do 5C, dzięki
 czemu każda granica sprzężenia ma osobny test i nie jest wdrażana ukrycie.
+
+---
+
+## 101. Brak możliwej pompy nie tworzy zastępczej godziny
+
+W trybie ograniczonej floty brak dostępnej pompy, niewystarczający wysięg,
+brak kierunkowego czasu przejazdu albo niedostępność zasobu tworzą konflikt
+`BRAK_MOZLIWEJ_POMPY`. Konflikt wskazuje budowę, główną przyczynę, listę
+rozpoznanych przyczyn i czytelny opis dla operatora.
+
+Budowa bez przydziału zachowuje swoje dotychczasowe `StartRoboczy`. Silnik nie
+zgaduje czasu przejazdu, nie podstawia fikcyjnej pompy i nie wyznacza godziny,
+której nie potrafi uzasadnić danymi.
