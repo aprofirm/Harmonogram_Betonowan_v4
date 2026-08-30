@@ -50,7 +50,7 @@
               <p class="etykieta-sekcji">USTAWIENIA</p>
               <h2 id="tytul-parametrow">Parametry planu</h2>
             </div>
-            <span class="znacznik-etapu">Etap 5F.1</span>
+            <span class="znacznik-etapu">Etap 5F.2</span>
           </div>
 
           <section class="sekcja-danych" aria-labelledby="tytul-importu">
@@ -307,6 +307,7 @@
                 <thead>
                   <tr>
                     <th>Start do przeliczenia</th>
+                    <th>Limit opóźnienia</th>
                     <th>Firma</th>
                     <th>Budowa</th>
                     <th>Dojazd</th>
@@ -322,7 +323,7 @@
                 </thead>
                 <tbody id="wiersze-harmonogramu">
                   <tr class="pusty-wiersz">
-                    <td colspan="12">
+                    <td colspan="13">
                       <span class="pusty-wiersz__ikona" aria-hidden="true">▦</span>
                       <strong>Brak danych do wyświetlenia</strong>
                       <span>Wczytaj CSV albo dodaj budowę ręcznie.</span>
@@ -478,7 +479,7 @@
 
       <footer class="stopka">
         <span>Harmonogram Betonowań v4</span>
-        <span>5F.1 · globalny limit opóźnienia startu</span>
+        <span>5F.2 · indywidualny limit opóźnienia budowy</span>
       </footer>
     </div>
 
@@ -487,7 +488,7 @@
     <script defer src="js/pamiec/pamiec_planu.js"></script>
     <script defer src="js/pamiec/pamiec_tras.js"></script>
     <script defer src="js/import/import_csv.js?v=4j3-panel-przejazdow-20260829a"></script>
-    <script defer src="js/budowy/budowy.js"></script>
+    <script defer src="js/budowy/budowy.js?v=5f2-limit-indywidualny-20260830a"></script>
     <script defer src="js/pompy/pompy.js"></script>
     <script defer src="js/pompy/dostepnosc_pomp.js"></script>
     <script defer src="js/pompy/przejazdy_pomp.js"></script>
@@ -503,11 +504,12 @@
     <script defer src="js/harmonogram/harmonogram.js?v=5f1-globalny-limit-opoznienia-20260830a"></script>
     <script defer src="js/interfejs/interfejs.js"></script>
     <script defer src="js/interfejs/odstep_dostaw.js"></script>
+    <script defer src="js/interfejs/limit_opoznienia.js?v=5f2-limit-indywidualny-20260830a"></script>
     <script defer src="js/interfejs/rodzaj_rozladunku.js"></script>
     <script defer src="js/interfejs/podglad_tras.js"></script>
     <script defer src="js/interfejs/dostepnosc_pomp.js"></script>
     <script defer src="js/interfejs/przejazdy_pomp.js"></script>
     <script defer src="js/interfejs/minimalna_liczba_pomp.js?v=20260830-1"></script>
-    <script defer src="js/aplikacja.js?v=4j3-panel-przejazdow-20260829a"></script>
+    <script defer src="js/aplikacja.js?v=5f2-limit-indywidualny-20260830a"></script>
   </body>
 </html>

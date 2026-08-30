@@ -148,7 +148,7 @@ function sprawdzInterfejsIPamiec() {
   assert.match(aplikacja, /"przejazdyPompyBazoweMinuty"/);
   assert.match(aplikacja, /"zrodlaPrzejazdowPompy"/);
   assert.match(aplikacja, /function obsluzZmianePrzejazduPompy\(/);
-  assert.match(aplikacja, /obsluzZmianePrzejazduPompy\s*\n\s*\);/);
+  assert.match(aplikacja, /obsluzZmianePrzejazduPompy(?:,|\s*\n\s*\);)/);
 
   assert.match(interfejs, /pole\.type = "number"/);
   assert.match(interfejs, /pole\.min = "0"/);

@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5F.2**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5F.3**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -733,7 +733,7 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
 - [ ] **5F — limit opóźnienia rozpoczęcia budowy.**
   - [x] **5F.1 — parametr globalny:** domyślny limit `30 min` jest konfiguracją,
     nie magiczną liczbą w algorytmie.
-  - [ ] **5F.2 — limit indywidualny:** budowa może nadpisać limit, a wartość jest
+  - [x] **5F.2 — limit indywidualny:** budowa może nadpisać limit, a wartość jest
     zachowywana w bieżącym planie i historii.
   - [ ] **5F.3 — klasyfikacja wyniku:** korekta w limicie pozostaje zwykłym
     przesunięciem, przekroczenie staje się konfliktem z godziną i liczbą minut.
@@ -1353,6 +1353,19 @@ Następny niezakończony podetap: **5F.1 — domyślny limit opóźnienia startu
 
 Podetap **5F.1** jest zakończony. Punkt nadrzędny **5F** i cały Etap 5 pozostają otwarte.
 Następny niezakończony podetap: **5F.2 — limit indywidualny budowy**.
+
+## Zamknięcie 5F.2 — limit indywidualny budowy — 2026-08-30
+
+- [x] każda budowa ma opcjonalne pole `maksymalneOpoznienieStartuBudowyMinuty`; brak wartości oznacza dziedziczenie limitu globalnego;
+- [x] indywidualna wartość nieujemna, w tym `0`, ma pierwszeństwo przed globalnym limitem dla tej budowy;
+- [x] operator ma w głównej tabeli kolumnę **Limit opóźnienia**; puste pole pokazuje źródło globalne, a `↺` usuwa wyjątek i wraca do bieżącego limitu globalnego;
+- [x] starsze budowy bez nowego pola są bezpiecznie traktowane jako dziedziczące limit, bez mutowania danych źródłowych podczas tworzenia listy roboczej;
+- [x] pole znajduje się na jawnej liście danych budowy zapisywanych przez aplikację, więc jest zachowywane w bieżącym planie oraz zapisie historycznym;
+- [x] test `testy/etap_5f_2.test.js` sprawdza dziedziczenie, nadpisanie `45 min`, limit `0`, przywrócenie globalnego limitu, walidację, pamięć bieżącą i historię;
+- [x] 5F.2 nie porównuje jeszcze przesunięcia `StartRoboczy` z limitem i nie tworzy konfliktu po przekroczeniu — to zakres 5F.3.
+
+Podetap **5F.2** jest zakończony. Punkt nadrzędny **5F** oraz cały Etap 5 pozostają otwarte.
+Następny niezakończony podetap: **5F.3 — klasyfikacja wyniku**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
