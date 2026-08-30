@@ -1,16 +1,14 @@
-name: Tymczasowa aktualizacja dokumentacji 5D.3
+name: Aktualizacja dokumentacji 5D.3
 
 on:
   push:
-    branches:
-      - etap-5d3-test-kaskady
+    branches: [etap-5d3-test-kaskady]
 
 permissions:
   contents: write
 
 jobs:
-  aktualizuj-dokumentacje:
-    if: ${{ !contains(github.event.head_commit.message, '[skip-5d3-docs]') }}
+  aktualizuj:
     runs-on: ubuntu-latest
     steps:
       - name: Pobierz repozytorium
@@ -20,36 +18,33 @@ jobs:
           fetch-depth: 0
 
       - name: Zaktualizuj status 5D.3
-        shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
 
           def replace_once(text, old, new, label):
+              if old not in text:
+                  if new in text:
+                      return text
+                  raise SystemExit("Brak fragmentu: " + label)
               if text.count(old) != 1:
-                  raise SystemExit(f"Nie znaleziono jednoznacznie: {label}")
+                  raise SystemExit("Niejednoznaczny fragment: " + label)
               return text.replace(old, new, 1)
 
           etap = Path("ETAPY_ROZWOJU.md")
           text = etap.read_text(encoding="utf-8")
-          text = replace_once(
-              text,
+          text = replace_once(text,
               "- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5D.3**",
               "- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5E.1**",
-              "status Etapu 5",
-          )
-          text = replace_once(
-              text,
+              "status Etapu 5")
+          text = replace_once(text,
               "- [ ] **5D — rzeczywiste dostawy a czas pracy pompy.**",
               "- [x] **5D — rzeczywiste dostawy a czas pracy pompy.**",
-              "checkbox 5D",
-          )
-          text = replace_once(
-              text,
+              "checkbox 5D")
+          text = replace_once(text,
               "  - [ ] **5D.3 — test kaskady:** co najmniej trzy budowy potwierdzają propagację\n    opóźnienia bez nakładania pracy jednej pompy i jednej gruszki.",
               "  - [x] **5D.3 — test kaskady:** co najmniej trzy budowy potwierdzają propagację\n    opóźnienia bez nakładania pracy jednej pompy i jednej gruszki.",
-              "checkbox 5D.3",
-          )
+              "checkbox 5D.3")
           marker = "\n\n## Weryfikacja produkcyjnego KDX — 2026-08-14"
           closure = """
 
@@ -69,27 +64,23 @@ Następny niezakończony podetap: **5E.1 — deterministyczna iteracja**.
 """
           if closure.strip() not in text:
               if marker not in text:
-                  raise SystemExit("Nie znaleziono miejsca na zamknięcie 5D.3")
+                  raise SystemExit("Brak miejsca na zamknięcie 5D.3")
               text = text.replace(marker, closure + marker, 1)
           etap.write_text(text, encoding="utf-8")
 
           testy = Path("testy/TESTY_ETAP_5.md")
           text = testy.read_text(encoding="utf-8")
-          text = replace_once(
-              text,
+          text = replace_once(text,
               "Punkty **5A–5C** są zakończone. Podetapy **5D.1–5D.2** są zakończone. Następny podetap: **5D.3 — test kaskady**.",
               "Punkty **5A–5D** są zakończone. Następny podetap: **5E.1 — deterministyczna iteracja**.",
-              "status planu testów",
-          )
-          text = replace_once(
-              text,
+              "status TESTY_ETAP_5")
+          text = replace_once(text,
               "- [ ] kaskada co najmniej trzech budów nie tworzy kolizji zasobów.",
               "- [x] kaskada co najmniej trzech budów nie tworzy kolizji zasobów.",
-              "test kaskady",
-          )
-          old_tests = "- 5D.2: `testy/etap_5d_2.test.js` — dwie budowy, jedna pompa oraz jedna/dwie gruszki; przy jednej gruszce wydłużenie pierwszej budowy przesuwa drugą z `09:20` na `09:30`, a przy dwóch gruszkach nie powstaje dodatkowa korekta."
-          new_tests = old_tests + "\n- 5D.3: `testy/etap_5d_3.test.js` — trzy budowy A → B → C, jedna pompa i jedna gruszka; kaskada przesuwa B do `09:30` oraz C do `11:00` bez nakładania pracy zasobów."
-          text = replace_once(text, old_tests, new_tests, "lista testów 5D")
+              "checkbox testu kaskady")
+          old = "- 5D.2: `testy/etap_5d_2.test.js` — dwie budowy, jedna pompa oraz jedna/dwie gruszki; przy jednej gruszce wydłużenie pierwszej budowy przesuwa drugą z `09:20` na `09:30`, a przy dwóch gruszkach nie powstaje dodatkowa korekta."
+          new = old + "\n- 5D.3: `testy/etap_5d_3.test.js` — trzy budowy A → B → C, jedna pompa i jedna gruszka; kaskada przesuwa B do `09:30` oraz C do `11:00` bez nakładania pracy zasobów."
+          text = replace_once(text, old, new, "lista testów 5D")
           testy.write_text(text, encoding="utf-8")
 
           readme = Path("README.md")
@@ -101,7 +92,6 @@ Następny niezakończony podetap: **5E.1 — deterministyczna iteracja**.
           PY
 
       - name: Zapisz dokumentację
-        shell: bash
         run: |
           if git diff --quiet -- ETAPY_ROZWOJU.md README.md testy/TESTY_ETAP_5.md; then
             echo "Brak zmian do zapisania."
@@ -110,5 +100,5 @@ Następny niezakończony podetap: **5E.1 — deterministyczna iteracja**.
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add ETAPY_ROZWOJU.md README.md testy/TESTY_ETAP_5.md
-          git commit -m "5D.3: zamknij test kaskady i punkt 5D [skip-5d3-docs]"
+          git commit -m "5D.3: zamknij test kaskady i punkt 5D"
           git push origin HEAD:etap-5d3-test-kaskady
