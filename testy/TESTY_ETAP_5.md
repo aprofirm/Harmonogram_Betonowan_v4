@@ -3,7 +3,7 @@
 ## Status
 
 Etap 4 jest zamknięty. Etap 5 jest rozpisany przed rozpoczęciem implementacji.
-Punkty **5A–5C** są zakończone. Następny podetap: **5D.1 — rzeczywiste okno betonowania**.
+Punkty **5A–5C** są zakończone. Podetap **5D.1** jest zakończony. Następny podetap: **5D.2 — wpływ na następną budowę**.
 
 ## Najważniejsza zasada testowa
 
@@ -40,10 +40,12 @@ konfliktem — nigdy bezgranicznym przesuwaniem.
 
 ## 5D — rzeczywiste dostawy i pompa
 
-- [ ] rzeczywisty okres pompowania korzysta z faktycznych rozładunków;
-- [ ] niedobór gruszek może wydłużyć okres pracy pompy;
+- [x] rzeczywisty okres pompowania korzysta z faktycznych rozładunków;
+- [x] niedobór gruszek może wydłużyć okres pracy pompy;
 - [ ] wydłużenie może opóźnić następną budowę tej samej pompy;
 - [ ] kaskada co najmniej trzech budów nie tworzy kolizji zasobów.
+
+Test automatyczny 5D.1: `testy/etap_5d_1.test.js`.
 
 ## 5E — stabilizacja
 
