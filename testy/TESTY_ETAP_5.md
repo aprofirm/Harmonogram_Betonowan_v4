@@ -3,7 +3,7 @@
 ## Status
 
 Etap 4 jest zamknięty. Etap 5 jest rozpisany przed rozpoczęciem implementacji.
-Punkty **5A–5C** są zakończone. Podetapy **5D.1–5D.2** są zakończone. Następny podetap: **5D.3 — test kaskady**.
+Punkty **5A–5D** są zakończone. Następny podetap: **5E.1 — deterministyczna iteracja**.
 
 ## Najważniejsza zasada testowa
 
@@ -43,12 +43,13 @@ konfliktem — nigdy bezgranicznym przesuwaniem.
 - [x] rzeczywisty okres pompowania korzysta z faktycznych rozładunków;
 - [x] niedobór gruszek może wydłużyć okres pracy pompy;
 - [x] wydłużenie może opóźnić następną budowę tej samej pompy;
-- [ ] kaskada co najmniej trzech budów nie tworzy kolizji zasobów.
+- [x] kaskada co najmniej trzech budów nie tworzy kolizji zasobów.
 
 Testy automatyczne:
 
 - 5D.1: `testy/etap_5d_1.test.js`;
 - 5D.2: `testy/etap_5d_2.test.js` — dwie budowy, jedna pompa oraz jedna/dwie gruszki; przy jednej gruszce wydłużenie pierwszej budowy przesuwa drugą z `09:20` na `09:30`, a przy dwóch gruszkach nie powstaje dodatkowa korekta.
+- 5D.3: `testy/etap_5d_3.test.js` — trzy budowy A → B → C, jedna pompa i jedna gruszka; kaskada przesuwa B do `09:30` oraz C do `11:00` bez nakładania pracy zasobów.
 
 ## 5E — stabilizacja
 
