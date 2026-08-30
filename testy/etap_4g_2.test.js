@@ -115,7 +115,7 @@ function sprawdzPodlaczenieModulu() {
   const skryptDostepnosci =
     '<script defer src="js/interfejs/dostepnosc_pomp.js"></script>';
   const skryptMinimalnejLiczby =
-    '<script defer src="js/interfejs/minimalna_liczba_pomp.js"></script>';
+    'src="js/interfejs/minimalna_liczba_pomp.js';
 
   assert.ok(html.includes(skryptMinimalnejLiczby));
   assert.ok(

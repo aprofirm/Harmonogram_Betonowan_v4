@@ -508,4 +508,4 @@ Zakres 4I.5 potwierdza, że podstawowy interfejs nadal korzysta wyłącznie z
 lokalnych skryptów, stylów i grafik. Tabela pomp ma semantyczne opisy i nagłówki,
 poziome przewijanie można obsłużyć klawiaturą, a braki i przesunięcia są opisane
 tekstem — kolor jest tylko sygnałem pomocniczym. Wynik pomp nadal nie zmienia
-`StartRoboczy` ani kursów gruszek. Cały Etap 4, wraz z testem operatora, jest zakończony. Etapy **5A.1–5A.2** zabezpieczają kontrakt `StartPlanowany` / `StartZadany` / `StartRoboczy`, czyste kopie danych oraz jeden centralny przebieg obliczeń bez logiki interfejsu. Wersja webowa jest publikowana z `main` pod adresem `https://aprofirm.github.io/Harmonogram_Betonowan_v4/`. Następny krok to **5A.3 — test bazowy**.
+`StartRoboczy` ani kursów gruszek. Cały Etap 4, wraz z testem operatora, jest zakończony. Punkt **5A** zabezpiecza kontrakt `StartPlanowany` / `StartZadany` / `StartRoboczy`, czyste kopie danych, jeden centralny przebieg oraz zgodność z wynikami zamkniętych Etapów 3–4. Wersja webowa jest publikowana z `main` pod adresem `https://aprofirm.github.io/Harmonogram_Betonowan_v4/`. Następny krok to **5B.1 — zastosowanie możliwego startu pompy**.

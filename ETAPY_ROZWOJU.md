@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5A.3**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5B.1**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -690,14 +690,14 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
 
 ## Postęp podetapów Etapu 5
 
-- [ ] **5A — kontrakt pełnego przeliczenia i granice sprzężenia.**
+- [x] **5A — kontrakt pełnego przeliczenia i granice sprzężenia.**
   - [x] **5A.1 — trzy godziny i niezmienniki:** `StartPlanowany` pozostaje źródłem,
     `StartZadany` decyzją operatora, a `StartRoboczy` rzeczywistym wynikiem silnika;
     ustalić kontrakt bez mutowania danych źródłowych.
   - [x] **5A.2 — czysty centralny przebieg:** jedno `przeliczCalyHarmonogram()`
     buduje wynik od początku i wywołuje istniejące moduły Etapów 3–4 we właściwej
     kolejności, bez logiki biznesowej w interfejsie.
-  - [ ] **5A.3 — test bazowy:** plan bez ograniczeń pomp i gruszek daje wynik
+  - [x] **5A.3 — test bazowy:** plan bez ograniczeń pomp i gruszek daje wynik
     zgodny z zamkniętymi Etapami 3–4, a kolejne identyczne przeliczenia nie
     dziedziczą starych kursów ani zajętości.
 - [ ] **5B — wpływ pomp na rzeczywisty start budowy.**
@@ -1145,7 +1145,7 @@ Przed kodowaniem rozpisano podetapy **5A–5J**. Etap 5 świadomie obejmuje sprz
 
 # Kolejny krok
 
-Rozpocząć **5A.3 — test bazowy pełnego przebiegu**. Plan bez ograniczeń pomp i gruszek ma zachować wynik zamkniętych Etapów 3–4, a identyczne kolejne przeliczenia nie mogą dziedziczyć starych kursów ani zajętości.
+Rozpocząć **5B.1 — zastosowanie możliwego startu pompy**. Wynik przydziału pompy może przesunąć wyłącznie `StartRoboczy`; `StartPlanowany` i `StartZadany` muszą pozostać bez zmian.
 
 ## Zamknięcie 5A.1 — trzy godziny i niezmienniki — 2026-08-30
 
@@ -1170,6 +1170,19 @@ Następny niezakończony podetap: **5A.2 — czysty centralny przebieg**.
 
 Zamknięty podetap: **5A.2**. Punkt nadrzędny **5A** i cały **Etap 5** pozostają otwarte.
 Następny niezakończony podetap: **5A.3 — test bazowy**.
+
+## Zamknięcie 5A.3 i całego 5A — test bazowy — 2026-08-30
+
+- [x] centralny wynik kursów jest zgodny z bezpośrednim wynikiem zamkniętego Etapu 3;
+- [x] centralny wynik minimalnej liczby pomp jest zgodny z bezpośrednim wynikiem zamkniętego Etapu 4;
+- [x] identyczne kolejne przeliczenia zwracają identyczny wynik;
+- [x] zmiana poprzedniego wyniku nie przenika do następnego przeliczenia;
+- [x] przekazane stare kursy i stary wynik pomp są ignorowane;
+- [x] dane wejściowe pozostają niezmienione;
+- [x] test `etap_5a_3.test.js` oraz pełna regresja przechodzą poprawnie.
+
+Podetap **5A.3** oraz cały punkt **5A** są zakończone. Etap 5 pozostaje otwarty.
+Następny niezakończony podetap: **5B.1 — zastosowanie możliwego startu**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
