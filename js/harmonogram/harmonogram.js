@@ -672,7 +672,7 @@
   }
 
 
-  function zastosujKorekteStartowPoRzeczywistychDostawach(przebieg) {
+  function wyczyscKorektyStartowPoRzeczywistychDostawach(przebieg) {
     const wynikPomp = przebieg.wynikPomp;
     const wynikiBudow = wynikPomp && Array.isArray(wynikPomp.wynikiBudow)
       ? wynikPomp.wynikiBudow
@@ -681,6 +681,22 @@
     wynikiBudow.forEach(function (wynikBudowy) {
       wynikBudowy.korektaPoRzeczywistychDostawach = null;
     });
+
+    return przebieg;
+  }
+
+  function przeliczZalezneFazyPoZmianieStartu(przebieg) {
+    regenerujKursyPoStartachPomp(przebieg);
+    obliczGruszkiPrzebiegu(przebieg);
+    zaktualizujRzeczywisteOknaPompPoGruszkach(przebieg);
+    return przebieg;
+  }
+
+  function zastosujKorekteStartowPoRzeczywistychDostawach(przebieg) {
+    const wynikPomp = przebieg.wynikPomp;
+    const wynikiBudow = wynikPomp && Array.isArray(wynikPomp.wynikiBudow)
+      ? wynikPomp.wynikiBudow
+      : [];
 
     if (
       !wynikPomp ||
@@ -954,15 +970,16 @@
     obliczBazoweKursyPrzebiegu(przebieg);
     obliczPompyPrzebiegu(przebieg);
     zastosujMozliweStartyPomp(przebieg);
-    regenerujKursyPoStartachPomp(przebieg);
-    obliczGruszkiPrzebiegu(przebieg);
-    zaktualizujRzeczywisteOknaPompPoGruszkach(przebieg);
+    przeliczZalezneFazyPoZmianieStartu(przebieg);
+    wyczyscKorektyStartowPoRzeczywistychDostawach(przebieg);
     zastosujKorekteStartowPoRzeczywistychDostawach(przebieg);
 
-    if (przebieg.czySkorygowanoStartyPoRzeczywistychDostawach) {
-      regenerujKursyPoStartachPomp(przebieg);
-      obliczGruszkiPrzebiegu(przebieg);
-      zaktualizujRzeczywisteOknaPompPoGruszkach(przebieg);
+    // Każda następna iteracja ma sens wyłącznie wtedy, gdy poprzednia
+    // rzeczywiście zmieniła StartRoboczy co najmniej jednej budowy. Nie
+    // dokładamy tu jeszcze osobnego limitu iteracji — to zakres 5E.3.
+    while (przebieg.czySkorygowanoStartyPoRzeczywistychDostawach) {
+      przeliczZalezneFazyPoZmianieStartu(przebieg);
+      zastosujKorekteStartowPoRzeczywistychDostawach(przebieg);
     }
 
     return zbudujKoncowyWynikPrzebiegu(przebieg);

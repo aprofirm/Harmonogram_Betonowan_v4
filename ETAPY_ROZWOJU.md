@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5E.1**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5E.2**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -723,7 +723,7 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
   - [x] **5D.3 — test kaskady:** co najmniej trzy budowy potwierdzają propagację
     opóźnienia bez nakładania pracy jednej pompy i jednej gruszki.
 - [ ] **5E — stabilizacja sprzężonego przeliczenia.**
-  - [ ] **5E.1 — deterministyczna iteracja:** powtarzać zależne obliczenia pomp,
+  - [x] **5E.1 — deterministyczna iteracja:** powtarzać zależne obliczenia pomp,
     startów i gruszek tylko wtedy, gdy wynik poprzedniego przebiegu zmienił plan.
   - [ ] **5E.2 — warunek zakończenia:** stabilny wynik kończy przeliczenie bez
     dodatkowych zmian, a identyczne dane zawsze dają identyczny rezultat.
@@ -1298,6 +1298,19 @@ Następny niezakończony podetap: **5D.3 — test kaskady**.
 
 Podetap **5D.3** oraz cały punkt **5D — rzeczywiste dostawy a czas pracy pompy** są zakończone. Etap 5 pozostaje otwarty.
 Następny niezakończony podetap: **5E.1 — deterministyczna iteracja**.
+
+## Zamknięcie 5E.1 — deterministyczna iteracja — 2026-08-30
+
+- [x] zależne fazy kursów, przydziału gruszek i rzeczywistych okien pomp są powtarzane wyłącznie po rzeczywistej zmianie `StartRoboczy`;
+- [x] stabilny plan bez korekty nie uruchamia zbędnego drugiego przydziału gruszek;
+- [x] scenariusz A → B → X → C potwierdza drugi poziom sprzężenia: po pierwszej korekcie B zwykła budowa X przejmuje jedyną gruszkę i wydłuża rzeczywisty cykl B;
+- [x] kolejna iteracja przesuwa C z pośredniego `11:00` do ostatecznego `11:25`, a następny przebieg nie wprowadza już nowej korekty;
+- [x] dotychczasowa informacja `korektaPoRzeczywistychDostawach` nie jest kasowana przez końcowy przebieg bez zmiany;
+- [x] 5E.1 nie wprowadza jeszcze osobnego limitu liczby iteracji — zabezpieczenie przed niestabilnym przypadkiem pozostaje zakresem 5E.3.
+
+Podetap **5E.1** jest zakończony. Punkt nadrzędny **5E** i cały Etap 5 pozostają otwarte.
+Następny niezakończony podetap: **5E.2 — warunek zakończenia**.
+
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
 
