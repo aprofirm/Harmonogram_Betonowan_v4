@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5E.3**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5F.1**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -722,12 +722,12 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
     przesuwa gotowość pompy i może wymusić dalszą korektę kolejnej budowy.
   - [x] **5D.3 — test kaskady:** co najmniej trzy budowy potwierdzają propagację
     opóźnienia bez nakładania pracy jednej pompy i jednej gruszki.
-- [ ] **5E — stabilizacja sprzężonego przeliczenia.**
+- [x] **5E — stabilizacja sprzężonego przeliczenia.**
   - [x] **5E.1 — deterministyczna iteracja:** powtarzać zależne obliczenia pomp,
     startów i gruszek tylko wtedy, gdy wynik poprzedniego przebiegu zmienił plan.
   - [x] **5E.2 — warunek zakończenia:** stabilny wynik kończy przeliczenie bez
     dodatkowych zmian, a identyczne dane zawsze dają identyczny rezultat.
-  - [ ] **5E.3 — zabezpieczenie przed nieskończonym przesuwaniem:** limit iteracji
+  - [x] **5E.3 — zabezpieczenie przed nieskończonym przesuwaniem:** limit iteracji
     lub równoważna osłona kończy niestabilny przypadek jawnym konfliktem zamiast
     bezgranicznie przesuwać plan.
 - [ ] **5F — limit opóźnienia rozpoczęcia budowy.**
@@ -1324,6 +1324,21 @@ Następny niezakończony podetap: **5E.2 — warunek zakończenia**.
 
 Podetap **5E.2** jest zakończony. Punkt nadrzędny **5E** i cały Etap 5 pozostają otwarte.
 Następny niezakończony podetap: **5E.3 — zabezpieczenie przed nieskończonym przesuwaniem**.
+
+## Zamknięcie 5E.3 i całego 5E — zabezpieczenie przed nieskończonym przesuwaniem — 2026-08-30
+
+- [x] centralny silnik ma techniczny domyślny limit `50` iteracji stabilizacji;
+- [x] normalny plan kończy się natychmiast po osiągnięciu stabilności i nie wykonuje iteracji do samego limitu;
+- [x] limit jest sprawdzany po pełnych iteracjach i nie pozwala wykonać kolejnego automatycznego przesunięcia ponad ustaloną granicę;
+- [x] brak stabilności na granicy ustawia `stabilizacja.status = "niestabilny"`, `czyStabilny = false`, przyczynę `limit-iteracji-stabilizacji` i `czyPrzekroczonoLimit = true`;
+- [x] wynik zawiera maksymalną liczbę iteracji, dzięki czemu przyczyna zatrzymania jest jednoznaczna diagnostycznie;
+- [x] niestabilny wynik tworzy dokładnie jeden konflikt `NIESTABILNY_HARMONOGRAM_LIMIT_ITERACJI` z liczbą wykonanych iteracji i czytelnym opisem;
+- [x] test może świadomie obniżyć limit techniczny na wejściu centralnego silnika bez dodawania pola do interfejsu operatora;
+- [x] scenariusz A → B → X → C nadal stabilizuje się normalnie po trzech iteracjach przy domyślnym limicie, natomiast limit `2` zatrzymuje go jawnym konfliktem zamiast uruchamiać trzeci przebieg;
+- [x] również wynik zatrzymany limitem jest deterministyczny dla identycznych danych, a źródłowy stan importu pozostaje niemodyfikowany.
+
+Podetap **5E.3** oraz cały punkt **5E — stabilizacja sprzężonego przeliczenia** są zakończone. Etap 5 pozostaje otwarty.
+Następny niezakończony podetap: **5F.1 — domyślny limit opóźnienia startu**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14

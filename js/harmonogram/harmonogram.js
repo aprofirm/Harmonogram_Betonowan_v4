@@ -3,6 +3,7 @@
 
   const aplikacja = zakresGlobalny.HarmonogramBetonowan =
     zakresGlobalny.HarmonogramBetonowan || {};
+  const DOMYSLNA_MAKSYMALNA_LICZBA_ITERACJI_STABILIZACJI = 50;
 
   function polaczParametry(parametryUzytkownika) {
     return Object.assign(
@@ -949,15 +950,44 @@
     });
   }
 
-  function utworzStanStabilizacji() {
+  function pobierzMaksymalnaLiczbeIteracjiStabilizacji(przebieg) {
+    const wartoscJawna = przebieg.aktualneDane &&
+      przebieg.aktualneDane.maksymalnaLiczbaIteracjiStabilizacji;
+    const wartosc = wartoscJawna === undefined || wartoscJawna === null
+      ? DOMYSLNA_MAKSYMALNA_LICZBA_ITERACJI_STABILIZACJI
+      : Number(wartoscJawna);
+
+    if (!Number.isInteger(wartosc) || wartosc < 1) {
+      throw new Error(
+        "Maksymalna liczba iteracji stabilizacji musi być dodatnią liczbą całkowitą."
+      );
+    }
+
+    return wartosc;
+  }
+
+  function utworzStanStabilizacji(maksymalnaLiczbaIteracji) {
     return {
       status: "w-toku",
       czyStabilny: false,
       powodZakonczenia: null,
       liczbaIteracji: 0,
       liczbaIteracjiZeZmiana: 0,
-      czyPlanZmienilSieWOstatniejIteracji: null
+      czyPlanZmienilSieWOstatniejIteracji: null,
+      maksymalnaLiczbaIteracji: maksymalnaLiczbaIteracji,
+      czyPrzekroczonoLimit: false
     };
+  }
+
+  function oznaczPrzekroczenieLimituStabilizacji(przebieg) {
+    const stanStabilizacji = przebieg.stabilizacja;
+
+    stanStabilizacji.status = "niestabilny";
+    stanStabilizacji.czyStabilny = false;
+    stanStabilizacji.powodZakonczenia = "limit-iteracji-stabilizacji";
+    stanStabilizacji.czyPrzekroczonoLimit = true;
+
+    return przebieg;
   }
 
   function wykonajIteracjeStabilizacji(przebieg) {
@@ -997,6 +1027,25 @@
     return przebieg;
   }
 
+  function utworzKonfliktyStabilizacji(przebieg) {
+    const stanStabilizacji = przebieg.stabilizacja;
+
+    if (!stanStabilizacji || !stanStabilizacji.czyPrzekroczonoLimit) {
+      return [];
+    }
+
+    return [{
+      kod: "NIESTABILNY_HARMONOGRAM_LIMIT_ITERACJI",
+      rodzaj: "stabilizacja",
+      liczbaIteracji: stanStabilizacji.liczbaIteracji,
+      maksymalnaLiczbaIteracji:
+        stanStabilizacji.maksymalnaLiczbaIteracji,
+      opis: "Harmonogram nie osiągnął stabilności po " +
+        stanStabilizacji.liczbaIteracji +
+        " iteracjach. Dalsze automatyczne przesuwanie zostało zatrzymane."
+    }];
+  }
+
   function zbudujKoncowyWynikPrzebiegu(przebieg) {
     const wynikPrzydzialu = przebieg.wynikPrzydzialuGruszek;
     const ustawieniaTrybuGruszek = przebieg.ustawieniaTrybuGruszek;
@@ -1015,7 +1064,8 @@
       ? utworzKonfliktyOgraniczonejFloty(wynikPrzydzialu)
       : [];
     const konflikty = konfliktyGruszek.concat(
-      utworzKonfliktyPomp(przebieg)
+      utworzKonfliktyPomp(przebieg),
+      utworzKonfliktyStabilizacji(przebieg)
     );
 
     return {
@@ -1048,15 +1098,26 @@
     obliczPompyPrzebiegu(przebieg);
     zastosujMozliweStartyPomp(przebieg);
     wyczyscKorektyStartowPoRzeczywistychDostawach(przebieg);
-    przebieg.stabilizacja = utworzStanStabilizacji();
+    const maksymalnaLiczbaIteracji =
+      pobierzMaksymalnaLiczbeIteracjiStabilizacji(przebieg);
+    przebieg.stabilizacja = utworzStanStabilizacji(
+      maksymalnaLiczbaIteracji
+    );
 
     wykonajIteracjeStabilizacji(przebieg);
 
-    // Stabilność oznacza brak zmiany całego wektora StartRoboczy po pełnym
-    // przebiegu zależnych faz. Limit bezpieczeństwa dla przypadku, który nie
-    // osiąga stabilności, pozostaje świadomie zakresem 5E.3.
-    while (!przebieg.stabilizacja.czyStabilny) {
+    // Przeliczamy wyłącznie do stabilności albo do jawnego limitu bezpieczeństwa.
+    // Po osiągnięciu limitu nie przesuwamy planu dalej bez końca; wynik dostaje
+    // konflikt wymagający kontroli operatora.
+    while (
+      !przebieg.stabilizacja.czyStabilny &&
+      przebieg.stabilizacja.liczbaIteracji < maksymalnaLiczbaIteracji
+    ) {
       wykonajIteracjeStabilizacji(przebieg);
+    }
+
+    if (!przebieg.stabilizacja.czyStabilny) {
+      oznaczPrzekroczenieLimituStabilizacji(przebieg);
     }
 
     return zbudujKoncowyWynikPrzebiegu(przebieg);
