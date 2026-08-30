@@ -627,7 +627,7 @@
         "POMPA-TECH-" + String(przydzial.numerPompyTechnicznej || "")
       );
       const czyPierwszyPrzydzial = !wykorzystanePompy.has(idPompy);
-      let przejazd = "— · tryb techniczny";
+      let przejazd = "— · bez wyliczonego przejazdu";
 
       if (czyPierwszyPrzydzial && wynikBudowy.informacyjnyPrzejazdZBazy) {
         przejazd = opiszPrzejazdZBazy(
@@ -640,7 +640,7 @@
       return utworzDaneWiersza(
         idBudowy,
         pobierzNazweBudowy(wynikBudowy, mapaBudow),
-        "Pompa techniczna " + String(przydzial.numerPompyTechnicznej || "?"),
+        "Pompa " + String(przydzial.numerPompyTechnicznej || "?"),
         przydzial.okresZajetosci,
         przejazd,
         "techniczny",
@@ -685,7 +685,7 @@
       trybPomp: trybPomp,
       opis: trybPomp === "mam-okreslona-liczbe"
         ? "Rzeczywisty przydział pomp z pełnym cyklem pracy, przejazdami i komunikatami ograniczeń."
-        : "Pompy techniczne pokazują minimalny układ zajętości. Przejazdy między budowami nie są w tym trybie rozstrzygane.",
+        : "Pompy pokazują minimalny układ zajętości. Przejazdy między budowami nie są w tym trybie rozstrzygane.",
       wiersze: wiersze
     };
   }

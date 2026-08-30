@@ -223,12 +223,12 @@ function sprawdzMinimalnaFloteTechniczna() {
 
   assert.equal(dane.trybPomp, "oblicz-potrzebne");
   assert.equal(dane.wiersze.length, 3);
-  assert.equal(dane.wiersze[0].pompa, "Pompa techniczna 1");
+  assert.equal(dane.wiersze[0].pompa, "Pompa 1");
   assert.equal(dane.wiersze[0].przejazd, "Baza · 20 min · 06:40–07:00");
-  assert.equal(dane.wiersze[1].pompa, "Pompa techniczna 2");
+  assert.equal(dane.wiersze[1].pompa, "Pompa 2");
   assert.equal(dane.wiersze[1].przejazd, "Baza · 25 min · 07:35–08:00");
-  assert.equal(dane.wiersze[2].pompa, "Pompa techniczna 1");
-  assert.equal(dane.wiersze[2].przejazd, "— · tryb techniczny");
+  assert.equal(dane.wiersze[2].pompa, "Pompa 1");
+  assert.equal(dane.wiersze[2].przejazd, "— · bez wyliczonego przejazdu");
   assert.match(dane.opis, /minimalny układ zajętości/);
   assert.match(dane.opis, /Przejazdy między budowami nie są/);
 }

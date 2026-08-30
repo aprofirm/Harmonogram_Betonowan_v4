@@ -502,7 +502,7 @@ Centralny `wynik.pompy` zasila wspólne sterowanie zasobami, osobną tabelę pe�
 cyklu pomp oraz komunikaty przypisane do konkretnych budów. W trybie ograniczonej
 floty operator widzi rzeczywistą pompę, przygotowanie, betonowanie, zakończenie,
 przejazd, gotowość i dokładny skutek ograniczenia. Tryb minimalnej floty nadal
-pokazuje jawne pompy techniczne bez udawania nieobliczonych przejazdów.
+pokazuje jawne pompy minimalnego układu bez udawania nieobliczonych przejazdów.
 
 Zakres 4I.5 potwierdza, że podstawowy interfejs nadal korzysta wyłącznie z
 lokalnych skryptów, stylów i grafik. Tabela pomp ma semantyczne opisy i nagłówki,

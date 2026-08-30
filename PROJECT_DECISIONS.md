@@ -1956,3 +1956,13 @@ tych faz.
 W 5A.2 wynik pomp nadal zachowuje granicę zamkniętego Etapu 4 i nie zmienia
 `StartRoboczy`. Zastosowanie przesunięcia pompy do budowy jest osobnym krokiem
 5B, a sprzężenie zwrotne z rzeczywistymi kursami należy do 5D–5E.
+
+---
+
+## 99. Operator widzi nazwę „Pompa”, bez określenia „techniczna”
+
+W tabeli wyniku trybu **Oblicz, ile potrzeba** zasoby są nazywane po prostu
+`Pompa 1`, `Pompa 2` itd. Określenie „pompa techniczna” jest terminem
+wewnętrznym silnika i nie powinno być pokazywane operatorowi. Wewnętrzne pola
+i identyfikatory mogą zachować dotychczasowe nazwy, aby nie naruszać zgodności
+silnika ani zapisanych testów danych.

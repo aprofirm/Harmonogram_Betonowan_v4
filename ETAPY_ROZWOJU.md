@@ -1054,7 +1054,7 @@ Następny niezakończony podetap: **4I.3 — tabela pomp**.
 
 - [x] osobna tabela pracy pomp korzysta z centralnego `wynik.pompy` i jest prezentowana niezależnie od tabeli kursów gruszek;
 - [x] tryb **Mam określoną liczbę** pokazuje rzeczywistą pompę, przygotowanie, betonowanie, zakończenie, przejazd i gotowość do kolejnej pracy;
-- [x] tryb **Oblicz, ile potrzeba** pokazuje pompy techniczne minimalnej floty i nie wymyśla przejazdów między budowami, których ten kontrakt nie wyznacza;
+- [x] tryb **Oblicz, ile potrzeba** pokazuje pompy minimalnej floty i nie wymyśla przejazdów między budowami, których ten kontrakt nie wyznacza;
 - [x] brak przydziału pozostaje jawnie widoczny, a wynik jest czyszczony po zmianie danych, odtworzeniu albo wyczyszczeniu planu;
 - [x] 4I.3 nie zmienia `StartRoboczy`, nie przebudowuje kursów gruszek i nie wykonuje jeszcze sprzężenia zasobów z Etapu 5;
 - [x] `testy/etap_4i_3.test.js` oraz pełna regresja GitHub Actions przeszły poprawnie przed i po scaleniu do `main`.
@@ -2362,9 +2362,9 @@ zakończony. Następny nieukończony podetap: **4G.1 — wynik silnika**.
 
 ## Zamknięcie 4G.1 — minimalna techniczna liczba pomp — 2026-08-28
 
-- [x] silnik tworzy techniczne pompy niezależnie od rzeczywistej listy zasobów;
+- [x] silnik tworzy pompy minimalnego układu niezależnie od rzeczywistej listy zasobów;
 - [x] bierze pod uwagę pełne okresy zajętości tylko budów wymagających pompy;
-- [x] ponownie używa pompy technicznej, gdy poprzedni cykl już się zakończył;
+- [x] ponownie używa pompy minimalnego układu, gdy poprzedni cykl już się zakończył;
 - [x] wynik zawiera `minimalnaLiczbaPomp` i techniczne przydziały bez mutowania wejścia;
 - [x] moduł jest ładowany lokalnie przez `index.html`, bez zależności internetowych;
 - [x] test `testy/etap_4g_1.test.js` i pełna regresja **43/43** przechodzą poprawnie;
