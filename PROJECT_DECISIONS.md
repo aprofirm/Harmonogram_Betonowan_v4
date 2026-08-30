@@ -2037,3 +2037,22 @@ aktualnego `StartRoboczy`, czyli już po uwzględnieniu pompy. Dopiero brak woln
 gruszki może przesunąć rzeczywistą godzinę załadunku i rozładunku, a różnica
 jest zapisywana jako `opoznienieZPowoduGruszekMinuty`. Pozwala to osobno
 odczytać skutek pompy i późniejszy skutek ograniczenia floty gruszek.
+
+---
+
+## 105. Sprzężone fazy są ponawiane tylko po zmianie StartRoboczy
+
+W 5E.1 centralny silnik po rzeczywistych dostawach ponownie generuje kursy,
+przydziela gruszki, aktualizuje rzeczywiste okresy pracy pomp i sprawdza dalszą
+korektę startów tylko wtedy, gdy poprzedni przebieg rzeczywiście zmienił
+`StartRoboczy` co najmniej jednej budowy.
+
+Przebieg bez nowej korekty nie uruchamia kolejnego przydziału gruszek. Dzięki
+temu sprzężenie jest deterministyczne i nie wykonuje pustych, zbędnych obliczeń.
+Informacja o ostatniej rzeczywistej korekcie budowy pozostaje zachowana także
+wtedy, gdy końcowa kontrola nie wymaga już dalszego przesunięcia.
+
+5E.1 nie wprowadza jeszcze osobnego limitu liczby iteracji. Formalny warunek
+stabilnego zakończenia jest doprecyzowany w 5E.2, a zabezpieczenie przed
+niestabilnym przypadkiem należy do 5E.3.
+
