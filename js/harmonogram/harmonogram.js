@@ -5,12 +5,31 @@
     zakresGlobalny.HarmonogramBetonowan || {};
   const DOMYSLNA_MAKSYMALNA_LICZBA_ITERACJI_STABILIZACJI = 50;
 
+  function sprawdzGlobalnyLimitOpoznieniaStartu(wartosc) {
+    const limitMinuty = Number(wartosc);
+
+    if (!Number.isFinite(limitMinuty) || limitMinuty < 0) {
+      throw new Error(
+        "Maksymalne opóźnienie startu musi być liczbą nie mniejszą niż 0."
+      );
+    }
+
+    return limitMinuty;
+  }
+
   function polaczParametry(parametryUzytkownika) {
-    return Object.assign(
+    const parametry = Object.assign(
       {},
       aplikacja.konfiguracja.parametryDomyslne,
       parametryUzytkownika || {}
     );
+
+    parametry.maksymalneOpoznienieStartuMinuty =
+      sprawdzGlobalnyLimitOpoznieniaStartu(
+        parametry.maksymalneOpoznienieStartuMinuty
+      );
+
+    return parametry;
   }
 
   function skopiujDaneDoPrzeliczenia(wartosc) {

@@ -2098,3 +2098,24 @@ blokuje przeglądarkę. Dla testów silnika dopuszczalne jest jawne podanie niż
 limitu na wejściu centralnego przeliczenia; produkcyjne wywołania korzystają z
 domyślnej wartości `50`.
 
+---
+
+## 108. Globalny limit opóźnienia startu pochodzi z konfiguracji
+
+Podetap 5F.1 formalizuje istniejący globalny parametr
+`maksymalneOpoznienieStartuMinuty`. Jego domyślna wartość wynosi `30 min` i
+pozostaje zapisana wyłącznie w `aplikacja.konfiguracja.parametryDomyslne`.
+Silnik nie może powielać liczby `30` jako magicznej wartości w logice
+obliczeniowej.
+
+Pełne przeliczenie zawsze korzysta ze skutecznej wartości po połączeniu
+parametrów domyślnych z ustawieniami bieżącego planu. Operator może globalnie
+zmienić limit w istniejącym polu **Maksymalne opóźnienie startu**, a wartość
+przekazana bezpośrednio do silnika jest normalizowana do liczby i musi być
+nieujemna. Błędna wartość nie może przejść dalej tylko dlatego, że wywołanie
+ominęło walidację formularza.
+
+5F.1 definiuje wyłącznie globalny parametr. Indywidualny wyjątek budowy należy
+do 5F.2, a porównanie rzeczywistego przesunięcia z limitem oraz utworzenie
+konfliktu po przekroczeniu — do 5F.3.
+

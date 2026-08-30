@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5F.1**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5F.2**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -731,7 +731,7 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
     lub równoważna osłona kończy niestabilny przypadek jawnym konfliktem zamiast
     bezgranicznie przesuwać plan.
 - [ ] **5F — limit opóźnienia rozpoczęcia budowy.**
-  - [ ] **5F.1 — parametr globalny:** domyślny limit `30 min` jest konfiguracją,
+  - [x] **5F.1 — parametr globalny:** domyślny limit `30 min` jest konfiguracją,
     nie magiczną liczbą w algorytmie.
   - [ ] **5F.2 — limit indywidualny:** budowa może nadpisać limit, a wartość jest
     zachowywana w bieżącym planie i historii.
@@ -1339,6 +1339,20 @@ Następny niezakończony podetap: **5E.3 — zabezpieczenie przed nieskończonym
 
 Podetap **5E.3** oraz cały punkt **5E — stabilizacja sprzężonego przeliczenia** są zakończone. Etap 5 pozostaje otwarty.
 Następny niezakończony podetap: **5F.1 — domyślny limit opóźnienia startu**.
+
+## Zamknięcie 5F.1 — parametr globalny limitu opóźnienia startu — 2026-08-30
+
+- [x] domyślna wartość `30 min` pozostaje jednym parametrem `maksymalneOpoznienieStartuMinuty` w `aplikacja.konfiguracja.parametryDomyslne`;
+- [x] istniejące pole operatora **Maksymalne opóźnienie startu** korzysta z tej konfiguracji, więc 5F.1 nie tworzy drugiego pola ani drugiej wartości domyślnej;
+- [x] centralny silnik po połączeniu parametrów zawsze normalizuje i waliduje skuteczny globalny limit;
+- [x] brak jawnego nadpisania daje w wyniku `30`, a wartość podana dla konkretnego pełnego przebiegu może globalnie zastąpić domyślną bez modyfikowania zamrożonej konfiguracji;
+- [x] wartość ujemna albo nieliczbowa jest odrzucana także przy bezpośrednim wywołaniu silnika, niezależnie od walidacji formularza;
+- [x] 5F.1 nie dodaje jeszcze indywidualnego limitu budowy — to zakres 5F.2;
+- [x] 5F.1 nie klasyfikuje jeszcze przesunięcia w limicie ani przekroczenia jako konfliktu — to zakres 5F.3;
+- [x] test `testy/etap_5f_1.test.js` oraz pełna regresja przechodzą poprawnie.
+
+Podetap **5F.1** jest zakończony. Punkt nadrzędny **5F** i cały Etap 5 pozostają otwarte.
+Następny niezakończony podetap: **5F.2 — limit indywidualny budowy**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14

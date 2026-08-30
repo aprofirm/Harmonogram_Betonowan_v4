@@ -3,7 +3,7 @@
 ## Status
 
 Etap 4 jest zamknięty. Etap 5 jest rozpisany przed rozpoczęciem implementacji.
-Punkty **5A–5D** oraz cały **5E — stabilizacja** są zakończone. Następny podetap: **5F.1 — domyślny limit opóźnienia startu**.
+Punkty **5A–5D**, cały **5E — stabilizacja** oraz **5F.1 — parametr globalny** są zakończone. Następny podetap: **5F.2 — limit indywidualny budowy**.
 
 ## Najważniejsza zasada testowa
 
@@ -64,7 +64,8 @@ Test automatyczny 5E.3: `testy/etap_5e_3.test.js` — normalna kaskada stabilizu
 
 ## 5F — limit opóźnienia startu
 
-- [ ] domyślny limit wynosi `30 min` i jest parametrem;
+- [x] domyślny limit wynosi `30 min` i jest parametrem;
+  Test automatyczny 5F.1: `testy/etap_5f_1.test.js` — domyślne `30 min` pochodzi z `parametryDomyslne`, globalne nadpisanie trafia do wyniku bieżącego przebiegu bez zmiany konfiguracji bazowej, a bezpośrednie wejście silnika odrzuca wartość ujemną i nieliczbową.
 - [ ] indywidualny limit budowy ma pierwszeństwo;
 - [ ] przesunięcie w limicie jest zwykłą korektą;
 - [ ] przekroczenie limitu tworzy jawny konflikt;
