@@ -1,14 +1,15 @@
-name: Aktualizacja dokumentacji 5D.3
+name: Tymczasowa aktualizacja dokumentacji 5D.3
 
 on:
   push:
-    branches: [etap-5d3-test-kaskady]
+    branches:
+      - etap-5d3-test-kaskady
 
 permissions:
   contents: write
 
 jobs:
-  aktualizuj:
+  aktualizuj-dokumentacje:
     runs-on: ubuntu-latest
     steps:
       - name: Pobierz repozytorium
@@ -18,6 +19,7 @@ jobs:
           fetch-depth: 0
 
       - name: Zaktualizuj status 5D.3
+        shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -46,23 +48,24 @@ jobs:
               "  - [x] **5D.3 — test kaskady:** co najmniej trzy budowy potwierdzają propagację\n    opóźnienia bez nakładania pracy jednej pompy i jednej gruszki.",
               "checkbox 5D.3")
           marker = "\n\n## Weryfikacja produkcyjnego KDX — 2026-08-14"
-          closure = """
-
-## Zamknięcie 5D.3 i całego 5D — test kaskady — 2026-08-30
-
-- [x] scenariusz obejmuje trzy budowy `A → B → C`, jedną pompę i jedną gruszkę;
-- [x] rzeczywiste wydłużenie budowy A przesuwa `StartRoboczy` budowy B z `09:20` do `09:30`;
-- [x] skutek przechodzi dalej: wydłużony okres B przesuwa budowę C z `10:50` do `11:00`;
-- [x] rzeczywiste okresy pracy jednej pompy stykają się na granicach, ale nigdy się nie nakładają;
-- [x] kursy jednej gruszki nie nakładają się i każdy kolejny załadunek zaczyna się dopiero po gotowości pojazdu;
-- [x] powtórne przeliczenie identycznych danych daje identyczny wynik i nie zmienia danych źródłowych;
-- [x] `testy/etap_5d_3.test.js` oraz pełna regresja wszystkich wcześniejszych testów przechodzą poprawnie;
-- [x] 5D.3 nie wprowadza jeszcze ogólnej iteracji do stabilności — ten zakres rozpoczyna się w 5E.1.
-
-Podetap **5D.3** oraz cały punkt **5D — rzeczywiste dostawy a czas pracy pompy** są zakończone. Etap 5 pozostaje otwarty.
-Następny niezakończony podetap: **5E.1 — deterministyczna iteracja**.
-"""
-          if closure.strip() not in text:
+          closure = "\n".join([
+              "",
+              "",
+              "## Zamknięcie 5D.3 i całego 5D — test kaskady — 2026-08-30",
+              "",
+              "- [x] scenariusz obejmuje trzy budowy `A → B → C`, jedną pompę i jedną gruszkę;",
+              "- [x] rzeczywiste wydłużenie budowy A przesuwa `StartRoboczy` budowy B z `09:20` do `09:30`;",
+              "- [x] skutek przechodzi dalej: wydłużony okres B przesuwa budowę C z `10:50` do `11:00`;",
+              "- [x] rzeczywiste okresy pracy jednej pompy stykają się na granicach, ale nigdy się nie nakładają;",
+              "- [x] kursy jednej gruszki nie nakładają się i każdy kolejny załadunek zaczyna się dopiero po gotowości pojazdu;",
+              "- [x] powtórne przeliczenie identycznych danych daje identyczny wynik i nie zmienia danych źródłowych;",
+              "- [x] `testy/etap_5d_3.test.js` oraz pełna regresja wszystkich wcześniejszych testów przechodzą poprawnie;",
+              "- [x] 5D.3 nie wprowadza jeszcze ogólnej iteracji do stabilności — ten zakres rozpoczyna się w 5E.1.",
+              "",
+              "Podetap **5D.3** oraz cały punkt **5D — rzeczywiste dostawy a czas pracy pompy** są zakończone. Etap 5 pozostaje otwarty.",
+              "Następny niezakończony podetap: **5E.1 — deterministyczna iteracja**.",
+          ])
+          if "## Zamknięcie 5D.3 i całego 5D" not in text:
               if marker not in text:
                   raise SystemExit("Brak miejsca na zamknięcie 5D.3")
               text = text.replace(marker, closure + marker, 1)
@@ -78,20 +81,21 @@ Następny niezakończony podetap: **5E.1 — deterministyczna iteracja**.
               "- [ ] kaskada co najmniej trzech budów nie tworzy kolizji zasobów.",
               "- [x] kaskada co najmniej trzech budów nie tworzy kolizji zasobów.",
               "checkbox testu kaskady")
-          old = "- 5D.2: `testy/etap_5d_2.test.js` — dwie budowy, jedna pompa oraz jedna/dwie gruszki; przy jednej gruszce wydłużenie pierwszej budowy przesuwa drugą z `09:20` na `09:30`, a przy dwóch gruszkach nie powstaje dodatkowa korekta."
-          new = old + "\n- 5D.3: `testy/etap_5d_3.test.js` — trzy budowy A → B → C, jedna pompa i jedna gruszka; kaskada przesuwa B do `09:30` oraz C do `11:00` bez nakładania pracy zasobów."
-          text = replace_once(text, old, new, "lista testów 5D")
+          old_test = "- 5D.2: `testy/etap_5d_2.test.js` — dwie budowy, jedna pompa oraz jedna/dwie gruszki; przy jednej gruszce wydłużenie pierwszej budowy przesuwa drugą z `09:20` na `09:30`, a przy dwóch gruszkach nie powstaje dodatkowa korekta."
+          new_test = old_test + "\n- 5D.3: `testy/etap_5d_3.test.js` — trzy budowy A → B → C, jedna pompa i jedna gruszka; kaskada przesuwa B do `09:30` oraz C do `11:00` bez nakładania pracy zasobów."
+          text = replace_once(text, old_test, new_test, "lista testów 5D")
           testy.write_text(text, encoding="utf-8")
 
           readme = Path("README.md")
           text = readme.read_text(encoding="utf-8")
-          old = "Podetapy **5D.1–5D.2** są zakończone: po przydziale gruszek rzeczywiste okno betonowania i okres zajętości pompy są liczone z faktycznych rozładunków, a wydłużenie pracy poprzedniej budowy może przesunąć gotowość tej samej pompy i `StartRoboczy` następnej budowy. Po takiej korekcie kursy gruszek powstają ponownie od nowej godziny. Test A→B potwierdza przesunięcie drugiej budowy z `09:20` do `09:30` przy jednej gruszce oraz brak dodatkowej korekty przy dwóch gruszkach. Wersja webowa jest publikowana z `main` pod adresem `https://aprofirm.github.io/Harmonogram_Betonowan_v4/`. Następny krok to **5D.3 — test kaskady**."
-          new = "Cały punkt **5D — rzeczywiste dostawy a czas pracy pompy** jest zakończony: po przydziale gruszek rzeczywiste okno betonowania i okres zajętości pompy są liczone z faktycznych rozładunków, a wydłużenie pracy poprzedniej budowy może przesunąć gotowość tej samej pompy i `StartRoboczy` następnej budowy. Po takiej korekcie kursy gruszek powstają ponownie od nowej godziny. Test kaskady A→B→C potwierdza przesunięcia B z `09:20` do `09:30` i C z `10:50` do `11:00` przy jednej gruszce, bez nakładania pracy jednej pompy ani jednej gruszki. Wersja webowa jest publikowana z `main` pod adresem `https://aprofirm.github.io/Harmonogram_Betonowan_v4/`. Następny krok to **5E.1 — deterministyczna iteracja**."
-          text = replace_once(text, old, new, "README 5D")
+          old_readme = "Podetapy **5D.1–5D.2** są zakończone: po przydziale gruszek rzeczywiste okno betonowania i okres zajętości pompy są liczone z faktycznych rozładunków, a wydłużenie pracy poprzedniej budowy może przesunąć gotowość tej samej pompy i `StartRoboczy` następnej budowy. Po takiej korekcie kursy gruszek powstają ponownie od nowej godziny. Test A→B potwierdza przesunięcie drugiej budowy z `09:20` do `09:30` przy jednej gruszce oraz brak dodatkowej korekty przy dwóch gruszkach. Wersja webowa jest publikowana z `main` pod adresem `https://aprofirm.github.io/Harmonogram_Betonowan_v4/`. Następny krok to **5D.3 — test kaskady**."
+          new_readme = "Cały punkt **5D — rzeczywiste dostawy a czas pracy pompy** jest zakończony: po przydziale gruszek rzeczywiste okno betonowania i okres zajętości pompy są liczone z faktycznych rozładunków, a wydłużenie pracy poprzedniej budowy może przesunąć gotowość tej samej pompy i `StartRoboczy` następnej budowy. Po takiej korekcie kursy gruszek powstają ponownie od nowej godziny. Test kaskady A→B→C potwierdza przesunięcia B z `09:20` do `09:30` i C z `10:50` do `11:00` przy jednej gruszce, bez nakładania pracy jednej pompy ani jednej gruszki. Wersja webowa jest publikowana z `main` pod adresem `https://aprofirm.github.io/Harmonogram_Betonowan_v4/`. Następny krok to **5E.1 — deterministyczna iteracja**."
+          text = replace_once(text, old_readme, new_readme, "README 5D")
           readme.write_text(text, encoding="utf-8")
           PY
 
       - name: Zapisz dokumentację
+        shell: bash
         run: |
           if git diff --quiet -- ETAPY_ROZWOJU.md README.md testy/TESTY_ETAP_5.md; then
             echo "Brak zmian do zapisania."
