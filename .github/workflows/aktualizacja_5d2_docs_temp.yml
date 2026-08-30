@@ -1,0 +1,36 @@
+name: Tymczasowa aktualizacja dokumentacji 5D.2
+
+on:
+  push:
+    branches:
+      - etap-5d2-wplyw-na-nastepna-budowe
+
+permissions:
+  contents: write
+
+jobs:
+  aktualizuj-dokumentacje:
+    if: ${{ !contains(github.event.head_commit.message, '[skip-5d2-docs]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          ref: etap-5d2-wplyw-na-nastepna-budowe
+          fetch-depth: 0
+
+      - name: Zaktualizuj dokumentację i cache
+        run: python narzedzia/patch_5d2_docs_temp.py
+
+      - name: Zapisz zmianę
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ETAPY_ROZWOJU.md README.md index.html
+          if git diff --cached --quiet; then
+            echo "Brak zmian do zapisania."
+            exit 0
+          fi
+          git commit -m "5D.2: zamknij podetap i wskaż 5D.3 [skip-5d2-docs]"
+          git push origin HEAD:etap-5d2-wplyw-na-nastepna-budowe
