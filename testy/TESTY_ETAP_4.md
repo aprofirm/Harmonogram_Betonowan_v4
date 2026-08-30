@@ -2,10 +2,16 @@
 
 ## Status
 
-Etap 4 jest rozpoczęty. Zakończono całe punkty **4A–4I**, **4J.1**, **4J.2** oraz korektę operatorską **4J.3.1 — jawne czasy przejazdów pomp**.
-Następny podetap to **4J.3.2 — ponowny test operatora**. Wszystkie pliki `testy/*.test.js` są
-uruchamiane przez jeden workflow GitHub Actions, a 4J.1 dodatkowo pilnuje kompletności
-zestawu regresji i granicy między Etapem 4 a Etapem 5.
+**Etap 4 jest zakończony.** Zakończono całe punkty **4A–4I**, pełną regresję
+**4J.1**, publikację **4J.2**, korektę operatorską **4J.3.1** oraz ponowny test
+operatora **4J.3.2**. Operator potwierdził działanie jawnych przejazdów pomp,
+ręcznej korekty, przywracania wartości bazowej, pamięci po odświeżeniu oraz
+scenariuszy ograniczonej i nieaktywnej floty.
+
+Wszystkie pliki `testy/*.test.js` są uruchamiane przez jeden workflow GitHub
+Actions, a 4J.1 dodatkowo pilnuje kompletności zestawu regresji i granicy między
+Etapem 4 a Etapem 5. Następny etap rozwoju to **Etap 5 — pełny silnik
+harmonogramu, konflikty i korekty**.
 
 ## Cel
 
@@ -234,26 +240,26 @@ Przed publikacją należy uruchomić wszystkie pliki `testy/*.test.js` i potwier
 
 ### 4J.2 — publikacja
 
-- stan po 4J.1 jest na `main`;
-- `Testy automatyczne` dla commita `0a26a72` zakończyły się `success` (run `33270058614`);
-- `pages build and deployment` dla tego samego commita zakończył się `success` (run `33270057938`);
-- wersja webowa korzysta z publikacji GitHub Pages z `main`;
-- publikacja nie zmienia logiki harmonogramu ani wymaga internetu do działania wariantu lokalnego.
+- [x] stan po 4J.1 jest na `main`;
+- [x] `Testy automatyczne` dla commita `0a26a72` zakończyły się `success` (run `33270058614`);
+- [x] `pages build and deployment` dla tego samego commita zakończył się `success` (run `33270057938`);
+- [x] wersja webowa korzysta z publikacji GitHub Pages z `main`;
+- [x] publikacja nie zmienia logiki harmonogramu ani wymaga internetu do działania wariantu lokalnego.
 
-## Test operatora 4J.3
+## Test operatora 4J.3 — zaliczony
 
-Po publikacji na GitHub Pages operator sprawdza ten sam rzeczywisty plan w
-wariantach:
+Po publikacji na GitHub Pages operator sprawdził plan w wariantach:
 
-1. brak aktywnych pomp;
-2. jedna aktywna pompa i kilka budów wymagających pompowania;
-3. kilka pomp bez kolizji;
-4. pompa nieaktywna;
-5. flota mniejsza od potrzebnej;
-6. przejazd pomiędzy dwiema budowami;
-7. odświeżenie strony i odtworzenie ustawień.
+1. [x] brak aktywnych pomp;
+2. [x] jedna aktywna pompa i kilka budów wymagających pompowania;
+3. [x] kilka pomp bez kolizji;
+4. [x] pompa nieaktywna;
+5. [x] flota mniejsza od potrzebnej;
+6. [x] przejazd pomiędzy dwiema budowami;
+7. [x] odświeżenie strony i odtworzenie ustawień.
 
-Dopiero po automatycznej regresji, publikacji i tym teście można zamknąć Etap 4.
+Automatyczna regresja, publikacja i test operatora zostały zakończone. Etap 4
+może zostać zamknięty.
 
 
 ### 4I.1 — centralny wynik pomp
@@ -278,11 +284,15 @@ Dopiero po automatycznej regresji, publikacji i tym teście można zamknąć Eta
   kontrakt interfejsu, pamięć i granicę Etapu 4;
 - [x] pełna regresja automatyczna przechodzi przed publikacją do ponownego testu operatora.
 
-### 4J.3.2 — ponowny test operatora
+### 4J.3.2 — ponowny test operatora — zaliczony 2026-08-30
 
-- [ ] wczytać plan z co najmniej trzema budowami pompowanymi i potwierdzić widoczne relacje;
-- [ ] zmienić ręcznie jeden czas, przeliczyć i potwierdzić użycie nowej wartości;
-- [ ] przywrócić wartość z CSV i potwierdzić powrót wartości bazowej;
-- [ ] odświeżyć stronę i potwierdzić zachowanie ręcznej korekty;
-- [ ] dokończyć scenariusze 4J.3: brak pomp, jedna pompa, kilka pomp, pompa nieaktywna,
-  zbyt mała flota i rzeczywisty przejazd pompy między budowami.
+- [x] wczytano plan z co najmniej trzema budowami pompowanymi i potwierdzono widoczne relacje;
+- [x] zmieniono ręcznie czas przejazdu, przeliczono plan i potwierdzono użycie nowej wartości;
+- [x] przywrócono wartość z CSV i potwierdzono powrót wartości bazowej;
+- [x] odświeżono stronę i potwierdzono zachowanie ręcznej korekty;
+- [x] dokończono scenariusze 4J.3: brak pomp, jedna pompa, kilka pomp, pompa nieaktywna,
+  zbyt mała flota i rzeczywisty przejazd pompy między budowami;
+- [x] dodatkowa poprawka szerokości okna **Zapisane trasy** została sprawdzona
+  przez operatora i nie wpłynęła na działanie testów harmonogramu.
+
+**Wynik końcowy:** 4J.3.2, 4J.3, 4J oraz cały **Etap 4 — Pompy** są zakończone.
