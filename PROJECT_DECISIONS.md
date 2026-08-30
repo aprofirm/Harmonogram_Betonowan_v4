@@ -2056,3 +2056,22 @@ wtedy, gdy końcowa kontrola nie wymaga już dalszego przesunięcia.
 stabilnego zakończenia jest doprecyzowany w 5E.2, a zabezpieczenie przed
 niestabilnym przypadkiem należy do 5E.3.
 
+---
+
+## 106. Stabilność sprzężonego harmonogramu oznacza niezmienione StartRoboczy
+
+W 5E.2 warunek zakończenia iteracji nie opiera się wyłącznie na pomocniczej
+fladze konkretnej fazy. Centralny silnik porównuje cały uporządkowany zestaw
+`StartRoboczy` wszystkich roboczych budów przed i po pełnej iteracji zależnych
+obliczeń. Jeżeli identyfikatory, kolejność i wszystkie wartości startów są takie
+same, plan jest stabilny i przeliczenie może się zakończyć.
+
+Wynik centralny zachowuje jawny obiekt `stabilizacja` z informacją, czy plan jest
+stabilny, ile wykonano iteracji, ile z nich rzeczywiście zmieniło plan oraz z
+przyczyną zakończenia `brak-zmiany-startow-roboczych`. Te metadane są częścią
+deterministycznego wyniku: identyczne dane wejściowe i ustawienia mają dawać
+identyczny stan stabilizacji i identyczny harmonogram.
+
+Brak osiągnięcia stabilności nie jest jeszcze rozstrzygany w 5E.2. Limit
+iteracji albo równoważne zabezpieczenie oraz jawny konflikt należą do 5E.3.
+

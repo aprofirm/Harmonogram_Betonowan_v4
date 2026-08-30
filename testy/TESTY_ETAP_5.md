@@ -3,7 +3,7 @@
 ## Status
 
 Etap 4 jest zamknięty. Etap 5 jest rozpisany przed rozpoczęciem implementacji.
-Punkty **5A–5D** oraz podetap **5E.1** są zakończone. Następny podetap: **5E.2 — warunek zakończenia**.
+Punkty **5A–5D** oraz podetapy **5E.1–5E.2** są zakończone. Następny podetap: **5E.3 — zabezpieczenie przed nieskończonym przesuwaniem**.
 
 ## Najważniejsza zasada testowa
 
@@ -56,8 +56,9 @@ Testy automatyczne:
 - [x] silnik powtarza zależne obliczenia tylko po zmianie planu;
 Test automatyczny 5E.1: `testy/etap_5e_1.test.js` — stabilny plan wykonuje jeden przydział gruszek, a scenariusz A → B → X → C z jedną pompą i jedną gruszką wymaga trzech przebiegów zależnych oraz kończy z C o `11:25`.
 
-- [ ] stabilny wynik kończy iterację;
-- [ ] identyczne dane mają deterministyczny wynik;
+- [x] stabilny wynik kończy iterację;
+- [x] identyczne dane mają deterministyczny wynik;
+Test automatyczny 5E.2: `testy/etap_5e_2.test.js` — stabilność jest rozpoznawana przez brak zmiany całego zestawu `StartRoboczy`; wynik zwraca jawny stan `stabilny`, liczbę iteracji i przyczynę zakończenia, a dwa pełne przeliczenia identycznych danych są identyczne.
 - [ ] zabezpieczenie kończy niestabilny przypadek jawnym konfliktem.
 
 ## 5F — limit opóźnienia startu

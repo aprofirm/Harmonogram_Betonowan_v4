@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5E.2**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5E.3**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -725,7 +725,7 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
 - [ ] **5E — stabilizacja sprzężonego przeliczenia.**
   - [x] **5E.1 — deterministyczna iteracja:** powtarzać zależne obliczenia pomp,
     startów i gruszek tylko wtedy, gdy wynik poprzedniego przebiegu zmienił plan.
-  - [ ] **5E.2 — warunek zakończenia:** stabilny wynik kończy przeliczenie bez
+  - [x] **5E.2 — warunek zakończenia:** stabilny wynik kończy przeliczenie bez
     dodatkowych zmian, a identyczne dane zawsze dają identyczny rezultat.
   - [ ] **5E.3 — zabezpieczenie przed nieskończonym przesuwaniem:** limit iteracji
     lub równoważna osłona kończy niestabilny przypadek jawnym konfliktem zamiast
@@ -1310,6 +1310,20 @@ Następny niezakończony podetap: **5E.1 — deterministyczna iteracja**.
 
 Podetap **5E.1** jest zakończony. Punkt nadrzędny **5E** i cały Etap 5 pozostają otwarte.
 Następny niezakończony podetap: **5E.2 — warunek zakończenia**.
+
+## Zamknięcie 5E.2 — warunek zakończenia — 2026-08-30
+
+- [x] każda iteracja zapisuje migawkę całego zestawu `StartRoboczy` przed i po wykonaniu zależnych faz oraz ewentualnej korekcie;
+- [x] plan jest uznawany za stabilny wyłącznie wtedy, gdy identyfikatory, kolejność i wszystkie wartości `StartRoboczy` pozostają bez zmian;
+- [x] wynik końcowy zawiera jawny obiekt `stabilizacja` ze statusem, liczbą iteracji, liczbą iteracji zmieniających plan i przyczyną zakończenia `brak-zmiany-startow-roboczych`;
+- [x] stabilny plan bez korekt kończy się po jednym przebiegu zależnym;
+- [x] kaskada A → B → X → C kończy się po trzech przebiegach: dwóch zmieniających plan i trzecim potwierdzającym stabilność, z ostatecznym startem C `11:25`;
+- [x] dwa pełne przeliczenia identycznych danych zwracają identyczny wynik razem z metadanymi stabilizacji;
+- [x] dane źródłowe pozostają niemodyfikowane;
+- [x] 5E.2 nie dodaje jeszcze limitu iteracji ani konfliktu dla przypadku niestabilnego — to zakres 5E.3.
+
+Podetap **5E.2** jest zakończony. Punkt nadrzędny **5E** i cały Etap 5 pozostają otwarte.
+Następny niezakończony podetap: **5E.3 — zabezpieczenie przed nieskończonym przesuwaniem**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
