@@ -19,6 +19,20 @@ jobs:
           ref: etap-5f2-limit-indywidualny
           fetch-depth: 0
 
+      - name: Dopasuj skrypt do aktualnego znacznika cache
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path("narzedzia/aktualizuj_5f2_temp.py")
+          text = path.read_text(encoding="utf-8")
+          old = '<script defer src="js/aplikacja.js"></script>'
+          current = '<script defer src="js/aplikacja.js?v=4j3-panel-przejazdow-20260829a"></script>'
+          if old not in text:
+              raise SystemExit("Nie znaleziono starego wzorca cache aplikacji w skrypcie 5F.2.")
+          path.write_text(text.replace(old, current, 1), encoding="utf-8")
+          PY
+
       - name: Wprowadz zmiany 5F.2
         run: python narzedzia/aktualizuj_5f2_temp.py
 
