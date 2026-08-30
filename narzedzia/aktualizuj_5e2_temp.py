@@ -211,7 +211,8 @@ readme_path.write_text(readme, encoding="utf-8")
 
 
 etapy_path = Path("ETAPY_ROZWOJU.md")
-etapy = etapy_path.read_text(encoding="utf-8")netapy = replace_once(
+etapy = etapy_path.read_text(encoding="utf-8")
+etapy = replace_once(
     etapy,
     "- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5E.2**",
     "- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5E.3**",

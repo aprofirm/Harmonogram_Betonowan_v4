@@ -921,6 +921,82 @@
       czySkorygowano;
     return przebieg;
   }
+  function pobierzMigawkeStartowRoboczych(przebieg) {
+    return przebieg.listaBudow.map(function (budowa, indeksBudowy) {
+      return {
+        idBudowy: String(budowa.idBudowy || ""),
+        indeksBudowy: indeksBudowy,
+        startRoboczy: budowa.startRoboczy === null ||
+          budowa.startRoboczy === undefined
+          ? null
+          : String(budowa.startRoboczy)
+      };
+    });
+  }
+
+  function czyMigawkiStartowRoboczychSaRowne(pierwsza, druga) {
+    if (pierwsza.length !== druga.length) {
+      return false;
+    }
+
+    return pierwsza.every(function (pozycja, indeks) {
+      const drugaPozycja = druga[indeks];
+
+      return drugaPozycja &&
+        pozycja.idBudowy === drugaPozycja.idBudowy &&
+        pozycja.indeksBudowy === drugaPozycja.indeksBudowy &&
+        pozycja.startRoboczy === drugaPozycja.startRoboczy;
+    });
+  }
+
+  function utworzStanStabilizacji() {
+    return {
+      status: "w-toku",
+      czyStabilny: false,
+      powodZakonczenia: null,
+      liczbaIteracji: 0,
+      liczbaIteracjiZeZmiana: 0,
+      czyPlanZmienilSieWOstatniejIteracji: null
+    };
+  }
+
+  function wykonajIteracjeStabilizacji(przebieg) {
+    const startyPrzedIteracja = pobierzMigawkeStartowRoboczych(przebieg);
+
+    przeliczZalezneFazyPoZmianieStartu(przebieg);
+    zastosujKorekteStartowPoRzeczywistychDostawach(przebieg);
+
+    const startyPoIteracji = pobierzMigawkeStartowRoboczych(przebieg);
+    const czyPlanZmienilSie = !czyMigawkiStartowRoboczychSaRowne(
+      startyPrzedIteracja,
+      startyPoIteracji
+    );
+    const stanStabilizacji = przebieg.stabilizacja;
+
+    stanStabilizacji.liczbaIteracji += 1;
+    stanStabilizacji.czyPlanZmienilSieWOstatniejIteracji =
+      czyPlanZmienilSie;
+
+    if (czyPlanZmienilSie) {
+      stanStabilizacji.status = "w-toku";
+      stanStabilizacji.czyStabilny = false;
+      stanStabilizacji.powodZakonczenia = null;
+      stanStabilizacji.liczbaIteracjiZeZmiana += 1;
+    } else {
+      stanStabilizacji.status = "stabilny";
+      stanStabilizacji.czyStabilny = true;
+      stanStabilizacji.powodZakonczenia =
+        "brak-zmiany-startow-roboczych";
+    }
+
+    // Warunek kolejnej iteracji wynika z faktycznej zmiany roboczych startów,
+    // a nie wyłącznie z pomocniczej flagi ustawianej przez jedną z faz.
+    przebieg.czySkorygowanoStartyPoRzeczywistychDostawach =
+      czyPlanZmienilSie;
+
+    return przebieg;
+  }
+
   function zbudujKoncowyWynikPrzebiegu(przebieg) {
     const wynikPrzydzialu = przebieg.wynikPrzydzialuGruszek;
     const ustawieniaTrybuGruszek = przebieg.ustawieniaTrybuGruszek;
@@ -946,6 +1022,7 @@
       etap: aplikacja.konfiguracja.numerEtapu,
       punktEtapu: aplikacja.konfiguracja.punktEtapu,
       status: "gotowy",
+      stabilizacja: skopiujDaneDoPrzeliczenia(przebieg.stabilizacja),
       parametry: przebieg.parametry,
       budowy: przebieg.listaBudow,
       pompy: przebieg.wynikPomp,
@@ -970,16 +1047,16 @@
     obliczBazoweKursyPrzebiegu(przebieg);
     obliczPompyPrzebiegu(przebieg);
     zastosujMozliweStartyPomp(przebieg);
-    przeliczZalezneFazyPoZmianieStartu(przebieg);
     wyczyscKorektyStartowPoRzeczywistychDostawach(przebieg);
-    zastosujKorekteStartowPoRzeczywistychDostawach(przebieg);
+    przebieg.stabilizacja = utworzStanStabilizacji();
 
-    // Każda następna iteracja ma sens wyłącznie wtedy, gdy poprzednia
-    // rzeczywiście zmieniła StartRoboczy co najmniej jednej budowy. Nie
-    // dokładamy tu jeszcze osobnego limitu iteracji — to zakres 5E.3.
-    while (przebieg.czySkorygowanoStartyPoRzeczywistychDostawach) {
-      przeliczZalezneFazyPoZmianieStartu(przebieg);
-      zastosujKorekteStartowPoRzeczywistychDostawach(przebieg);
+    wykonajIteracjeStabilizacji(przebieg);
+
+    // Stabilność oznacza brak zmiany całego wektora StartRoboczy po pełnym
+    // przebiegu zależnych faz. Limit bezpieczeństwa dla przypadku, który nie
+    // osiąga stabilności, pozostaje świadomie zakresem 5E.3.
+    while (!przebieg.stabilizacja.czyStabilny) {
+      wykonajIteracjeStabilizacji(przebieg);
     }
 
     return zbudujKoncowyWynikPrzebiegu(przebieg);
