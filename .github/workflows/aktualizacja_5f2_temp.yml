@@ -36,18 +36,26 @@ jobs:
       - name: Wprowadz zmiany 5F.2
         run: python narzedzia/aktualizuj_5f2_temp.py
 
-      - name: Uelastycznij historyczny test integracji 4J.3
+      - name: Uelastycznij testy historyczne
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
-          path = Path("testy/etap_4j_3_1.test.js")
-          text = path.read_text(encoding="utf-8")
-          old = '  assert.match(aplikacja, /obsluzZmianePrzejazduPompy\\s*\\n\\s*\\);/);'
-          new = '  assert.match(aplikacja, /obsluzZmianePrzejazduPompy(?:,|\\s*\\n\\s*\\);)/);'
-          if text.count(old) != 1:
+
+          path_4j = Path("testy/etap_4j_3_1.test.js")
+          text_4j = path_4j.read_text(encoding="utf-8")
+          old_4j = '  assert.match(aplikacja, /obsluzZmianePrzejazduPompy\\s*\\n\\s*\\);/);'
+          new_4j = '  assert.match(aplikacja, /obsluzZmianePrzejazduPompy(?:,|\\s*\\n\\s*\\);)/);'
+          if text_4j.count(old_4j) != 1:
               raise SystemExit("Nie znaleziono jednoznacznie historycznej asercji 4J.3.")
-          path.write_text(text.replace(old, new, 1), encoding="utf-8")
+          path_4j.write_text(text_4j.replace(old_4j, new_4j, 1), encoding="utf-8")
+
+          path_5f1 = Path("testy/etap_5f_1.test.js")
+          text_5f1 = path_5f1.read_text(encoding="utf-8")
+          old_5f1 = '  assert.equal(aplikacja.konfiguracja.punktEtapu, "5F.1");\n'
+          if text_5f1.count(old_5f1) != 1:
+              raise SystemExit("Nie znaleziono jednoznacznie przestarzalej asercji etapu 5F.1.")
+          path_5f1.write_text(text_5f1.replace(old_5f1, "", 1), encoding="utf-8")
           PY
 
       - name: Sprawdz nowy test
@@ -67,7 +75,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add js/budowy/budowy.js js/aplikacja.js js/interfejs/limit_opoznienia.js js/konfiguracja/konfiguracja.js index.html testy/etap_5f_2.test.js testy/etap_4j_3_1.test.js testy/TESTY_ETAP_5.md README.md ETAPY_ROZWOJU.md PROJECT_DECISIONS.md
+          git add js/budowy/budowy.js js/aplikacja.js js/interfejs/limit_opoznienia.js js/konfiguracja/konfiguracja.js index.html testy/etap_5f_2.test.js testy/etap_5f_1.test.js testy/etap_4j_3_1.test.js testy/TESTY_ETAP_5.md README.md ETAPY_ROZWOJU.md PROJECT_DECISIONS.md
           if git diff --cached --quiet; then
             echo "Brak zmian do zapisania."
             exit 0
