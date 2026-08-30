@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5D.1**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5D.2**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -716,7 +716,7 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
   - [x] **5C.3 — testy:** brak przesunięcia daje wynik zgodny z Etapem 3, a
     przesunięcie nie pozostawia żadnego kursu z poprzedniej wersji planu.
 - [ ] **5D — rzeczywiste dostawy a czas pracy pompy.**
-  - [ ] **5D.1 — rzeczywiste okno betonowania:** okres pracy pompy wynika z
+  - [x] **5D.1 — rzeczywiste okno betonowania:** okres pracy pompy wynika z
     faktycznych godzin rozładunków po przydziale gruszek, nie tylko z planu bazowego.
   - [ ] **5D.2 — wpływ na następną budowę:** wydłużenie betonowania przez gruszki
     przesuwa gotowość pompy i może wymusić dalszą korektę kolejnej budowy.
@@ -1145,7 +1145,7 @@ Przed kodowaniem rozpisano podetapy **5A–5J**. Etap 5 świadomie obejmuje sprz
 
 # Kolejny krok
 
-Rozpocząć **5D.1 — rzeczywiste okno betonowania**. Okres pracy pompy ma wynikać z faktycznych godzin rozładunków po przydziale gruszek, a nie wyłącznie z kursów bazowych.
+Rozpocząć **5D.2 — wpływ na następną budowę**. Wydłużony przez rzeczywiste dostawy okres zajętości pompy ma przesunąć jej gotowość i w razie potrzeby skorygować kolejną budowę.
 
 ## Zamknięcie 5A.1 — trzy godziny i niezmienniki — 2026-08-30
 
@@ -1256,6 +1256,19 @@ Następny niezakończony podetap: **5C.3 — testy regenerowania kursów**.
 
 Podetap **5C.3** oraz cały punkt **5C** są zakończone. Etap 5 pozostaje otwarty.
 Następny niezakończony podetap: **5D.1 — rzeczywiste okno betonowania**.
+
+## Zamknięcie 5D.1 — rzeczywiste okno betonowania — 2026-08-30
+
+- [x] po przydziale gruszek silnik ponownie wyznacza okno betonowania z kursów o statusie `przydzielony`;
+- [x] planowane okno pompy pozostaje punktem odniesienia, a `rzeczywisteOknoBetonowania` przechowuje faktyczne granice pierwszego i ostatniego rozładunku;
+- [x] przy jednej gruszce dla budowy 16 m³ drugi faktyczny rozładunek przesuwa się o `10 min` do `08:25–08:40`, przez co betonowanie wydłuża się z `30` do `40 min`;
+- [x] pełny rzeczywisty okres pompy 32 m wydłuża się w tym scenariuszu z `07:40–09:00` do `07:40–09:10`;
+- [x] ten sam okres jest synchronizowany w wyniku budowy, liście okresów i stanie konkretnej pompy;
+- [x] 5D.1 nie przesuwa jeszcze kolejnej budowy na podstawie wydłużonego okresu — ten zakres pozostaje w 5D.2;
+- [x] `testy/etap_5d_1.test.js` oraz pełna regresja przechodzą poprawnie.
+
+Podetap **5D.1** jest zakończony. Punkt nadrzędny **5D** i cały Etap 5 pozostają otwarte.
+Następny niezakończony podetap: **5D.2 — wpływ na następną budowę**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
