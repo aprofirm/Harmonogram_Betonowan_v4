@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5B.3**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5C.1**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -700,13 +700,13 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
   - [x] **5A.3 — test bazowy:** plan bez ograniczeń pomp i gruszek daje wynik
     zgodny z zamkniętymi Etapami 3–4, a kolejne identyczne przeliczenia nie
     dziedziczą starych kursów ani zajętości.
-- [ ] **5B — wpływ pomp na rzeczywisty start budowy.**
+- [x] **5B — wpływ pomp na rzeczywisty start budowy.**
   - [x] **5B.1 — zastosowanie możliwego startu:** wynik przydziału pompy może
     przesunąć `StartRoboczy`, ale nigdy `StartPlanowany` ani `StartZadany`.
   - [x] **5B.2 — brak możliwej pompy:** brak aktywnego lub zgodnego zasobu, brak
     wymaganej trasy albo niemożliwe okno dostępności tworzą jawny konflikt bez
     wymyślania zastępczej godziny.
-  - [ ] **5B.3 — testy propagacji:** wielkość przesunięcia i jego przyczyna są
+  - [x] **5B.3 — testy propagacji:** wielkość przesunięcia i jego przyczyna są
     zachowane przy budowie i stabilne przy ponownym przeliczeniu.
 - [ ] **5C — regenerowanie kursów gruszek po zmianie startu.**
   - [ ] **5C.1 — nowe kursy od `StartRoboczy`:** po przesunięciu budowy wszystkie
@@ -1145,7 +1145,7 @@ Przed kodowaniem rozpisano podetapy **5A–5J**. Etap 5 świadomie obejmuje sprz
 
 # Kolejny krok
 
-Rozpocząć **5B.3 — testy propagacji skutku pompy**. Wielkość przesunięcia i jego przyczyna mają pozostać przy budowie oraz być stabilne przy ponownym przeliczeniu.
+Rozpocząć **5C.1 — nowe kursy od `StartRoboczy`**. Po przesunięciu budowy przez pompę wszystkie jej kursy mają zostać wygenerowane od nowej godziny roboczej.
 
 ## Zamknięcie 5A.1 — trzy godziny i niezmienniki — 2026-08-30
 
@@ -1209,6 +1209,17 @@ Następny niezakończony podetap: **5B.2 — brak możliwej pompy**.
 
 Zamknięty podetap: **5B.2**. Punkt nadrzędny **5B** i cały Etap 5 pozostają otwarte.
 Następny niezakończony podetap: **5B.3 — testy propagacji**.
+
+## Zamknięcie 5B.3 i całego 5B — propagacja skutku pompy — 2026-08-30
+
+- [x] każda robocza budowa otrzymuje własną kopię `jawnySkutekPompy` z przydzielonym zasobem, wielkością przesunięcia, główną przyczyną i pełną listą ograniczeń;
+- [x] trzy budowy obsługiwane przez jedną pompę zachowują przesunięcia `0`, `55` i `110 min` oraz właściwą przyczynę `pompa-zajeta`;
+- [x] dane źródłowe nie są mutowane, a skutek z poprzedniego wyniku nie przenika do kolejnego przeliczenia;
+- [x] kopia skutku przy budowie jest niezależna od technicznego wyniku przydziału pomp;
+- [x] test `etap_5b_3.test.js` oraz pełna regresja przechodzą poprawnie.
+
+Podetap **5B.3** oraz cały punkt **5B** są zakończone. Etap 5 pozostaje otwarty.
+Następny niezakończony podetap: **5C.1 — nowe kursy od `StartRoboczy`**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14

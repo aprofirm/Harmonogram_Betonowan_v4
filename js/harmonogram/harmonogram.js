@@ -47,6 +47,7 @@
       // wynikiem bieżącego silnika, więc nie wolno dziedziczyć go z poprzedniego
       // przeliczenia ani zapisu historycznego.
       budowa.startRoboczy = budowa.startZadany;
+      budowa.jawnySkutekPompy = null;
       return budowa;
     });
   }
@@ -460,6 +461,16 @@
       const minutaMozliwegoStartu = Number(
         wynikBudowy && wynikBudowy.minutaRzeczywistegoStartuBetonowania
       );
+
+      if (
+        wynikBudowy &&
+        wynikBudowy.jawnySkutekPompy &&
+        typeof wynikBudowy.jawnySkutekPompy === "object"
+      ) {
+        budowa.jawnySkutekPompy = skopiujDaneDoPrzeliczenia(
+          wynikBudowy.jawnySkutekPompy
+        );
+      }
 
       if (
         !wynikBudowy ||

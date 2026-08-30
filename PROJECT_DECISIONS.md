@@ -1992,3 +1992,19 @@ rozpoznanych przyczyn i czytelny opis dla operatora.
 Budowa bez przydziału zachowuje swoje dotychczasowe `StartRoboczy`. Silnik nie
 zgaduje czasu przejazdu, nie podstawia fikcyjnej pompy i nie wyznacza godziny,
 której nie potrafi uzasadnić danymi.
+
+---
+
+## 102. Skutek pompy jest zachowywany bezpośrednio przy roboczej budowie
+
+Centralny wynik każdej budowy obsługiwanej przez ograniczoną flotę zachowuje
+własną kopię `jawnySkutekPompy`. Obejmuje ona przydzielony zasób, minutę
+możliwego startu, liczbę minut przesunięcia, główną przyczynę oraz pełną listę
+ograniczeń. Dzięki temu kolejne fazy harmonogramu nie muszą ponownie wyszukiwać
+tych danych w technicznym wyniku przydziału pomp.
+
+Każde pełne przeliczenie najpierw zeruje skutek na roboczej kopii budowy, a
+następnie wstawia wynik bieżącego przydziału. Dane z poprzedniego wyniku albo
+zapisu historycznego nie mogą przenikać do nowego harmonogramu. Kopia przy
+budowie jest niezależna od `wynik.pompy.wynikiBudow`, a budowy źródłowe z
+importu i budowy ręczne pozostają bez zmian.

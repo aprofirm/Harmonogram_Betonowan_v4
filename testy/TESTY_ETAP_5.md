@@ -3,7 +3,7 @@
 ## Status
 
 Etap 4 jest zamknięty. Etap 5 jest rozpisany przed rozpoczęciem implementacji.
-Cały punkt **5A** jest zakończony. Następny podetap: **5B.1 — zastosowanie możliwego startu**.
+Punkty **5A** i **5B** są zakończone. Następny podetap: **5C.1 — nowe kursy od `StartRoboczy`**.
 
 ## Najważniejsza zasada testowa
 
@@ -29,7 +29,7 @@ konfliktem — nigdy bezgranicznym przesuwaniem.
 - [x] zajęta pompa przesuwa tylko `StartRoboczy`;
 - [x] przejazd budowa → budowa wpływa na realny start;
 - [x] brak możliwej pompy daje konflikt zamiast fikcyjnej godziny;
-- [ ] przyczyna i liczba minut są zachowane w wyniku.
+- [x] przyczyna i liczba minut są zachowane w wyniku.
 
 ## 5C — regenerowanie kursów gruszek
 
