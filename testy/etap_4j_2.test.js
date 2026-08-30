@@ -27,11 +27,11 @@ function sprawdzStatusPublikacji() {
   );
   assert.match(
     etapy,
-    /- \[ \] \*\*4J — pełna regresja, publikacja i test operatora\.\*\*/
+    /- \[x\] \*\*4J — pełna regresja, publikacja i test operatora\.\*\*/
   );
   assert.match(
     etapy,
-    /- \[ \] Etap 4 — Pompy — \*\*rozpoczęty;/
+    /- \[x\] Etap 4 — Pompy — \*\*zakończony 2026-08-30;/
   );
   assert.match(readme, /https:\/\/aprofirm\.github\.io\/Harmonogram_Betonowan_v4\//);
   assert.match(planTestow, /### 4J\.2 — publikacja/);
@@ -51,7 +51,7 @@ function sprawdzGraniceEtapu4() {
       assert.doesNotMatch(
         kod,
         /\.startRoboczy\s*=/,
-        "4J.2 nie może przekroczyć granicy Etapu 4 w module: " + nazwa
+        "Zamknięty Etap 4 nie może przekroczyć swojej granicy w module: " + nazwa
       );
     });
 }
@@ -60,5 +60,5 @@ sprawdzStatusPublikacji();
 sprawdzGraniceEtapu4();
 
 console.log(
-  "OK — 4J.2 formalizuje publikację na main i GitHub Pages bez zmiany logiki harmonogramu."
+  "OK — 4J.2 zachowuje historyczny test publikacji po zamknięciu całego Etapu 4."
 );

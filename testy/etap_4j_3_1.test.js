@@ -157,8 +157,9 @@ function sprawdzInterfejsIPamiec() {
   assert.match(interfejs, /Przywróć wartość z CSV/);
 
   assert.match(etapy, /\[x\] \*\*4J\.3\.1 — jawne czasy przejazdów pomp:/);
-  assert.match(etapy, /\[ \] \*\*4J\.3\.2 — ponowny test operatora:/);
-  assert.match(etapy, /- \[ \] \*\*4J — pełna regresja, publikacja i test operatora\.\*\*/);
+  assert.match(etapy, /\[x\] \*\*4J\.3\.2 — ponowny test operatora:/);
+  assert.match(etapy, /- \[x\] \*\*4J — pełna regresja, publikacja i test operatora\.\*\*/);
+  assert.match(etapy, /- \[x\] Etap 4 — Pompy — \*\*zakończony 2026-08-30;/);
 }
 
 function sprawdzGraniceEtapu4() {
@@ -177,5 +178,5 @@ sprawdzInterfejsIPamiec();
 sprawdzGraniceEtapu4();
 
 console.log(
-  "✓ 4J.3.1: jawne czasy przejazdów pomp są edytowalne, zapisywane i używane przez silnik."
+  "✓ 4J.3.1: jawne czasy przejazdów pomp pozostają chronione po zaliczeniu 4J.3.2 i zamknięciu Etapu 4."
 );

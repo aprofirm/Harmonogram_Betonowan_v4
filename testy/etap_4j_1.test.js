@@ -81,7 +81,7 @@ function sprawdzGraniceEtapu4() {
     assert.doesNotMatch(
       kod,
       /\.startRoboczy\s*=/,
-      "Etap 4 nie może zmieniać StartRoboczy w module: " + nazwa
+      "Zamknięty Etap 4 nie może zmieniać StartRoboczy w module: " + nazwa
     );
   });
 }
@@ -96,7 +96,9 @@ function sprawdzStatus4J1() {
   assert.match(html, /Etap 4J\.[1-3]/);
   assert.match(html, /4J\.[1-3] ·/);
   assert.match(etapy, /\[x\] \*\*4J\.1 — testy automatyczne:/);
-  assert.match(etapy, /- \[ \] \*\*4J — pełna regresja, publikacja i test operatora\.\*\*/);
+  assert.match(etapy, /- \[x\] \*\*4J — pełna regresja, publikacja i test operatora\.\*\*/);
+  assert.match(etapy, /- \[x\] Etap 4 — Pompy — \*\*zakończony 2026-08-30;/);
+  assert.match(etapy, /Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — \*\*zaplanowany; następny podetap 5A\.1\*\*/);
   assert.match(planTestow, /### 4J\.1 — pełna regresja automatyczna/);
   assert.doesNotMatch(planTestow, /Następny podetap to \*\*4G\.3/);
 }
@@ -107,5 +109,5 @@ sprawdzGraniceEtapu4();
 sprawdzStatus4J1();
 
 console.log(
-  "OK — 4J.1 potwierdza kompletność automatycznej regresji całego Etapu 4 i wcześniejszych funkcji."
+  "OK — 4J.1 potwierdza kompletność regresji zamkniętego Etapu 4 i wcześniejszych funkcji."
 );

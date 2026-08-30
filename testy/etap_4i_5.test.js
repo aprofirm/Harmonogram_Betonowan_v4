@@ -88,8 +88,6 @@ function sprawdzKomunikatyNieTylkoKolorem() {
 }
 
 function sprawdzStatusEtapuIGranice() {
-  const html = wczytaj("index.html");
-  const konfiguracja = wczytaj("js/konfiguracja/konfiguracja.js");
   const etapy = wczytaj("ETAPY_ROZWOJU.md");
   const kod = wczytaj("js/interfejs/minimalna_liczba_pomp.js");
 
@@ -103,7 +101,11 @@ function sprawdzStatusEtapuIGranice() {
   );
   assert.match(
     etapy,
-    /- \[ \] \*\*4J — pełna regresja, publikacja i test operatora\.\*\*/
+    /- \[x\] \*\*4J — pełna regresja, publikacja i test operatora\.\*\*/
+  );
+  assert.match(
+    etapy,
+    /- \[x\] Etap 4 — Pompy — \*\*zakończony 2026-08-30;/
   );
   assert.doesNotMatch(kod, /startRoboczy\s*=/);
 }
@@ -114,5 +116,5 @@ sprawdzKomunikatyNieTylkoKolorem();
 sprawdzStatusEtapuIGranice();
 
 console.log(
-  "OK — 4I.5 zachowuje pracę offline i dostępny, czytelny interfejs pomp."
+  "OK — 4I.5 zachowuje pracę offline i dostępny, czytelny interfejs pomp także po zamknięciu Etapu 4."
 );
