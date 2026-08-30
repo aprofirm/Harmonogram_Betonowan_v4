@@ -556,6 +556,121 @@
     return przebieg;
   }
 
+  function pobierzRzeczywisteKursyPoPrzydzialeGruszek(przebieg) {
+    const wynikPrzydzialu = przebieg.wynikPrzydzialuGruszek;
+    const kursy = wynikPrzydzialu && Array.isArray(wynikPrzydzialu.kursy)
+      ? wynikPrzydzialu.kursy
+      : [];
+
+    return kursy.filter(function (kurs) {
+      return kurs && kurs.statusKursu === "przydzielony";
+    });
+  }
+
+  function zaktualizujRzeczywisteOknaPompPoGruszkach(przebieg) {
+    const wynikPomp = przebieg.wynikPomp;
+    const wynikiBudow = wynikPomp && Array.isArray(wynikPomp.wynikiBudow)
+      ? wynikPomp.wynikiBudow
+      : [];
+    const rzeczywisteKursy = pobierzRzeczywisteKursyPoPrzydzialeGruszek(
+      przebieg
+    );
+    const budowyPoId = new Map(
+      przebieg.listaBudow.map(function (budowa) {
+        return [String(budowa.idBudowy || ""), budowa];
+      })
+    );
+    const rzeczywisteOkresyPoIdBudowy = new Map();
+
+    wynikiBudow.forEach(function (wynikBudowy) {
+      const idBudowy = String(wynikBudowy.idBudowy || "");
+      const budowa = budowyPoId.get(idBudowy);
+
+      if (!budowa) {
+        return;
+      }
+
+      const rzeczywisteOknoBetonowania =
+        aplikacja.pompy.wyznaczPlanowaneOknoBetonowaniaBudowy(
+          budowa,
+          rzeczywisteKursy
+        );
+
+      wynikBudowy.rzeczywisteOknoBetonowania = rzeczywisteOknoBetonowania
+        ? skopiujDaneDoPrzeliczenia(rzeczywisteOknoBetonowania)
+        : null;
+
+      if (wynikBudowy.statusPrzydzialuPompy !== "przydzielona") {
+        return;
+      }
+
+      const rzeczywistyOkresZajetosci = rzeczywisteOknoBetonowania
+        ? aplikacja.pompy.wyznaczPelnyOkresZajetosciPompyBudowy(
+          budowa,
+          rzeczywisteKursy
+        )
+        : null;
+
+      wynikBudowy.rzeczywistyOkresZajetosci = rzeczywistyOkresZajetosci
+        ? skopiujDaneDoPrzeliczenia(rzeczywistyOkresZajetosci)
+        : null;
+      rzeczywisteOkresyPoIdBudowy.set(
+        idBudowy,
+        wynikBudowy.rzeczywistyOkresZajetosci
+      );
+    });
+
+    if (!wynikPomp) {
+      return przebieg;
+    }
+
+    if (Array.isArray(wynikPomp.przydzieloneBetonowania)) {
+      wynikPomp.przydzieloneBetonowania = wynikiBudow.filter(
+        function (wynikBudowy) {
+          return wynikBudowy.statusPrzydzialuPompy === "przydzielona";
+        }
+      );
+    }
+
+    if (Array.isArray(wynikPomp.okresyZajetosci)) {
+      wynikPomp.okresyZajetosci.forEach(function (pozycja) {
+        const idBudowy = String(pozycja.idBudowy || "");
+
+        if (!rzeczywisteOkresyPoIdBudowy.has(idBudowy)) {
+          return;
+        }
+
+        const okres = rzeczywisteOkresyPoIdBudowy.get(idBudowy);
+        pozycja.rzeczywistyOkresZajetosci = okres
+          ? skopiujDaneDoPrzeliczenia(okres)
+          : null;
+      });
+    }
+
+    if (Array.isArray(wynikPomp.stanPomp)) {
+      wynikPomp.stanPomp.forEach(function (stanPompy) {
+        const przydzialy = Array.isArray(stanPompy.przydzialy)
+          ? stanPompy.przydzialy
+          : [];
+
+        przydzialy.forEach(function (przydzial) {
+          const idBudowy = String(przydzial.idBudowy || "");
+
+          if (!rzeczywisteOkresyPoIdBudowy.has(idBudowy)) {
+            return;
+          }
+
+          const okres = rzeczywisteOkresyPoIdBudowy.get(idBudowy);
+          przydzial.rzeczywistyOkresZajetosci = okres
+            ? skopiujDaneDoPrzeliczenia(okres)
+            : null;
+        });
+      });
+    }
+
+    return przebieg;
+  }
+
   function zbudujKoncowyWynikPrzebiegu(przebieg) {
     const wynikPrzydzialu = przebieg.wynikPrzydzialuGruszek;
     const ustawieniaTrybuGruszek = przebieg.ustawieniaTrybuGruszek;
@@ -607,6 +722,7 @@
     zastosujMozliweStartyPomp(przebieg);
     regenerujKursyPoStartachPomp(przebieg);
     obliczGruszkiPrzebiegu(przebieg);
+    zaktualizujRzeczywisteOknaPompPoGruszkach(przebieg);
 
     return zbudujKoncowyWynikPrzebiegu(przebieg);
   }
