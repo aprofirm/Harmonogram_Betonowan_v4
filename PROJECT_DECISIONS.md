@@ -1942,3 +1942,17 @@ przeliczenia ani zapisu historycznego.
 Silnik pracuje na niezależnych kopiach budów, także ich zagnieżdżonych danych.
 Może zmieniać kopię roboczą w kolejnych podetapach Etapu 5, ale nie może mutować
 budów źródłowych z importu ani budów ręcznych przekazanych na wejściu.
+
+---
+
+## 98. Pełne obliczenie ma jeden centralny przebieg
+
+Publicznym punktem wejścia silnika jest `przeliczCalyHarmonogram()`. Funkcja
+koordynuje osobne, czytelne fazy: przygotowanie budów, zbudowanie bazowych
+kursów, obliczenie niezależnego wyniku pomp, przydział gruszek oraz złożenie
+wyniku końcowego. Moduły interfejsu nie mogą samodzielnie powtarzać ani omijać
+tych faz.
+
+W 5A.2 wynik pomp nadal zachowuje granicę zamkniętego Etapu 4 i nie zmienia
+`StartRoboczy`. Zastosowanie przesunięcia pompy do budowy jest osobnym krokiem
+5B, a sprzężenie zwrotne z rzeczywistymi kursami należy do 5D–5E.

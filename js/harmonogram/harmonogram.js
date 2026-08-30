@@ -300,7 +300,7 @@
     }];
   }
 
-  function przeliczCalyHarmonogram(daneWejsciowe) {
+  function przygotujCentralnyPrzebieg(daneWejsciowe) {
     const aktualneDane = daneWejsciowe || {};
     const parametry = polaczParametry(aktualneDane.parametry);
     const stanImportu = aktualneDane.stanImportu ||
@@ -309,46 +309,75 @@
       stanImportu.budowy,
       aktualneDane.budowyReczne
     );
+
+    return {
+      aktualneDane: aktualneDane,
+      parametry: parametry,
+      listaBudow: listaBudow
+    };
+  }
+
+  function obliczBazoweKursyPrzebiegu(przebieg) {
     const wygenerowaneKursy = aplikacja.gruszki.generujKursy(
-      listaBudow,
-      parametry.pojemnoscGruszkiM3
+      przebieg.listaBudow,
+      przebieg.parametry.pojemnoscGruszkiM3
     );
-    const kursyZCzasami = aplikacja.gruszki.obliczCzasyKursow(
+
+    przebieg.kursyBazowe = aplikacja.gruszki.obliczCzasyKursow(
       wygenerowaneKursy,
-      listaBudow,
-      parametry
+      przebieg.listaBudow,
+      przebieg.parametry
     );
-    const ustawieniaTrybuGruszek = pobierzUstawieniaTrybuGruszek(parametry);
+
+    return przebieg;
+  }
+
+  function obliczPompyPrzebiegu(przebieg) {
+    // Do końca 5A pompy nadal tworzą niezależny wynik Etapu 4 na bazowych
+    // kursach. Zastosowanie ich wpływu do StartRoboczy rozpocznie dopiero 5B.
+    przebieg.wynikPomp = obliczCentralnyWynikPomp(
+      przebieg.listaBudow,
+      przebieg.aktualneDane.listaPomp,
+      przebieg.kursyBazowe,
+      przebieg.parametry,
+      utworzOpcjePompZBudow(
+        przebieg.listaBudow,
+        przebieg.aktualneDane.opcjePomp
+      )
+    );
+
+    return przebieg;
+  }
+
+  function obliczGruszkiPrzebiegu(przebieg) {
+    const ustawieniaTrybuGruszek = pobierzUstawieniaTrybuGruszek(
+      przebieg.parametry
+    );
     const wynikMinimalnejFloty = aplikacja.gruszki.przydzielGruszkiDoKursow(
-      kursyZCzasami
+      przebieg.kursyBazowe
     );
     const czyOgraniczonaFlota =
       ustawieniaTrybuGruszek.trybGruszek === "mam-okreslona-liczbe";
     const wynikPrzydzialu = czyOgraniczonaFlota
       ? aplikacja.gruszki.przydzielOgraniczonaLiczbeGruszekDoKursow(
-        kursyZCzasami,
+        przebieg.kursyBazowe,
         ustawieniaTrybuGruszek.liczbaDostepnychGruszek
       )
       : wynikMinimalnejFloty;
-    const kursy = wynikPrzydzialu.kursy;
-    const minimalnaLiczbaGruszek =
+
+    przebieg.ustawieniaTrybuGruszek = ustawieniaTrybuGruszek;
+    przebieg.czyOgraniczonaFlotaGruszek = czyOgraniczonaFlota;
+    przebieg.wynikPrzydzialuGruszek = wynikPrzydzialu;
+    przebieg.minimalnaLiczbaGruszek =
       wynikMinimalnejFloty.minimalnaLiczbaGruszek;
-    // 4I.1: pompy dostają bazowe kursy przed korektami ograniczonej floty
-    // gruszek. Wyniki obu zasobów są nadal niezależne; sprzężenie należy do Etapu 5.
-    const wynikPomp = obliczCentralnyWynikPomp(
-      listaBudow,
-      aktualneDane.listaPomp,
-      kursyZCzasami,
-      parametry,
-      utworzOpcjePompZBudow(listaBudow, aktualneDane.opcjePomp)
-    );
-    const stanGruszek = {
+
+    przebieg.stanGruszek = {
       trybGruszek: ustawieniaTrybuGruszek.trybGruszek,
-      minimalnaLiczbaGruszek: minimalnaLiczbaGruszek,
+      minimalnaLiczbaGruszek: przebieg.minimalnaLiczbaGruszek,
       liczbaDostepnychGruszek:
         ustawieniaTrybuGruszek.liczbaDostepnychGruszek,
       dostepneGruszki: wynikPrzydzialu.gruszki,
-      przydzieloneKursy: kursy,
+      przydzieloneKursy: wynikPrzydzialu.kursy,
       liczbaNieprzydzielonychKursow:
         wynikPrzydzialu.liczbaNieprzydzielonychKursow || 0,
       liczbaOpoznionychKursow:
@@ -358,18 +387,25 @@
       czyOgraniczenieWplyneloNaPlan:
         Boolean(wynikPrzydzialu.czyOgraniczenieWplyneloNaPlan)
     };
-    const komunikatKursow = czyOgraniczonaFlota
+
+    return przebieg;
+  }
+
+  function zbudujKoncowyWynikPrzebiegu(przebieg) {
+    const wynikPrzydzialu = przebieg.wynikPrzydzialuGruszek;
+    const ustawieniaTrybuGruszek = przebieg.ustawieniaTrybuGruszek;
+    const komunikatKursow = przebieg.czyOgraniczonaFlotaGruszek
       ? utworzKomunikatOgraniczonejFloty(
         wynikPrzydzialu,
-        minimalnaLiczbaGruszek,
-        listaBudow
+        przebieg.minimalnaLiczbaGruszek,
+        przebieg.listaBudow
       )
       : utworzKomunikatKursow(
-        kursy,
-        listaBudow,
-        minimalnaLiczbaGruszek
+        wynikPrzydzialu.kursy,
+        przebieg.listaBudow,
+        przebieg.minimalnaLiczbaGruszek
       );
-    const konflikty = czyOgraniczonaFlota
+    const konflikty = przebieg.czyOgraniczonaFlotaGruszek
       ? utworzKonfliktyOgraniczonejFloty(wynikPrzydzialu)
       : [];
 
@@ -377,22 +413,32 @@
       etap: aplikacja.konfiguracja.numerEtapu,
       punktEtapu: aplikacja.konfiguracja.punktEtapu,
       status: "gotowy",
-      parametry: parametry,
-      budowy: listaBudow,
-      pompy: wynikPomp,
-      gruszki: stanGruszek,
+      parametry: przebieg.parametry,
+      budowy: przebieg.listaBudow,
+      pompy: przebieg.wynikPomp,
+      gruszki: przebieg.stanGruszek,
       lokalizacje: aplikacja.lokalizacje.utworzPustyStanLokalizacji(),
-      kursy: kursy,
+      kursy: wynikPrzydzialu.kursy,
       trybGruszek: ustawieniaTrybuGruszek.trybGruszek,
-      minimalnaLiczbaGruszek: minimalnaLiczbaGruszek,
+      minimalnaLiczbaGruszek: przebieg.minimalnaLiczbaGruszek,
       liczbaDostepnychGruszek:
         ustawieniaTrybuGruszek.liczbaDostepnychGruszek,
-      trybPomp: wynikPomp.trybPomp,
-      minimalnaLiczbaPomp: wynikPomp.minimalnaLiczbaPomp,
-      liczbaDostepnychPomp: wynikPomp.liczbaDostepnychPomp,
+      trybPomp: przebieg.wynikPomp.trybPomp,
+      minimalnaLiczbaPomp: przebieg.wynikPomp.minimalnaLiczbaPomp,
+      liczbaDostepnychPomp: przebieg.wynikPomp.liczbaDostepnychPomp,
       konflikty: konflikty,
       komunikaty: [komunikatKursow]
     };
+  }
+
+  function przeliczCalyHarmonogram(daneWejsciowe) {
+    const przebieg = przygotujCentralnyPrzebieg(daneWejsciowe);
+
+    obliczBazoweKursyPrzebiegu(przebieg);
+    obliczPompyPrzebiegu(przebieg);
+    obliczGruszkiPrzebiegu(przebieg);
+
+    return zbudujKoncowyWynikPrzebiegu(przebieg);
   }
 
   aplikacja.harmonogram = {

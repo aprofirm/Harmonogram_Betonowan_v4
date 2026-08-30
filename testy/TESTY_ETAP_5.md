@@ -3,7 +3,7 @@
 ## Status
 
 Etap 4 jest zamknięty. Etap 5 jest rozpisany przed rozpoczęciem implementacji.
-Podetap **5A.1** jest zakończony. Następny podetap: **5A.2 — czysty centralny przebieg**.
+Podetapy **5A.1–5A.2** są zakończone. Następny podetap: **5A.3 — test bazowy**.
 
 ## Najważniejsza zasada testowa
 
@@ -18,6 +18,8 @@ konfliktem — nigdy bezgranicznym przesuwaniem.
 - [x] `StartZadany` pozostaje decyzją operatora;
 - [x] `StartRoboczy` jest wynikiem ograniczeń silnika;
 - [x] pełne przeliczenie nie mutuje danych wejściowych;
+- [x] jedno centralne wywołanie prowadzi jawnie przez fazy budów, kursów, pomp, gruszek i wyniku końcowego;
+- [x] moduł centralnego przebiegu nie zawiera logiki DOM ani obsługi zdarzeń interfejsu;
 - [ ] identyczne kolejne przeliczenia dają identyczny wynik;
 - [ ] plan bez ograniczeń zachowuje wynik zamkniętych Etapów 3–4.
 

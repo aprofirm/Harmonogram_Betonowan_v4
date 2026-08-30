@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5A.2**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5A.3**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -694,7 +694,7 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
   - [x] **5A.1 — trzy godziny i niezmienniki:** `StartPlanowany` pozostaje źródłem,
     `StartZadany` decyzją operatora, a `StartRoboczy` rzeczywistym wynikiem silnika;
     ustalić kontrakt bez mutowania danych źródłowych.
-  - [ ] **5A.2 — czysty centralny przebieg:** jedno `przeliczCalyHarmonogram()`
+  - [x] **5A.2 — czysty centralny przebieg:** jedno `przeliczCalyHarmonogram()`
     buduje wynik od początku i wywołuje istniejące moduły Etapów 3–4 we właściwej
     kolejności, bez logiki biznesowej w interfejsie.
   - [ ] **5A.3 — test bazowy:** plan bez ograniczeń pomp i gruszek daje wynik
@@ -1145,7 +1145,7 @@ Przed kodowaniem rozpisano podetapy **5A–5J**. Etap 5 świadomie obejmuje sprz
 
 # Kolejny krok
 
-Rozpocząć **5A.2 — czysty centralny przebieg pełnego silnika**. Punkt wejścia ma budować wynik od początku i wywoływać istniejące moduły we właściwej kolejności, bez przenoszenia logiki biznesowej do interfejsu.
+Rozpocząć **5A.3 — test bazowy pełnego przebiegu**. Plan bez ograniczeń pomp i gruszek ma zachować wynik zamkniętych Etapów 3–4, a identyczne kolejne przeliczenia nie mogą dziedziczyć starych kursów ani zajętości.
 
 ## Zamknięcie 5A.1 — trzy godziny i niezmienniki — 2026-08-30
 
@@ -1158,6 +1158,18 @@ Rozpocząć **5A.2 — czysty centralny przebieg pełnego silnika**. Punkt wejś
 
 Zamknięty podetap: **5A.1**. Punkt nadrzędny **5A** i cały **Etap 5** pozostają otwarte.
 Następny niezakończony podetap: **5A.2 — czysty centralny przebieg**.
+
+## Zamknięcie 5A.2 — czysty centralny przebieg — 2026-08-30
+
+- [x] publicznym punktem wejścia pozostaje jedno `przeliczCalyHarmonogram()`;
+- [x] centralny przebieg jawnie przygotowuje budowy, buduje bazowe kursy, oblicza niezależny wynik pomp, przydziela gruszki i składa wynik końcowy;
+- [x] logika przebiegu pozostaje w module harmonogramu i nie korzysta z DOM ani zdarzeń interfejsu;
+- [x] granica Etapu 4 jest zachowana — wpływ pompy nie zmienia jeszcze `StartRoboczy`, ponieważ rozpocznie się dopiero w 5B;
+- [x] test `etap_5a_2.test.js` potwierdza kolejność faz oraz kompletny wynik obu zasobów;
+- [x] pełna regresja wcześniejszych etapów przechodzi poprawnie.
+
+Zamknięty podetap: **5A.2**. Punkt nadrzędny **5A** i cały **Etap 5** pozostają otwarte.
+Następny niezakończony podetap: **5A.3 — test bazowy**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
