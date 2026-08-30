@@ -3,7 +3,7 @@
 ## Status
 
 Etap 4 jest zamknięty. Etap 5 jest rozpisany przed rozpoczęciem implementacji.
-Punkty **5A–5D** oraz podetapy **5E.1–5E.2** są zakończone. Następny podetap: **5E.3 — zabezpieczenie przed nieskończonym przesuwaniem**.
+Punkty **5A–5D** oraz cały **5E — stabilizacja** są zakończone. Następny podetap: **5F.1 — domyślny limit opóźnienia startu**.
 
 ## Najważniejsza zasada testowa
 
@@ -59,7 +59,8 @@ Test automatyczny 5E.1: `testy/etap_5e_1.test.js` — stabilny plan wykonuje jed
 - [x] stabilny wynik kończy iterację;
 - [x] identyczne dane mają deterministyczny wynik;
 Test automatyczny 5E.2: `testy/etap_5e_2.test.js` — stabilność jest rozpoznawana przez brak zmiany całego zestawu `StartRoboczy`; wynik zwraca jawny stan `stabilny`, liczbę iteracji i przyczynę zakończenia, a dwa pełne przeliczenia identycznych danych są identyczne.
-- [ ] zabezpieczenie kończy niestabilny przypadek jawnym konfliktem.
+- [x] zabezpieczenie kończy niestabilny przypadek jawnym konfliktem.
+Test automatyczny 5E.3: `testy/etap_5e_3.test.js` — normalna kaskada stabilizuje się przed domyślnym limitem `50`, a wymuszony w teście limit `2` zatrzymuje dalsze przesuwanie i tworzy dokładnie jeden konflikt `NIESTABILNY_HARMONOGRAM_LIMIT_ITERACJI`; ponowne przeliczenie pozostaje deterministyczne.
 
 ## 5F — limit opóźnienia startu
 

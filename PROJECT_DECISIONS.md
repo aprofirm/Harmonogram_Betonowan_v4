@@ -2075,3 +2075,26 @@ identyczny stan stabilizacji i identyczny harmonogram.
 Brak osiągnięcia stabilności nie jest jeszcze rozstrzygany w 5E.2. Limit
 iteracji albo równoważne zabezpieczenie oraz jawny konflikt należą do 5E.3.
 
+---
+
+## 107. Niestabilny harmonogram jest zatrzymywany limitem iteracji i konfliktem
+
+W 5E.3 centralny silnik ma techniczną osłonę przed przypadkiem, w którym
+sprzężone przeliczenie nie osiąga stabilności. Domyślny limit wynosi `50`
+pełnych iteracji stabilizacji. Nie jest to parametr codziennej pracy operatora
+i nie wymaga pola w interfejsie; służy jako bezpiecznik silnika.
+
+Jeżeli plan ustabilizuje się wcześniej, obliczenia kończą się natychmiast zgodnie
+z warunkiem 5E.2. Jeżeli po wykorzystaniu całego limitu ostatnia iteracja nadal
+zmienia `StartRoboczy`, silnik nie wykonuje kolejnego automatycznego przesunięcia.
+Stan `stabilizacja` otrzymuje status `niestabilny`, przyczynę
+`limit-iteracji-stabilizacji` i informację o wykorzystanym limicie, a wynik
+zawiera jawny konflikt `NIESTABILNY_HARMONOGRAM_LIMIT_ITERACJI`.
+
+Zatrzymany wynik może zawierać ostatni obliczony wariant roboczy, ale nie wolno
+traktować go jako potwierdzonego stabilnego harmonogramu. Operator ma dostać
+konflikt zamiast sytuacji, w której aplikacja bez końca przesuwa godziny lub
+blokuje przeglądarkę. Dla testów silnika dopuszczalne jest jawne podanie niższego
+limitu na wejściu centralnego przeliczenia; produkcyjne wywołania korzystają z
+domyślnej wartości `50`.
+

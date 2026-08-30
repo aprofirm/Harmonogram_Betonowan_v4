@@ -100,7 +100,9 @@ function sprawdzJawnyStanStabilnyBezKorekty() {
       powodZakonczenia: "brak-zmiany-startow-roboczych",
       liczbaIteracji: 1,
       liczbaIteracjiZeZmiana: 0,
-      czyPlanZmienilSieWOstatniejIteracji: false
+      czyPlanZmienilSieWOstatniejIteracji: false,
+      maksymalnaLiczbaIteracji: 50,
+      czyPrzekroczonoLimit: false
     }
   );
 }
@@ -151,7 +153,9 @@ function sprawdzZakonczeniePoUstabilizowaniuIKolejneIdentycznePrzeliczenie() {
       powodZakonczenia: "brak-zmiany-startow-roboczych",
       liczbaIteracji: 3,
       liczbaIteracjiZeZmiana: 2,
-      czyPlanZmienilSieWOstatniejIteracji: false
+      czyPlanZmienilSieWOstatniejIteracji: false,
+      maksymalnaLiczbaIteracji: 50,
+      czyPrzekroczonoLimit: false
     }
   );
   assert.deepEqual(
