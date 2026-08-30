@@ -3,7 +3,7 @@
 ## Status
 
 Etap 4 jest zamknięty. Etap 5 jest rozpisany przed rozpoczęciem implementacji.
-Punkty **5A** i **5B** są zakończone. Następny podetap: **5C.1 — nowe kursy od `StartRoboczy`**.
+Punkty **5A** i **5B** są zakończone. Podpunkt **5C.1** jest zakończony. Następny podetap: **5C.2 — ponowny przydział gruszek**.
 
 ## Najważniejsza zasada testowa
 
@@ -33,8 +33,8 @@ konfliktem — nigdy bezgranicznym przesuwaniem.
 
 ## 5C — regenerowanie kursów gruszek
 
-- [ ] przesunięty `StartRoboczy` tworzy od nowa wszystkie kursy budowy;
-- [ ] rytm dostaw i fizyczny cykl gruszki pozostają rozdzielone;
+- [x] przesunięty `StartRoboczy` tworzy od nowa wszystkie kursy budowy;
+- [x] rytm dostaw i fizyczny cykl gruszki pozostają rozdzielone;
 - [ ] tryb bez limitu i ograniczona flota korzystają z nowych kursów;
 - [ ] nie pozostają żadne kursy z poprzedniego przeliczenia.
 

@@ -115,13 +115,12 @@ function sprawdzZastosowanieStartuPompy() {
   );
   assert.equal(JSON.stringify(stanImportu), zrodloPrzed);
 
-  // 5B.1 zmienia wyłącznie StartRoboczy budowy. Regenerowanie kursów na
-  // podstawie nowych startów jest świadomie zakresem następnego punktu 5C.
+  // Od 5C.1 końcowe kursy są tworzone ponownie z aktualnych StartRoboczy.
   assert.deepEqual(
     Array.from(wynik.kursy, function (kurs) {
       return kurs.godzinaRozpoczeciaRozladunku;
     }),
-    ["08:00", "08:10", "08:20"]
+    ["08:00", "09:05", "10:10"]
   );
 }
 

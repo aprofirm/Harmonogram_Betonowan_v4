@@ -1949,9 +1949,9 @@ budów źródłowych z importu ani budów ręcznych przekazanych na wejściu.
 
 Publicznym punktem wejścia silnika jest `przeliczCalyHarmonogram()`. Funkcja
 koordynuje osobne, czytelne fazy: przygotowanie budów, zbudowanie bazowych
-kursów, obliczenie niezależnego wyniku pomp, przydział gruszek oraz złożenie
-wyniku końcowego. Moduły interfejsu nie mogą samodzielnie powtarzać ani omijać
-tych faz.
+kursów, obliczenie niezależnego wyniku pomp, zastosowanie `StartRoboczy`,
+ponowne wygenerowanie kursów, przydział gruszek oraz złożenie wyniku końcowego.
+Moduły interfejsu nie mogą samodzielnie powtarzać ani omijać tych faz.
 
 W 5A.2 wynik pomp nadal zachowuje granicę zamkniętego Etapu 4 i nie zmienia
 `StartRoboczy`. Zastosowanie przesunięcia pompy do budowy jest osobnym krokiem
@@ -2008,3 +2008,18 @@ następnie wstawia wynik bieżącego przydziału. Dane z poprzedniego wyniku alb
 zapisu historycznego nie mogą przenikać do nowego harmonogramu. Kopia przy
 budowie jest niezależna od `wynik.pompy.wynikiBudow`, a budowy źródłowe z
 importu i budowy ręczne pozostają bez zmian.
+
+---
+
+## 103. Kursy po pompie są generowane od aktualnego StartRoboczy
+
+Kursy bazowe powstają przed przydziałem pomp i pozostają wejściem do
+niezależnego obliczenia ich zajętości. Po zastosowaniu możliwych startów pomp
+centralny silnik nie poprawia godzin w starych obiektach kursów. Generuje od
+zera osobną listę `kursyPoPompach` z aktualnych roboczych kopii budów.
+
+Nowa lista zachowuje liczbę kursów, ich pojemności, dodatkowy odstęp dostaw i
+pełny fizyczny cykl: załadunek, dojazd, rozładunek i powrót. Dodatkowy odstęp
+przesuwa rytm kolejnych dostaw, ale nie wydłuża gotowości pojedynczej gruszki.
+Techniczny wynik pomp nadal korzysta z kursów bazowych; użycie rzeczywistych
+dostaw do ponownego wyznaczenia okresu pompy należy do 5D–5E.

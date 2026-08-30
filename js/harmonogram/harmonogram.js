@@ -421,6 +421,21 @@
     return przebieg;
   }
 
+  function regenerujKursyPoStartachPomp(przebieg) {
+    const wygenerowaneKursy = aplikacja.gruszki.generujKursy(
+      przebieg.listaBudow,
+      przebieg.parametry.pojemnoscGruszkiM3
+    );
+
+    przebieg.kursyPoPompach = aplikacja.gruszki.obliczCzasyKursow(
+      wygenerowaneKursy,
+      przebieg.listaBudow,
+      przebieg.parametry
+    );
+
+    return przebieg;
+  }
+
   function obliczPompyPrzebiegu(przebieg) {
     przebieg.wynikPomp = obliczCentralnyWynikPomp(
       przebieg.listaBudow,
@@ -493,13 +508,13 @@
       przebieg.parametry
     );
     const wynikMinimalnejFloty = aplikacja.gruszki.przydzielGruszkiDoKursow(
-      przebieg.kursyBazowe
+      przebieg.kursyPoPompach
     );
     const czyOgraniczonaFlota =
       ustawieniaTrybuGruszek.trybGruszek === "mam-okreslona-liczbe";
     const wynikPrzydzialu = czyOgraniczonaFlota
       ? aplikacja.gruszki.przydzielOgraniczonaLiczbeGruszekDoKursow(
-        przebieg.kursyBazowe,
+        przebieg.kursyPoPompach,
         ustawieniaTrybuGruszek.liczbaDostepnychGruszek
       )
       : wynikMinimalnejFloty;
@@ -579,6 +594,7 @@
     obliczBazoweKursyPrzebiegu(przebieg);
     obliczPompyPrzebiegu(przebieg);
     zastosujMozliweStartyPomp(przebieg);
+    regenerujKursyPoStartachPomp(przebieg);
     obliczGruszkiPrzebiegu(przebieg);
 
     return zbudujKoncowyWynikPrzebiegu(przebieg);

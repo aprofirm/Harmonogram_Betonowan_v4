@@ -103,6 +103,8 @@ function sprawdzCentralnyPrzebieg() {
     "generowanie-kursow",
     "czasy-kursow",
     "pompy",
+    "generowanie-kursow",
+    "czasy-kursow",
     "przydzial-gruszek",
     "wynik-koncowy"
   ]);
@@ -120,6 +122,7 @@ function sprawdzBrakLogikiInterfejsuWSilniku() {
   assert.match(kod, /function przygotujCentralnyPrzebieg/);
   assert.match(kod, /function obliczBazoweKursyPrzebiegu/);
   assert.match(kod, /function obliczPompyPrzebiegu/);
+  assert.match(kod, /function regenerujKursyPoStartachPomp/);
   assert.match(kod, /function obliczGruszkiPrzebiegu/);
   assert.match(kod, /function zbudujKoncowyWynikPrzebiegu/);
 }
