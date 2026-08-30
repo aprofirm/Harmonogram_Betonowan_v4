@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5C.3**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5D.1**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -708,12 +708,12 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
     wymyślania zastępczej godziny.
   - [x] **5B.3 — testy propagacji:** wielkość przesunięcia i jego przyczyna są
     zachowane przy budowie i stabilne przy ponownym przeliczeniu.
-- [ ] **5C — regenerowanie kursów gruszek po zmianie startu.**
+- [x] **5C — regenerowanie kursów gruszek po zmianie startu.**
   - [x] **5C.1 — nowe kursy od `StartRoboczy`:** po przesunięciu budowy wszystkie
     jej kursy są generowane ponownie z zachowaniem rytmu dostaw i fizycznego cyklu.
   - [x] **5C.2 — ponowny przydział gruszek:** tryb bez limitu i `mam X gruszek`
     korzystają wyłącznie z nowych kursów i wyliczają rzeczywiste godziny dostaw.
-  - [ ] **5C.3 — testy:** brak przesunięcia daje wynik zgodny z Etapem 3, a
+  - [x] **5C.3 — testy:** brak przesunięcia daje wynik zgodny z Etapem 3, a
     przesunięcie nie pozostawia żadnego kursu z poprzedniej wersji planu.
 - [ ] **5D — rzeczywiste dostawy a czas pracy pompy.**
   - [ ] **5D.1 — rzeczywiste okno betonowania:** okres pracy pompy wynika z
@@ -1145,7 +1145,7 @@ Przed kodowaniem rozpisano podetapy **5A–5J**. Etap 5 świadomie obejmuje sprz
 
 # Kolejny krok
 
-Rozpocząć **5C.3 — testy regenerowania kursów**. Plan bez przesunięcia ma pozostać zgodny z Etapem 3, a kolejne przeliczenie nie może zachować żadnego starego kursu.
+Rozpocząć **5D.1 — rzeczywiste okno betonowania**. Okres pracy pompy ma wynikać z faktycznych godzin rozładunków po przydziale gruszek, a nie wyłącznie z kursów bazowych.
 
 ## Zamknięcie 5A.1 — trzy godziny i niezmienniki — 2026-08-30
 
@@ -1244,6 +1244,18 @@ Następny niezakończony podetap: **5C.2 — ponowny przydział gruszek**.
 
 Podetap **5C.2** jest zakończony. Punkt nadrzędny **5C** i cały Etap 5 pozostają otwarte.
 Następny niezakończony podetap: **5C.3 — testy regenerowania kursów**.
+
+## Zamknięcie 5C.3 i całego 5C — testy regenerowania kursów — 2026-08-30
+
+- [x] plan bez przesunięcia pompy zwraca kursy identyczne z bezpośrednim wynikiem zamkniętego Etapu 3;
+- [x] jedna pompa przesuwa kursy drugiej budowy z `08:10`, `08:25` na `09:05`, `09:20`;
+- [x] ponowne przeliczenie z dwiema pompami odtwarza bazowe godziny bez pozostawienia kursów z przesuniętego wyniku;
+- [x] ręczna zmiana poprzedniego wyniku i dodany sztuczny stary kurs nie przenikają do następnego przeliczenia;
+- [x] powrót do jednej pompy ponownie daje dokładnie ten sam deterministyczny wynik;
+- [x] test `etap_5c_3.test.js` oraz pełna regresja przechodzą poprawnie.
+
+Podetap **5C.3** oraz cały punkt **5C** są zakończone. Etap 5 pozostaje otwarty.
+Następny niezakończony podetap: **5D.1 — rzeczywiste okno betonowania**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14

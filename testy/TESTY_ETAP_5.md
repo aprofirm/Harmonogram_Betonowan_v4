@@ -3,7 +3,7 @@
 ## Status
 
 Etap 4 jest zamknięty. Etap 5 jest rozpisany przed rozpoczęciem implementacji.
-Punkty **5A** i **5B** są zakończone. Podpunkty **5C.1–5C.2** są zakończone. Następny podetap: **5C.3 — testy regenerowania kursów**.
+Punkty **5A–5C** są zakończone. Następny podetap: **5D.1 — rzeczywiste okno betonowania**.
 
 ## Najważniejsza zasada testowa
 
@@ -36,7 +36,7 @@ konfliktem — nigdy bezgranicznym przesuwaniem.
 - [x] przesunięty `StartRoboczy` tworzy od nowa wszystkie kursy budowy;
 - [x] rytm dostaw i fizyczny cykl gruszki pozostają rozdzielone;
 - [x] tryb bez limitu i ograniczona flota korzystają z nowych kursów;
-- [ ] nie pozostają żadne kursy z poprzedniego przeliczenia.
+- [x] nie pozostają żadne kursy z poprzedniego przeliczenia.
 
 ## 5D — rzeczywiste dostawy i pompa
 
