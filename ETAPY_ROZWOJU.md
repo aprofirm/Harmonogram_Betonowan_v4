@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5D.2**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5D.3**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -718,7 +718,7 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
 - [ ] **5D — rzeczywiste dostawy a czas pracy pompy.**
   - [x] **5D.1 — rzeczywiste okno betonowania:** okres pracy pompy wynika z
     faktycznych godzin rozładunków po przydziale gruszek, nie tylko z planu bazowego.
-  - [ ] **5D.2 — wpływ na następną budowę:** wydłużenie betonowania przez gruszki
+  - [x] **5D.2 — wpływ na następną budowę:** wydłużenie betonowania przez gruszki
     przesuwa gotowość pompy i może wymusić dalszą korektę kolejnej budowy.
   - [ ] **5D.3 — test kaskady:** co najmniej trzy budowy potwierdzają propagację
     opóźnienia bez nakładania pracy jednej pompy i jednej gruszki.
@@ -1145,7 +1145,7 @@ Przed kodowaniem rozpisano podetapy **5A–5J**. Etap 5 świadomie obejmuje sprz
 
 # Kolejny krok
 
-Rozpocząć **5D.2 — wpływ na następną budowę**. Wydłużony przez rzeczywiste dostawy okres zajętości pompy ma przesunąć jej gotowość i w razie potrzeby skorygować kolejną budowę.
+Rozpocząć **5D.3 — test kaskady**. Co najmniej trzy kolejne budowy mają potwierdzić propagację opóźnienia przez rzeczywiste dostawy bez nakładania pracy jednej pompy i jednej gruszki.
 
 ## Zamknięcie 5A.1 — trzy godziny i niezmienniki — 2026-08-30
 
@@ -1269,6 +1269,20 @@ Następny niezakończony podetap: **5D.1 — rzeczywiste okno betonowania**.
 
 Podetap **5D.1** jest zakończony. Punkt nadrzędny **5D** i cały Etap 5 pozostają otwarte.
 Następny niezakończony podetap: **5D.2 — wpływ na następną budowę**.
+
+## Zamknięcie 5D.2 — wpływ na następną budowę — 2026-08-30
+
+- [x] po 5D.1 rzeczywisty koniec zajętości poprzedniej budowy staje się nowym punktem gotowości tej samej pompy;
+- [x] do gotowości pompy doliczany jest jawny czas przejazdu do następnej budowy;
+- [x] jeżeli pompa nie zdąży na dotychczasowe przygotowanie, różnica przesuwa `StartRoboczy` następnej budowy;
+- [x] po korekcie kursy gruszek są generowane ponownie od nowego `StartRoboczy`, a przydział gruszek liczony jest ponownie;
+- [x] wynik zachowuje `korektaPoRzeczywistychDostawach` z poprzednią budową, gotowością pompy, przejazdem i liczbą dodatkowych minut;
+- [x] scenariusz testowy A→B potwierdza: przy jednej gruszce koniec pompy A przesuwa się do `09:10`, a B z `09:20` do `09:30`; przy dwóch gruszkach B pozostaje `09:20`;
+- [x] 5D.2 wykonuje kontrolowaną propagację w bieżącym przebiegu, ale nie wprowadza jeszcze pełnej iteracji do stabilnego punktu — to pozostaje zakresem 5E;
+- [x] `testy/etap_5d_2.test.js` oraz pełna regresja wszystkich wcześniejszych testów przechodzą poprawnie.
+
+Podetap **5D.2** jest zakończony. Punkt nadrzędny **5D** i cały Etap 5 pozostają otwarte.
+Następny niezakończony podetap: **5D.3 — test kaskady**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
