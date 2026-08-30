@@ -25,9 +25,9 @@ konfliktem — nigdy bezgranicznym przesuwaniem.
 
 ## 5B — wpływ pomp na start
 
-- [ ] pompa dostępna na czas nie przesuwa budowy;
-- [ ] zajęta pompa przesuwa tylko `StartRoboczy`;
-- [ ] przejazd budowa → budowa wpływa na realny start;
+- [x] pompa dostępna na czas nie przesuwa budowy;
+- [x] zajęta pompa przesuwa tylko `StartRoboczy`;
+- [x] przejazd budowa → budowa wpływa na realny start;
 - [ ] brak możliwej pompy daje konflikt zamiast fikcyjnej godziny;
 - [ ] przyczyna i liczba minut są zachowane w wyniku.
 

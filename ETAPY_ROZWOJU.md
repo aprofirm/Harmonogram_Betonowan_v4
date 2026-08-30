@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5B.1**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5B.2**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -701,7 +701,7 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
     zgodny z zamkniętymi Etapami 3–4, a kolejne identyczne przeliczenia nie
     dziedziczą starych kursów ani zajętości.
 - [ ] **5B — wpływ pomp na rzeczywisty start budowy.**
-  - [ ] **5B.1 — zastosowanie możliwego startu:** wynik przydziału pompy może
+  - [x] **5B.1 — zastosowanie możliwego startu:** wynik przydziału pompy może
     przesunąć `StartRoboczy`, ale nigdy `StartPlanowany` ani `StartZadany`.
   - [ ] **5B.2 — brak możliwej pompy:** brak aktywnego lub zgodnego zasobu, brak
     wymaganej trasy albo niemożliwe okno dostępności tworzą jawny konflikt bez
@@ -1145,7 +1145,7 @@ Przed kodowaniem rozpisano podetapy **5A–5J**. Etap 5 świadomie obejmuje sprz
 
 # Kolejny krok
 
-Rozpocząć **5B.1 — zastosowanie możliwego startu pompy**. Wynik przydziału pompy może przesunąć wyłącznie `StartRoboczy`; `StartPlanowany` i `StartZadany` muszą pozostać bez zmian.
+Rozpocząć **5B.2 — brak możliwej pompy**. Brak aktywnego lub zgodnego zasobu, brak wymaganej trasy albo niemożliwe okno dostępności mają utworzyć jawny konflikt bez wymyślania zastępczej godziny.
 
 ## Zamknięcie 5A.1 — trzy godziny i niezmienniki — 2026-08-30
 
@@ -1183,6 +1183,19 @@ Następny niezakończony podetap: **5A.3 — test bazowy**.
 
 Podetap **5A.3** oraz cały punkt **5A** są zakończone. Etap 5 pozostaje otwarty.
 Następny niezakończony podetap: **5B.1 — zastosowanie możliwego startu**.
+
+## Zamknięcie 5B.1 — zastosowanie możliwego startu pompy — 2026-08-30
+
+- [x] przydzielona pompa może zmienić `StartRoboczy` budowy na rzeczywiście możliwą godzinę;
+- [x] `StartPlanowany` i `StartZadany` pozostają bez zmian;
+- [x] wynik bez ograniczenia pomp nie przesuwa budów;
+- [x] źródłowe budowy z importu nie są mutowane;
+- [x] kursy gruszek pozostają jeszcze oparte na bazowych startach zgodnie z granicą przed 5C;
+- [x] test trzech budów potwierdza kaskadowe starty `08:00`, `09:05` i `10:10` dla jednej pompy;
+- [x] test `etap_5b_1.test.js` oraz pełna regresja przechodzą poprawnie.
+
+Zamknięty podetap: **5B.1**. Punkt nadrzędny **5B** i cały Etap 5 pozostają otwarte.
+Następny niezakończony podetap: **5B.2 — brak możliwej pompy**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14

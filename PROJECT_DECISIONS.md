@@ -1966,3 +1966,16 @@ W tabeli wyniku trybu **Oblicz, ile potrzeba** zasoby są nazywane po prostu
 wewnętrznym silnika i nie powinno być pokazywane operatorowi. Wewnętrzne pola
 i identyfikatory mogą zachować dotychczasowe nazwy, aby nie naruszać zgodności
 silnika ani zapisanych testów danych.
+
+---
+
+## 100. Możliwy start pompy zmienia wyłącznie StartRoboczy
+
+Jeżeli ograniczony przydział pomp wyznaczy dla budowy późniejszy, rzeczywiście
+możliwy start, centralny silnik zapisuje tę godzinę wyłącznie w roboczej kopii
+`StartRoboczy`. `StartPlanowany` z danych źródłowych i `StartZadany` ustawiony
+przez operatora pozostają niezmienne.
+
+W 5B.1 kursy gruszek są jeszcze generowane przed zastosowaniem przesunięcia
+pompy. Ich ponowne wygenerowanie od nowego `StartRoboczy` należy do 5C, dzięki
+czemu każda granica sprzężenia ma osobny test i nie jest wdrażana ukrycie.

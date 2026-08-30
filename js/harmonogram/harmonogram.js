@@ -333,8 +333,6 @@
   }
 
   function obliczPompyPrzebiegu(przebieg) {
-    // Do końca 5A pompy nadal tworzą niezależny wynik Etapu 4 na bazowych
-    // kursach. Zastosowanie ich wpływu do StartRoboczy rozpocznie dopiero 5B.
     przebieg.wynikPomp = obliczCentralnyWynikPomp(
       przebieg.listaBudow,
       przebieg.aktualneDane.listaPomp,
@@ -345,6 +343,48 @@
         przebieg.aktualneDane.opcjePomp
       )
     );
+
+    return przebieg;
+  }
+
+  function formatujMinuteStartuPompy(minutaStartu) {
+    const minutaDnia = ((Number(minutaStartu) % 1440) + 1440) % 1440;
+    const godziny = Math.floor(minutaDnia / 60);
+    const minuty = minutaDnia % 60;
+
+    return String(godziny).padStart(2, "0") + ":" +
+      String(minuty).padStart(2, "0");
+  }
+
+  function zastosujMozliweStartyPomp(przebieg) {
+    const wynikiBudow = przebieg.wynikPomp &&
+      Array.isArray(przebieg.wynikPomp.wynikiBudow)
+      ? przebieg.wynikPomp.wynikiBudow
+      : [];
+    const wynikiPoIdBudowy = new Map(
+      wynikiBudow.map(function (wynikBudowy) {
+        return [String(wynikBudowy.idBudowy || ""), wynikBudowy];
+      })
+    );
+
+    przebieg.listaBudow.forEach(function (budowa) {
+      const wynikBudowy = wynikiPoIdBudowy.get(String(budowa.idBudowy || ""));
+      const minutaMozliwegoStartu = Number(
+        wynikBudowy && wynikBudowy.minutaRzeczywistegoStartuBetonowania
+      );
+
+      if (
+        !wynikBudowy ||
+        wynikBudowy.statusPrzydzialuPompy !== "przydzielona" ||
+        !Number.isFinite(minutaMozliwegoStartu)
+      ) {
+        return;
+      }
+
+      budowa.startRoboczy = formatujMinuteStartuPompy(
+        minutaMozliwegoStartu
+      );
+    });
 
     return przebieg;
   }
@@ -436,6 +476,7 @@
 
     obliczBazoweKursyPrzebiegu(przebieg);
     obliczPompyPrzebiegu(przebieg);
+    zastosujMozliweStartyPomp(przebieg);
     obliczGruszkiPrzebiegu(przebieg);
 
     return zbudujKoncowyWynikPrzebiegu(przebieg);
