@@ -28,6 +28,40 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          plik = Path(".github/zastosuj_5i2.py")
+          tekst = plik.read_text(encoding="utf-8")
+          tekst = tekst.replace(
+              '      panelKonfliktow: pobierzWymaganyElement("panel-konfliktow"),\n'
+              '      liczbaKonfliktowPanel: pobierzWymaganyElement("liczba-konfliktow-panel"),\n'
+              '      listaKonfliktow: pobierzWymaganyElement("lista-konfliktow"),\n',
+              '      panelKonfliktow: document.getElementById("panel-konfliktow"),\n'
+              '      liczbaKonfliktowPanel: document.getElementById("liczba-konfliktow-panel"),\n'
+              '      listaKonfliktow: document.getElementById("lista-konfliktow"),\n'
+          )
+          stare = '''  function pokazListeKonfliktow(listaKonfliktow) {
+              const lista = Array.isArray(listaKonfliktow) ? listaKonfliktow : [];
+              const fragment = document.createDocumentFragment();
+          '''
+          nowe = '''  function pokazListeKonfliktow(listaKonfliktow) {
+              const lista = Array.isArray(listaKonfliktow) ? listaKonfliktow : [];
+
+              if (
+                !elementy.panelKonfliktow ||
+                !elementy.liczbaKonfliktowPanel ||
+                !elementy.listaKonfliktow
+              ) {
+                return;
+              }
+
+              const fragment = document.createDocumentFragment();
+          '''
+          if stare not in tekst:
+              raise SystemExit("Nie znaleziono funkcji pokazListeKonfliktow w pakiecie 5I.2")
+          tekst = tekst.replace(stare, nowe)
+          plik.write_text(tekst, encoding="utf-8")
+          PY
           python3 .github/zastosuj_5i2.py
           rm .github/zastosuj_5i2.py
           rm .github/workflows/zastosuj_5i2.yml
