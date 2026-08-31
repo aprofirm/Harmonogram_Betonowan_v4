@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5I.3**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5J.1**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -752,12 +752,12 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
     zachowuje powiązanie z budową, kursem albo zasobem.
   - [x] **5H.3 — czytelne przyczyny:** komunikaty dla operatora są po polsku i
     nie wymagają odczytywania danych diagnostycznych.
-- [ ] **5I — interfejs, parametry i pamięć wyniku Etapu 5.**
+- [x] **5I — interfejs, parametry i pamięć wyniku Etapu 5.**
   - [x] **5I.1 — trzy godziny i przesunięcie:** tabela pokazuje plan źródłowy,
     godzinę zadaną oraz rzeczywisty `StartRoboczy` razem z przyczyną różnicy.
   - [x] **5I.2 — konflikty i przestoje:** problemy są widoczne tekstowo, a kolor
     jest tylko sygnałem pomocniczym.
-  - [ ] **5I.3 — pamięć i stan nieaktualny:** parametry oraz wyjątki budów są
+  - [x] **5I.3 — pamięć i stan nieaktualny:** parametry oraz wyjątki budów są
     odtwarzane, a każda istotna zmiana wymaga nowego pełnego przeliczenia.
 - [ ] **5J — pełna regresja, publikacja i test operatora.**
   - [ ] **5J.1 — testy automatyczne:** cały Etap 5 oraz pełna regresja importu,
@@ -1507,6 +1507,20 @@ Następny niezakończony podetap: **5I.2 — konflikty i przestoje w interfejsie
 
 Podetap **5I.2** jest zakończony. Punkt nadrzędny **5I — interfejs, parametry i pamięć wyniku Etapu 5** oraz cały Etap 5 pozostają otwarte.
 Następny niezakończony podetap: **5I.3 — pamięć i stan nieaktualny**.
+
+## Zamknięcie 5I.3 — pamięć i stan nieaktualny — 2026-08-31
+
+- [x] globalny parametr **Maksymalny przestój między dostawami** jest widoczny w ustawieniach i domyślnie ma `15 min`;
+- [x] `maksymalnyPrzestojMinuty` jest walidowany, przekazywany do pełnego przeliczenia oraz zapisywany razem z pozostałymi parametrami planu;
+- [x] parametr jest odtwarzany z bieżącego planu i historii, a starszy zapis bez pola korzysta z bieżącej wartości domyślnej `15 min`;
+- [x] indywidualny `maksymalneOpoznienieStartuBudowyMinuty` pozostaje zachowywany w planie i historii zgodnie z 5F.2;
+- [x] zmiana parametrów albo indywidualnego wyjątku budowy oznacza poprzedni wynik jako nieaktualny i wymaga pełnego przeliczenia;
+- [x] odtworzenie wcześniej przeliczonego planu uruchamia obliczenie ponownie z zapisanych danych zamiast przywracać stary wynik jako źródło prawdy;
+- [x] zachowano kompatybilność ze starszymi zapisami oraz minimalistycznymi środowiskami testowymi;
+- [x] test `testy/etap_5i_3.test.js` oraz pełna regresja przechodzą przed publikacją.
+
+Podetap **5I.3** oraz cały punkt **5I — interfejs, parametry i pamięć wyniku Etapu 5** są zakończone. Cały Etap 5 pozostaje otwarty do zakończenia 5J.
+Następny niezakończony podetap: **5J.1 — pełna regresja automatyczna Etapu 5**.
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
 

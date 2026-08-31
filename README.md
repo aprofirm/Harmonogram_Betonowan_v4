@@ -145,6 +145,13 @@ Po pełnym przeliczeniu, jeżeli wynik zawiera problemy wymagające uwagi, pod n
 
 Wpis pokazuje również kontekst problemu: nazwę budowy, właściwe kursy albo zasób. Konflikt przestoju wskazuje konkretną parę kolejnych dostaw. Kolor jest tylko dodatkowym sygnałem; rodzaj i sens problemu są zawsze zapisane tekstem. Gdy konfliktów nie ma, panel pozostaje ukryty. Zmiana danych planu czyści poprzedni panel razem z nieaktualnym wynikiem.
 
+
+### Limit przestoju i aktualność wyniku
+
+W ustawieniach planu znajduje się **Maksymalny przestój między dostawami**, domyślnie `15 min`. Jest to osobny parametr od **Maksymalnego opóźnienia startu**. Obie wartości są zachowywane w bieżącym planie i historii. Starszy zapis bez limitu przestoju korzysta z bieżącej wartości domyślnej `15 min`.
+
+Każda istotna zmiana parametrów, zasobów albo indywidualnego limitu budowy unieważnia poprzedni wynik i wymaga ponownego użycia **Przelicz harmonogram**. Odtworzony wcześniej przeliczony plan jest liczony ponownie z zachowanych danych zamiast używać starego wyniku.
+
 ## Szeroki, kompaktowy widok
 
 Na komputerze aplikacja jest przygotowana do pracy przy zwykłym zoomie
