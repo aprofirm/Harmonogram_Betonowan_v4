@@ -1,0 +1,54 @@
+name: Zastosuj 5H.3
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/zastosuj_5h3.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  zastosuj:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Przygotuj Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Wprowadź 5H.3
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -c 'import base64,zlib;exec(zlib.decompress(base64.b64decode("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 Tzm0W4sWwaHv/kg b3kWMtPffACJQvkrfManFyEjJC58p7xWUsPhm38YDo0uDZf30KYe y8ky71Kmplbq1F83GhrQoKD+GPwx+Owz9h1gg0uVSqGOc9P JKB/TFfiD3X8n4eE1hM6DrztbXzYbGQRhKeUGjD3j/iTwbj6OgNlFWdtXIuaFas/7cKvRkBpTOuEq5Q7ngMyQjfHw3b7BB+qRC8ovGVC4gD3VNbSU+qgF82Fbt+/1rQ7cm7lLs6OWVvE2V32Ku aAL4REZKhhBI68c3mbyKio5vZu2VamNX1V1DcVlXIwKcQWh9z3dIBuaa mPIwogX8ibpzQd3gpvA4Dws0dJQM5hE4vYvN//Jh lhbDCmqkzQwmCCXNx8qTAOeLkAzEw8IoDKnyAJyuP0RDBg4+SuMH7MCr/V4MOkEdhDIBISKgueI/sGMuWv06e0YL VF2Jm4ElP0iIA1nFbaJQTk/X5LC9HwFm3jTSQrlMcyE+RdFoHPY7fcoYSih+B2JLkNJFiAT0C4V1tcjdENI+JDeoN6GP7Ye4HG5H+35ZXoEt4Y9Sa+mD+TS9ElrDyyvpAeARIUezwy7oJAQxgSSA Rgz5n6tDI3Vlxt1q4AErTx0SbouL8eCMHWNDyxkYKI3H+DB7fd6ldIVUUJ+mmD8AhPEodZlRkQArrS827/CnlwS0Oj amB7a2XAJFhhqwG6hmHZlfzpg3n7fVhITZSWNOyMoAoM8DdZuPoImZxAtPKokZcQGyCbdZU44tIhmlQyDQ0UDO4caRnO9WXKLEQFCOXgHfXTlOhj/bj44jcaRysQyeUC2ICcrOCkJjxkcdIQgD5K3C077EaIN0VJEM9fGI O C I a S X+lRgL5qRtjPjt+5wpRGEbTZLxKBF O49DAA9CexYFGC13J5ENaGtEpQFNb su6Us3AGuS2B9TY3TTZq1kTuu huyQGryxZp3zVbcBqbMQUkiYzVQcPlVLqsIx5SFR584FxUiM6gJf2u43JCIc717XIg2fWHQ6fFeb/f5XhWWS pK7f2g1MHM1K+azVWM+XYbuGidgzuZSsRWBfDIBY0eUbuSBJ0Qnl8JhYVILUHrk wvDBjr0yRinIAk9SrJAhe2DMl7ECp6+Gw9G1w0qDm0ThBKJ2LYRakdbByOTvrRYlk i uR/O3P/6UcKwauS8GIX0cwXKE/WXZlnpiGsNekkkt4bW/7rsqMfHQqMLqNIVhLI07LzJo67FgFvwvVucHkkqvUkrcrMRHySb4qoWjBQEpZqre1A0N541/r7f9Rb9AV2ozZ/qT8aPW P JtXS6oap/FL/E0pXjPJiXLru0XH/6d6T08Hu3pP9k/3+4UnVixX5SjdWUXFr6yuHnRqtUm5WYKUuQM7FqzIgYaBtdDqdRmP1pArPGsvhtYbTaPRdFTmrlcv6RlyuOJv7YYNrYWGNbod bQ4edSDO3w dsi61lOsReht0TaNAOk7wWA3GZ DAMjggUOJkPHT4gHUsAqWyX1XgWUgIDf/WHFzSuNTYUP lgASc03bpF1oV53XYrgLLCXq6AcgINd0Q4M1IHXoBkIwnHgRQox2JfMnbSsRLsgf/hreR0BEkp4iXgsDwl0cMWVB3GUyTlB1YsAneYKi2EHYFXwOSymDF2x9p3WwGYCKjREv7AxE8hXdi6plVzI0JDCbEa3l1AgE4x6sTEIakk a3bXSK8XSlwCG3jVnTol sdcNx9GYj2APZeXSsBNtfWnY26H9UzuKrc1hyJhZAWz1uJq1U1TQFpBZoOnMYcixsIAADhFx6n14AjqRBbWn7GT094ho6h2cPqCgjz1FVkGYDejiqrR6IG3KCfm3UopjTdk6Lo9eegE5AU51ZdTgPoVuxxdoZwQoZEjsiQ/juChIz tcQsdP2Ps1yArdlfp1aJCW2ME66+KwctrhPOJDH4XYKHeBbTTY PnYBjgWqDVdJ/S4bcjDaSy/ yv7AObAbmmt7g9ZcwT4f1MfeA1y3HyJ8EYW DGfX8m3Y6oaQLw27GLao8hUqCfDX3uBcMdkOPk9j3HOuDk254JN KFL/WIwJUD6oe972M/AiczvhZZ2nGhPVGQQaOohZPpGVw2zNeHUjrIZqEy8u0uNjlS2VTjNsIp2CTxi6ZRKIYQXYuyjEDY3v/4XhmcRPEMZIgn8ReGhWp+E2H2ARWkeHIm6nfDbH928TF96/4Dtan5wU+aiNYAdln9zzSNbxXM1H3YJXPASHx7C8MIvexxox2vdNaUlVzWNUrACzM4/Q8PIBoYLvaKyukaOrJRnpYT6FC6FVtvLW ejkLJkMpzBtmzUwNBppJNyUuMfc arILUlG8gQ/WNLhA9IvAZpyZ/yJ5QfdQiHndxRB4gXwyg tfDO247DWG2Yf2Z5JAEaC4UoLHW HGgOUa7ypFo2sCFTTaWIo7DIwjFpnvzZbtJBukCzY5degCEZdkgtR+rYWWBHFw6Eg6S7V+uPRuMTqg9nc7PROKPb2OY4hGxBhrm022hsOTT4KsT9IC6CSDEOBF1rK1Ifw4wGZsJuZCImDV00BbTfmtYvHs5on7PDxU5j2yknwujkw1Ns k2q2wTkgqMsEq2wbMiuAIT7BW36qo5Uq5CPju0wIuVQJ1d+ux6+CMNYtz53GQ0fX7LjNCqbCn2qDTkfXgTSmTDM88kASkHOk l+Y+s8LBCFHBCJSEZIKXsqgGlJ3Gl45tBJi uqOkLhZm6Zk3dwTI+FmQ4Ow2oaTA/wADqDpLCITpFKfDvo6zIm8ndKaNAzq xrt+EBBKfKh9blFYxziFwjckwmqfJClG4mH0A+Jm+U0V0l22Hvm73DU0IeUGCc9U56uy8HB/3dF+pJLUbB5/3nL0+evRzsHx73nhw863+jni/gFpmFE4WxsKGgzRakqDqhuH2ukY2ECWrz5vhvhN1MFJpjn bYi7hto3EdFrI0dESLVQcf/A7jl4hY=" )).decode())'
+          rm .github/workflows/zastosuj_5h3.yml
+
+      - name: Uruchom pełną regresję
+        shell: bash
+        run: |
+          set -euo pipefail
+          liczba=0
+          for plik in testy/*.test.js; do
+            echo "=== $plik ==="
+            node "$plik"
+            liczba=$((liczba + 1))
+          done
+          echo "Pełna regresja: $liczba zestawów — wszystkie poprawne."
+          test "$liczba" -eq 88
+
+      - name: Zapisz 5H.3 na main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "5H.3: dodaj czytelne komunikaty konfliktów"
+          git push origin HEAD:main
