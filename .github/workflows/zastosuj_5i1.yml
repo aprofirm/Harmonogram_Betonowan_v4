@@ -27,6 +27,29 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          plik = Path(".github/zastosuj_5i1.py")
+          tekst = plik.read_text(encoding="utf-8")
+          poczatek = tekst.index("# 4. Zachowujemy historyczny test KP-4")
+          koniec = tekst.index("# 5. Test 5I.1")
+          poprawka = '''# 4. Zachowujemy historyczny test KP-4, ale aktualizujemy nazwę kolumny.
+          plik_kp4 = Path("testy/kp_4.test.js")
+          tekst_kp4 = plik_kp4.read_text(encoding="utf-8")
+          if "Start do przeliczenia" not in tekst_kp4:
+              raise SystemExit("Nie znaleziono starej nazwy kolumny w testy/kp_4.test.js")
+          plik_kp4.write_text(
+              tekst_kp4.replace("Start do przeliczenia", "Start budowy"),
+              encoding="utf-8"
+          )
+
+
+          '''
+          plik.write_text(
+              tekst[:poczatek] + poprawka + tekst[koniec:],
+              encoding="utf-8"
+          )
+          PY
           python3 .github/zastosuj_5i1.py
           rm .github/zastosuj_5i1.py
           rm .github/workflows/zastosuj_5i1.yml
