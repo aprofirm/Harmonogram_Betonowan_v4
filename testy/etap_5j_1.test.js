@@ -80,7 +80,10 @@ function sprawdzPelnyRunner() {
 function sprawdzPlanTestowEtapu5() {
   const plan = wczytaj("testy/TESTY_ETAP_5.md");
 
-  assert.match(plan, /Punkty \*\*5A–5I\*\* są zakończone/);
+  assert.match(
+    plan,
+    /Punkty \*\*5A–5I\*\*(?: oraz \*\*5J\.1–5J\.2\*\*)? są zakończone/
+  );
   assert.match(plan, /\[x\] przekroczenie wskazuje konkretną parę dostaw/);
   assert.match(plan, /## 5H — wspólny model konfliktów[\s\S]*?- \[x\] brak gruszki;/);
   assert.match(plan, /## 5I — interfejs i pamięć[\s\S]*?- \[x\] operator widzi plan źródłowy/);
