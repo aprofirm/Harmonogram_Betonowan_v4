@@ -2,7 +2,7 @@
 
 ## Status
 
-Etap 4 jest zamknięty. Punkty **5A–5I** są zakończone. Trwa końcowe domknięcie Etapu 5 w punkcie **5J**; bieżący podetap to **5J.1 — pełna regresja automatyczna**.
+Etap 4 jest zamknięty. Punkty **5A–5I** oraz **5J.1–5J.2** są zakończone. Trwa końcowe domknięcie Etapu 5: scenariusz **5J.3 — test operatora** jest przygotowany i czeka na rzeczywiste wykonanie w przeglądarce.
 
 ## Najważniejsza zasada testowa
 
@@ -160,3 +160,16 @@ pełną regresję każdego zestawu; po dodaniu 5J.1 obejmuje ona 92 testy.
 Test automatyczny 5J.2: `testy/etap_5j_2.test.js` pilnuje trwałego zapisu tych dowodów publikacji i pozostawia 5J otwarte do testu operatora.
 
 Etap 5 można zamknąć dopiero po wykonaniu całego 5J.
+
+
+### 5J.3 — scenariusz operatora przygotowany — 2026-08-31
+
+- status: **przygotowany, jeszcze niezaliczony przez operatora**;
+- instrukcja: `testy/SCENARIUSZ_OPERATORA_5J_3.md`;
+- sztuczne dane: `przyklady/5j3_test_operatora.csv`;
+- automatyczna kontrola oczekiwanego wyniku: `testy/etap_5j_3_przygotowanie.test.js`;
+- scenariusz A obejmuje jedną gruszkę, jedną pompę, kaskadę A → B → X → C, przesunięcia B i C, limit startu i przestój;
+- scenariusz B1 sprawdza `0` gruszek, a B2 `0` pomp;
+- test przygotowawczy nie zastępuje testu operatorskiego i nie może sam zamknąć 5J.3.
+
+Po zielonej regresji przygotowania repo powinno zawierać **94 zestawy testów**. Checkbox testu operatora pozostaje niezaznaczony do chwili rzeczywistego wykonania A, B1 i B2 w przeglądarce.

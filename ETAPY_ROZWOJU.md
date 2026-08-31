@@ -2793,3 +2793,15 @@ Następny niezakończony podetap: **5J.3 — test operatora**.
 - [x] 5J.2 nie dodaje funkcji biznesowych.
 
 Podetap **5J.2** jest zakończony. Następny niezakończony podetap: **5J.3 — test operatora**.
+
+
+### 5J.3 — scenariusz testu operatora przygotowany — 2026-08-31
+
+- [x] przygotowano sztuczny plik `przyklady/5j3_test_operatora.csv`;
+- [x] przygotowano instrukcję `testy/SCENARIUSZ_OPERATORA_5J_3.md`;
+- [x] przygotowano automatyczną kontrolę oczekiwanego wyniku;
+- [ ] operator wykonał scenariusz A w prawdziwej przeglądarce;
+- [ ] operator wykonał scenariusz B1 — brak gruszki;
+- [ ] operator wykonał scenariusz B2 — brak pompy.
+
+Samo przygotowanie danych i automatyczna kontrola **nie zamykają 5J.3**. Punkt 5J i cały Etap 5 pozostają otwarte do rzeczywistego potwierdzenia operatora.
