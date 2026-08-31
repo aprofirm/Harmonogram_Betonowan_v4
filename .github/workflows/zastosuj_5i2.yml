@@ -1,0 +1,56 @@
+name: Zastosuj 5I.2
+
+on:
+  push:
+    branches: [work/5i2-konflikty-interfejs]
+    paths:
+      - ".github/workflows/zastosuj_5i2.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  zastosuj:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: work/5i2-konflikty-interfejs
+
+      - name: Przygotuj Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Wprowadź 5I.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 .github/zastosuj_5i2.py
+          rm .github/zastosuj_5i2.py
+          rm .github/workflows/zastosuj_5i2.yml
+
+      - name: Uruchom pełną regresję
+        shell: bash
+        run: |
+          set -euo pipefail
+          liczba=0
+          for plik in testy/*.test.js; do
+            echo "=== $plik ==="
+            node "$plik"
+            liczba=$((liczba + 1))
+          done
+          echo "Pełna regresja: $liczba zestawów — wszystkie poprawne."
+          test "$liczba" -eq 90
+
+      - name: Zapisz 5I.2 na gałęzi roboczej
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "5I.2: pokaż konflikty i przestoje operatorowi"
+          git push origin HEAD:work/5i2-konflikty-interfejs
