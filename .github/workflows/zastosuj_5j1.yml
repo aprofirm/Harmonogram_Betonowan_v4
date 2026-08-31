@@ -27,6 +27,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          sed -i 's/konfiguracja\.punktEtapu, "5I\.3"/.punktEtapu, "5I.3"/g; s/konfiguracja\.punktEtapu, "5J\.1"/.punktEtapu, "5J.1"/g' .github/zastosuj_5j1.py
           python3 .github/zastosuj_5j1.py
           rm .github/zastosuj_5j1.py
           rm .github/workflows/zastosuj_5j1.yml
