@@ -166,7 +166,7 @@ sprawdzGraniceLimitu();
 sprawdzPierwszePrzekroczenieIWielePar();
 sprawdzBrakFikcyjnychKonfliktow();
 
-assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5H.2");
+assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5H.3");
 
 console.log(
   "OK — 5G.3 zgłasza osobny konflikt dla każdej rzeczywistej pary dostaw przekraczającej limit i zachowuje granicę 15 min."

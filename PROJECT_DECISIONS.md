@@ -2241,3 +2241,13 @@ Pole `opis` nie należy do klucza tożsamości. Dzięki temu późniejsze doprac
 
 Jeżeli ten sam problem zostanie zgłoszony kilka razy, wynik zachowuje pierwsze pełne zgłoszenie i jego szczegółowe pola. Konflikty dotyczące różnych budów, kursów, zasobów, szczegółowych przyczyn albo różnych par dostaw pozostają osobnymi pozycjami. Agregacja zachowuje deterministyczną kolejność pierwszych wystąpień i nie mutuje danych wejściowych.
 
+---
+
+## 116. Konflikt ma osobny czytelny komunikat dla operatora
+
+Od 5H.3 każdy znormalizowany konflikt zachowuje dotychczasowy `opis` i pola techniczne, a dodatkowo otrzymuje `komunikatOperatora`. Pole to jest przygotowane wyłącznie do prostego przedstawienia problemu użytkownikowi i nie uczestniczy w tożsamości ani agregacji konfliktów.
+
+Komunikat operatorski powstaje centralnie na podstawie `kategoriaKonfliktu` i dostępnych danych. Jeżeli konflikt dotyczy konkretnej budowy, kursów, godzin albo limitów, komunikat powinien podać te informacje bez wymagania od operatora odczytywania kodów diagnostycznych. Dla braku trasy program wskazuje również potrzebną czynność: uzupełnienie czasu przejazdu między budowami.
+
+Nieznany przyszły typ konfliktu może użyć dotychczasowego `opis` jako bezpiecznego fallbacku. Zmiana sformułowania `komunikatOperatora` nie może zmieniać klucza tożsamości z 5H.2 ani logiki planowania.
+

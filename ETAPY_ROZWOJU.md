@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5H.3**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5I.1**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -745,12 +745,12 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
     implementacją i przechowywać ją jako parametr programu.
   - [x] **5G.3 — konflikt ciągłości:** przekroczenie limitu jest jawne przy
     konkretnej budowie i wskazuje problematyczną parę dostaw oraz wielkość przerwy.
-- [ ] **5H — wspólny model konfliktów i przyczyn.**
+- [x] **5H — wspólny model konfliktów i przyczyn.**
   - [x] **5H.1 — kontrakt konfliktu:** jeden format dla braku gruszki, braku pompy,
     niedostępności, niezgodnego parametru, kolizji, braku trasy, limitu startu i przestoju.
   - [x] **5H.2 — agregacja:** wynik końcowy zbiera konflikty bez dublowania i
     zachowuje powiązanie z budową, kursem albo zasobem.
-  - [ ] **5H.3 — czytelne przyczyny:** komunikaty dla operatora są po polsku i
+  - [x] **5H.3 — czytelne przyczyny:** komunikaty dla operatora są po polsku i
     nie wymagają odczytywania danych diagnostycznych.
 - [ ] **5I — interfejs, parametry i pamięć wyniku Etapu 5.**
   - [ ] **5I.1 — trzy godziny i przesunięcie:** tabela pokazuje plan źródłowy,
@@ -1461,6 +1461,22 @@ Następny niezakończony podetap: **5H.2 — agregacja konfliktów bez dublowani
 
 Podetap **5H.2** jest zakończony. Punkt nadrzędny **5H — wspólny model konfliktów i przyczyn** oraz cały Etap 5 pozostają otwarte.
 Następny niezakończony podetap: **5H.3 — czytelne przyczyny dla operatora**.
+
+## Zamknięcie 5H.3 — czytelne przyczyny dla operatora — 2026-08-31
+
+- [x] każdy końcowy konflikt otrzymuje osobne pole `komunikatOperatora`, generowane centralnie z kategorii konfliktu i dostępnych danych;
+- [x] dotychczasowe pole `opis` oraz wszystkie pola techniczne pozostają bez zmian dla kompatybilności i diagnostyki;
+- [x] komunikaty rozróżniają brak gruszek, brak pompy, niedostępność, niewystarczający wysięg, brak trasy, limit startu, limit przestoju, niestabilność i kolizję zasobu;
+- [x] tam, gdzie dane są dostępne, komunikat podaje nazwę budowy, godziny, liczbę minut, limit oraz problematyczne kursy;
+- [x] brak trasy zawiera prostą wskazówkę operatorską, aby uzupełnić czas przejazdu między budowami;
+- [x] nieznana przyszła kategoria bez specjalnego szablonu zachowuje dotychczasowy czytelny `opis` jako bezpieczny fallback;
+- [x] tekst `komunikatOperatora` nie uczestniczy w kluczu tożsamości 5H.2, więc zmiana sformułowania nie wpływa na agregację;
+- [x] generowanie komunikatu nie mutuje konfliktu źródłowego;
+- [x] test `testy/etap_5h_3.test.js` sprawdza wszystkie główne kategorie, konkretne dane liczbowe, fallback, brak mutowania, współpracę z deduplikacją i oznaczenie wersji webowej;
+- [x] pełna regresja **88 zestawów** `testy/*.test.js` przechodzi przed publikacją.
+
+Podetap **5H.3** oraz cały punkt **5H — wspólny model konfliktów i przyczyn** są zakończone. Etap 5 pozostaje otwarty.
+Następny niezakończony podetap: **5I.1 — trzy godziny i przesunięcie**.
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
 
