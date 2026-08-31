@@ -2258,3 +2258,14 @@ Nieznany przyszły typ konfliktu może użyć dotychczasowego `opis` jako bezpie
 Od 5I.1 główna tabela nie używa jednego pola do przedstawiania różnych znaczeń godziny. W zwartej komórce `Start budowy` operator widzi osobno plan źródłowy, edytowalny `StartZadany` oraz wynikowy `StartRoboczy`.
 
 `StartRoboczy` jest traktowany jako aktualny wynik dopiero po pełnym przeliczeniu; wcześniej interfejs pokazuje `—`. Jeżeli `StartRoboczy` jest późniejszy niż `StartZadany`, ta sama komórka pokazuje liczbę minut przesunięcia oraz krótką przyczynę wynikającą z danych silnika. Ręczna zmiana `StartZadany` nie zmienia planu źródłowego. Układ pozostaje celowo w jednej komórce, aby nie poszerzać głównej tabeli trzema osobnymi kolumnami.
+
+
+---
+
+## 118. Końcowe konflikty są pokazane w osobnym panelu operatora
+
+Od 5I.2 końcowa lista `wynik.konflikty` jest prezentowana operatorowi w zwartym panelu bezpośrednio przy wyniku harmonogramu. Panel korzysta z `komunikatOperatora` przygotowanego w 5H.3 i nie tworzy własnej równoległej klasyfikacji ani nie zmienia silnika.
+
+Każdy wpis ma tekstową nazwę rodzaju problemu oraz pełny komunikat. Kolor jest wyłącznie sygnałem pomocniczym i nie może być jedynym nośnikiem znaczenia. Konflikt zachowuje widoczne powiązanie z budową, kursem albo zasobem na podstawie wspólnego pola `powiazania`; dla konfliktu przestoju operator widzi konkretną budowę oraz oba kolejne kursy.
+
+Panel jest ukryty, gdy końcowy wynik nie zawiera konfliktów, i jest czyszczony razem z wynikiem po każdej zmianie danych wymagającej ponownego przeliczenia. Warstwa interfejsu nie modyfikuje obiektów konfliktów, zasad agregacji 5H ani decyzji planistycznych silnika.

@@ -236,7 +236,7 @@ sprawdzPrzestojePoRzeczywistymPrzydziale();
 sprawdzZeOpoznionaPierwszaDostawaNieJestPrzestojem();
 sprawdzCiagloscIOdrzucenieNieprzydzielonychKursow();
 
-assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5I.1");
+assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5I.2");
 
 console.log(
   "OK — 5G.1 liczy rzeczywiste przerwy między przydzielonymi dostawami bez mieszania pierwszego opóźnienia."

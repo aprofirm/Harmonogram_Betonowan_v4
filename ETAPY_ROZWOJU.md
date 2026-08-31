@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5I.2**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5I.3**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -755,7 +755,7 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
 - [ ] **5I — interfejs, parametry i pamięć wyniku Etapu 5.**
   - [x] **5I.1 — trzy godziny i przesunięcie:** tabela pokazuje plan źródłowy,
     godzinę zadaną oraz rzeczywisty `StartRoboczy` razem z przyczyną różnicy.
-  - [ ] **5I.2 — konflikty i przestoje:** problemy są widoczne tekstowo, a kolor
+  - [x] **5I.2 — konflikty i przestoje:** problemy są widoczne tekstowo, a kolor
     jest tylko sygnałem pomocniczym.
   - [ ] **5I.3 — pamięć i stan nieaktualny:** parametry oraz wyjątki budów są
     odtwarzane, a każda istotna zmiana wymaga nowego pełnego przeliczenia.
@@ -1492,6 +1492,21 @@ Następny niezakończony podetap: **5I.1 — trzy godziny i przesunięcie**.
 
 Podetap **5I.1** jest zakończony. Punkt nadrzędny **5I — interfejs, parametry i pamięć wyniku Etapu 5** oraz cały Etap 5 pozostają otwarte.
 Następny niezakończony podetap: **5I.2 — konflikty i przestoje w interfejsie**.
+
+## Zamknięcie 5I.2 — konflikty i przestoje w interfejsie — 2026-08-31
+
+- [x] końcowe `wynik.konflikty` są pokazywane w osobnym, zwartym panelu przy głównym wyniku harmonogramu;
+- [x] każdy wpis korzysta z `komunikatOperatora` z 5H.3 zamiast kodu diagnostycznego;
+- [x] rodzaj problemu jest zapisany tekstowo, a kolor pozostaje wyłącznie dodatkowym sygnałem;
+- [x] widoczne znaczniki zachowują powiązania z budową, kursem albo zasobem z kontraktu 5H.1;
+- [x] konflikt przestoju wskazuje konkretną budowę oraz poprzedni i następny kurs problematycznej pary;
+- [x] brak konfliktów ukrywa panel, a zmiana danych czyści go razem z nieaktualnym wynikiem;
+- [x] interfejs nie zmienia klasyfikacji, agregacji ani logiki planowania konfliktów;
+- [x] test `testy/etap_5i_2.test.js` sprawdza rzeczywisty konflikt przestoju, tekst, powiązania, fallback oraz warstwę HTML/CSS;
+- [x] pełna regresja `testy/*.test.js` przechodzi przed publikacją.
+
+Podetap **5I.2** jest zakończony. Punkt nadrzędny **5I — interfejs, parametry i pamięć wyniku Etapu 5** oraz cały Etap 5 pozostają otwarte.
+Następny niezakończony podetap: **5I.3 — pamięć i stan nieaktualny**.
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
 

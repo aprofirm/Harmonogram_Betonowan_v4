@@ -60,6 +60,9 @@
         "liczba-dostepnych-pomp-wynik"
       ),
       liczbaKonfliktow: pobierzWymaganyElement("liczba-konfliktow"),
+      panelKonfliktow: document.getElementById("panel-konfliktow"),
+      liczbaKonfliktowPanel: document.getElementById("liczba-konfliktow-panel"),
+      listaKonfliktow: document.getElementById("lista-konfliktow"),
       wierszeHarmonogramu: pobierzWymaganyElement("wiersze-harmonogramu"),
       wierszeKursow: pobierzWymaganyElement("wiersze-kursow"),
       polePlikuCsv: pobierzWymaganyElement("pole-pliku-csv"),
@@ -1067,6 +1070,195 @@
     elementy.wierszeKursow.replaceChildren(fragment);
   }
 
+
+  function pobierzNazweKategoriiKonfliktu(kategoriaKonfliktu) {
+    const nazwyKategorii = {
+      "brak-gruszki": "Brak gruszki",
+      "brak-pompy": "Brak pompy",
+      "niedostepnosc": "Niedostępność",
+      "niezgodny-parametr": "Parametr",
+      "kolizja": "Kolizja",
+      "brak-trasy": "Brak trasy",
+      "limit-startu": "Start",
+      "limit-przestoju": "Przestój",
+      "niestabilnosc": "Niestabilny plan",
+      "inne": "Konflikt"
+    };
+
+    return nazwyKategorii[kategoriaKonfliktu] || "Konflikt";
+  }
+
+  function pobierzNumerKursuPowiazania(konflikt, powiazanie) {
+    const idPowiazania = String(powiazanie.id || "");
+
+    if (
+      powiazanie.rola === "poprzedni" &&
+      idPowiazania === String(konflikt.idPoprzedniegoKursu || "") &&
+      Number.isFinite(Number(konflikt.numerPoprzedniegoKursu))
+    ) {
+      return String(konflikt.numerPoprzedniegoKursu);
+    }
+
+    if (
+      powiazanie.rola === "nastepny" &&
+      idPowiazania === String(konflikt.idNastepnegoKursu || "") &&
+      Number.isFinite(Number(konflikt.numerNastepnegoKursu))
+    ) {
+      return String(konflikt.numerNastepnegoKursu);
+    }
+
+    return idPowiazania;
+  }
+
+  function utworzEtykietePowiazaniaKonfliktu(konflikt, powiazanie) {
+    const typ = String(powiazanie.typ || "");
+    const id = String(powiazanie.id || "");
+
+    if (typ === "budowa") {
+      if (
+        id === String(konflikt.idBudowy || "") &&
+        String(konflikt.nazwaBudowy || "").trim()
+      ) {
+        return "Budowa: " + String(konflikt.nazwaBudowy).trim();
+      }
+      return "Budowa: " + id;
+    }
+
+    if (typ === "kurs") {
+      const numerKursu = pobierzNumerKursuPowiazania(konflikt, powiazanie);
+      if (powiazanie.rola === "poprzedni") {
+        return "Kurs poprzedni: " + numerKursu;
+      }
+      if (powiazanie.rola === "nastepny") {
+        return "Kurs następny: " + numerKursu;
+      }
+      return "Kurs: " + numerKursu;
+    }
+
+    if (typ === "zasob") {
+      if (id === "gruszki") {
+        return "Zasób: gruszki";
+      }
+      if (id === "pompy") {
+        return "Zasób: pompy";
+      }
+      if (id.indexOf("pompa:") === 0) {
+        return "Pompa: " + id.slice(6);
+      }
+      if (id.indexOf("gruszka:") === 0) {
+        return "Gruszka: " + id.slice(8);
+      }
+      return "Zasób: " + id;
+    }
+
+    if (typ === "parametr") {
+      return "Parametr: " + id;
+    }
+
+    if (typ === "harmonogram") {
+      return "Cały harmonogram";
+    }
+
+    return "Powiązanie: " + id;
+  }
+
+  function pobierzPrezentacjeKonfliktu(konflikt) {
+    const zrodlo = konflikt && typeof konflikt === "object" ? konflikt : {};
+    const kategoriaKonfliktu = String(
+      zrodlo.kategoriaKonfliktu || "inne"
+    ).trim() || "inne";
+    const listaPowiazan = Array.isArray(zrodlo.powiazania)
+      ? zrodlo.powiazania
+      : [];
+    const powiazania = listaPowiazan.map(function (powiazanie) {
+      const kopia = {
+        typ: String(powiazanie.typ || ""),
+        id: String(powiazanie.id || ""),
+        rola: String(powiazanie.rola || "")
+      };
+      kopia.etykieta = utworzEtykietePowiazaniaKonfliktu(zrodlo, kopia);
+      return kopia;
+    });
+    const komunikat = String(
+      zrodlo.komunikatOperatora ||
+      zrodlo.opis ||
+      "Wykryto konflikt harmonogramu."
+    ).trim();
+
+    return {
+      kategoriaKonfliktu: kategoriaKonfliktu,
+      etykietaTypu: pobierzNazweKategoriiKonfliktu(kategoriaKonfliktu),
+      komunikat: komunikat,
+      czyPrzestoj:
+        kategoriaKonfliktu === "limit-przestoju" ||
+        zrodlo.rodzaj === "przestoj-betonowania",
+      powiazania: powiazania
+    };
+  }
+
+  function utworzZnacznikPowiazaniaKonfliktu(powiazanie) {
+    const znacznik = document.createElement("span");
+    znacznik.className = "wpis-konfliktu__powiazanie";
+    znacznik.textContent = powiazanie.etykieta;
+    znacznik.setAttribute("data-typ", powiazanie.typ);
+    znacznik.setAttribute("data-id", powiazanie.id);
+    znacznik.setAttribute("data-rola", powiazanie.rola);
+    return znacznik;
+  }
+
+  function utworzWpisKonfliktu(konflikt) {
+    const prezentacja = pobierzPrezentacjeKonfliktu(konflikt);
+    const wpis = document.createElement("article");
+    const etykietaTypu = document.createElement("strong");
+    const komunikat = document.createElement("p");
+    const powiazania = document.createElement("div");
+
+    wpis.className = "wpis-konfliktu" +
+      (prezentacja.czyPrzestoj ? " wpis-konfliktu--przestoj" : "");
+    wpis.setAttribute(
+      "data-kategoria-konfliktu",
+      prezentacja.kategoriaKonfliktu
+    );
+    etykietaTypu.className = "wpis-konfliktu__typ";
+    etykietaTypu.textContent = prezentacja.etykietaTypu;
+    komunikat.className = "wpis-konfliktu__komunikat";
+    komunikat.textContent = prezentacja.komunikat;
+    powiazania.className = "wpis-konfliktu__powiazania";
+
+    prezentacja.powiazania.forEach(function (powiazanie) {
+      powiazania.appendChild(utworzZnacznikPowiazaniaKonfliktu(powiazanie));
+    });
+
+    wpis.appendChild(etykietaTypu);
+    wpis.appendChild(komunikat);
+    if (prezentacja.powiazania.length) {
+      wpis.appendChild(powiazania);
+    }
+    return wpis;
+  }
+
+  function pokazListeKonfliktow(listaKonfliktow) {
+    const lista = Array.isArray(listaKonfliktow) ? listaKonfliktow : [];
+
+    if (
+      !elementy.panelKonfliktow ||
+      !elementy.liczbaKonfliktowPanel ||
+      !elementy.listaKonfliktow
+    ) {
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    lista.forEach(function (konflikt) {
+      fragment.appendChild(utworzWpisKonfliktu(konflikt));
+    });
+
+    elementy.listaKonfliktow.replaceChildren(fragment);
+    elementy.liczbaKonfliktowPanel.textContent = String(lista.length);
+    elementy.panelKonfliktow.hidden = lista.length === 0;
+  }
+
   function pokazTrwajacePrzeliczenie() {
     elementy.przyciskPrzelicz.disabled = true;
     ustawStatus("praca", "Trwa przeliczanie", "Program przygotowuje nowy wynik od początku.");
@@ -1085,6 +1277,7 @@
         : String(wynik.liczbaDostepnychGruszek);
     odswiezPodsumowaniePomp();
     elementy.liczbaKonfliktow.textContent = String(wynik.konflikty.length);
+    pokazListeKonfliktow(wynik.konflikty);
     ustawStatus(
       wynik.konflikty.length ? "ostrzezenie" : "sukces",
       wynik.konflikty.length
@@ -1102,6 +1295,7 @@
     elementy.minimalnaLiczbaPomp.textContent = "—";
     odswiezPodsumowaniePomp();
     elementy.liczbaKonfliktow.textContent = "0";
+    pokazListeKonfliktow([]);
   }
 
   function oznaczWynikJakoNieaktualny() {
@@ -1233,6 +1427,7 @@
     pokazListeKursow([], []);
     elementy.liczbaKursow.textContent = "0";
     elementy.liczbaKonfliktow.textContent = "0";
+    pokazListeKonfliktow([]);
 
     if (czySaOstrzezenia) {
       ustawStatus(
@@ -1265,6 +1460,7 @@
     pokazListeKursow([], []);
     elementy.liczbaKursow.textContent = "0";
     elementy.liczbaKonfliktow.textContent = "0";
+    pokazListeKonfliktow([]);
     ustawStatus(
       "sukces",
       "Dodano budowę ręcznie",
@@ -1572,6 +1768,8 @@
     pokazListePomp: pokazListePomp,
     pokazTrwajacePrzeliczenie: pokazTrwajacePrzeliczenie,
     pokazWynik: pokazWynik,
+    pobierzPrezentacjeKonfliktu: pobierzPrezentacjeKonfliktu,
+    pokazListeKonfliktow: pokazListeKonfliktow,
     oznaczWynikJakoNieaktualny: oznaczWynikJakoNieaktualny,
     pokazPrzywroconyPlan: pokazPrzywroconyPlan,
     wyczyscPlan: wyczyscPlan,
