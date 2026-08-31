@@ -61,6 +61,19 @@ jobs:
               raise SystemExit("Nie znaleziono funkcji pokazListeKonfliktow w pakiecie 5I.2")
           tekst = tekst.replace(stare, nowe)
           plik.write_text(tekst, encoding="utf-8")
+
+          for test in Path("testy").glob("*.test.js"):
+              tresc = test.read_text(encoding="utf-8")
+              tresc = tresc.replace('html.includes("Etap 5I.1")', 'html.includes("Etap 5I.2")')
+              tresc = tresc.replace(
+                  'html.includes("5I.1 · trzy godziny startu")',
+                  'html.includes("5I.2 · konflikty i przestoje")'
+              )
+              tresc = tresc.replace(
+                  'html.includes("5i1-trzy-godziny-20260831a")',
+                  'html.includes("5i2-konflikty-interfejs-20260831a")'
+              )
+              test.write_text(tresc, encoding="utf-8")
           PY
           python3 .github/zastosuj_5i2.py
           rm .github/zastosuj_5i2.py
