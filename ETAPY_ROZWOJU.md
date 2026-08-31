@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5H.2**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5H.3**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -748,7 +748,7 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
 - [ ] **5H — wspólny model konfliktów i przyczyn.**
   - [x] **5H.1 — kontrakt konfliktu:** jeden format dla braku gruszki, braku pompy,
     niedostępności, niezgodnego parametru, kolizji, braku trasy, limitu startu i przestoju.
-  - [ ] **5H.2 — agregacja:** wynik końcowy zbiera konflikty bez dublowania i
+  - [x] **5H.2 — agregacja:** wynik końcowy zbiera konflikty bez dublowania i
     zachowuje powiązanie z budową, kursem albo zasobem.
   - [ ] **5H.3 — czytelne przyczyny:** komunikaty dla operatora są po polsku i
     nie wymagają odczytywania danych diagnostycznych.
@@ -1445,6 +1445,22 @@ Następny niezakończony podetap: **5H.1 — wspólny kontrakt konfliktu**.
 Podetap **5H.1** jest zakończony. Punkt nadrzędny **5H — wspólny model konfliktów i przyczyn** oraz cały Etap 5 pozostają otwarte.
 Następny niezakończony podetap: **5H.2 — agregacja konfliktów bez dublowania**.
 
+
+## Zamknięcie 5H.2 — agregacja konfliktów bez dublowania — 2026-08-31
+
+- [x] końcowa lista `wynik.konflikty` jest normalizowana i agregowana w jednym miejscu przez moduł wspólnego kontraktu;
+- [x] stabilny klucz tożsamości korzysta z wersji kontraktu, poziomu, kodu, rodzaju, kategorii, szczegółowej `przyczyna` oraz uporządkowanych `powiazania`;
+- [x] treść `opis` nie jest częścią tożsamości, dzięki czemu 5H.3 może później zmienić komunikaty bez zmiany zasad agregacji;
+- [x] kolejność elementów w `powiazania` nie zmienia tożsamości konfliktu;
+- [x] z kilku identycznych zgłoszeń pozostaje pierwsze pełne zgłoszenie wraz z jego dotychczasowymi polami szczegółowymi;
+- [x] konflikty różnych budów, kursów, zasobów, przyczyn i różnych par dostaw pozostają osobnymi pozycjami;
+- [x] kolejność końcowa pozostaje deterministyczna i odpowiada kolejności pierwszych wystąpień;
+- [x] agregacja nie mutuje wejściowej listy ani danych źródłowych;
+- [x] test `testy/etap_5h_2.test.js` sprawdza duplikaty, kolejność powiązań, różne przyczyny i obiekty, integrację z publicznym wynikiem oraz deterministyczność;
+- [x] pełna regresja `testy/*.test.js` przechodzi przed publikacją.
+
+Podetap **5H.2** jest zakończony. Punkt nadrzędny **5H — wspólny model konfliktów i przyczyn** oraz cały Etap 5 pozostają otwarte.
+Następny niezakończony podetap: **5H.3 — czytelne przyczyny dla operatora**.
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
 

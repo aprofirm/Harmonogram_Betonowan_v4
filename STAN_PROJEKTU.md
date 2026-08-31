@@ -7,47 +7,36 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **5H.1 — wspólny kontrakt konfliktu**.
-- Commit z implementacją 5H.1 na `main`: `38d9f9be5e25de6f74f96d2741cb87e6911db7d1`.
-- Cały punkt **5G — maksymalny przestój podczas betonowania** jest zakończony.
-- Punkty **5A–5G** oraz podetap **5H.1** są zakończone; punkt 5H i cały Etap 5 pozostają otwarte.
-- Pełna regresja po 5H.1: **86 zestawów testów — wszystkie poprawne**.
-- Jednorazowy workflow wdrożeniowy zastosował pakiet 5H.1 dopiero po poprawnym przejściu pełnej regresji.
-- Wersja webowa zawiera moduł wspólnego kontraktu przed uruchomieniem interfejsu.
+- Ostatni zakończony podetap: **5H.2 — agregacja konfliktów bez dublowania**.
+- Implementacja 5H.2 znajduje się na `main`; dokładny SHA należy odczytać z commita `5H.2: agreguj konflikty bez dublowania`.
+- Punkty **5A–5G** oraz podetapy **5H.1–5H.2** są zakończone; punkt 5H i cały Etap 5 pozostają otwarte.
+- Pełna regresja po dodaniu testu 5H.2 obejmuje **87 zestawów testów**.
 
-## Co działa po 5H.1
+## Co działa po 5H.2
 
-- końcowa lista `wynik.konflikty` ma jeden wersjonowany rdzeń kontraktu;
-- każdy konflikt otrzymuje pola `wersjaKontraktu`, `poziom`, `kod`, `rodzaj`, `kategoriaKonfliktu`, `opis` oraz `powiazania`;
-- wersja kontraktu wynosi obecnie `1`, a `poziom` ma wartość `konflikt`;
-- dotychczasowe pola szczegółowe konfliktów pozostają zachowane, więc wcześniejsze reguły nie tracą danych;
-- `powiazania` mają wspólny format `{ typ, id, rola }`;
-- powiązanie może wskazywać `harmonogram`, `budowa`, `kurs`, `zasob` albo `parametr`;
-- konflikt może wskazywać wiele obiektów jednocześnie, np. budowę oraz poprzedni i następny kurs przy przekroczeniu limitu przestoju;
-- brak gruszek i brak pomp zachowują jawne powiązanie z typem zasobu;
-- brak konkretnego obiektu dostaje powiązanie z całym harmonogramem zamiast pustej listy;
-- wspólna klasyfikacja obejmuje co najmniej `brak-gruszki`, `brak-pompy`, `niedostepnosc`, `niezgodny-parametr`, `kolizja`, `brak-trasy`, `limit-startu` i `limit-przestoju`;
-- istniejące przyczyny braku pompy są mapowane do wspólnych kategorii bez zmiany logiki przydziału;
-- moduł `js/harmonogram/kontrakt_konfliktow.js` normalizuje końcową listę po dołączeniu konfliktów przestoju 5G.3;
-- moduł pozostaje częścią silnika i nie przenosi logiki biznesowej do interfejsu;
-- 5H.1 nie usuwa jeszcze duplikatów konfliktów i nie zmienia docelowych komunikatów dla operatora — to zakres 5H.2 i 5H.3;
-- test `testy/etap_5h_1.test.js` sprawdza wymagane kategorie, powiązania, kompatybilność, brak mutowania źródła i kolejność modułów wersji webowej;
-- `ETAPY_ROZWOJU.md`, `PROJECT_DECISIONS.md` i `README.md` są zsynchronizowane z zakończeniem 5G.3 oraz 5H.1.
+- każdy końcowy konflikt ma wspólny kontrakt wersji `1` z kategorią i listą `powiazania`;
+- końcowa lista konfliktów przechodzi przez jeden mechanizm agregacji w `js/harmonogram/kontrakt_konfliktow.js`;
+- stabilny klucz tożsamości używa wersji kontraktu, poziomu, kodu, rodzaju, kategorii, szczegółowej przyczyny i uporządkowanych powiązań;
+- `opis` nie wpływa na tożsamość konfliktu;
+- kolejność elementów `powiazania` nie wpływa na tożsamość;
+- identyczne zgłoszenia tego samego problemu są redukowane do pierwszego pełnego zgłoszenia;
+- różne budowy, kursy, zasoby, przyczyny i pary dostaw pozostają osobnymi konfliktami;
+- agregacja zachowuje deterministyczną kolejność pierwszych wystąpień i nie mutuje źródła;
+- publiczne funkcje `pobierzKluczTozsamosciKonfliktu` i `agregujListeKonfliktow` są dostępne w `aplikacja.konflikty` do testowania i dalszego rozwoju;
+- 5H.2 nie zmienia jeszcze finalnych treści komunikatów operatorskich.
 
 ## Następny krok
 
-**5H.2 — agregacja konfliktów bez dublowania.**
+**5H.3 — czytelne przyczyny dla operatora.**
 
 Zakres następnego podetapu:
 
-1. zebrać końcowe konflikty w jednym miejscu bez wielokrotnego raportowania tego samego problemu;
-2. zdefiniować stabilny klucz tożsamości konfliktu na podstawie wspólnego kontraktu 5H.1 i jego powiązań;
-3. zachować osobne konflikty, gdy dotyczą różnych budów, kursów, zasobów albo różnych par dostaw;
-4. nie usuwać szczegółów potrzebnych operatorowi podczas agregacji;
-5. zachować deterministyczną kolejność wyniku i brak mutowania danych źródłowych;
-6. nie przebudowywać jeszcze finalnych polskich komunikatów operatorskich — to zakres 5H.3;
-7. dodać test 5H.2 i uruchomić pełną regresję przed publikacją.
+1. przygotować spójne, zrozumiałe polskie komunikaty na podstawie wspólnego kontraktu i kategorii konfliktów;
+2. komunikat ma mówić operatorowi co jest problemem i jakiego obiektu dotyczy bez odczytywania pól diagnostycznych;
+3. zachować szczegółowe dane techniczne w konflikcie, ale nie wymagać ich do zrozumienia podstawowej przyczyny;
+4. nie zmieniać zasad planowania ani agregacji z 5H.2;
+5. dodać test 5H.3 i uruchomić pełną regresję przed publikacją.
 
 ## Ważna zasada wznowienia
 
-Na początku kolejnego wątku najpierw przeczytać `AGENTS.md`, `ZASADY_KODU.md`, `PROJECT_DECISIONS.md`, `POMYSLY_I_BACKLOG.md`, `ETAPY_ROZWOJU.md` oraz ten plik, a następnie sprawdzić aktualny `main` przed rozpoczęciem 5H.2.
+Na początku kolejnego wątku najpierw przeczytać `AGENTS.md`, `ZASADY_KODU.md`, `PROJECT_DECISIONS.md`, `POMYSLY_I_BACKLOG.md`, `ETAPY_ROZWOJU.md` oraz ten plik, a następnie sprawdzić aktualny `main` przed rozpoczęciem 5H.3.

@@ -205,6 +205,67 @@
       .map(normalizujKonflikt);
   }
 
+  function uporzadkujPowiazaniaDoKlucza(powiazania) {
+    return (Array.isArray(powiazania) ? powiazania : [])
+      .map(function (powiazanie) {
+        return [
+          String(powiazanie && powiazanie.typ || ""),
+          String(powiazanie && powiazanie.id || ""),
+          String(powiazanie && powiazanie.rola || "")
+        ];
+      })
+      .sort(function (pierwsze, drugie) {
+        const tekstPierwszy = JSON.stringify(pierwsze);
+        const tekstDrugi = JSON.stringify(drugie);
+
+        if (tekstPierwszy < tekstDrugi) {
+          return -1;
+        }
+
+        if (tekstPierwszy > tekstDrugi) {
+          return 1;
+        }
+
+        return 0;
+      });
+  }
+
+  function pobierzKluczZnormalizowanegoKonfliktu(konflikt) {
+    return JSON.stringify([
+      konflikt.wersjaKontraktu,
+      konflikt.poziom,
+      konflikt.kod,
+      konflikt.rodzaj,
+      konflikt.kategoriaKonfliktu,
+      String(konflikt.przyczyna || ""),
+      uporzadkujPowiazaniaDoKlucza(konflikt.powiazania)
+    ]);
+  }
+
+  function pobierzKluczTozsamosciKonfliktu(konflikt) {
+    return pobierzKluczZnormalizowanegoKonfliktu(
+      normalizujKonflikt(konflikt)
+    );
+  }
+
+  function agregujListeKonfliktow(listaKonfliktow) {
+    const widzianeKlucze = new Set();
+    const wynik = [];
+
+    normalizujListeKonfliktow(listaKonfliktow).forEach(function (konflikt) {
+      const klucz = pobierzKluczZnormalizowanegoKonfliktu(konflikt);
+
+      if (widzianeKlucze.has(klucz)) {
+        return;
+      }
+
+      widzianeKlucze.add(klucz);
+      wynik.push(konflikt);
+    });
+
+    return wynik;
+  }
+
   function utworzKonflikt(daneKonfliktu) {
     return normalizujKonflikt(daneKonfliktu);
   }
@@ -215,7 +276,7 @@
   aplikacja.harmonogram.przeliczCalyHarmonogram = function (daneWejsciowe) {
     const wynik = przeliczCalyHarmonogramPodstawowy(daneWejsciowe);
 
-    wynik.konflikty = normalizujListeKonfliktow(wynik.konflikty);
+    wynik.konflikty = agregujListeKonfliktow(wynik.konflikty);
     return wynik;
   };
 
@@ -223,6 +284,8 @@
     wersjaKontraktu: WERSJA_KONTRAKTU,
     utworzKonflikt: utworzKonflikt,
     normalizujKonflikt: normalizujKonflikt,
-    normalizujListeKonfliktow: normalizujListeKonfliktow
+    normalizujListeKonfliktow: normalizujListeKonfliktow,
+    pobierzKluczTozsamosciKonfliktu: pobierzKluczTozsamosciKonfliktu,
+    agregujListeKonfliktow: agregujListeKonfliktow
   };
 })(window);

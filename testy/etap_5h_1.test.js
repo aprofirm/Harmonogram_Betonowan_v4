@@ -277,7 +277,7 @@ sprawdzIntegracjeZPelnyWynikiem();
 sprawdzWalidacjeKontraktu();
 sprawdzPodpiecieWersjiWebowej();
 
-assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5H.1");
+assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5H.2");
 
 console.log(
   "OK — 5H.1 nadaje wszystkim konfliktom wspólny, wersjonowany kontrakt i zachowuje szczegóły wcześniejszych reguł."

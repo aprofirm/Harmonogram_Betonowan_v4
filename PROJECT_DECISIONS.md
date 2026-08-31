@@ -2230,3 +2230,14 @@ Od 5H.1 końcowa lista `wynik.konflikty` jest normalizowana do wspólnego kontra
 `powiazania` są listą elementów `{ typ, id, rola }`. Typ może wskazywać `harmonogram`, `budowa`, `kurs`, `zasob` albo `parametr`. Dzięki temu jeden konflikt może odnosić się do wielu obiektów jednocześnie, np. konflikt ciągłości do budowy oraz dwóch kolejnych kursów. Brak konkretnego obiektu otrzymuje powiązanie z całym harmonogramem zamiast pustej listy.
 
 Wspólne kategorie obejmują co najmniej brak gruszki, brak pompy, niedostępność, niezgodny parametr, kolizję, brak trasy, przekroczenie limitu startu i przekroczenie limitu przestoju. Szczegółowe przyczyny istniejących konfliktów pozostają zachowane; 5H.1 nie zmienia sposobu planowania, nie usuwa duplikatów i nie definiuje jeszcze finalnych komunikatów operatorskich. Te dwa ostatnie zadania należą do 5H.2 i 5H.3.
+
+---
+
+## 115. Tożsamość konfliktu jest niezależna od tekstu komunikatu
+
+Od 5H.2 wynik końcowy usuwa wielokrotne zgłoszenia tego samego konfliktu po normalizacji do kontraktu wersji `1`. Stabilna tożsamość konfliktu jest wyznaczana przez wersję kontraktu, poziom, `kod`, `rodzaj`, `kategoriaKonfliktu`, szczegółową `przyczyna` oraz uporządkowaną listę `powiazania`.
+
+Pole `opis` nie należy do klucza tożsamości. Dzięki temu późniejsze dopracowanie polskich komunikatów w 5H.3 nie zmieni tego, które problemy są uznawane za ten sam konflikt. Kolejność samych elementów `powiazania` również nie wpływa na klucz.
+
+Jeżeli ten sam problem zostanie zgłoszony kilka razy, wynik zachowuje pierwsze pełne zgłoszenie i jego szczegółowe pola. Konflikty dotyczące różnych budów, kursów, zasobów, szczegółowych przyczyn albo różnych par dostaw pozostają osobnymi pozycjami. Agregacja zachowuje deterministyczną kolejność pierwszych wystąpień i nie mutuje danych wejściowych.
+
