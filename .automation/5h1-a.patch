@@ -1,0 +1,103 @@
+diff --git a/index.html b/index.html
+index 726e833..7320fae 100644
+--- a/index.html
++++ b/index.html
+@@ -50,7 +50,7 @@
+               <p class="etykieta-sekcji">USTAWIENIA</p>
+               <h2 id="tytul-parametrow">Parametry planu</h2>
+             </div>
+-            <span class="znacznik-etapu">Etap 5G.3</span>
++            <span class="znacznik-etapu">Etap 5H.1</span>
+           </div>
+ 
+           <section class="sekcja-danych" aria-labelledby="tytul-importu">
+@@ -479,11 +479,11 @@
+ 
+       <footer class="stopka">
+         <span>Harmonogram Betonowań v4</span>
+-        <span>5G.3 · konflikt ciągłości dostaw</span>
++        <span>5H.1 · wspólny kontrakt konfliktów</span>
+       </footer>
+     </div>
+ 
+-    <script defer src="js/konfiguracja/konfiguracja.js?v=5g3-konflikt-przestoju-20260831a"></script>
++    <script defer src="js/konfiguracja/konfiguracja.js?v=5h1-kontrakt-konfliktow-20260831a"></script>
+     <script defer src="js/diagnostyka/diagnostyka.js"></script>
+     <script defer src="js/pamiec/pamiec_planu.js"></script>
+     <script defer src="js/pamiec/pamiec_tras.js"></script>
+@@ -501,8 +501,9 @@
+     <script defer src="js/gruszki/przydzial_gruszek.js"></script>
+     <script defer src="js/lokalizacje/lokalizacje.js"></script>
+     <script defer src="js/budowy/rodzaj_rozladunku.js"></script>
+-    <script defer src="js/harmonogram/harmonogram.js?v=5g2-limit-przestoju-20260831a"></script>
++    <script defer src="js/harmonogram/harmonogram.js?v=5h1-kontrakt-konfliktow-20260831a"></script>
+     <script defer src="js/harmonogram/konflikty_przestojow.js?v=5g3-konflikt-przestoju-20260831a"></script>
++    <script defer src="js/harmonogram/kontrakt_konfliktow.js?v=5h1-kontrakt-konfliktow-20260831a"></script>
+     <script defer src="js/interfejs/interfejs.js"></script>
+     <script defer src="js/interfejs/odstep_dostaw.js"></script>
+     <script defer src="js/interfejs/limit_opoznienia.js?v=5f2-limit-indywidualny-20260830a"></script>
+diff --git a/js/konfiguracja/konfiguracja.js b/js/konfiguracja/konfiguracja.js
+index 27412a9..a1216c9 100644
+--- a/js/konfiguracja/konfiguracja.js
++++ b/js/konfiguracja/konfiguracja.js
+@@ -20,7 +20,7 @@
+   aplikacja.konfiguracja = Object.freeze({
+     nazwaAplikacji: "Harmonogram Betonowań v4",
+     numerEtapu: 5,
+-    punktEtapu: "5G.3",
++    punktEtapu: "5H.1",
+     parametryDomyslne: parametryDomyslne,
+     komunikatPoPrzeliczeniu:
+       "Kursy, godziny pełnego cyklu i przydział dostępnych gruszek zostały obliczone od nowa."
+diff --git a/testy/etap_5f_3.test.js b/testy/etap_5f_3.test.js
+index d6a1586..798689d 100644
+--- a/testy/etap_5f_3.test.js
++++ b/testy/etap_5f_3.test.js
+@@ -211,7 +211,7 @@ function sprawdzPierwszenstwoLimituIndywidualnegoIGranice() {
+   assert.equal(konfliktB.opoznienieStartuMinuty, 10);
+   assert.equal(konfliktB.maksymalneOpoznienieStartuMinuty, 9);
+   assert.equal(konfliktB.przekroczenieLimituMinuty, 1);
+-  assert.equal(aplikacja.konfiguracja.punktEtapu, "5G.3");
++  assert.equal(aplikacja.konfiguracja.punktEtapu, "5H.1");
+ }
+ 
+ function sprawdzPowtarzalnoscKlasyfikacji() {
+diff --git a/testy/etap_5g_1.test.js b/testy/etap_5g_1.test.js
+index 617a9f2..79709a2 100644
+--- a/testy/etap_5g_1.test.js
++++ b/testy/etap_5g_1.test.js
+@@ -236,7 +236,7 @@ sprawdzPrzestojePoRzeczywistymPrzydziale();
+ sprawdzZeOpoznionaPierwszaDostawaNieJestPrzestojem();
+ sprawdzCiagloscIOdrzucenieNieprzydzielonychKursow();
+ 
+-assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5G.3");
++assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5H.1");
+ 
+ console.log(
+   "OK — 5G.1 liczy rzeczywiste przerwy między przydzielonymi dostawami bez mieszania pierwszego opóźnienia."
+diff --git a/testy/etap_5g_2.test.js b/testy/etap_5g_2.test.js
+index 7a86cd7..6da7c5c 100644
+--- a/testy/etap_5g_2.test.js
++++ b/testy/etap_5g_2.test.js
+@@ -153,7 +153,7 @@ sprawdzDomyslnyParametr();
+ sprawdzNadpisanieBezZmianyKonfiguracji();
+ sprawdzWalidacjeBezposredniegoWejsciaSilnika();
+ 
+-assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5G.3");
++assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5H.1");
+ 
+ console.log(
+   "OK — 5G.2 nadal niezależnie przechowuje, normalizuje i waliduje limit przestoju 15 min."
+diff --git a/testy/etap_5g_3.test.js b/testy/etap_5g_3.test.js
+index caebd60..c64eb4d 100644
+--- a/testy/etap_5g_3.test.js
++++ b/testy/etap_5g_3.test.js
+@@ -166,7 +166,7 @@ sprawdzGraniceLimitu();
+ sprawdzPierwszePrzekroczenieIWielePar();
+ sprawdzBrakFikcyjnychKonfliktow();
+ 
+-assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5G.3");
++assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5H.1");
+ 
+ console.log(
+   "OK — 5G.3 zgłasza osobny konflikt dla każdej rzeczywistej pary dostaw przekraczającej limit i zachowuje granicę 15 min."

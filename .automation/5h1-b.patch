@@ -1,0 +1,234 @@
+diff --git a/js/harmonogram/kontrakt_konfliktow.js b/js/harmonogram/kontrakt_konfliktow.js
+new file mode 100644
+index 0000000..dcf8f01
+--- /dev/null
++++ b/js/harmonogram/kontrakt_konfliktow.js
+@@ -0,0 +1,228 @@
++(function (zakresGlobalny) {
++  "use strict";
++
++  const aplikacja = zakresGlobalny.HarmonogramBetonowan =
++    zakresGlobalny.HarmonogramBetonowan || {};
++  const WERSJA_KONTRAKTU = 1;
++  const DOZWOLONE_TYPY_POWIAZAN = [
++    "harmonogram",
++    "budowa",
++    "kurs",
++    "zasob",
++    "parametr"
++  ];
++
++  if (
++    !aplikacja.harmonogram ||
++    typeof aplikacja.harmonogram.przeliczCalyHarmonogram !== "function"
++  ) {
++    throw new Error(
++      "Moduł kontraktu konfliktów wymaga głównego silnika harmonogramu."
++    );
++  }
++
++  function pobierzWymaganyTekst(wartosc, nazwaPola) {
++    const tekst = String(wartosc === null || wartosc === undefined ? "" : wartosc)
++      .trim();
++
++    if (!tekst) {
++      throw new Error(
++        "Konflikt wymaga niepustego pola „" + nazwaPola + "”."
++      );
++    }
++
++    return tekst;
++  }
++
++  function dodajPowiazanie(lista, typ, id, rola) {
++    const typPowiazania = String(typ || "").trim();
++    const idPowiazania = String(id || "").trim();
++    const rolaPowiazania = String(rola || "dotyczy").trim() || "dotyczy";
++
++    if (
++      !DOZWOLONE_TYPY_POWIAZAN.includes(typPowiazania) ||
++      !idPowiazania
++    ) {
++      return;
++    }
++
++    const czyIstnieje = lista.some(function (powiazanie) {
++      return powiazanie.typ === typPowiazania &&
++        powiazanie.id === idPowiazania &&
++        powiazanie.rola === rolaPowiazania;
++    });
++
++    if (!czyIstnieje) {
++      lista.push({
++        typ: typPowiazania,
++        id: idPowiazania,
++        rola: rolaPowiazania
++      });
++    }
++  }
++
++  function pobierzKategorieKonfliktu(konflikt) {
++    const kategoriaJawna = String(
++      konflikt && konflikt.kategoriaKonfliktu || ""
++    ).trim();
++
++    if (kategoriaJawna) {
++      return kategoriaJawna;
++    }
++
++    const kod = String(konflikt && konflikt.kod || "");
++    const przyczyna = String(konflikt && konflikt.przyczyna || "");
++
++    if (kod === "BRAK_DOSTEPNYCH_GRUSZEK") {
++      return "brak-gruszki";
++    }
++
++    if (kod === "BRAK_MOZLIWEJ_POMPY") {
++      if (przyczyna === "brak-trasy") {
++        return "brak-trasy";
++      }
++
++      if (
++        przyczyna === "po-dostepnosci" ||
++        przyczyna === "pompa-nieaktywna"
++      ) {
++        return "niedostepnosc";
++      }
++
++      if (przyczyna === "niewystarczajacy-wysieg") {
++        return "niezgodny-parametr";
++      }
++
++      return "brak-pompy";
++    }
++
++    if (kod === "PRZEKROCZONY_LIMIT_OPOZNIENIA_STARTU") {
++      return "limit-startu";
++    }
++
++    if (kod === "PRZEKROCZONY_LIMIT_PRZESTOJU_BETONOWANIA") {
++      return "limit-przestoju";
++    }
++
++    if (kod === "NIESTABILNY_HARMONOGRAM_LIMIT_ITERACJI") {
++      return "niestabilnosc";
++    }
++
++    return "inne";
++  }
++
++  function pobierzPowiazaniaKonfliktu(konflikt) {
++    const powiazania = [];
++    const istniejacePowiazania = Array.isArray(konflikt.powiazania)
++      ? konflikt.powiazania
++      : [];
++
++    istniejacePowiazania.forEach(function (powiazanie) {
++      dodajPowiazanie(
++        powiazania,
++        powiazanie && powiazanie.typ,
++        powiazanie && powiazanie.id,
++        powiazanie && powiazanie.rola
++      );
++    });
++
++    dodajPowiazanie(powiazania, "budowa", konflikt.idBudowy, "dotyczy");
++    dodajPowiazanie(powiazania, "kurs", konflikt.idKursu, "dotyczy");
++    dodajPowiazanie(
++      powiazania,
++      "kurs",
++      konflikt.idPoprzedniegoKursu,
++      "poprzedni"
++    );
++    dodajPowiazanie(
++      powiazania,
++      "kurs",
++      konflikt.idNastepnegoKursu,
++      "nastepny"
++    );
++    dodajPowiazanie(
++      powiazania,
++      "zasob",
++      konflikt.idPompy ? "pompa:" + konflikt.idPompy : "",
++      "pompa"
++    );
++    dodajPowiazanie(
++      powiazania,
++      "zasob",
++      konflikt.idGruszki ? "gruszka:" + konflikt.idGruszki : "",
++      "gruszka"
++    );
++    dodajPowiazanie(
++      powiazania,
++      "parametr",
++      konflikt.nazwaParametru,
++      "dotyczy"
++    );
++
++    if (
++      konflikt.rodzaj === "gruszki" ||
++      konflikt.kod === "BRAK_DOSTEPNYCH_GRUSZEK"
++    ) {
++      dodajPowiazanie(powiazania, "zasob", "gruszki", "typ-zasobu");
++    }
++
++    if (
++      konflikt.rodzaj === "pompy" ||
++      konflikt.kod === "BRAK_MOZLIWEJ_POMPY"
++    ) {
++      dodajPowiazanie(powiazania, "zasob", "pompy", "typ-zasobu");
++    }
++
++    if (!powiazania.length) {
++      dodajPowiazanie(powiazania, "harmonogram", "glowny", "dotyczy");
++    }
++
++    return powiazania;
++  }
++
++  function normalizujKonflikt(konflikt) {
++    if (!konflikt || typeof konflikt !== "object" || Array.isArray(konflikt)) {
++      throw new Error("Konflikt musi być obiektem.");
++    }
++
++    const kod = pobierzWymaganyTekst(konflikt.kod, "kod");
++    const rodzaj = pobierzWymaganyTekst(konflikt.rodzaj, "rodzaj");
++    const opis = pobierzWymaganyTekst(konflikt.opis, "opis");
++
++    return Object.assign({}, konflikt, {
++      wersjaKontraktu: WERSJA_KONTRAKTU,
++      poziom: "konflikt",
++      kod: kod,
++      rodzaj: rodzaj,
++      kategoriaKonfliktu: pobierzKategorieKonfliktu(konflikt),
++      opis: opis,
++      powiazania: pobierzPowiazaniaKonfliktu(konflikt)
++    });
++  }
++
++  function normalizujListeKonfliktow(listaKonfliktow) {
++    return (Array.isArray(listaKonfliktow) ? listaKonfliktow : [])
++      .map(normalizujKonflikt);
++  }
++
++  function utworzKonflikt(daneKonfliktu) {
++    return normalizujKonflikt(daneKonfliktu);
++  }
++
++  const przeliczCalyHarmonogramPodstawowy =
++    aplikacja.harmonogram.przeliczCalyHarmonogram;
++
++  aplikacja.harmonogram.przeliczCalyHarmonogram = function (daneWejsciowe) {
++    const wynik = przeliczCalyHarmonogramPodstawowy(daneWejsciowe);
++
++    wynik.konflikty = normalizujListeKonfliktow(wynik.konflikty);
++    return wynik;
++  };
++
++  aplikacja.konflikty = {
++    wersjaKontraktu: WERSJA_KONTRAKTU,
++    utworzKonflikt: utworzKonflikt,
++    normalizujKonflikt: normalizujKonflikt,
++    normalizujListeKonfliktow: normalizujListeKonfliktow
++  };
++})(window);
