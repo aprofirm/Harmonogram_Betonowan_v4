@@ -3,7 +3,7 @@
 ## Status
 
 Etap 4 jest zamknięty. Etap 5 jest rozpisany przed rozpoczęciem implementacji.
-Punkty **5A–5D**, cały **5E — stabilizacja** oraz cały **5F — limit opóźnienia startu** są zakończone. Następny podetap: **5G.1 — osobna definicja przestoju podczas betonowania**.
+Punkty **5A–5D**, cały **5E — stabilizacja**, cały **5F — limit opóźnienia startu** oraz podetap **5G.1** są zakończone. Następny podetap: **5G.2 — parametr `MaksPrzestojMin`**.
 
 ## Najważniejsza zasada testowa
 
@@ -82,10 +82,20 @@ danych źródłowych.
 
 ## 5G — przestój w trakcie betonowania
 
-- [ ] opóźnienie pierwszej dostawy nie jest przestojem;
-- [ ] przestój jest liczony pomiędzy końcem jednego rzeczywistego rozładunku a początkiem następnego;
+- [x] opóźnienie pierwszej dostawy nie jest przestojem;
+- [x] przestój jest liczony pomiędzy końcem jednego rzeczywistego rozładunku a początkiem następnego;
+- [x] wyłącznie faktycznie przydzielone kursy tworzą kolejne pary dostaw;
+- [x] każda para zachowuje ID i numery obu kursów, rzeczywiste godziny oraz długość przerwy, także `0 min` przy ciągłości;
 - [ ] `MaksPrzestojMin` jest osobnym parametrem;
 - [ ] przekroczenie wskazuje konkretną parę dostaw i liczbę minut.
+
+Test automatyczny 5G.1: `testy/etap_5g_1.test.js` — trzy dostawy jednej budowy
+przy jednej gruszce tworzą dwie rzeczywiste przerwy po `10 min`, a przy dwóch
+gruszkach te same pary mają `0 min`. Osobny scenariusz opóźnia pierwszą dostawę
+o `15 min`, lecz zapisuje wyłącznie późniejszą przerwę `10 min` między pierwszym
+i drugim rozładunkiem. Test potwierdza też puste analizy dla pojedynczej dostawy
+i kursów bez przydzielonej gruszki, dokładny kontrakt par, brak konfliktu w 5G.1,
+niemutowanie danych źródłowych oraz deterministyczny wynik.
 
 ## 5H — wspólny model konfliktów
 

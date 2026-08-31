@@ -2164,3 +2164,29 @@ parametru globalnego. Porównanie godzin traktuje wcześniejszą godzinę zegaro
 budowę wyłącznie do przodu. Format konfliktu w 5F.3 jest celowo ograniczony do
 potrzeb tej reguły; ujednolicenie wszystkich konfliktów pozostaje zakresem 5H.
 
+---
+
+## 111. Przestój betonowania jest mierzony wyłącznie między rzeczywistymi dostawami
+
+Podetap 5G.1 oddziela ciągłość rozpoczętego betonowania od opóźnienia jego
+początku. Pierwsza faktycznie przydzielona dostawa nie ma poprzednika, dlatego
+jej późniejszy przyjazd nie tworzy przestoju. Opóźnienie rozpoczęcia budowy nadal
+ocenia osobna reguła 5F względem `StartZadany` i `StartRoboczy`.
+
+Dla każdej roboczej budowy silnik po zakończeniu sprzężonego przeliczenia bierze
+wyłącznie kursy o statusie `przydzielony` i porządkuje je według rzeczywistej
+minuty rozpoczęcia rozładunku. Każda kolejna para trafia do
+`analizaPrzestojowBetonowania.przerwyMiedzyDostawami`. Wpis zawiera ID i numer
+obu kursów, rzeczywisty koniec poprzedniego rozładunku, rzeczywisty początek
+następnego oraz `przestojMinuty`.
+
+Przestój jest dodatnią różnicą pomiędzy tymi dwoma zdarzeniami. Jeżeli
+rozładunki stykają się albo nakładają, wynik pary wynosi `0 min`. Analiza podaje
+również liczbę przydzielonych dostaw, wszystkich kolejnych par, par z dodatnim
+przestojem oraz najdłuższy przestój. Kursy nieprzydzielone nie mogą tworzyć
+fikcyjnej przerwy, a wynik powstaje na roboczej kopii bez zmiany źródłowego
+stanu importu.
+
+5G.1 wyłącznie mierzy i opisuje faktyczne przerwy. Nie wprowadza wartości
+domyślnej ani parametru `MaksPrzestojMin` i nie tworzy konfliktu. Te decyzje i
+zachowania należą odpowiednio do 5G.2 i 5G.3.

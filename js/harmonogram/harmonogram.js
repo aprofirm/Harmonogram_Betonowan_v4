@@ -69,6 +69,7 @@
       budowa.startRoboczy = budowa.startZadany;
       budowa.jawnySkutekPompy = null;
       budowa.ocenaOpoznieniaStartu = null;
+      budowa.analizaPrzestojowBetonowania = null;
       return budowa;
     });
   }
@@ -708,6 +709,150 @@
     });
   }
 
+  function pobierzRzeczywistaMinuteKursu(kurs, nazwaPola, etykieta) {
+    const minuta = Number(kurs && kurs[nazwaPola]);
+
+    if (!Number.isFinite(minuta)) {
+      throw new Error(
+        "Przydzielony kurs „" + String(kurs && kurs.idKursu || "bez ID") +
+          "” nie ma poprawnej wartości pola „" + etykieta + "”."
+      );
+    }
+
+    return minuta;
+  }
+
+  function uporzadkujRzeczywisteKursyBudowy(kursy) {
+    return kursy
+      .map(function (kurs, indeksPierwotny) {
+        return {
+          kurs: kurs,
+          indeksPierwotny: indeksPierwotny,
+          minutaRozpoczeciaRozladunku: pobierzRzeczywistaMinuteKursu(
+            kurs,
+            "minutaRozpoczeciaRozladunku",
+            "Rzeczywista minuta rozpoczęcia rozładunku"
+          )
+        };
+      })
+      .sort(function (lewy, prawy) {
+        const roznicaCzasu =
+          lewy.minutaRozpoczeciaRozladunku -
+          prawy.minutaRozpoczeciaRozladunku;
+        const roznicaNumeruKursu =
+          Number(lewy.kurs.numerKursu || 0) -
+          Number(prawy.kurs.numerKursu || 0);
+
+        return roznicaCzasu ||
+          roznicaNumeruKursu ||
+          lewy.indeksPierwotny - prawy.indeksPierwotny;
+      })
+      .map(function (pozycja) {
+        return pozycja.kurs;
+      });
+  }
+
+  function utworzPrzerweMiedzyDostawami(
+    poprzedniKurs,
+    nastepnyKurs
+  ) {
+    const minutaZakonczeniaPoprzedniegoRozladunku =
+      pobierzRzeczywistaMinuteKursu(
+        poprzedniKurs,
+        "minutaZakonczeniaRozladunku",
+        "Rzeczywista minuta zakończenia rozładunku"
+      );
+    const minutaRozpoczeciaNastepnegoRozladunku =
+      pobierzRzeczywistaMinuteKursu(
+        nastepnyKurs,
+        "minutaRozpoczeciaRozladunku",
+        "Rzeczywista minuta rozpoczęcia rozładunku"
+      );
+    const przestojMinuty = Math.max(
+      0,
+      minutaRozpoczeciaNastepnegoRozladunku -
+        minutaZakonczeniaPoprzedniegoRozladunku
+    );
+
+    return {
+      idPoprzedniegoKursu: String(poprzedniKurs.idKursu || ""),
+      numerPoprzedniegoKursu: Number(poprzedniKurs.numerKursu),
+      idNastepnegoKursu: String(nastepnyKurs.idKursu || ""),
+      numerNastepnegoKursu: Number(nastepnyKurs.numerKursu),
+      minutaZakonczeniaPoprzedniegoRozladunku:
+        minutaZakonczeniaPoprzedniegoRozladunku,
+      godzinaZakonczeniaPoprzedniegoRozladunku:
+        String(poprzedniKurs.godzinaZakonczeniaRozladunku || ""),
+      minutaRozpoczeciaNastepnegoRozladunku:
+        minutaRozpoczeciaNastepnegoRozladunku,
+      godzinaRozpoczeciaNastepnegoRozladunku:
+        String(nastepnyKurs.godzinaRozpoczeciaRozladunku || ""),
+      przestojMinuty: przestojMinuty
+    };
+  }
+
+  function utworzAnalizePrzestojowBudowy(rzeczywisteKursyBudowy) {
+    const uporzadkowaneKursy = uporzadkujRzeczywisteKursyBudowy(
+      rzeczywisteKursyBudowy
+    );
+    const przerwyMiedzyDostawami = [];
+
+    for (
+      let indeksKursu = 1;
+      indeksKursu < uporzadkowaneKursy.length;
+      indeksKursu += 1
+    ) {
+      przerwyMiedzyDostawami.push(utworzPrzerweMiedzyDostawami(
+        uporzadkowaneKursy[indeksKursu - 1],
+        uporzadkowaneKursy[indeksKursu]
+      ));
+    }
+
+    const dodatniePrzestoje = przerwyMiedzyDostawami.filter(
+      function (przerwa) {
+        return przerwa.przestojMinuty > 0;
+      }
+    );
+    const najdluzszyPrzestojMinuty = dodatniePrzestoje.reduce(
+      function (najdluzszyPrzestoj, przerwa) {
+        return Math.max(najdluzszyPrzestoj, przerwa.przestojMinuty);
+      },
+      0
+    );
+
+    return {
+      liczbaPrzydzielonychDostaw: uporzadkowaneKursy.length,
+      liczbaPrzerwMiedzyDostawami: przerwyMiedzyDostawami.length,
+      liczbaPrzestojow: dodatniePrzestoje.length,
+      najdluzszyPrzestojMinuty: najdluzszyPrzestojMinuty,
+      przerwyMiedzyDostawami: przerwyMiedzyDostawami
+    };
+  }
+
+  function analizujPrzestojeBetonowania(przebieg) {
+    const rzeczywisteKursyPoIdBudowy = new Map();
+
+    pobierzRzeczywisteKursyPoPrzydzialeGruszek(przebieg)
+      .forEach(function (kurs) {
+        const idBudowy = String(kurs.idBudowy || "");
+        const kursyBudowy = rzeczywisteKursyPoIdBudowy.get(idBudowy) || [];
+
+        kursyBudowy.push(kurs);
+        rzeczywisteKursyPoIdBudowy.set(idBudowy, kursyBudowy);
+      });
+
+    przebieg.listaBudow.forEach(function (budowa) {
+      const idBudowy = String(budowa.idBudowy || "");
+      const rzeczywisteKursyBudowy =
+        rzeczywisteKursyPoIdBudowy.get(idBudowy) || [];
+
+      budowa.analizaPrzestojowBetonowania =
+        utworzAnalizePrzestojowBudowy(rzeczywisteKursyBudowy);
+    });
+
+    return przebieg;
+  }
+
   function zaktualizujRzeczywisteOknaPompPoGruszkach(przebieg) {
     const wynikPomp = przebieg.wynikPomp;
     const wynikiBudow = wynikPomp && Array.isArray(wynikPomp.wynikiBudow)
@@ -1203,6 +1348,7 @@
     const konfliktyGruszek = przebieg.czyOgraniczonaFlotaGruszek
       ? utworzKonfliktyOgraniczonejFloty(wynikPrzydzialu)
       : [];
+    analizujPrzestojeBetonowania(przebieg);
     const konfliktyLimitowStartu = ocenOpoznieniaStartow(przebieg);
     const konflikty = konfliktyGruszek.concat(
       utworzKonfliktyPomp(przebieg),

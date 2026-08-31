@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5G.1**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5G.2**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -738,7 +738,7 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
   - [x] **5F.3 — klasyfikacja wyniku:** korekta w limicie pozostaje zwykłym
     przesunięciem, przekroczenie staje się konfliktem z godziną i liczbą minut.
 - [ ] **5G — maksymalny przestój podczas betonowania.**
-  - [ ] **5G.1 — osobna definicja:** przestój liczyć pomiędzy rzeczywistym końcem
+  - [x] **5G.1 — osobna definicja:** przestój liczyć pomiędzy rzeczywistym końcem
     rozładunku poprzedniej dostawy a rzeczywistym początkiem następnej; nie mieszać
     go z opóźnieniem pierwszej dostawy.
   - [ ] **5G.2 — parametr `MaksPrzestojMin`:** ustalić wartość domyślną przed
@@ -1382,6 +1382,22 @@ Następny niezakończony podetap: **5F.3 — klasyfikacja wyniku**.
 
 Podetap **5F.3** oraz cały punkt **5F — limit opóźnienia rozpoczęcia budowy** są zakończone. Etap 5 pozostaje otwarty.
 Następny niezakończony podetap: **5G.1 — osobna definicja przestoju podczas betonowania**.
+
+## Zamknięcie 5G.1 — osobna definicja przestoju podczas betonowania — 2026-08-31
+
+- [x] analiza powstaje dopiero z końcowego przydziału gruszek po sprzężonym przeliczeniu i korzysta wyłącznie z kursów o statusie `przydzielony`;
+- [x] rzeczywiste kursy każdej budowy są porządkowane według faktycznego początku rozładunku, a każda kolejna para tworzy jawny wpis w `przerwyMiedzyDostawami`;
+- [x] każda para wskazuje ID i numery obu kursów, rzeczywisty koniec poprzedniego rozładunku, rzeczywisty początek następnego oraz `przestojMinuty`;
+- [x] stykające się albo nakładające rozładunki mają przestój `0 min`, a dodatnia przerwa jest liczona bezpośrednio z rzeczywistych minut obu zdarzeń;
+- [x] pierwsza dostawa nie ma poprzednika, dlatego jej opóźnienie względem `StartZadany` lub `StartRoboczy` nie jest przestojem podczas betonowania;
+- [x] każda robocza budowa otrzymuje `analizaPrzestojowBetonowania` z liczbą przydzielonych dostaw, wszystkich par, dodatnich przestojów i najdłuższym przestojem;
+- [x] budowa bez przydzielonych kursów oraz budowa z jedną dostawą otrzymują pustą listę par, bez fikcyjnej przerwy;
+- [x] 5G.1 nie dodaje jeszcze parametru `MaksPrzestojMin` ani konfliktu po przekroczeniu — to zakres odpowiednio 5G.2 i 5G.3;
+- [x] test `testy/etap_5g_1.test.js` potwierdza przerwy `10 min`, ciągłość `0 min`, pominięcie opóźnienia pierwszej dostawy i kursów nieprzydzielonych, dokładne pary dostaw, brak mutowania źródła oraz powtarzalność wyniku;
+- [x] pełna regresja **83 zestawów** `testy/*.test.js` przechodzi poprawnie.
+
+Podetap **5G.1** jest zakończony. Punkt nadrzędny **5G — maksymalny przestój podczas betonowania** i cały Etap 5 pozostają otwarte.
+Następny niezakończony podetap: **5G.2 — parametr `MaksPrzestojMin`**, którego wartość domyślną trzeba ustalić przed implementacją.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
