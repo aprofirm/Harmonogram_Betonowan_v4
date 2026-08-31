@@ -57,6 +57,112 @@ jobs:
           )
           PY
           python3 .github/zastosuj_5i1.py
+          python3 - <<'PY'
+          from pathlib import Path
+
+          interfejs = Path("js/interfejs/interfejs.js")
+          tekst = interfejs.read_text(encoding="utf-8")
+          tekst = tekst.replace(
+              '    const podsumowanieStartow = document.createElement("span");\n',
+              ''
+          )
+          tekst = tekst.replace(
+              '    podsumowanieStartow.className = "podsumowanie-startow-budowy";\n',
+              ''
+          )
+          stare = '''    kontrolki.appendChild(etykietaZadanego);
+              kontrolki.appendChild(pole);
+              kontrolki.appendChild(przyciskPrzywroc);
+              podsumowanieStartow.appendChild(opisPlanu);
+              podsumowanieStartow.appendChild(opisStartuRoboczego);
+              komorka.appendChild(kontrolki);
+              komorka.appendChild(podsumowanieStartow);
+          '''
+          nowe = '''    kontrolki.appendChild(pole);
+              kontrolki.appendChild(przyciskPrzywroc);
+              kontrolki.appendChild(etykietaZadanego);
+              komorka.appendChild(kontrolki);
+              komorka.appendChild(opisPlanu);
+              komorka.appendChild(opisStartuRoboczego);
+          '''
+          if stare not in tekst:
+              raise SystemExit("Nie znaleziono bloku składania komórki startu 5I.1")
+          tekst = tekst.replace(stare, nowe)
+          interfejs.write_text(tekst, encoding="utf-8")
+
+          css = Path("style/glowny.css")
+          tekst = css.read_text(encoding="utf-8")
+          tekst = tekst.replace(
+              '''  white-space: nowrap;
+          }
+
+          .pole-startu-budowy {
+            width: 88px;
+          ''',
+              '''  white-space: nowrap;
+            grid-column: 1;
+            grid-row: 1;
+          }
+
+          .pole-startu-budowy {
+            grid-column: 2;
+            grid-row: 1;
+            width: 88px;
+          ''',
+              1
+          )
+          tekst = tekst.replace(
+              '''.przycisk-przywroc-start {
+            width: 32px;
+          ''',
+              '''.przycisk-przywroc-start {
+            grid-column: 3;
+            grid-row: 1;
+            width: 32px;
+          ''',
+              1
+          )
+          tekst = tekst.replace(
+              '''.podsumowanie-startow-budowy {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-top: 3px;
+            white-space: nowrap;
+          }
+          ''',
+              '''.plan-zrodlowy-startu {
+            display: inline-block;
+            margin-top: 3px;
+          }
+          ''',
+              1
+          )
+          tekst = tekst.replace(
+              '''.start-roboczy-budowy {
+            color: var(--kolor-granatowy);
+            font-weight: 800;
+          }
+          ''',
+              '''.start-roboczy-budowy {
+            display: inline-block;
+            margin-left: 8px;
+            color: var(--kolor-granatowy);
+            font-weight: 800;
+          }
+          ''',
+              1
+          )
+          css.write_text(tekst, encoding="utf-8")
+
+          test = Path("testy/etap_5i_1.test.js")
+          tekst = test.read_text(encoding="utf-8")
+          tekst = tekst.replace(
+              'assert.ok(css.includes(".podsumowanie-startow-budowy"));',
+              'assert.ok(css.includes(".etykieta-startu-zadanego"));'
+          )
+          test.write_text(tekst, encoding="utf-8")
+          PY
           rm .github/zastosuj_5i1.py
           rm .github/workflows/zastosuj_5i1.yml
 
