@@ -8,9 +8,10 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
 - Ostatni zakończony podetap: **5H.2 — agregacja konfliktów bez dublowania**.
-- Implementacja 5H.2 znajduje się na `main`; dokładny SHA należy odczytać z commita `5H.2: agreguj konflikty bez dublowania`.
+- Commit z implementacją 5H.2 na `main`: `200429edbae553f1d15216db04a2fd9aa5a9ebf0`.
 - Punkty **5A–5G** oraz podetapy **5H.1–5H.2** są zakończone; punkt 5H i cały Etap 5 pozostają otwarte.
 - Pełna regresja po dodaniu testu 5H.2 obejmuje **87 zestawów testów**.
+- Pełna regresja **87/87** została wykonana przez workflow wdrożeniowy przed utworzeniem commita implementacyjnego.
 
 ## Co działa po 5H.2
 
