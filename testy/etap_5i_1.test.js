@@ -180,8 +180,8 @@ function sprawdzWarstweWidoku() {
   const css = wczytaj("style/glowny.css");
 
   assert.ok(html.includes("<th>Start budowy</th>"));
-  assert.ok(html.includes("Etap 5I.3"));
-  assert.ok(html.includes("5I.3 · pamięć i stan nieaktualny"));
+  assert.ok(html.includes("Etap 5J.1"));
+  assert.ok(html.includes("5J.1 · pełna regresja automatyczna"));
   assert.ok(html.includes("5i3-pamiec-stan-20260831a"));
   assert.ok(interfejs.includes('etykietaZadanego.textContent = "Zadany"'));
   assert.ok(interfejs.includes('"Roboczy: " + (prezentacja.startRoboczy || "—")'));
@@ -198,7 +198,7 @@ sprawdzBrakPrzesuniecia();
 sprawdzIntegracjeZRzeczywistymSilnikiem();
 sprawdzWarstweWidoku();
 
-assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5I.3");
+assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5J.1");
 
 console.log(
   "OK — 5I.1 rozdziela plan źródłowy, start zadany i StartRoboczy oraz pokazuje wielkość i przyczynę przesunięcia."

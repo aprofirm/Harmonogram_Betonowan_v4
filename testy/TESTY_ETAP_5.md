@@ -2,8 +2,7 @@
 
 ## Status
 
-Etap 4 jest zamknięty. Etap 5 jest rozpisany przed rozpoczęciem implementacji.
-Punkty **5A–5D**, cały **5E — stabilizacja**, cały **5F — limit opóźnienia startu** oraz podetapy **5G.1–5G.2** są zakończone. Następny podetap: **5G.3 — konflikt ciągłości**.
+Etap 4 jest zamknięty. Punkty **5A–5I** są zakończone. Trwa końcowe domknięcie Etapu 5 w punkcie **5J**; bieżący podetap to **5J.1 — pełna regresja automatyczna**.
 
 ## Najważniejsza zasada testowa
 
@@ -87,7 +86,7 @@ danych źródłowych.
 - [x] wyłącznie faktycznie przydzielone kursy tworzą kolejne pary dostaw;
 - [x] każda para zachowuje ID i numery obu kursów, rzeczywiste godziny oraz długość przerwy, także `0 min` przy ciągłości;
 - [x] `MaksPrzestojMin` jest osobnym parametrem, domyślnie `15 min`;
-- [ ] przekroczenie wskazuje konkretną parę dostaw i liczbę minut.
+- [x] przekroczenie wskazuje konkretną parę dostaw i liczbę minut.
 
 Test automatyczny 5G.1: `testy/etap_5g_1.test.js` — trzy dostawy jednej budowy
 przy jednej gruszce tworzą dwie rzeczywiste przerwy po `10 min`, a przy dwóch
@@ -104,31 +103,49 @@ niezależny od limitu opóźnienia startu. Test potwierdza nadpisanie wartości�
 odrzucenie wartości ujemnej, nieliczbowej i nieskończonej oraz brak konfliktu,
 który należy dopiero do 5G.3.
 
+Test automatyczny 5G.3: `testy/etap_5g_3.test.js` — każda para rzeczywistych
+dostaw przekraczająca limit tworzy osobny konflikt z budową, oboma kursami,
+czasem przestoju, limitem i wielkością przekroczenia; granica równa limitowi
+pozostaje dozwolona.
+
 ## 5H — wspólny model konfliktów
 
-- [ ] brak gruszki;
-- [ ] brak pompy;
-- [ ] niedostępna lub niezgodna pompa;
-- [ ] brak trasy pompy;
-- [ ] kolizja zasobów;
-- [ ] przekroczenie limitu startu;
-- [ ] przekroczenie maksymalnego przestoju;
-- [ ] konflikty nie są dublowane i mają czytelne przyczyny po polsku.
+- [x] brak gruszki;
+- [x] brak pompy;
+- [x] niedostępna lub niezgodna pompa;
+- [x] brak trasy pompy;
+- [x] kolizja zasobów;
+- [x] przekroczenie limitu startu;
+- [x] przekroczenie maksymalnego przestoju;
+- [x] konflikty nie są dublowane i mają czytelne przyczyny po polsku.
+
+Testy automatyczne 5H.1–5H.3 potwierdzają wspólny wersjonowany kontrakt,
+stabilną agregację bez duplikatów oraz osobny, czytelny `komunikatOperatora`
+bez utraty technicznych danych konfliktu.
 
 ## 5I — interfejs i pamięć
 
-- [ ] operator widzi plan źródłowy, zadany i roboczy;
-- [ ] wielkość oraz przyczyna przesunięcia są jawne;
-- [ ] konflikty mają tekst, nie tylko kolor;
-- [ ] zmiana parametrów unieważnia stary wynik;
-- [ ] odświeżenie zachowuje parametry i wyjątki, a wynik jest liczony ponownie.
+- [x] operator widzi plan źródłowy, zadany i roboczy;
+- [x] wielkość oraz przyczyna przesunięcia są jawne;
+- [x] konflikty mają tekst, nie tylko kolor;
+- [x] zmiana parametrów unieważnia stary wynik;
+- [x] odświeżenie zachowuje parametry i wyjątki, a wynik jest liczony ponownie.
+
+Testy automatyczne 5I.1–5I.3 potwierdzają trzy znaczenia godziny startu,
+tekstową prezentację konfliktów i przestojów, pamięć limitów oraz jawne
+unieważnianie wyniku po istotnej zmianie.
 
 ## 5J — regresja, publikacja i test operatora
 
-- [ ] pełna regresja importu i pamięci;
-- [ ] pełna regresja Etapu 3 — gruszki;
-- [ ] pełna regresja Etapu 4 — pompy;
+- [x] pełna regresja importu i pamięci;
+- [x] pełna regresja Etapu 3 — gruszki;
+- [x] pełna regresja Etapu 4 — pompy;
 - [ ] publikacja `main` i GitHub Pages;
 - [ ] test operatora: przesunięcie pompą, niedobór gruszek, kaskada, limit startu, przestój i brak możliwego zasobu.
+
+Test automatyczny 5J.1: `testy/etap_5j_1.test.js` — pilnuje obecności wszystkich
+27 testów podetapów 5A–5I, kluczowych testów wcześniejszych etapów oraz tego,
+że GitHub Actions uruchamia pełny zestaw `testy/*.test.js`. Właściwe CI wykonuje
+pełną regresję każdego zestawu; po dodaniu 5J.1 obejmuje ona 92 testy.
 
 Etap 5 można zamknąć dopiero po wykonaniu całego 5J.

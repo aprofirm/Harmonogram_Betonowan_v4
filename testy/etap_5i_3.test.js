@@ -44,8 +44,8 @@ function sprawdzPoleIOdczytInterfejsu() {
   assert.ok(html.includes('id="maksymalny-przestoj"'));
   assert.ok(html.includes('name="maksymalnyPrzestojMinuty"'));
   assert.ok(html.includes("Maksymalny przestój między dostawami"));
-  assert.ok(html.includes("Etap 5I.3"));
-  assert.ok(html.includes("5I.3 · pamięć i stan nieaktualny"));
+  assert.ok(html.includes("Etap 5J.1"));
+  assert.ok(html.includes("5J.1 · pełna regresja automatyczna"));
   assert.ok(html.includes("5i3-pamiec-stan-20260831a"));
 
   assert.ok(interfejs.includes('document.getElementById("maksymalny-przestoj")'));
@@ -117,7 +117,7 @@ sprawdzPoleIOdczytInterfejsu();
 sprawdzPamiecParametrowIWyjatkuBudowy();
 sprawdzKompatybilnoscIStanNieaktualny();
 
-assert.equal(wczytajModelIPamiec().konfiguracja.punktEtapu, "5I.3");
+assert.equal(wczytajModelIPamiec().konfiguracja.punktEtapu, "5J.1");
 
 console.log(
   "OK — 5I.3 zapisuje i odtwarza parametry Etapu 5, zachowuje wyjątki budów i unieważnia wynik po istotnej zmianie."
