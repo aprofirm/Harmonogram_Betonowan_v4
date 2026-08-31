@@ -7,15 +7,15 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **5G.1 — osobna definicja przestoju podczas betonowania**.
-- Commit z implementacją 5G.1 na `main`: `0b8776a3c22c3058583b633a1f459423ae124cf8`.
-- Cały punkt **5F — limit opóźnienia rozpoczęcia budowy** oraz podetap **5G.1** są zakończone.
+- Ostatni zakończony podetap: **5G.2 — parametr maksymalnego przestoju**.
+- Commit z implementacją 5G.2 na `main`: `fc506f13859d2859ed5e0d0fdb6df6612b479dea`.
+- Cały punkt **5F — limit opóźnienia rozpoczęcia budowy** oraz podetapy **5G.1–5G.2** są zakończone.
 - Punkty 5A–5F są zakończone; punkt 5G i cały Etap 5 pozostają otwarte.
-- Pełna regresja po 5G.1: **83 zestawy testów — wszystkie poprawne**.
-- GitHub Actions dla commita 5G.1 zakończył się powodzeniem.
-- GitHub Pages po 5G.1 został poprawnie zbudowany i wdrożony.
+- Pełna regresja po 5G.2: **84 zestawy testów — wszystkie poprawne**.
+- GitHub Actions dla commita 5G.2 zakończył się powodzeniem.
+- GitHub Pages po 5G.2 został poprawnie zbudowany i wdrożony.
 
-## Co działa po 5G.1
+## Co działa po 5G.2
 
 - globalny limit opóźnienia startu jest parametrem programu; domyślnie `30 min`;
 - każda budowa może mieć własny `maksymalneOpoznienieStartuBudowyMinuty`;
@@ -27,26 +27,32 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - ścisłe przekroczenie tworzy konflikt `PRZEKROCZONY_LIMIT_OPOZNIENIA_STARTU` przypisany do konkretnej budowy;
 - konflikt podaje `StartZadany`, `StartRoboczy`, pełne opóźnienie, efektywny limit i liczbę minut przekroczenia;
 - źródłowe budowy z importu nie są mutowane, a identyczne przeliczenia dają identyczną klasyfikację;
-- porównanie godzin uwzględnia przejście przez północ.
+- porównanie godzin uwzględnia przejście przez północ;
 - każda robocza budowa otrzymuje `analizaPrzestojowBetonowania` utworzoną z końcowego sprzężonego przydziału gruszek;
 - analiza korzysta wyłącznie z kursów o statusie `przydzielony` i porządkuje je według rzeczywistego początku rozładunku;
 - każda kolejna para dostaw zachowuje ID i numery obu kursów, rzeczywisty koniec poprzedniego rozładunku, rzeczywisty początek następnego oraz `przestojMinuty`;
 - stykające się lub nakładające rozładunki mają `0 min`, a budowa bez przydzielonych dostaw albo z jedną dostawą ma pustą listę par;
 - opóźnienie pierwszej dostawy nie jest przestojem, ponieważ nie ma ona poprzedniej dostawy tej samej budowy;
-- 5G.1 nie dodaje jeszcze `MaksPrzestojMin` ani konfliktu przekroczenia.
+- osobny parametr `maksymalnyPrzestojMinuty` ma zatwierdzoną wartość domyślną `15 min` w konfiguracji programu;
+- limit przestoju jest niezależny od maksymalnego opóźnienia startu i może zostać nadpisany dla pojedynczego przeliczenia;
+- skuteczna wartość jest normalizowana do liczby, musi być skończona i nieujemna, a `0` jest prawidłowe;
+- wynik zwraca skuteczny limit w `wynik.parametry.maksymalnyPrzestojMinuty` bez mutowania konfiguracji i parametrów wejściowych;
+- przerwa równa limitowi pozostaje dozwolona; konflikt po ścisłym przekroczeniu należy jeszcze do 5G.3;
+- pole operatora i trwałe zapamiętywanie parametru pozostają zakresem 5I.
 
 ## Następny krok
 
-**5G.2 — parametr `MaksPrzestojMin`.**
+**5G.3 — konflikt ciągłości dla konkretnej pary dostaw.**
 
 Zakres następnego podetapu:
 
-1. przed rozpoczęciem implementacji uzgodnić z operatorem domyślną wartość `MaksPrzestojMin` — nie wpisywać przypadkowej liczby;
-2. przechowywać limit jako osobny parametr programu, niezależny od maksymalnego opóźnienia rozpoczęcia budowy;
-3. walidować skuteczną wartość również przy bezpośrednim wywołaniu silnika i zwracać ją w wyniku bieżącego przeliczenia;
-4. nie tworzyć jeszcze konfliktu przekroczenia — porównanie konkretnych par z limitem należy do 5G.3;
-5. dodać test 5G.2, uruchomić pełną regresję, zaktualizować dokumentację i opublikować wynik na `main` oraz Pages.
+1. po końcowym sprzężonym przeliczeniu porównać `przestojMinuty` każdej rzeczywistej pary dostaw ze skutecznym `maksymalnyPrzestojMinuty`;
+2. pozostawić przerwę równą limitowi bez konfliktu i klasyfikować wyłącznie ścisłe przekroczenie;
+3. utworzyć osobny konflikt dla każdej problematycznej pary, wskazujący budowę, oba kursy, obie godziny, pełny przestój, użyty limit i liczbę minut ponad limit;
+4. nie tworzyć konfliktu dla pierwszej dostawy, pary z `0 min`, przerwy w limicie ani kursu nieprzydzielonego;
+5. sprawdzić co najmniej granicę `15 min`, pierwszy konflikt od `16 min`, wiele par, deterministyczność i brak mutowania źródła;
+6. dodać test 5G.3, uruchomić pełną regresję, zaktualizować dokumentację i opublikować wynik na `main` oraz Pages.
 
 ## Ważna zasada wznowienia
 
-Na początku kolejnego wątku najpierw przeczytać `AGENTS.md`, `ZASADY_KODU.md`, `PROJECT_DECISIONS.md`, `POMYSLY_I_BACKLOG.md`, `ETAPY_ROZWOJU.md` oraz ten plik, a następnie sprawdzić aktualny `main` i uzgodnić domyślną wartość `MaksPrzestojMin` przed rozpoczęciem 5G.2.
+Na początku kolejnego wątku najpierw przeczytać `AGENTS.md`, `ZASADY_KODU.md`, `PROJECT_DECISIONS.md`, `POMYSLY_I_BACKLOG.md`, `ETAPY_ROZWOJU.md` oraz ten plik, a następnie sprawdzić aktualny `main` przed rozpoczęciem 5G.3.
