@@ -7,15 +7,15 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **5F.3 — klasyfikacja wyniku**.
-- Commit z implementacją 5F.3 na `main`: `d58cf0b8074c64436d1396ff96365688d532a49f`.
-- Cały punkt **5F — limit opóźnienia rozpoczęcia budowy** jest zakończony.
-- Etapy 5A–5F są zakończone; cały Etap 5 pozostaje otwarty.
-- Pełna regresja po 5F.3: **82 zestawy testów — wszystkie poprawne**.
-- GitHub Actions dla commita 5F.3 zakończył się powodzeniem.
-- GitHub Pages po 5F.3 został poprawnie zbudowany i wdrożony.
+- Ostatni zakończony podetap: **5G.1 — osobna definicja przestoju podczas betonowania**.
+- Commit z implementacją 5G.1 na `main`: `0b8776a3c22c3058583b633a1f459423ae124cf8`.
+- Cały punkt **5F — limit opóźnienia rozpoczęcia budowy** oraz podetap **5G.1** są zakończone.
+- Punkty 5A–5F są zakończone; punkt 5G i cały Etap 5 pozostają otwarte.
+- Pełna regresja po 5G.1: **83 zestawy testów — wszystkie poprawne**.
+- GitHub Actions dla commita 5G.1 zakończył się powodzeniem.
+- GitHub Pages po 5G.1 został poprawnie zbudowany i wdrożony.
 
-## Co działa po 5F.3
+## Co działa po 5G.1
 
 - globalny limit opóźnienia startu jest parametrem programu; domyślnie `30 min`;
 - każda budowa może mieć własny `maksymalneOpoznienieStartuBudowyMinuty`;
@@ -28,21 +28,25 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - konflikt podaje `StartZadany`, `StartRoboczy`, pełne opóźnienie, efektywny limit i liczbę minut przekroczenia;
 - źródłowe budowy z importu nie są mutowane, a identyczne przeliczenia dają identyczną klasyfikację;
 - porównanie godzin uwzględnia przejście przez północ.
+- każda robocza budowa otrzymuje `analizaPrzestojowBetonowania` utworzoną z końcowego sprzężonego przydziału gruszek;
+- analiza korzysta wyłącznie z kursów o statusie `przydzielony` i porządkuje je według rzeczywistego początku rozładunku;
+- każda kolejna para dostaw zachowuje ID i numery obu kursów, rzeczywisty koniec poprzedniego rozładunku, rzeczywisty początek następnego oraz `przestojMinuty`;
+- stykające się lub nakładające rozładunki mają `0 min`, a budowa bez przydzielonych dostaw albo z jedną dostawą ma pustą listę par;
+- opóźnienie pierwszej dostawy nie jest przestojem, ponieważ nie ma ona poprzedniej dostawy tej samej budowy;
+- 5G.1 nie dodaje jeszcze `MaksPrzestojMin` ani konfliktu przekroczenia.
 
 ## Następny krok
 
-**5G.1 — osobna definicja przestoju podczas betonowania.**
+**5G.2 — parametr `MaksPrzestojMin`.**
 
 Zakres następnego podetapu:
 
-1. liczyć przestój pomiędzy rzeczywistym końcem rozładunku poprzedniej dostawy a rzeczywistym początkiem następnej dostawy tej samej budowy;
-2. nie mylić opóźnienia pierwszej dostawy i rozpoczęcia budowy z przestojem podczas już trwającego betonowania;
-3. oprzeć obliczenie wyłącznie na faktycznie przydzielonych kursach po sprzężonym przeliczeniu;
-4. wskazywać konkretną parę dostaw i długość przerwy, jeszcze bez klasyfikowania jej według przyszłego parametru `MaksPrzestojMin` z 5G.2;
-5. dodać test 5G.1 i uruchomić pełną regresję;
-6. po zaliczeniu zaktualizować dokumentację, wysłać zmianę na `main` i sprawdzić GitHub Pages.
+1. przed rozpoczęciem implementacji uzgodnić z operatorem domyślną wartość `MaksPrzestojMin` — nie wpisywać przypadkowej liczby;
+2. przechowywać limit jako osobny parametr programu, niezależny od maksymalnego opóźnienia rozpoczęcia budowy;
+3. walidować skuteczną wartość również przy bezpośrednim wywołaniu silnika i zwracać ją w wyniku bieżącego przeliczenia;
+4. nie tworzyć jeszcze konfliktu przekroczenia — porównanie konkretnych par z limitem należy do 5G.3;
+5. dodać test 5G.2, uruchomić pełną regresję, zaktualizować dokumentację i opublikować wynik na `main` oraz Pages.
 
 ## Ważna zasada wznowienia
 
-Na początku kolejnego wątku najpierw przeczytać `AGENTS.md`, `ZASADY_KODU.md`, `PROJECT_DECISIONS.md`, `POMYSLY_I_BACKLOG.md`, `ETAPY_ROZWOJU.md` oraz ten plik, a następnie sprawdzić aktualny `main` przed rozpoczęciem 5G.1.
-
+Na początku kolejnego wątku najpierw przeczytać `AGENTS.md`, `ZASADY_KODU.md`, `PROJECT_DECISIONS.md`, `POMYSLY_I_BACKLOG.md`, `ETAPY_ROZWOJU.md` oraz ten plik, a następnie sprawdzić aktualny `main` i uzgodnić domyślną wartość `MaksPrzestojMin` przed rozpoczęciem 5G.2.
