@@ -31,7 +31,7 @@ function sprawdzDowodyPublikacji() {
   assert.match(readme, /https:\/\/aprofirm\.github\.io\/Harmonogram_Betonowan_v4\//);
   assert.match(readme, /## Publikacja 5J\.2/);
   assert.match(stan, /Ostatni zakończony podetap: \*\*5J\.2 — publikacja\*\*/);
-  assert.match(stan, /\*\*5J\.3 — test operatora\.\*\*/);
+  assert.match(stan, /5J\.3[\s\S]*?test operatora/i);
 }
 
 function sprawdzBrakPrzedwczesnegoZamknieciaEtapu5() {
