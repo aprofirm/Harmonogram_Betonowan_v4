@@ -140,12 +140,23 @@ unieważnianie wyniku po istotnej zmianie.
 - [x] pełna regresja importu i pamięci;
 - [x] pełna regresja Etapu 3 — gruszki;
 - [x] pełna regresja Etapu 4 — pompy;
-- [ ] publikacja `main` i GitHub Pages;
+- [x] publikacja `main` i GitHub Pages;
 - [ ] test operatora: przesunięcie pompą, niedobór gruszek, kaskada, limit startu, przestój i brak możliwego zasobu.
 
 Test automatyczny 5J.1: `testy/etap_5j_1.test.js` — pilnuje obecności wszystkich
 27 testów podetapów 5A–5I, kluczowych testów wcześniejszych etapów oraz tego,
 że GitHub Actions uruchamia pełny zestaw `testy/*.test.js`. Właściwe CI wykonuje
 pełną regresję każdego zestawu; po dodaniu 5J.1 obejmuje ona 92 testy.
+
+### 5J.2 — publikacja
+
+- commit zweryfikowany przed zamknięciem publikacji: `1d3f9d02ceb79293b71dd4a77386244eb9eee050`;
+- GitHub Actions `Testy automatyczne`: run `33396511183` — `success`, pełne 92 zestawy;
+- GitHub Pages `pages build and deployment`: run `33396509870` — `success`;
+- deployment Pages wskazał `pages_build_version` dokładnie `1d3f9d02ceb79293b71dd4a77386244eb9eee050`;
+- docelowy adres: `https://aprofirm.github.io/Harmonogram_Betonowan_v4/`;
+- 5J.2 nie zmienia reguł harmonogramu.
+
+Test automatyczny 5J.2: `testy/etap_5j_2.test.js` pilnuje trwałego zapisu tych dowodów publikacji i pozostawia 5J otwarte do testu operatora.
 
 Etap 5 można zamknąć dopiero po wykonaniu całego 5J.

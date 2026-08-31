@@ -7,34 +7,37 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **5J.1 — pełna regresja automatyczna Etapu 5**.
-- Punkty **5A–5I** oraz **5J.1** są zakończone; punkt 5J i cały Etap 5 pozostają otwarte.
-- Końcowy test `testy/etap_5j_1.test.js` pilnuje obecności wszystkich 27 testów 5A–5I oraz kluczowej regresji wcześniejszych etapów.
-- `testy/TESTY_ETAP_5.md` jest zsynchronizowany z faktycznym stanem 5G.3, 5H i 5I.
-- Pełny runner `.github/workflows/testy.yml` uruchamia każdy `testy/*.test.js` dla `main` i pull requestów.
-- Po dodaniu 5J.1 pełna regresja obejmuje **92 zestawy testów**.
-- 5J.1 nie zmienia logiki planowania, konfliktów, gruszek ani pomp.
+- Ostatni zakończony podetap: **5J.2 — publikacja**.
+- Punkty **5A–5I** oraz **5J.1–5J.2** są zakończone.
+- Punkt **5J** i cały **Etap 5** pozostają otwarte wyłącznie dlatego, że nie wykonano jeszcze testu operatora 5J.3.
+- Pełna regresja po 5J.1 obejmuje **92 zestawy testów**; po dodaniu strażnika 5J.2 repo zawiera **93 zestawy**.
+- 5J.2 nie zmienia logiki planowania, konfliktów, gruszek ani pomp.
 
-## Zakres potwierdzony przez 5J.1
+## Potwierdzenie publikacji 5J.2
 
-- import KDX/CSV i zmienne kolumny;
-- pamięć planu, historia, pamięć tras i ponowne odtwarzanie;
-- Etap 3 — generowanie kursów, przydział gruszek i ograniczona flota;
-- Etap 4 — pompy, przejazdy, dostępność i oba tryby zasobów;
-- Etap 5 — StartPlanowany/StartZadany/StartRoboczy, sprzężenie pomp i gruszek, kaskady, stabilizacja, limity startu, przestoje, wspólny kontrakt konfliktów, tekst operatorski, interfejs i stan nieaktualny.
+- zweryfikowany commit `main`: `1d3f9d02ceb79293b71dd4a77386244eb9eee050`;
+- GitHub Actions `Testy automatyczne`: run `33396511183` — `success`;
+- GitHub Pages: run `33396509870` — `success`;
+- `pages_build_version`: `1d3f9d02ceb79293b71dd4a77386244eb9eee050`;
+- środowisko deploymentu wskazało: `https://aprofirm.github.io/Harmonogram_Betonowan_v4/`.
+
+Po scaleniu zapisu 5J.2 trzeba ponownie potwierdzić zielone Actions i Pages dla końcowego commita `main`.
 
 ## Następny krok
 
-**5J.2 — publikacja.**
+**5J.3 — test operatora.**
 
-Zakres:
+Test ma objąć na rzeczywistym planie co najmniej:
 
-1. potwierdzić aktualny `main` po 5J.1;
-2. potwierdzić zielony GitHub Actions dla pełnych 92 testów;
-3. potwierdzić poprawne GitHub Pages dla tego samego stanu;
-4. nie dodawać nowych funkcji biznesowych;
-5. po publikacji przejść do **5J.3 — test operatora**.
+1. przesunięcie budowy przez pompę;
+2. niedobór gruszek;
+3. kaskadę kilku budów;
+4. przekroczenie limitu startu;
+5. przestój pomiędzy dostawami;
+6. brak możliwego zasobu.
+
+Dopiero po zaliczeniu 5J.3 można zamknąć **5J i cały Etap 5**.
 
 ## Ważna zasada wznowienia
 
-Na początku kolejnego wątku najpierw przeczytać `AGENTS.md`, `ZASADY_KODU.md`, `PROJECT_DECISIONS.md`, `POMYSLY_I_BACKLOG.md`, `ETAPY_ROZWOJU.md` oraz ten plik, a następnie sprawdzić aktualny `main` przed rozpoczęciem 5J.2.
+Na początku kolejnego wątku najpierw przeczytać `AGENTS.md`, `ZASADY_KODU.md`, `PROJECT_DECISIONS.md`, `POMYSLY_I_BACKLOG.md`, `ETAPY_ROZWOJU.md` oraz ten plik, a następnie sprawdzić aktualny `main` przed rozpoczęciem 5J.3.

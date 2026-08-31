@@ -542,3 +542,11 @@ obejmuje **92 testy**. Logika biznesowa harmonogramu nie została w tym kroku
 zmieniona.
 
 Następny podetap: **5J.2 — publikacja i weryfikacja `main`, GitHub Actions oraz GitHub Pages**.
+
+
+## Publikacja 5J.2 — 2026-08-31
+
+Wersja po pełnej regresji Etapu 5 została poprawnie opublikowana przez GitHub Pages.
+Adres: `https://aprofirm.github.io/Harmonogram_Betonowan_v4/`.
+
+Dla commita `1d3f9d02ceb79293b71dd4a77386244eb9eee050` GitHub Actions zakończył pełne 92 testy powodzeniem (run `33396511183`), a GitHub Pages zakończył build i deployment powodzeniem (run `33396509870`). Kolejny krok projektu to **5J.3 — test operatora**.

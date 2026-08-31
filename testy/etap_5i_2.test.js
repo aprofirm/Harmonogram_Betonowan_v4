@@ -139,8 +139,8 @@ function sprawdzWarstweWidoku() {
   assert.ok(html.includes('id="liczba-konfliktow-panel"'));
   assert.ok(html.includes('aria-live="polite"'));
   assert.ok(html.includes("Konflikty wymagające uwagi"));
-  assert.ok(html.includes("Etap 5J.1"));
-  assert.ok(html.includes("5J.1 · pełna regresja automatyczna"));
+  assert.match(html, /Etap 5J\.[1-3]/);
+  assert.match(html, /5J\.[1-3] · (?:pełna regresja automatyczna|publikacja|test operatora)/);
   assert.ok(html.includes("5i3-pamiec-stan-20260831a"));
 
   assert.ok(interfejs.includes("pokazListeKonfliktow(wynik.konflikty);"));
@@ -160,7 +160,7 @@ sprawdzPrzestojZRzeczywistegoSilnika();
 sprawdzZasobIFallbackTekstu();
 sprawdzWarstweWidoku();
 
-assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5J.1");
+assert.match(wczytajAplikacje().konfiguracja.punktEtapu, /^5J\.[1-3]$/);
 
 console.log(
   "OK — 5I.2 pokazuje końcowe konflikty i przestoje tekstowo, z jawnym powiązaniem do budowy, kursu albo zasobu."

@@ -217,7 +217,7 @@ sprawdzRoznePrzyczynyNieSaLaczone();
 sprawdzIntegracjeZKoncowymWynikiem();
 sprawdzDeterministycznosc();
 
-assert.equal(wczytajPelnaAplikacje().konfiguracja.punktEtapu, "5J.1");
+assert.match(wczytajPelnaAplikacje().konfiguracja.punktEtapu, /^5J\.[1-3]$/);
 
 console.log(
   "OK — 5H.2 usuwa duplikaty według stabilnej tożsamości konfliktu, zachowuje pierwsze pełne zgłoszenie i nie łączy różnych obiektów ani przyczyn."
