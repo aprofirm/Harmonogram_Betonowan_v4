@@ -1,0 +1,508 @@
+name: Zastosuj 5H.2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/zastosuj_5h2.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  zastosuj:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Przygotuj Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Wprowadź 5H.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          def zamien(path, stare, nowe):
+              plik = Path(path)
+              tekst = plik.read_text(encoding="utf-8")
+              if stare not in tekst:
+                  raise SystemExit(f"Nie znaleziono oczekiwanego fragmentu w {path}")
+              plik.write_text(tekst.replace(stare, nowe), encoding="utf-8")
+
+          kontrakt = Path("js/harmonogram/kontrakt_konfliktow.js")
+          tekst = kontrakt.read_text(encoding="utf-8")
+          stare = '''  function normalizujListeKonfliktow(listaKonfliktow) {
+    return (Array.isArray(listaKonfliktow) ? listaKonfliktow : [])
+      .map(normalizujKonflikt);
+  }
+
+  function utworzKonflikt(daneKonfliktu) {
+    return normalizujKonflikt(daneKonfliktu);
+  }
+'''
+          nowe = '''  function normalizujListeKonfliktow(listaKonfliktow) {
+    return (Array.isArray(listaKonfliktow) ? listaKonfliktow : [])
+      .map(normalizujKonflikt);
+  }
+
+  function uporzadkujPowiazaniaDoKlucza(powiazania) {
+    return (Array.isArray(powiazania) ? powiazania : [])
+      .map(function (powiazanie) {
+        return [
+          String(powiazanie && powiazanie.typ || ""),
+          String(powiazanie && powiazanie.id || ""),
+          String(powiazanie && powiazanie.rola || "")
+        ];
+      })
+      .sort(function (pierwsze, drugie) {
+        const tekstPierwszy = JSON.stringify(pierwsze);
+        const tekstDrugi = JSON.stringify(drugie);
+
+        if (tekstPierwszy < tekstDrugi) {
+          return -1;
+        }
+
+        if (tekstPierwszy > tekstDrugi) {
+          return 1;
+        }
+
+        return 0;
+      });
+  }
+
+  function pobierzKluczZnormalizowanegoKonfliktu(konflikt) {
+    return JSON.stringify([
+      konflikt.wersjaKontraktu,
+      konflikt.poziom,
+      konflikt.kod,
+      konflikt.rodzaj,
+      konflikt.kategoriaKonfliktu,
+      String(konflikt.przyczyna || ""),
+      uporzadkujPowiazaniaDoKlucza(konflikt.powiazania)
+    ]);
+  }
+
+  function pobierzKluczTozsamosciKonfliktu(konflikt) {
+    return pobierzKluczZnormalizowanegoKonfliktu(
+      normalizujKonflikt(konflikt)
+    );
+  }
+
+  function agregujListeKonfliktow(listaKonfliktow) {
+    const widzianeKlucze = new Set();
+    const wynik = [];
+
+    normalizujListeKonfliktow(listaKonfliktow).forEach(function (konflikt) {
+      const klucz = pobierzKluczZnormalizowanegoKonfliktu(konflikt);
+
+      if (widzianeKlucze.has(klucz)) {
+        return;
+      }
+
+      widzianeKlucze.add(klucz);
+      wynik.push(konflikt);
+    });
+
+    return wynik;
+  }
+
+  function utworzKonflikt(daneKonfliktu) {
+    return normalizujKonflikt(daneKonfliktu);
+  }
+'''
+          if stare not in tekst:
+              raise SystemExit("Nie znaleziono miejsca na agregację w kontrakt_konfliktow.js")
+          tekst = tekst.replace(stare, nowe)
+          tekst = tekst.replace(
+              "    wynik.konflikty = normalizujListeKonfliktow(wynik.konflikty);",
+              "    wynik.konflikty = agregujListeKonfliktow(wynik.konflikty);"
+          )
+          tekst = tekst.replace(
+              "    normalizujKonflikt: normalizujKonflikt,\n    normalizujListeKonfliktow: normalizujListeKonfliktow",
+              "    normalizujKonflikt: normalizujKonflikt,\n    normalizujListeKonfliktow: normalizujListeKonfliktow,\n    pobierzKluczTozsamosciKonfliktu: pobierzKluczTozsamosciKonfliktu,\n    agregujListeKonfliktow: agregujListeKonfliktow"
+          )
+          kontrakt.write_text(tekst, encoding="utf-8")
+
+          zamien(
+              "js/konfiguracja/konfiguracja.js",
+              'punktEtapu: "5H.1"',
+              'punktEtapu: "5H.2"'
+          )
+
+          index = Path("index.html")
+          tekst = index.read_text(encoding="utf-8")
+          tekst = tekst.replace("Etap 5H.1", "Etap 5H.2")
+          tekst = tekst.replace("5H.1 · wspólny kontrakt konfliktów", "5H.2 · agregacja konfliktów")
+          tekst = tekst.replace("5h1-kontrakt-konfliktow-20260831a", "5h2-agregacja-konfliktow-20260831a")
+          index.write_text(tekst, encoding="utf-8")
+
+          for plik in Path("testy").glob("*.test.js"):
+              tekst = plik.read_text(encoding="utf-8")
+              tekst = tekst.replace('punktEtapu, "5H.1"', 'punktEtapu, "5H.2"')
+              plik.write_text(tekst, encoding="utf-8")
+
+          test = r'''"use strict";
+
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+const vm = require("node:vm");
+
+const katalogProjektu = path.resolve(__dirname, "..");
+
+function wczytaj(sciezka) {
+  return fs.readFileSync(path.join(katalogProjektu, sciezka), "utf8");
+}
+
+function wczytajPelnaAplikacje() {
+  const zakresOkna = {};
+  zakresOkna.window = zakresOkna;
+  const kontekst = {
+    window: zakresOkna,
+    TextDecoder: TextDecoder,
+    FileReader: function () {},
+    Map: Map,
+    Set: Set
+  };
+  vm.createContext(kontekst);
+
+  [
+    "js/konfiguracja/konfiguracja.js",
+    "js/budowy/budowy.js",
+    "js/import/import_csv.js",
+    "js/pompy/pompy.js",
+    "js/pompy/dostepnosc_pomp.js",
+    "js/pompy/przejazdy_pomp.js",
+    "js/pompy/przydzial_pomp.js",
+    "js/pompy/minimalna_liczba_pomp.js",
+    "js/pompy/ograniczony_przydzial_pomp.js",
+    "js/pompy/jawne_konsekwencje_pomp.js",
+    "js/gruszki/gruszki.js",
+    "js/gruszki/przydzial_gruszek.js",
+    "js/lokalizacje/lokalizacje.js",
+    "js/harmonogram/harmonogram.js",
+    "js/harmonogram/konflikty_przestojow.js",
+    "js/harmonogram/kontrakt_konfliktow.js"
+  ].forEach(function (sciezka) {
+    new vm.Script(wczytaj(sciezka), { filename: sciezka })
+      .runInContext(kontekst);
+  });
+
+  return zakresOkna.HarmonogramBetonowan;
+}
+
+function wczytajKontraktNadSztucznymSilnikiem(listaKonfliktow) {
+  const zakresOkna = {
+    HarmonogramBetonowan: {
+      harmonogram: {
+        przeliczCalyHarmonogram: function () {
+          return {
+            znacznik: "wynik-testowy",
+            konflikty: listaKonfliktow
+          };
+        }
+      }
+    }
+  };
+  zakresOkna.window = zakresOkna;
+  const kontekst = {
+    window: zakresOkna,
+    Map: Map,
+    Set: Set
+  };
+  vm.createContext(kontekst);
+  new vm.Script(
+    wczytaj("js/harmonogram/kontrakt_konfliktow.js"),
+    { filename: "js/harmonogram/kontrakt_konfliktow.js" }
+  ).runInContext(kontekst);
+
+  return zakresOkna.HarmonogramBetonowan;
+}
+
+function utworzBrakTrasy(idBudowy, opis) {
+  return {
+    kod: "BRAK_MOZLIWEJ_POMPY",
+    rodzaj: "pompy",
+    idBudowy: idBudowy,
+    nazwaBudowy: "Budowa " + idBudowy,
+    przyczyna: "brak-trasy",
+    przyczyny: ["brak-trasy"],
+    opis: opis
+  };
+}
+
+function utworzPrzestoj(idPoprzedniegoKursu, idNastepnegoKursu) {
+  return {
+    kod: "PRZEKROCZONY_LIMIT_PRZESTOJU_BETONOWANIA",
+    rodzaj: "przestoj-betonowania",
+    idBudowy: "A",
+    idPoprzedniegoKursu: idPoprzedniegoKursu,
+    idNastepnegoKursu: idNastepnegoKursu,
+    przestojMinuty: 16,
+    maksymalnyPrzestojMinuty: 15,
+    przekroczenieLimituMinuty: 1,
+    opis: "Przerwa przekracza limit."
+  };
+}
+
+function sprawdzUsuwanieRzeczywistychDuplikatow() {
+  const aplikacja = wczytajPelnaAplikacje();
+  const agreguj = aplikacja.konflikty.agregujListeKonfliktow;
+  const lista = [
+    utworzBrakTrasy("A", "Pierwszy pełny opis."),
+    utworzBrakTrasy("A", "Ten sam problem zgłoszony drugi raz."),
+    utworzBrakTrasy("B", "Inna budowa."),
+    utworzPrzestoj("A-KURS-001", "A-KURS-002"),
+    utworzPrzestoj("A-KURS-001", "A-KURS-002"),
+    utworzPrzestoj("A-KURS-002", "A-KURS-003")
+  ];
+  const zrodloPrzed = JSON.stringify(lista);
+  const wynik = agreguj(lista);
+
+  assert.equal(wynik.length, 4);
+  assert.equal(wynik[0].idBudowy, "A");
+  assert.equal(wynik[0].opis, "Pierwszy pełny opis.");
+  assert.deepEqual(Array.from(wynik[0].przyczyny), ["brak-trasy"]);
+  assert.equal(wynik[1].idBudowy, "B");
+  assert.equal(wynik[2].idPoprzedniegoKursu, "A-KURS-001");
+  assert.equal(wynik[2].idNastepnegoKursu, "A-KURS-002");
+  assert.equal(wynik[3].idPoprzedniegoKursu, "A-KURS-002");
+  assert.equal(wynik[3].idNastepnegoKursu, "A-KURS-003");
+  assert.equal(JSON.stringify(lista), zrodloPrzed);
+}
+
+function sprawdzKluczNieZalezyOdKolejnosciPowiazanAniOpisu() {
+  const aplikacja = wczytajPelnaAplikacje();
+  const klucz = aplikacja.konflikty.pobierzKluczTozsamosciKonfliktu;
+  const pierwszy = {
+    kod: "KOLIZJA_ZASOBU",
+    rodzaj: "zasoby",
+    kategoriaKonfliktu: "kolizja",
+    opis: "Pierwszy opis.",
+    powiazania: [
+      { typ: "budowa", id: "A", rola: "dotyczy" },
+      { typ: "zasob", id: "pompa:P-1", rola: "dotyczy" }
+    ]
+  };
+  const drugi = {
+    kod: "KOLIZJA_ZASOBU",
+    rodzaj: "zasoby",
+    kategoriaKonfliktu: "kolizja",
+    opis: "Inne sformułowanie tego samego problemu.",
+    powiazania: [
+      { typ: "zasob", id: "pompa:P-1", rola: "dotyczy" },
+      { typ: "budowa", id: "A", rola: "dotyczy" }
+    ]
+  };
+  const innyZasob = Object.assign({}, drugi, {
+    powiazania: [
+      { typ: "zasob", id: "pompa:P-2", rola: "dotyczy" },
+      { typ: "budowa", id: "A", rola: "dotyczy" }
+    ]
+  });
+
+  assert.equal(klucz(pierwszy), klucz(drugi));
+  assert.notEqual(klucz(pierwszy), klucz(innyZasob));
+}
+
+function sprawdzRoznePrzyczynyNieSaLaczone() {
+  const aplikacja = wczytajPelnaAplikacje();
+  const agreguj = aplikacja.konflikty.agregujListeKonfliktow;
+  const brakTrasy = utworzBrakTrasy("A", "Brak trasy.");
+  const brakPompy = Object.assign({}, brakTrasy, {
+    przyczyna: "brak-dostepnych-pomp",
+    przyczyny: ["brak-dostepnych-pomp"],
+    opis: "Brak dostępnej pompy."
+  });
+
+  assert.equal(agreguj([brakTrasy, brakPompy]).length, 2);
+}
+
+function sprawdzIntegracjeZKoncowymWynikiem() {
+  const duplikat = utworzBrakTrasy("A", "Powtarzany konflikt.");
+  const aplikacja = wczytajKontraktNadSztucznymSilnikiem([
+    duplikat,
+    Object.assign({}, duplikat),
+    utworzBrakTrasy("B", "Inna budowa.")
+  ]);
+  const wynik = aplikacja.harmonogram.przeliczCalyHarmonogram({});
+
+  assert.equal(wynik.znacznik, "wynik-testowy");
+  assert.equal(wynik.konflikty.length, 2);
+  assert.equal(wynik.konflikty[0].idBudowy, "A");
+  assert.equal(wynik.konflikty[1].idBudowy, "B");
+  assert.ok(wynik.konflikty.every(function (konflikt) {
+    return konflikt.wersjaKontraktu === 1 &&
+      Array.isArray(konflikt.powiazania) &&
+      konflikt.powiazania.length > 0;
+  }));
+}
+
+function sprawdzDeterministycznosc() {
+  const aplikacja = wczytajPelnaAplikacje();
+  const agreguj = aplikacja.konflikty.agregujListeKonfliktow;
+  const lista = [
+    utworzBrakTrasy("A", "A"),
+    utworzBrakTrasy("A", "A duplikat"),
+    utworzPrzestoj("A-KURS-001", "A-KURS-002"),
+    utworzPrzestoj("A-KURS-002", "A-KURS-003")
+  ];
+
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(agreguj(lista))),
+    JSON.parse(JSON.stringify(agreguj(lista)))
+  );
+}
+
+sprawdzUsuwanieRzeczywistychDuplikatow();
+sprawdzKluczNieZalezyOdKolejnosciPowiazanAniOpisu();
+sprawdzRoznePrzyczynyNieSaLaczone();
+sprawdzIntegracjeZKoncowymWynikiem();
+sprawdzDeterministycznosc();
+
+assert.equal(wczytajPelnaAplikacje().konfiguracja.punktEtapu, "5H.2");
+
+console.log(
+  "OK — 5H.2 usuwa duplikaty według stabilnej tożsamości konfliktu, zachowuje pierwsze pełne zgłoszenie i nie łączy różnych obiektów ani przyczyn."
+);
+'''
+          Path("testy/etap_5h_2.test.js").write_text(test, encoding="utf-8")
+
+          etapy = Path("ETAPY_ROZWOJU.md")
+          tekst = etapy.read_text(encoding="utf-8")
+          tekst = tekst.replace(
+              "Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5H.2**",
+              "Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5H.3**"
+          )
+          tekst = tekst.replace(
+              "  - [ ] **5H.2 — agregacja:** wynik końcowy zbiera konflikty bez dublowania i\n    zachowuje powiązanie z budową, kursem albo zasobem.",
+              "  - [x] **5H.2 — agregacja:** wynik końcowy zbiera konflikty bez dublowania i\n    zachowuje powiązanie z budową, kursem albo zasobem."
+          )
+          znacznik = "\n\n## Weryfikacja produkcyjnego KDX — 2026-08-14"
+          wpis = '''
+
+## Zamknięcie 5H.2 — agregacja konfliktów bez dublowania — 2026-08-31
+
+- [x] końcowa lista `wynik.konflikty` jest normalizowana i agregowana w jednym miejscu przez moduł wspólnego kontraktu;
+- [x] stabilny klucz tożsamości korzysta z wersji kontraktu, poziomu, kodu, rodzaju, kategorii, szczegółowej `przyczyna` oraz uporządkowanych `powiazania`;
+- [x] treść `opis` nie jest częścią tożsamości, dzięki czemu 5H.3 może później zmienić komunikaty bez zmiany zasad agregacji;
+- [x] kolejność elementów w `powiazania` nie zmienia tożsamości konfliktu;
+- [x] z kilku identycznych zgłoszeń pozostaje pierwsze pełne zgłoszenie wraz z jego dotychczasowymi polami szczegółowymi;
+- [x] konflikty różnych budów, kursów, zasobów, przyczyn i różnych par dostaw pozostają osobnymi pozycjami;
+- [x] kolejność końcowa pozostaje deterministyczna i odpowiada kolejności pierwszych wystąpień;
+- [x] agregacja nie mutuje wejściowej listy ani danych źródłowych;
+- [x] test `testy/etap_5h_2.test.js` sprawdza duplikaty, kolejność powiązań, różne przyczyny i obiekty, integrację z publicznym wynikiem oraz deterministyczność;
+- [x] pełna regresja `testy/*.test.js` przechodzi przed publikacją.
+
+Podetap **5H.2** jest zakończony. Punkt nadrzędny **5H — wspólny model konfliktów i przyczyn** oraz cały Etap 5 pozostają otwarte.
+Następny niezakończony podetap: **5H.3 — czytelne przyczyny dla operatora**.
+'''
+          if "## Zamknięcie 5H.2" not in tekst:
+              if znacznik not in tekst:
+                  raise SystemExit("Nie znaleziono miejsca na wpis 5H.2 w ETAPY_ROZWOJU.md")
+              tekst = tekst.replace(znacznik, wpis + znacznik)
+          etapy.write_text(tekst, encoding="utf-8")
+
+          readme = Path("README.md")
+          tekst = readme.read_text(encoding="utf-8")
+          stare_readme = "Podetap **5H.1** jest zakończony: wszystkie końcowe konflikty mają wspólny wersjonowany rdzeń z kategorią i listą `powiazania`, przy zachowaniu wcześniejszych pól szczegółowych. Następny krok to **5H.2 — agregacja konfliktów bez dublowania**."
+          nowe_readme = "Podetapy **5H.1–5H.2** są zakończone: wszystkie końcowe konflikty mają wspólny wersjonowany rdzeń z kategorią i listą `powiazania`, a wynik usuwa wielokrotne zgłoszenia tego samego problemu według stabilnej tożsamości niezależnej od tekstu komunikatu. Różne budowy, kursy, zasoby, przyczyny i pary dostaw pozostają osobnymi konfliktami. Następny krok to **5H.3 — czytelne przyczyny dla operatora**."
+          if stare_readme not in tekst:
+              raise SystemExit("Nie znaleziono statusu 5H.1 w README.md")
+          readme.write_text(tekst.replace(stare_readme, nowe_readme), encoding="utf-8")
+
+          decyzje = Path("PROJECT_DECISIONS.md")
+          tekst = decyzje.read_text(encoding="utf-8")
+          if "## 115. Tożsamość konfliktu" not in tekst:
+              tekst = tekst.rstrip() + '''
+
+---
+
+## 115. Tożsamość konfliktu jest niezależna od tekstu komunikatu
+
+Od 5H.2 wynik końcowy usuwa wielokrotne zgłoszenia tego samego konfliktu po normalizacji do kontraktu wersji `1`. Stabilna tożsamość konfliktu jest wyznaczana przez wersję kontraktu, poziom, `kod`, `rodzaj`, `kategoriaKonfliktu`, szczegółową `przyczyna` oraz uporządkowaną listę `powiazania`.
+
+Pole `opis` nie należy do klucza tożsamości. Dzięki temu późniejsze dopracowanie polskich komunikatów w 5H.3 nie zmieni tego, które problemy są uznawane za ten sam konflikt. Kolejność samych elementów `powiazania` również nie wpływa na klucz.
+
+Jeżeli ten sam problem zostanie zgłoszony kilka razy, wynik zachowuje pierwsze pełne zgłoszenie i jego szczegółowe pola. Konflikty dotyczące różnych budów, kursów, zasobów, szczegółowych przyczyn albo różnych par dostaw pozostają osobnymi pozycjami. Agregacja zachowuje deterministyczną kolejność pierwszych wystąpień i nie mutuje danych wejściowych.
+''' + "\n"
+          decyzje.write_text(tekst, encoding="utf-8")
+
+          stan = '''# STAN PROJEKTU — punkt wznowienia
+
+Aktualizacja: 2026-08-31
+
+Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne decyzje i historia etapów pozostają w `PROJECT_DECISIONS.md` oraz `ETAPY_ROZWOJU.md`.
+
+## Aktualny stan
+
+- Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
+- Ostatni zakończony podetap: **5H.2 — agregacja konfliktów bez dublowania**.
+- Implementacja 5H.2 znajduje się na `main`; dokładny SHA należy odczytać z bieżącego commita `5H.2: agreguj konflikty bez dublowania`.
+- Punkty **5A–5G** oraz podetapy **5H.1–5H.2** są zakończone; punkt 5H i cały Etap 5 pozostają otwarte.
+- Pełna regresja po dodaniu testu 5H.2 obejmuje **87 zestawów testów**.
+
+## Co działa po 5H.2
+
+- każdy końcowy konflikt ma wspólny kontrakt wersji `1` z kategorią i listą `powiazania`;
+- końcowa lista konfliktów przechodzi przez jeden mechanizm agregacji w `js/harmonogram/kontrakt_konfliktow.js`;
+- stabilny klucz tożsamości używa wersji kontraktu, poziomu, kodu, rodzaju, kategorii, szczegółowej przyczyny i uporządkowanych powiązań;
+- `opis` nie wpływa na tożsamość konfliktu;
+- kolejność elementów `powiazania` nie wpływa na tożsamość;
+- identyczne zgłoszenia tego samego problemu są redukowane do pierwszego pełnego zgłoszenia;
+- różne budowy, kursy, zasoby, przyczyny i pary dostaw pozostają osobnymi konfliktami;
+- agregacja zachowuje deterministyczną kolejność pierwszych wystąpień i nie mutuje źródła;
+- publiczne funkcje `pobierzKluczTozsamosciKonfliktu` i `agregujListeKonfliktow` są dostępne w `aplikacja.konflikty` do testowania i dalszego rozwoju;
+- 5H.2 nie zmienia jeszcze finalnych treści komunikatów operatorskich.
+
+## Następny krok
+
+**5H.3 — czytelne przyczyny dla operatora.**
+
+Zakres następnego podetapu:
+
+1. przygotować spójne, zrozumiałe polskie komunikaty na podstawie wspólnego kontraktu i kategorii konfliktów;
+2. komunikat ma mówić operatorowi co jest problemem i jakiego obiektu dotyczy bez odczytywania pól diagnostycznych;
+3. zachować szczegółowe dane techniczne w konflikcie, ale nie wymagać ich do zrozumienia podstawowej przyczyny;
+4. nie zmieniać zasad planowania ani agregacji z 5H.2;
+5. dodać test 5H.3 i uruchomić pełną regresję przed publikacją.
+
+## Ważna zasada wznowienia
+
+Na początku kolejnego wątku najpierw przeczytać `AGENTS.md`, `ZASADY_KODU.md`, `PROJECT_DECISIONS.md`, `POMYSLY_I_BACKLOG.md`, `ETAPY_ROZWOJU.md` oraz ten plik, a następnie sprawdzić aktualny `main` przed rozpoczęciem 5H.3.
+'''
+          Path("STAN_PROJEKTU.md").write_text(stan, encoding="utf-8")
+          PY
+
+          rm .github/workflows/zastosuj_5h2.yml
+
+      - name: Uruchom pełną regresję
+        shell: bash
+        run: |
+          set -euo pipefail
+          liczba=0
+          for plik in testy/*.test.js; do
+            echo "=== $plik ==="
+            node "$plik"
+            liczba=$((liczba + 1))
+          done
+          echo "Pełna regresja: $liczba zestawów — wszystkie poprawne."
+          test "$liczba" -eq 87
+
+      - name: Zapisz 5H.2 na main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "5H.2: agreguj konflikty bez dublowania"
+          git push origin HEAD:main
