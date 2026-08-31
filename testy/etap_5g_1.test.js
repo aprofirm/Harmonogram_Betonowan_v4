@@ -138,7 +138,7 @@ function sprawdzPrzestojePoRzeczywistymPrzydziale() {
       return konflikt.rodzaj === "przestoj-betonowania";
     }),
     false,
-    "5G.1 oblicza przerwy, ale nie klasyfikuje ich jeszcze jako konflikty."
+    "Przerwa 10 min pozostaje w domyślnym limicie 15 min także po 5G.3."
   );
   assert.equal(
     JSON.stringify(stanImportu),
@@ -236,7 +236,7 @@ sprawdzPrzestojePoRzeczywistymPrzydziale();
 sprawdzZeOpoznionaPierwszaDostawaNieJestPrzestojem();
 sprawdzCiagloscIOdrzucenieNieprzydzielonychKursow();
 
-assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5G.2");
+assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5G.3");
 
 console.log(
   "OK — 5G.1 liczy rzeczywiste przerwy między przydzielonymi dostawami bez mieszania pierwszego opóźnienia."

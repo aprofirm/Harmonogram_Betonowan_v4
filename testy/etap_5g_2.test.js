@@ -128,7 +128,7 @@ function sprawdzNadpisanieBezZmianyKonfiguracji() {
       return konflikt.rodzaj === "przestoj-betonowania";
     }),
     false,
-    "5G.2 przechowuje limit, ale konflikt należy dopiero do 5G.3."
+    "Sam moduł 5G.2 przechowuje limit; klasyfikację dodaje osobny moduł 5G.3."
   );
 }
 
@@ -153,8 +153,8 @@ sprawdzDomyslnyParametr();
 sprawdzNadpisanieBezZmianyKonfiguracji();
 sprawdzWalidacjeBezposredniegoWejsciaSilnika();
 
-assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5G.2");
+assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5G.3");
 
 console.log(
-  "OK — 5G.2 przechowuje, normalizuje i waliduje osobny limit przestoju 15 min bez tworzenia konfliktu."
+  "OK — 5G.2 nadal niezależnie przechowuje, normalizuje i waliduje limit przestoju 15 min."
 );
