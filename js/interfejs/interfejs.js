@@ -701,21 +701,76 @@
     return budowa.startPlanowany;
   }
 
+  function opiszPrzyczynePrzesunieciaStartu(budowa) {
+    const skutekPompy = budowa && budowa.jawnySkutekPompy;
+    const przyczyna = String(
+      skutekPompy && skutekPompy.przyczyna || ""
+    ).trim();
+    const opisyPrzyczyn = {
+      "pompa-zajeta": "pompa zajęta",
+      "po-dostepnosci": "pompa dostępna później",
+      "rzeczywiste-dostawy-poprzedniej-budowy":
+        "poprzednia budowa zakończyła się później",
+      "brak-trasy": "brak czasu przejazdu pompy",
+      "niewystarczajacy-wysieg": "brak pompy o wymaganym wysięgu",
+      "pompa-nieaktywna": "pompa nieaktywna"
+    };
+
+    return opisyPrzyczyn[przyczyna] || "korekta harmonogramu";
+  }
+
+  function pobierzPrezentacjeStartuBudowy(budowa) {
+    const startZadany = String(
+      budowa && (budowa.startZadany || budowa.startPlanowany) || ""
+    ).trim();
+    const ocenaOpoznienia = budowa && budowa.ocenaOpoznieniaStartu;
+    const czyJestAktualnyWynik = Boolean(
+      ocenaOpoznienia &&
+      typeof ocenaOpoznienia === "object" &&
+      !Array.isArray(ocenaOpoznienia)
+    );
+    const startRoboczy = czyJestAktualnyWynik
+      ? String(budowa.startRoboczy || "").trim()
+      : "";
+    const opoznienie = czyJestAktualnyWynik
+      ? Number(ocenaOpoznienia.opoznienieStartuMinuty)
+      : NaN;
+    const przesuniecieStartuMinuty = Number.isFinite(opoznienie)
+      ? Math.max(0, opoznienie)
+      : null;
+
+    return {
+      planZrodlowy: opiszOknoStartu(budowa),
+      startZadany: startZadany,
+      startRoboczy: startRoboczy || null,
+      przesuniecieStartuMinuty: przesuniecieStartuMinuty,
+      przyczynaPrzesuniecia:
+        przesuniecieStartuMinuty !== null && przesuniecieStartuMinuty > 0
+          ? opiszPrzyczynePrzesunieciaStartu(budowa)
+          : null
+    };
+  }
+
   function utworzKomorkeStartuBudowy(budowa) {
     const komorka = document.createElement("td");
     const kontrolki = document.createElement("span");
+    const etykietaZadanego = document.createElement("small");
     const pole = document.createElement("input");
     const przyciskPrzywroc = document.createElement("button");
     const opisPlanu = document.createElement("small");
+    const opisStartuRoboczego = document.createElement("small");
+    const opisPrzesuniecia = document.createElement("small");
     const startPlanowany = String(budowa.startPlanowany || "").trim();
-    const startZadany = String(
-      budowa.startZadany || budowa.startPlanowany || ""
-    ).trim();
+    const prezentacja = pobierzPrezentacjeStartuBudowy(budowa);
+    const startZadany = prezentacja.startZadany;
     const czyStartZmieniony = startZadany !== startPlanowany;
     const czyZrealizowana = budowa.statusRealizacji === "zrealizowana";
 
     komorka.className = "komorka-startu-budowy";
     kontrolki.className = "kontrolki-startu-budowy";
+
+    etykietaZadanego.className = "etykieta-startu-zadanego";
+    etykietaZadanego.textContent = "Zadany";
 
     pole.className = "pole-startu-budowy";
     pole.type = "time";
@@ -725,7 +780,7 @@
     pole.disabled = czyZrealizowana;
     pole.setAttribute(
       "aria-label",
-      "Start do przeliczenia dla budowy " + budowa.budowa
+      "Godzina zadana do przeliczenia dla budowy " + budowa.budowa
     );
     pole.addEventListener("change", function () {
       obslugaZmianyStartuBudowy(budowa.idBudowy, pole.value, false);
@@ -748,11 +803,28 @@
 
     opisPlanu.className = "plan-zrodlowy-startu";
     opisPlanu.textContent = "Plan: " + opiszOknoStartu(budowa);
+    opisStartuRoboczego.className = "start-roboczy-budowy";
+    opisStartuRoboczego.textContent =
+      "Roboczy: " + (prezentacja.startRoboczy || "—");
 
     kontrolki.appendChild(pole);
     kontrolki.appendChild(przyciskPrzywroc);
+    kontrolki.appendChild(etykietaZadanego);
     komorka.appendChild(kontrolki);
     komorka.appendChild(opisPlanu);
+    komorka.appendChild(opisStartuRoboczego);
+
+    if (
+      prezentacja.przesuniecieStartuMinuty !== null &&
+      prezentacja.przesuniecieStartuMinuty > 0
+    ) {
+      opisPrzesuniecia.className = "przesuniecie-startu-budowy";
+      opisPrzesuniecia.textContent =
+        "+" + String(prezentacja.przesuniecieStartuMinuty) + " min · " +
+        prezentacja.przyczynaPrzesuniecia;
+      komorka.appendChild(opisPrzesuniecia);
+    }
+
     return komorka;
   }
 
@@ -1504,6 +1576,8 @@
     pokazPrzywroconyPlan: pokazPrzywroconyPlan,
     wyczyscPlan: wyczyscPlan,
     pokazListeBudow: pokazListeBudow,
+    pobierzPrezentacjeStartuBudowy: pobierzPrezentacjeStartuBudowy,
+    opiszPrzyczynePrzesunieciaStartu: opiszPrzyczynePrzesunieciaStartu,
     utworzKomorkeStartuBudowy: utworzKomorkeStartuBudowy,
     pokazBlad: pokazBlad,
     pokazBladDanych: pokazBladDanych,

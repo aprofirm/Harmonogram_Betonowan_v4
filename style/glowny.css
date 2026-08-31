@@ -1198,18 +1198,29 @@ td {
 }
 
 .komorka-startu-budowy {
-  min-width: 154px;
+  min-width: 196px;
 }
 
 .kontrolki-startu-budowy {
   display: inline-grid;
-  grid-template-columns: 98px 32px;
+  grid-template-columns: auto 88px 30px;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
+}
+
+.etykieta-startu-zadanego {
+  color: var(--kolor-tekstu-pomocniczego);
+  font-size: 0.61rem;
+  font-weight: 750;
+  white-space: nowrap;
+  grid-column: 1;
+  grid-row: 1;
 }
 
 .pole-startu-budowy {
-  width: 98px;
+  grid-column: 2;
+  grid-row: 1;
+  width: 88px;
   min-height: 34px;
   padding: 0 7px;
   border: 1px solid #cbd7df;
@@ -1233,6 +1244,8 @@ td {
 }
 
 .przycisk-przywroc-start {
+  grid-column: 3;
+  grid-row: 1;
   width: 32px;
   height: 32px;
   padding: 0;
@@ -1257,12 +1270,32 @@ td {
 }
 
 .plan-zrodlowy-startu {
-  display: block;
-  margin-top: 4px;
+  display: inline-block;
+  margin-top: 3px;
+}
+
+.plan-zrodlowy-startu,
+.start-roboczy-budowy {
   color: var(--kolor-tekstu-pomocniczego);
-  font-size: 0.66rem;
+  font-size: 0.64rem;
   font-weight: 650;
   white-space: nowrap;
+}
+
+.start-roboczy-budowy {
+  display: inline-block;
+  margin-left: 8px;
+  color: var(--kolor-granatowy);
+  font-weight: 800;
+}
+
+.przesuniecie-startu-budowy {
+  display: block;
+  margin-top: 2px;
+  color: #a65e1e;
+  font-size: 0.63rem;
+  font-weight: 800;
+  line-height: 1.15;
 }
 
 .komorka-czasu-rozladunku {

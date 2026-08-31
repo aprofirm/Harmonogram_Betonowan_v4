@@ -218,9 +218,9 @@ function sprawdzPublicznaFunkcje() {
 function sprawdzOznaczenieWersjiWebowej() {
   const html = wczytaj("index.html");
 
-  assert.ok(html.includes("Etap 5H.3"));
-  assert.ok(html.includes("5H.3 · czytelne przyczyny konfliktów"));
-  assert.ok(html.includes("5h3-komunikaty-konfliktow-20260831a"));
+  assert.ok(html.includes("Etap 5I.1"));
+  assert.ok(html.includes("5I.1 · trzy godziny startu"));
+  assert.ok(html.includes("5i1-trzy-godziny-20260831a"));
 }
 
 sprawdzCzytelneKomunikatyKategorii();
@@ -228,7 +228,7 @@ sprawdzFallbackINiezaleznoscOdDeduplikacji();
 sprawdzPublicznaFunkcje();
 sprawdzOznaczenieWersjiWebowej();
 
-assert.equal(wczytajKonfiguracje().punktEtapu, "5H.3");
+assert.equal(wczytajKonfiguracje().punktEtapu, "5I.1");
 
 console.log(
   "OK — 5H.3 dodaje każdemu konfliktowi czytelny polski komunikat operatorski bez zmiany danych technicznych ani agregacji."

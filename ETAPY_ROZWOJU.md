@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5I.1**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5I.2**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -753,7 +753,7 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
   - [x] **5H.3 — czytelne przyczyny:** komunikaty dla operatora są po polsku i
     nie wymagają odczytywania danych diagnostycznych.
 - [ ] **5I — interfejs, parametry i pamięć wyniku Etapu 5.**
-  - [ ] **5I.1 — trzy godziny i przesunięcie:** tabela pokazuje plan źródłowy,
+  - [x] **5I.1 — trzy godziny i przesunięcie:** tabela pokazuje plan źródłowy,
     godzinę zadaną oraz rzeczywisty `StartRoboczy` razem z przyczyną różnicy.
   - [ ] **5I.2 — konflikty i przestoje:** problemy są widoczne tekstowo, a kolor
     jest tylko sygnałem pomocniczym.
@@ -1477,6 +1477,21 @@ Następny niezakończony podetap: **5H.3 — czytelne przyczyny dla operatora**.
 
 Podetap **5H.3** oraz cały punkt **5H — wspólny model konfliktów i przyczyn** są zakończone. Etap 5 pozostaje otwarty.
 Następny niezakończony podetap: **5I.1 — trzy godziny i przesunięcie**.
+
+## Zamknięcie 5I.1 — trzy godziny i przesunięcie — 2026-08-31
+
+- [x] jedna zwarta komórka `Start budowy` rozdziela plan źródłowy, edytowalny `StartZadany` i wynikowy `StartRoboczy` bez tworzenia trzech szerokich kolumn;
+- [x] przed pełnym przeliczeniem `StartRoboczy` jest pokazany jako `—`, aby wartość modelu roboczego nie udawała aktualnego wyniku silnika;
+- [x] po przeliczeniu operator widzi rzeczywisty `StartRoboczy` z `ocenaOpoznieniaStartu`;
+- [x] przy dodatniej różnicy `StartRoboczy - StartZadany` widoczna jest liczba minut oraz prosta przyczyna, m.in. `pompa zajęta`, `pompa dostępna później` albo `poprzednia budowa zakończyła się później`;
+- [x] nieznana przyszła przyczyna przesunięcia ma bezpieczny opis `korekta harmonogramu`;
+- [x] ręczna korekta `StartZadany` nadal nie nadpisuje planu źródłowego, a przycisk `↺` zachowuje wcześniejsze działanie;
+- [x] układ pozostaje kompaktowy: Plan i Roboczy są w jednym wierszu pomocniczym, a przyczyna pojawia się tylko wtedy, gdy wystąpiło przesunięcie;
+- [x] test `testy/etap_5i_1.test.js` sprawdza trzy znaczenia godziny, stan przed przeliczeniem, brak przesunięcia, przyczyny oraz integrację z rzeczywistym silnikiem pomp;
+- [x] pełna regresja `testy/*.test.js` przechodzi przed publikacją.
+
+Podetap **5I.1** jest zakończony. Punkt nadrzędny **5I — interfejs, parametry i pamięć wyniku Etapu 5** oraz cały Etap 5 pozostają otwarte.
+Następny niezakończony podetap: **5I.2 — konflikty i przestoje w interfejsie**.
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
 

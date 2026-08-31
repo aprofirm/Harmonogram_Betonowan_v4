@@ -204,7 +204,7 @@ function sprawdzInterfejsKorektyStartu() {
     "utf8"
   );
 
-  assert.match(html, /<th>Start do przeliczenia<\/th>/);
+  assert.match(html, /<th>Start budowy<\/th>/);
   assert.match(html, /<footer class="stopka">[\s\S]*<span>[^<]+ · [^<]+<\/span>/);
   assert.match(interfejs, /className = "pole-startu-budowy"/);
   assert.match(interfejs, /type = "time"/);

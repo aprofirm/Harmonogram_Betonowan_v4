@@ -2251,3 +2251,10 @@ Komunikat operatorski powstaje centralnie na podstawie `kategoriaKonfliktu` i do
 
 Nieznany przyszły typ konfliktu może użyć dotychczasowego `opis` jako bezpiecznego fallbacku. Zmiana sformułowania `komunikatOperatora` nie może zmieniać klucza tożsamości z 5H.2 ani logiki planowania.
 
+---
+
+## 117. Trzy znaczenia godziny startu są rozdzielone w widoku operatora
+
+Od 5I.1 główna tabela nie używa jednego pola do przedstawiania różnych znaczeń godziny. W zwartej komórce `Start budowy` operator widzi osobno plan źródłowy, edytowalny `StartZadany` oraz wynikowy `StartRoboczy`.
+
+`StartRoboczy` jest traktowany jako aktualny wynik dopiero po pełnym przeliczeniu; wcześniej interfejs pokazuje `—`. Jeżeli `StartRoboczy` jest późniejszy niż `StartZadany`, ta sama komórka pokazuje liczbę minut przesunięcia oraz krótką przyczynę wynikającą z danych silnika. Ręczna zmiana `StartZadany` nie zmienia planu źródłowego. Układ pozostaje celowo w jednej komórce, aby nie poszerzać głównej tabeli trzema osobnymi kolumnami.
