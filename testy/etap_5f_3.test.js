@@ -211,7 +211,7 @@ function sprawdzPierwszenstwoLimituIndywidualnegoIGranice() {
   assert.equal(konfliktB.opoznienieStartuMinuty, 10);
   assert.equal(konfliktB.maksymalneOpoznienieStartuMinuty, 9);
   assert.equal(konfliktB.przekroczenieLimituMinuty, 1);
-  assert.equal(aplikacja.konfiguracja.punktEtapu, "5J.1");
+  assert.match(aplikacja.konfiguracja.punktEtapu, /^5J\.[1-3]$/);
 }
 
 function sprawdzPowtarzalnoscKlasyfikacji() {

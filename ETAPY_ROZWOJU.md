@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5J.2**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5J.3**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -762,7 +762,7 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
 - [ ] **5J — pełna regresja, publikacja i test operatora.**
   - [x] **5J.1 — testy automatyczne:** cały Etap 5 oraz pełna regresja importu,
     pamięci, gruszek i pomp.
-  - [ ] **5J.2 — publikacja:** `main`, GitHub Actions i GitHub Pages.
+  - [x] **5J.2 — publikacja:** `main`, GitHub Actions i GitHub Pages.
   - [ ] **5J.3 — test operatora:** rzeczywisty plan obejmujący przesunięcie przez
     pompę, niedobór gruszek, kaskadę, limit startu, przestój i brak możliwego zasobu.
 
@@ -2779,5 +2779,17 @@ Następny niezakończony podetap: **4H.3 — jawne konsekwencje**.
 - [x] pełna regresja po dodaniu 5J.1 obejmuje **92 zestawy testów** i musi przejść przed scaleniem;
 - [x] 5J.1 nie zmienia logiki biznesowej harmonogramu.
 
-Podetap **5J.1** jest zakończony. Punkt **5J** oraz cały **Etap 5** pozostają otwarte.
-Następny niezakończony podetap: **5J.2 — publikacja (`main`, GitHub Actions i GitHub Pages)**.
+Podetapy **5J.1–5J.2** są zakończone. Punkt **5J** oraz cały **Etap 5** pozostają otwarte.
+Następny niezakończony podetap: **5J.3 — test operatora**.
+
+
+### 5J.2 — publikacja potwierdzona — 2026-08-31
+
+- [x] `main` po 5J.1 wskazywał commit `1d3f9d02ceb79293b71dd4a77386244eb9eee050`;
+- [x] `Testy automatyczne`, run `33396511183`, zakończyły się `success`;
+- [x] `pages build and deployment`, run `33396509870`, zakończył się `success`;
+- [x] deployment użył `pages_build_version = 1d3f9d02ceb79293b71dd4a77386244eb9eee050`;
+- [x] środowisko Pages wskazało adres `https://aprofirm.github.io/Harmonogram_Betonowan_v4/`;
+- [x] 5J.2 nie dodaje funkcji biznesowych.
+
+Podetap **5J.2** jest zakończony. Następny niezakończony podetap: **5J.3 — test operatora**.

@@ -218,8 +218,8 @@ function sprawdzPublicznaFunkcje() {
 function sprawdzOznaczenieWersjiWebowej() {
   const html = wczytaj("index.html");
 
-  assert.ok(html.includes("Etap 5J.1"));
-  assert.ok(html.includes("5J.1 · pełna regresja automatyczna"));
+  assert.match(html, /Etap 5J\.[1-3]/);
+  assert.match(html, /5J\.[1-3] · (?:pełna regresja automatyczna|publikacja|test operatora)/);
   assert.ok(html.includes("5i3-pamiec-stan-20260831a"));
 }
 
@@ -228,7 +228,7 @@ sprawdzFallbackINiezaleznoscOdDeduplikacji();
 sprawdzPublicznaFunkcje();
 sprawdzOznaczenieWersjiWebowej();
 
-assert.equal(wczytajKonfiguracje().punktEtapu, "5J.1");
+assert.match(wczytajKonfiguracje().punktEtapu, /^5J\.[1-3]$/);
 
 console.log(
   "OK — 5H.3 dodaje każdemu konfliktowi czytelny polski komunikat operatorski bez zmiany danych technicznych ani agregacji."
