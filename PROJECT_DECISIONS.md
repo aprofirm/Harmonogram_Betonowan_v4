@@ -2190,3 +2190,25 @@ stanu importu.
 5G.1 wyłącznie mierzy i opisuje faktyczne przerwy. Nie wprowadza wartości
 domyślnej ani parametru `MaksPrzestojMin` i nie tworzy konfliktu. Te decyzje i
 zachowania należą odpowiednio do 5G.2 i 5G.3.
+
+---
+
+## 112. Domyślny maksymalny przestój wynosi 15 minut
+
+Przed implementacją 5G.2 operator zatwierdził domyślny limit `15 min`.
+W kodzie parametr ma nazwę `maksymalnyPrzestojMinuty` i jest przechowywany w
+`aplikacja.konfiguracja.parametryDomyslne`. Jest niezależny od
+`maksymalneOpoznienieStartuMinuty`; oba limity opisują różne sytuacje i nie mogą
+wzajemnie zastępować swoich wartości.
+
+Pełne przeliczenie może otrzymać inne globalne nadpisanie dla bieżącego planu.
+Skuteczna wartość jest normalizowana do liczby, musi być skończona i nieujemna,
+a `0` jest prawidłowym limitem. Nadpisanie nie zmienia zamrożonej konfiguracji
+domyślnej. Wynik zwraca skuteczny limit w
+`wynik.parametry.maksymalnyPrzestojMinuty`, aby dalsze fazy i interfejs mogły
+korzystać z jednej wartości.
+
+Granica jest dozwolona: przerwa równa `15 min` nie przekracza limitu. Dla planów
+liczonych w pełnych minutach pierwszy konflikt powstanie więc od `16 min`.
+Porównanie każdej rzeczywistej pary z limitem i utworzenie konfliktu należą do
+5G.3. Pole operatora oraz trwałe odtwarzanie parametru pozostają zakresem 5I.

@@ -3,7 +3,7 @@
 ## Status
 
 Etap 4 jest zamknięty. Etap 5 jest rozpisany przed rozpoczęciem implementacji.
-Punkty **5A–5D**, cały **5E — stabilizacja**, cały **5F — limit opóźnienia startu** oraz podetap **5G.1** są zakończone. Następny podetap: **5G.2 — parametr `MaksPrzestojMin`**.
+Punkty **5A–5D**, cały **5E — stabilizacja**, cały **5F — limit opóźnienia startu** oraz podetapy **5G.1–5G.2** są zakończone. Następny podetap: **5G.3 — konflikt ciągłości**.
 
 ## Najważniejsza zasada testowa
 
@@ -86,7 +86,7 @@ danych źródłowych.
 - [x] przestój jest liczony pomiędzy końcem jednego rzeczywistego rozładunku a początkiem następnego;
 - [x] wyłącznie faktycznie przydzielone kursy tworzą kolejne pary dostaw;
 - [x] każda para zachowuje ID i numery obu kursów, rzeczywiste godziny oraz długość przerwy, także `0 min` przy ciągłości;
-- [ ] `MaksPrzestojMin` jest osobnym parametrem;
+- [x] `MaksPrzestojMin` jest osobnym parametrem, domyślnie `15 min`;
 - [ ] przekroczenie wskazuje konkretną parę dostaw i liczbę minut.
 
 Test automatyczny 5G.1: `testy/etap_5g_1.test.js` — trzy dostawy jednej budowy
@@ -96,6 +96,13 @@ o `15 min`, lecz zapisuje wyłącznie późniejszą przerwę `10 min` między pi
 i drugim rozładunkiem. Test potwierdza też puste analizy dla pojedynczej dostawy
 i kursów bez przydzielonej gruszki, dokładny kontrakt par, brak konfliktu w 5G.1,
 niemutowanie danych źródłowych oraz deterministyczny wynik.
+
+Test automatyczny 5G.2: `testy/etap_5g_2.test.js` — domyślny parametr
+`maksymalnyPrzestojMinuty` wynosi `15`, jest jawny w wyniku i pozostaje
+niezależny od limitu opóźnienia startu. Test potwierdza nadpisanie wartością
+`20`, poprawny limit `0`, brak zmiany domyślnej konfiguracji i wejścia,
+odrzucenie wartości ujemnej, nieliczbowej i nieskończonej oraz brak konfliktu,
+który należy dopiero do 5G.3.
 
 ## 5H — wspólny model konfliktów
 

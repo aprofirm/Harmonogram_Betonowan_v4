@@ -17,6 +17,18 @@
     return limitMinuty;
   }
 
+  function sprawdzMaksymalnyPrzestoj(wartosc) {
+    const limitMinuty = Number(wartosc);
+
+    if (!Number.isFinite(limitMinuty) || limitMinuty < 0) {
+      throw new Error(
+        "Maksymalny przestój musi być liczbą nie mniejszą niż 0."
+      );
+    }
+
+    return limitMinuty;
+  }
+
   function polaczParametry(parametryUzytkownika) {
     const parametry = Object.assign(
       {},
@@ -28,6 +40,9 @@
       sprawdzGlobalnyLimitOpoznieniaStartu(
         parametry.maksymalneOpoznienieStartuMinuty
       );
+    parametry.maksymalnyPrzestojMinuty = sprawdzMaksymalnyPrzestoj(
+      parametry.maksymalnyPrzestojMinuty
+    );
 
     return parametry;
   }

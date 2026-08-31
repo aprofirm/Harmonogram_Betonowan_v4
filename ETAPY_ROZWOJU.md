@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5G.2**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5G.3**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -741,7 +741,7 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
   - [x] **5G.1 — osobna definicja:** przestój liczyć pomiędzy rzeczywistym końcem
     rozładunku poprzedniej dostawy a rzeczywistym początkiem następnej; nie mieszać
     go z opóźnieniem pierwszej dostawy.
-  - [ ] **5G.2 — parametr `MaksPrzestojMin`:** ustalić wartość domyślną przed
+  - [x] **5G.2 — parametr `MaksPrzestojMin`:** ustalić wartość domyślną przed
     implementacją i przechowywać ją jako parametr programu.
   - [ ] **5G.3 — konflikt ciągłości:** przekroczenie limitu jest jawne przy
     konkretnej budowie i wskazuje problematyczną parę dostaw oraz wielkość przerwy.
@@ -1398,6 +1398,22 @@ Następny niezakończony podetap: **5G.1 — osobna definicja przestoju podczas 
 
 Podetap **5G.1** jest zakończony. Punkt nadrzędny **5G — maksymalny przestój podczas betonowania** i cały Etap 5 pozostają otwarte.
 Następny niezakończony podetap: **5G.2 — parametr `MaksPrzestojMin`**, którego wartość domyślną trzeba ustalić przed implementacją.
+
+## Zamknięcie 5G.2 — parametr maksymalnego przestoju — 2026-08-31
+
+- [x] operator zatwierdził domyślną wartość `15 min` przed rozpoczęciem implementacji;
+- [x] jedynym źródłem wartości domyślnej jest `parametryDomyslne.maksymalnyPrzestojMinuty` w konfiguracji programu;
+- [x] maksymalny przestój jest osobnym parametrem i nie korzysta z wartości maksymalnego opóźnienia startu;
+- [x] pełne przeliczenie normalizuje skuteczną wartość do liczby oraz odrzuca wartość ujemną, nieliczbową i nieskończoną także przy bezpośrednim wywołaniu silnika;
+- [x] wartość `0` jest prawidłowa, a poprawne nadpisanie dotyczy tylko bieżącego przebiegu i nie modyfikuje zamrożonej konfiguracji domyślnej;
+- [x] skuteczny `maksymalnyPrzestojMinuty` jest jawny w `wynik.parametry`;
+- [x] 5G.2 nie klasyfikuje jeszcze żadnej pary i nie tworzy konfliktu nawet przy limicie `0` — porównanie oraz konflikt należą do 5G.3;
+- [x] pole operatorskie oraz trwałe zapamiętywanie parametru pozostają zakresem 5I;
+- [x] test `testy/etap_5g_2.test.js` potwierdza wartość domyślną `15`, nadpisanie tekstową wartością `20`, prawidłowe `0`, brak mutowania wejścia, walidację i brak przedwczesnego konfliktu;
+- [x] pełna regresja **84 zestawów** `testy/*.test.js` przechodzi poprawnie.
+
+Podetap **5G.2** jest zakończony. Punkt nadrzędny **5G — maksymalny przestój podczas betonowania** i cały Etap 5 pozostają otwarte.
+Następny niezakończony podetap: **5G.3 — konflikt ciągłości dla konkretnej pary dostaw**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14

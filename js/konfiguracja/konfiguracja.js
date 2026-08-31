@@ -10,6 +10,7 @@
     czasZaladunkuMinuty: 10,
     czasRozladunkuMinuty: 15,
     maksymalneOpoznienieStartuMinuty: 30,
+    maksymalnyPrzestojMinuty: 15,
     trybGruszek: "oblicz-potrzebne",
     liczbaDostepnychGruszek: null,
     trybPomp: "oblicz-potrzebne",
@@ -19,7 +20,7 @@
   aplikacja.konfiguracja = Object.freeze({
     nazwaAplikacji: "Harmonogram Betonowań v4",
     numerEtapu: 5,
-    punktEtapu: "5G.1",
+    punktEtapu: "5G.2",
     parametryDomyslne: parametryDomyslne,
     komunikatPoPrzeliczeniu:
       "Kursy, godziny pełnego cyklu i przydział dostępnych gruszek zostały obliczone od nowa."
