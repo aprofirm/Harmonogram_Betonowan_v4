@@ -7,47 +7,47 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **5G.3 — konflikt ciągłości dla konkretnej pary dostaw**.
-- Commit z implementacją 5G.3 na `main`: `d4ebe8283249e185390fc626b8a2c6562d6a7216`.
-- Commit poprawiający zgodność pełnej regresji po przejściu na 5G.3: `ed8dcc3ea2f6842d76ceaca86c9f941bec1b4b2e`.
+- Ostatni zakończony podetap: **5H.1 — wspólny kontrakt konfliktu**.
+- Commit z implementacją 5H.1 na `main`: `38d9f9be5e25de6f74f96d2741cb87e6911db7d1`.
 - Cały punkt **5G — maksymalny przestój podczas betonowania** jest zakończony.
-- Punkty **5A–5G** są zakończone; cały Etap 5 pozostaje otwarty.
-- Pełna regresja po 5G.3: **85 zestawów testów — wszystkie poprawne**.
-- GitHub Actions dla końcowego `main` po 5G.3 zakończył się powodzeniem.
-- GitHub Pages po 5G.3 został poprawnie zbudowany i wdrożony.
+- Punkty **5A–5G** oraz podetap **5H.1** są zakończone; punkt 5H i cały Etap 5 pozostają otwarte.
+- Pełna regresja po 5H.1: **86 zestawów testów — wszystkie poprawne**.
+- Jednorazowy workflow wdrożeniowy zastosował pakiet 5H.1 dopiero po poprawnym przejściu pełnej regresji.
+- Wersja webowa zawiera moduł wspólnego kontraktu przed uruchomieniem interfejsu.
 
-## Co działa po 5G.3
+## Co działa po 5H.1
 
-- globalny limit opóźnienia startu jest parametrem programu; domyślnie `30 min`;
-- każda budowa może mieć własny `maksymalneOpoznienieStartuBudowyMinuty`;
-- brak wartości indywidualnej oznacza dziedziczenie limitu globalnego, a `0` jest prawidłowym wyjątkiem;
-- klasyfikacja korzysta z końcowego `StartRoboczy` po stabilizacji harmonogramu;
-- każda budowa otrzymuje `ocenaOpoznieniaStartu` z obiema godzinami, pełnym opóźnieniem, użytym limitem i liczbą minut ponad limit;
-- ścisłe przekroczenie limitu startu tworzy konflikt `PRZEKROCZONY_LIMIT_OPOZNIENIA_STARTU`;
-- każda robocza budowa otrzymuje `analizaPrzestojowBetonowania` utworzoną z końcowego sprzężonego przydziału gruszek;
-- analiza korzysta wyłącznie z kursów o statusie `przydzielony` i porządkuje je według rzeczywistego początku rozładunku;
-- każda kolejna para dostaw zachowuje ID i numery obu kursów, rzeczywisty koniec poprzedniego rozładunku, rzeczywisty początek następnego oraz `przestojMinuty`;
-- osobny parametr `maksymalnyPrzestojMinuty` ma domyślną wartość `15 min`;
-- przerwa równa limitowi pozostaje dozwolona, więc `15 min` nie tworzy konfliktu, a pierwszy konflikt przy wartości domyślnej powstaje od `16 min`;
-- każda rzeczywista para przekraczająca limit tworzy osobny konflikt `PRZEKROCZONY_LIMIT_PRZESTOJU_BETONOWANIA`;
-- konflikt przestoju wskazuje konkretną budowę, oba kursy, rzeczywisty koniec poprzedniego rozładunku, rzeczywisty początek następnego, pełny przestój, użyty limit oraz liczbę minut ponad limit;
-- pierwsza dostawa, para z `0 min`, przerwa mieszcząca się w limicie oraz kurs nieprzydzielony nie tworzą fikcyjnego konfliktu;
-- identyczne przeliczenia dają identyczne konflikty, a źródłowy stan importu nie jest mutowany;
-- klasyfikacja 5G.3 jest wydzielona do `js/harmonogram/konflikty_przestojow.js`, bez przenoszenia logiki biznesowej do interfejsu;
-- wersja webowa ładuje moduł 5G.3 przed uruchomieniem interfejsu.
+- końcowa lista `wynik.konflikty` ma jeden wersjonowany rdzeń kontraktu;
+- każdy konflikt otrzymuje pola `wersjaKontraktu`, `poziom`, `kod`, `rodzaj`, `kategoriaKonfliktu`, `opis` oraz `powiazania`;
+- wersja kontraktu wynosi obecnie `1`, a `poziom` ma wartość `konflikt`;
+- dotychczasowe pola szczegółowe konfliktów pozostają zachowane, więc wcześniejsze reguły nie tracą danych;
+- `powiazania` mają wspólny format `{ typ, id, rola }`;
+- powiązanie może wskazywać `harmonogram`, `budowa`, `kurs`, `zasob` albo `parametr`;
+- konflikt może wskazywać wiele obiektów jednocześnie, np. budowę oraz poprzedni i następny kurs przy przekroczeniu limitu przestoju;
+- brak gruszek i brak pomp zachowują jawne powiązanie z typem zasobu;
+- brak konkretnego obiektu dostaje powiązanie z całym harmonogramem zamiast pustej listy;
+- wspólna klasyfikacja obejmuje co najmniej `brak-gruszki`, `brak-pompy`, `niedostepnosc`, `niezgodny-parametr`, `kolizja`, `brak-trasy`, `limit-startu` i `limit-przestoju`;
+- istniejące przyczyny braku pompy są mapowane do wspólnych kategorii bez zmiany logiki przydziału;
+- moduł `js/harmonogram/kontrakt_konfliktow.js` normalizuje końcową listę po dołączeniu konfliktów przestoju 5G.3;
+- moduł pozostaje częścią silnika i nie przenosi logiki biznesowej do interfejsu;
+- 5H.1 nie usuwa jeszcze duplikatów konfliktów i nie zmienia docelowych komunikatów dla operatora — to zakres 5H.2 i 5H.3;
+- test `testy/etap_5h_1.test.js` sprawdza wymagane kategorie, powiązania, kompatybilność, brak mutowania źródła i kolejność modułów wersji webowej;
+- `ETAPY_ROZWOJU.md`, `PROJECT_DECISIONS.md` i `README.md` są zsynchronizowane z zakończeniem 5G.3 oraz 5H.1.
 
 ## Następny krok
 
-**5H.1 — wspólny kontrakt konfliktu.**
+**5H.2 — agregacja konfliktów bez dublowania.**
 
 Zakres następnego podetapu:
 
-1. zdefiniować jeden stabilny format konfliktu dla różnych przyczyn występujących w pełnym harmonogramie;
-2. objąć kontraktem co najmniej brak gruszki, brak pompy, niedostępność, niezgodny parametr, kolizję, brak trasy, przekroczenie limitu startu i przekroczenie limitu przestoju;
-3. zachować czytelne powiązanie konfliktu z budową, kursem albo zasobem bez utraty szczegółów potrzebnych operatorowi;
-4. nie przebudowywać jeszcze sposobu agregacji ani docelowej prezentacji — to zakres odpowiednio 5H.2 i 5H.3;
-5. dodać test 5H.1 i uruchomić pełną regresję przed publikacją.
+1. zebrać końcowe konflikty w jednym miejscu bez wielokrotnego raportowania tego samego problemu;
+2. zdefiniować stabilny klucz tożsamości konfliktu na podstawie wspólnego kontraktu 5H.1 i jego powiązań;
+3. zachować osobne konflikty, gdy dotyczą różnych budów, kursów, zasobów albo różnych par dostaw;
+4. nie usuwać szczegółów potrzebnych operatorowi podczas agregacji;
+5. zachować deterministyczną kolejność wyniku i brak mutowania danych źródłowych;
+6. nie przebudowywać jeszcze finalnych polskich komunikatów operatorskich — to zakres 5H.3;
+7. dodać test 5H.2 i uruchomić pełną regresję przed publikacją.
 
 ## Ważna zasada wznowienia
 
-Na początku kolejnego wątku najpierw przeczytać `AGENTS.md`, `ZASADY_KODU.md`, `PROJECT_DECISIONS.md`, `POMYSLY_I_BACKLOG.md`, `ETAPY_ROZWOJU.md` oraz ten plik, a następnie sprawdzić aktualny `main` przed rozpoczęciem 5H.1. Jeżeli skrót statusu w `ETAPY_ROZWOJU.md` nie został jeszcze zsynchronizowany z tym punktem wznowienia, jako nowszy stan traktować zakończone 5G.3 i przed kodowaniem 5H.1 najpierw zaktualizować checklistę Etapu 5.
+Na początku kolejnego wątku najpierw przeczytać `AGENTS.md`, `ZASADY_KODU.md`, `PROJECT_DECISIONS.md`, `POMYSLY_I_BACKLOG.md`, `ETAPY_ROZWOJU.md` oraz ten plik, a następnie sprawdzić aktualny `main` przed rozpoczęciem 5H.2.
