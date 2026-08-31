@@ -139,9 +139,9 @@ function sprawdzWarstweWidoku() {
   assert.ok(html.includes('id="liczba-konfliktow-panel"'));
   assert.ok(html.includes('aria-live="polite"'));
   assert.ok(html.includes("Konflikty wymagające uwagi"));
-  assert.ok(html.includes("Etap 5I.2"));
-  assert.ok(html.includes("5I.2 · konflikty i przestoje"));
-  assert.ok(html.includes("5i2-konflikty-interfejs-20260831a"));
+  assert.ok(html.includes("Etap 5I.3"));
+  assert.ok(html.includes("5I.3 · pamięć i stan nieaktualny"));
+  assert.ok(html.includes("5i3-pamiec-stan-20260831a"));
 
   assert.ok(interfejs.includes("pokazListeKonfliktow(wynik.konflikty);"));
   assert.ok(interfejs.includes("elementy.panelKonfliktow.hidden = lista.length === 0;"));
@@ -160,7 +160,7 @@ sprawdzPrzestojZRzeczywistegoSilnika();
 sprawdzZasobIFallbackTekstu();
 sprawdzWarstweWidoku();
 
-assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5I.2");
+assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5I.3");
 
 console.log(
   "OK — 5I.2 pokazuje końcowe konflikty i przestoje tekstowo, z jawnym powiązaniem do budowy, kursu albo zasobu."

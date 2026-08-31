@@ -2269,3 +2269,14 @@ Od 5I.2 końcowa lista `wynik.konflikty` jest prezentowana operatorowi w zwartym
 Każdy wpis ma tekstową nazwę rodzaju problemu oraz pełny komunikat. Kolor jest wyłącznie sygnałem pomocniczym i nie może być jedynym nośnikiem znaczenia. Konflikt zachowuje widoczne powiązanie z budową, kursem albo zasobem na podstawie wspólnego pola `powiazania`; dla konfliktu przestoju operator widzi konkretną budowę oraz oba kolejne kursy.
 
 Panel jest ukryty, gdy końcowy wynik nie zawiera konfliktów, i jest czyszczony razem z wynikiem po każdej zmianie danych wymagającej ponownego przeliczenia. Warstwa interfejsu nie modyfikuje obiektów konfliktów, zasad agregacji 5H ani decyzji planistycznych silnika.
+
+
+---
+
+## 119. Parametry Etapu 5 są częścią planu, a ich zmiana unieważnia wynik
+
+Od 5I.3 globalny `maksymalnyPrzestojMinuty` jest pełnoprawnym parametrem operatorskim obok globalnego limitu opóźnienia startu. Domyślna wartość pozostaje `15 min`. Parametr jest zapisywany w bieżącym planie i historii oraz odtwarzany po ponownym uruchomieniu; starszy zapis bez tego pola dziedziczy bieżącą wartość domyślną zamiast przyjmować `0`.
+
+Indywidualny `maksymalneOpoznienieStartuBudowyMinuty` nadal należy do stanu konkretnej budowy. Każda istotna zmiana parametrów planu, zasobów albo wyjątku budowy oznacza poprzedni wynik jako nieaktualny i wymaga nowego pełnego przeliczenia.
+
+Gotowy wynik harmonogramu nie jest źródłem prawdy w pamięci. Jeżeli odtworzony plan był wcześniej przeliczony, aplikacja odbudowuje wynik od nowa z zapisanych danych, parametrów, budów i zasobów.

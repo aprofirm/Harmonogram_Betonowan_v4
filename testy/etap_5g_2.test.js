@@ -153,7 +153,7 @@ sprawdzDomyslnyParametr();
 sprawdzNadpisanieBezZmianyKonfiguracji();
 sprawdzWalidacjeBezposredniegoWejsciaSilnika();
 
-assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5I.2");
+assert.equal(wczytajAplikacje().konfiguracja.punktEtapu, "5I.3");
 
 console.log(
   "OK — 5G.2 nadal niezależnie przechowuje, normalizuje i waliduje limit przestoju 15 min."

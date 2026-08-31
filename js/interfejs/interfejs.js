@@ -30,6 +30,7 @@
       czasZaladunku: pobierzWymaganyElement("czas-zaladunku"),
       czasRozladunku: pobierzWymaganyElement("czas-rozladunku"),
       maksymalneOpoznienie: pobierzWymaganyElement("maksymalne-opoznienie"),
+      maksymalnyPrzestoj: document.getElementById("maksymalny-przestoj"),
       trybGruszek: pobierzWymaganyElement("tryb-gruszek"),
       liczbaDostepnychGruszek: pobierzWymaganyElement(
         "liczba-dostepnych-gruszek"
@@ -99,6 +100,11 @@
     elementy.maksymalneOpoznienie.value = String(
       parametryDomyslne.maksymalneOpoznienieStartuMinuty
     );
+    if (elementy.maksymalnyPrzestoj) {
+      elementy.maksymalnyPrzestoj.value = String(
+        parametryDomyslne.maksymalnyPrzestojMinuty
+      );
+    }
     elementy.trybGruszek.value = parametryDomyslne.trybGruszek;
     elementy.liczbaDostepnychGruszek.value = formatujWartoscPola(
       parametryDomyslne.liczbaDostepnychGruszek
@@ -118,6 +124,9 @@
       czasZaladunkuMinuty: elementy.czasZaladunku.value,
       czasRozladunkuMinuty: elementy.czasRozladunku.value,
       maksymalneOpoznienieStartuMinuty: elementy.maksymalneOpoznienie.value,
+      maksymalnyPrzestojMinuty: elementy.maksymalnyPrzestoj
+        ? elementy.maksymalnyPrzestoj.value
+        : parametryDomyslneInterfejsu.maksymalnyPrzestojMinuty,
       trybGruszek: elementy.trybGruszek.value,
       liczbaDostepnychGruszek:
         elementy.trybGruszek.value === "mam-okreslona-liczbe"
@@ -178,6 +187,11 @@
         "maksymalneOpoznienieStartuMinuty"
       )
     );
+    if (elementy.maksymalnyPrzestoj) {
+      elementy.maksymalnyPrzestoj.value = formatujWartoscPola(
+        pobierzWartoscLubDomyslna(parametry, "maksymalnyPrzestojMinuty")
+      );
+    }
     elementy.trybGruszek.value = formatujWartoscPola(
       pobierzWartoscLubDomyslna(parametry, "trybGruszek")
     );
@@ -285,6 +299,13 @@
         "Maksymalne opóźnienie startu",
         0
       ),
+      maksymalnyPrzestojMinuty: elementy.maksymalnyPrzestoj
+        ? pobierzLiczbe(
+            elementy.maksymalnyPrzestoj,
+            "Maksymalny przestój między dostawami",
+            0
+          )
+        : Number(parametryDomyslneInterfejsu.maksymalnyPrzestojMinuty),
       trybGruszek: trybGruszek,
       liczbaDostepnychGruszek: liczbaDostepnychGruszek,
       trybPomp: trybPomp,
@@ -1665,9 +1686,10 @@
       elementy.czasZaladunku,
       elementy.czasRozladunku,
       elementy.maksymalneOpoznienie,
+      elementy.maksymalnyPrzestoj,
       elementy.liczbaDostepnychGruszek,
       elementy.liczbaDostepnychPomp
-    ].forEach(function (pole) {
+    ].filter(Boolean).forEach(function (pole) {
       pole.addEventListener("change", function () {
         obslugaZmianyParametrowAplikacji(pobierzWartosciParametrowDoZapisu());
       });
