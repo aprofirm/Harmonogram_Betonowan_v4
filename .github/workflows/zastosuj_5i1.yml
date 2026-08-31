@@ -33,15 +33,21 @@ jobs:
           tekst = plik.read_text(encoding="utf-8")
           poczatek = tekst.index("# 4. Zachowujemy historyczny test KP-4")
           koniec = tekst.index("# 5. Test 5I.1")
-          poprawka = '''# 4. Zachowujemy historyczny test KP-4, ale aktualizujemy nazwę kolumny.
+          poprawka = '''# 4. Zachowujemy historyczny test KP-4, ale aktualizujemy wyłącznie nagłówek tabeli.
           plik_kp4 = Path("testy/kp_4.test.js")
-          tekst_kp4 = plik_kp4.read_text(encoding="utf-8")
-          if "Start do przeliczenia" not in tekst_kp4:
-              raise SystemExit("Nie znaleziono starej nazwy kolumny w testy/kp_4.test.js")
-          plik_kp4.write_text(
-              tekst_kp4.replace("Start do przeliczenia", "Start budowy"),
-              encoding="utf-8"
-          )
+          linie_kp4 = plik_kp4.read_text(encoding="utf-8").splitlines(keepends=True)
+          liczba_zmian = 0
+          nowe_linie = []
+          for linia in linie_kp4:
+              if "assert.match(html" in linia and "Start do przeliczenia" in linia:
+                  linia = linia.replace("Start do przeliczenia", "Start budowy")
+                  liczba_zmian += 1
+              nowe_linie.append(linia)
+          if liczba_zmian != 1:
+              raise SystemExit(
+                  "Oczekiwano dokładnie jednego testu nagłówka Start do przeliczenia w KP-4"
+              )
+          plik_kp4.write_text("".join(nowe_linie), encoding="utf-8")
 
 
           '''
