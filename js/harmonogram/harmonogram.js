@@ -68,6 +68,7 @@
       // przeliczenia ani zapisu historycznego.
       budowa.startRoboczy = budowa.startZadany;
       budowa.jawnySkutekPompy = null;
+      budowa.ocenaOpoznieniaStartu = null;
       return budowa;
     });
   }
@@ -407,6 +408,126 @@
         opis: opiszBrakMozliwejPompy(przyczyna, nazwaBudowy)
       };
     });
+  }
+
+  function pobierzMinuteDniaStartu(wartosc, nazwaPola, idBudowy) {
+    const godzina = String(wartosc || "").trim();
+    const dopasowanie = godzina.match(/^(\d{1,2}):(\d{2})$/);
+    const liczbaGodzin = dopasowanie ? Number(dopasowanie[1]) : NaN;
+    const liczbaMinut = dopasowanie ? Number(dopasowanie[2]) : NaN;
+
+    if (
+      !dopasowanie ||
+      liczbaGodzin > 23 ||
+      liczbaMinut > 59
+    ) {
+      throw new Error(
+        "Nie można ocenić opóźnienia startu budowy „" + idBudowy +
+          "”, ponieważ pole „" + nazwaPola +
+          "” nie zawiera poprawnej godziny."
+      );
+    }
+
+    return liczbaGodzin * 60 + liczbaMinut;
+  }
+
+  function obliczOpoznienieStartuMinuty(budowa) {
+    const idBudowy = String(budowa.idBudowy || "bez ID");
+    const minutaStartuZadanego = pobierzMinuteDniaStartu(
+      budowa.startZadany,
+      "StartZadany",
+      idBudowy
+    );
+    const minutaStartuRoboczego = pobierzMinuteDniaStartu(
+      budowa.startRoboczy,
+      "StartRoboczy",
+      idBudowy
+    );
+    const roznicaMinut = minutaStartuRoboczego - minutaStartuZadanego;
+
+    // Silnik przesuwa budowy wyłącznie do przodu. Ujemna różnica zegarowa
+    // oznacza zatem przejście przez północ, a nie wcześniejszy start.
+    return roznicaMinut >= 0 ? roznicaMinut : roznicaMinut + 1440;
+  }
+
+  function opiszPrzekroczenieLimituOpoznieniaStartu(
+    nazwaBudowy,
+    startZadany,
+    startRoboczy,
+    opoznienieStartuMinuty,
+    efektywnyLimitMinuty,
+    przekroczenieLimituMinuty
+  ) {
+    return "Budowa „" + nazwaBudowy + "” ma StartRoboczy " +
+      startRoboczy + ", czyli " + opoznienieStartuMinuty +
+      " min po StartZadany " + startZadany +
+      ". Dopuszczalny limit " + efektywnyLimitMinuty +
+      " min został przekroczony o " + przekroczenieLimituMinuty + " min.";
+  }
+
+  function ocenOpoznieniaStartow(przebieg) {
+    const globalnyLimitMinuty =
+      przebieg.parametry.maksymalneOpoznienieStartuMinuty;
+
+    return przebieg.listaBudow.reduce(function (konflikty, budowa) {
+      const opoznienieStartuMinuty = obliczOpoznienieStartuMinuty(budowa);
+      const efektywnyLimitMinuty =
+        aplikacja.budowy.pobierzEfektywnyLimitOpoznieniaStartuMinuty(
+          budowa,
+          globalnyLimitMinuty
+        );
+      const przekroczenieLimituMinuty = Math.max(
+        0,
+        opoznienieStartuMinuty - efektywnyLimitMinuty
+      );
+      const czyPrzekroczonoLimit = przekroczenieLimituMinuty > 0;
+      let status = "bez-opoznienia";
+
+      if (czyPrzekroczonoLimit) {
+        status = "konflikt-przekroczenia-limitu";
+      } else if (opoznienieStartuMinuty > 0) {
+        status = "korekta-w-limicie";
+      }
+
+      budowa.ocenaOpoznieniaStartu = {
+        status: status,
+        startZadany: String(budowa.startZadany),
+        startRoboczy: String(budowa.startRoboczy),
+        opoznienieStartuMinuty: opoznienieStartuMinuty,
+        efektywnyLimitOpoznieniaStartuMinuty: efektywnyLimitMinuty,
+        przekroczenieLimituMinuty: przekroczenieLimituMinuty,
+        czyPrzekroczonoLimit: czyPrzekroczonoLimit
+      };
+
+      if (!czyPrzekroczonoLimit) {
+        return konflikty;
+      }
+
+      const idBudowy = String(budowa.idBudowy || "");
+      const nazwaBudowy = String(budowa.budowa || idBudowy || "bez nazwy");
+
+      konflikty.push({
+        kod: "PRZEKROCZONY_LIMIT_OPOZNIENIA_STARTU",
+        rodzaj: "limit-opoznienia-startu",
+        idBudowy: idBudowy,
+        nazwaBudowy: nazwaBudowy,
+        startZadany: String(budowa.startZadany),
+        startRoboczy: String(budowa.startRoboczy),
+        opoznienieStartuMinuty: opoznienieStartuMinuty,
+        maksymalneOpoznienieStartuMinuty: efektywnyLimitMinuty,
+        przekroczenieLimituMinuty: przekroczenieLimituMinuty,
+        opis: opiszPrzekroczenieLimituOpoznieniaStartu(
+          nazwaBudowy,
+          budowa.startZadany,
+          budowa.startRoboczy,
+          opoznienieStartuMinuty,
+          efektywnyLimitMinuty,
+          przekroczenieLimituMinuty
+        )
+      });
+
+      return konflikty;
+    }, []);
   }
 
   function przygotujCentralnyPrzebieg(daneWejsciowe) {
@@ -1082,9 +1203,11 @@
     const konfliktyGruszek = przebieg.czyOgraniczonaFlotaGruszek
       ? utworzKonfliktyOgraniczonejFloty(wynikPrzydzialu)
       : [];
+    const konfliktyLimitowStartu = ocenOpoznieniaStartow(przebieg);
     const konflikty = konfliktyGruszek.concat(
       utworzKonfliktyPomp(przebieg),
-      utworzKonfliktyStabilizacji(przebieg)
+      utworzKonfliktyStabilizacji(przebieg),
+      konfliktyLimitowStartu
     );
 
     return {

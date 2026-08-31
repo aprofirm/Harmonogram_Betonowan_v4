@@ -2139,3 +2139,28 @@ bieżącym planie i historii oraz odtwarzana po ponownym wczytaniu zapisu.
 przesunięcia `StartRoboczy`. Rozróżnienie zwykłej korekty od konfliktu po
 przekroczeniu skutecznego limitu należy do 5F.3.
 
+---
+
+## 110. Limit opóźnienia jest oceniany na końcowym StartRoboczy
+
+Podetap 5F.3 klasyfikuje opóźnienie dopiero po zakończeniu stabilizacji
+sprzężonego harmonogramu. Dla każdej roboczej budowy silnik porównuje
+`StartRoboczy` z `StartZadany` i zapisuje `ocenaOpoznieniaStartu` zawierającą
+obie godziny, pełne opóźnienie, efektywny limit oraz liczbę minut ponad limit.
+Ocena nie jest zapisywana do budowy źródłowej i przy każdym pełnym przeliczeniu
+powstaje od nowa.
+
+Brak opóźnienia ma status `bez-opoznienia`. Dodatnie przesunięcie mniejsze lub
+równe efektywnemu limitowi ma status `korekta-w-limicie` i nie tworzy konfliktu.
+Wyłącznie ścisłe przekroczenie limitu otrzymuje status
+`konflikt-przekroczenia-limitu` oraz konflikt
+`PRZEKROCZONY_LIMIT_OPOZNIENIA_STARTU`. Konflikt wskazuje budowę,
+`StartZadany`, `StartRoboczy`, pełne opóźnienie, wykorzystany limit i liczbę
+minut ponad limit, a jego opis jest zrozumiały bez danych diagnostycznych.
+
+Efektywny limit nadal pochodzi z wyjątku budowy, jeżeli ten istnieje, albo z
+parametru globalnego. Porównanie godzin traktuje wcześniejszą godzinę zegarową
+`StartRoboczy` jako przejście przez północ, ponieważ silnik może przesuwać
+budowę wyłącznie do przodu. Format konfliktu w 5F.3 jest celowo ograniczony do
+potrzeb tej reguły; ujednolicenie wszystkich konfliktów pozostaje zakresem 5H.
+

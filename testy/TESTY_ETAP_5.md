@@ -3,7 +3,7 @@
 ## Status
 
 Etap 4 jest zamknięty. Etap 5 jest rozpisany przed rozpoczęciem implementacji.
-Punkty **5A–5D**, cały **5E — stabilizacja** oraz **5F.1–5F.2** są zakończone. Następny podetap: **5F.3 — klasyfikacja wyniku**.
+Punkty **5A–5D**, cały **5E — stabilizacja** oraz cały **5F — limit opóźnienia startu** są zakończone. Następny podetap: **5G.1 — osobna definicja przestoju podczas betonowania**.
 
 ## Najważniejsza zasada testowa
 
@@ -68,10 +68,17 @@ Test automatyczny 5E.3: `testy/etap_5e_3.test.js` — normalna kaskada stabilizu
   Test automatyczny 5F.1: `testy/etap_5f_1.test.js` — domyślne `30 min` pochodzi z `parametryDomyslne`, globalne nadpisanie trafia do wyniku bieżącego przebiegu bez zmiany konfiguracji bazowej, a bezpośrednie wejście silnika odrzuca wartość ujemną i nieliczbową.
 - [x] indywidualny limit budowy ma pierwszeństwo;
   Test automatyczny 5F.2: `testy/etap_5f_2.test.js` — puste pole dziedziczy limit globalny, wartość `45` nadpisuje globalne `30`, `0` jest dozwolone, wyczyszczenie/`↺` przywraca dziedziczenie, a błędne wartości są odrzucane.
-- [ ] przesunięcie w limicie jest zwykłą korektą;
-- [ ] przekroczenie limitu tworzy jawny konflikt;
+- [x] przesunięcie w limicie jest zwykłą korektą;
+- [x] przekroczenie limitu tworzy jawny konflikt;
 - [x] wartości są zachowywane w pamięci planu i historii.
   5F.2 sprawdza round-trip bieżącego planu i zapisu historycznego oraz obecność pola na jawnej liście danych budowy zapisywanych przez aplikację.
+
+Test automatyczny 5F.3: `testy/etap_5f_3.test.js` — końcowy scenariusz
+A → B → X → C rozróżnia brak opóźnienia, korektę `10 min` w limicie oraz
+konflikt `35 min` przy globalnym limicie `30 min`. Test potwierdza konflikt z
+obiema godzinami i przekroczeniem o `5 min`, pierwszeństwo limitu indywidualnego,
+brak konfliktu dokładnie na granicy oraz deterministyczny wynik bez mutowania
+danych źródłowych.
 
 ## 5G — przestój w trakcie betonowania
 

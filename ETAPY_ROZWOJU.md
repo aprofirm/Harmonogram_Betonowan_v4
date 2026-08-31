@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5F.3**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5G.1**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -730,12 +730,12 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
   - [x] **5E.3 — zabezpieczenie przed nieskończonym przesuwaniem:** limit iteracji
     lub równoważna osłona kończy niestabilny przypadek jawnym konfliktem zamiast
     bezgranicznie przesuwać plan.
-- [ ] **5F — limit opóźnienia rozpoczęcia budowy.**
+- [x] **5F — limit opóźnienia rozpoczęcia budowy.**
   - [x] **5F.1 — parametr globalny:** domyślny limit `30 min` jest konfiguracją,
     nie magiczną liczbą w algorytmie.
   - [x] **5F.2 — limit indywidualny:** budowa może nadpisać limit, a wartość jest
     zachowywana w bieżącym planie i historii.
-  - [ ] **5F.3 — klasyfikacja wyniku:** korekta w limicie pozostaje zwykłym
+  - [x] **5F.3 — klasyfikacja wyniku:** korekta w limicie pozostaje zwykłym
     przesunięciem, przekroczenie staje się konfliktem z godziną i liczbą minut.
 - [ ] **5G — maksymalny przestój podczas betonowania.**
   - [ ] **5G.1 — osobna definicja:** przestój liczyć pomiędzy rzeczywistym końcem
@@ -1366,6 +1366,22 @@ Następny niezakończony podetap: **5F.2 — limit indywidualny budowy**.
 
 Podetap **5F.2** jest zakończony. Punkt nadrzędny **5F** oraz cały Etap 5 pozostają otwarte.
 Następny niezakończony podetap: **5F.3 — klasyfikacja wyniku**.
+
+## Zamknięcie 5F.3 i całego 5F — klasyfikacja wyniku — 2026-08-31
+
+- [x] klasyfikacja jest wykonywana dopiero na końcowym wyniku po stabilizacji sprzężonego przeliczenia;
+- [x] każda robocza budowa otrzymuje `ocenaOpoznieniaStartu` z `StartZadany`, `StartRoboczy`, pełnym opóźnieniem, efektywnym limitem i liczbą minut ponad limit;
+- [x] brak opóźnienia ma status `bez-opoznienia`, a dodatnie przesunięcie nieprzekraczające limitu pozostaje zwykłą `korekta-w-limicie`;
+- [x] opóźnienie równe limitowi jest dozwolone; konflikt powstaje wyłącznie po ścisłym przekroczeniu limitu;
+- [x] przekroczenie tworzy dokładnie jeden konflikt `PRZEKROCZONY_LIMIT_OPOZNIENIA_STARTU` dla danej budowy z obiema godzinami i wartościami minutowymi;
+- [x] indywidualny limit, w tym `0`, ma pierwszeństwo przed globalnym, a brak wyjątku nadal dziedziczy bieżący parametr globalny;
+- [x] różnica zegarowa uwzględnia przejście przez północ, ponieważ silnik przesuwa `StartRoboczy` wyłącznie do przodu;
+- [x] klasyfikacja działa na roboczych kopiach i nie dopisuje wyniku do źródłowego stanu importu;
+- [x] test `testy/etap_5f_3.test.js` potwierdza brak opóźnienia, korektę `10 min`, konflikt `35 min` przy limicie `30`, indywidualne limity `40`, `10` i `9 min`, ścisłą granicę oraz powtarzalność wyniku;
+- [x] pełna regresja wszystkich zestawów `testy/*.test.js` przechodzi poprawnie.
+
+Podetap **5F.3** oraz cały punkt **5F — limit opóźnienia rozpoczęcia budowy** są zakończone. Etap 5 pozostaje otwarty.
+Następny niezakończony podetap: **5G.1 — osobna definicja przestoju podczas betonowania**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14

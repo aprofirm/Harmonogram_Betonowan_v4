@@ -116,7 +116,11 @@ function sprawdzDziedziczenieINadpisanie() {
     false,
     "Normalizacja listy roboczej nie może mutować starszego źródła."
   );
-  assert.equal(aplikacja.konfiguracja.punktEtapu, "5F.2");
+  assert.match(
+    aplikacja.konfiguracja.punktEtapu,
+    /^5[A-Z](?:\.\d+)+$/,
+    "Po zamknięciu 5F.2 konfiguracja ma pozostać w Etapie 5 lub późniejszym jego podetapie."
+  );
 }
 
 function sprawdzPamiecPlanuIHistorie() {

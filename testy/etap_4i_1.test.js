@@ -91,6 +91,15 @@ function utworzSrodowisko() {
       return (Array.isArray(zImportu) ? zImportu : []).concat(
         Array.isArray(reczne) ? reczne : []
       );
+    },
+    pobierzEfektywnyLimitOpoznieniaStartuMinuty: function (budowa, globalnyLimit) {
+      const indywidualnyLimit = budowa &&
+        budowa.maksymalneOpoznienieStartuBudowyMinuty;
+      return indywidualnyLimit === null ||
+        indywidualnyLimit === undefined ||
+        indywidualnyLimit === ""
+        ? Number(globalnyLimit)
+        : Number(indywidualnyLimit);
     }
   };
   aplikacja.gruszki = {
