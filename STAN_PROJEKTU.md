@@ -7,44 +7,43 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **5H.3 — czytelne przyczyny dla operatora**.
-- Commit z implementacją 5H.3 na `main`: `0e89dc93e385b41e0e3f7c7eef97b21ecadd4d44`.
-- Punkty **5A–5H** są zakończone; cały Etap 5 pozostaje otwarty.
-- Pełna regresja po dodaniu testu 5H.3 obejmuje **88 zestawów testów — wszystkie poprawne**.
-- Pełna regresja **88/88** została wykonana przez workflow wdrożeniowy przed utworzeniem commita implementacyjnego.
-- Tymczasowe pliki użyte wyłącznie do bezpiecznego wdrożenia 5H.3 zostały usunięte w tym samym commicie implementacyjnym.
+- Ostatni zakończony podetap: **5I.1 — trzy godziny i przesunięcie**.
+- Commit z implementacją 5I.1 na `main`: `aea718d1030d748b0d29c68342b37c304868d463`.
+- Punkty **5A–5H** oraz podetap **5I.1** są zakończone; punkt 5I i cały Etap 5 pozostają otwarte.
+- Pełna regresja po dodaniu testu 5I.1 obejmuje **89 zestawów testów — wszystkie poprawne**.
+- Pełna regresja **89/89** została wykonana przez workflow wdrożeniowy przed utworzeniem commita implementacyjnego.
+- Tymczasowe pliki użyte wyłącznie do bezpiecznego wdrożenia 5I.1 zostały usunięte w tym samym commicie implementacyjnym.
 
-## Co działa po 5H.3
+## Co działa po 5I.1
 
-- każdy końcowy konflikt zachowuje wspólny kontrakt wersji `1` z kategorią i listą `powiazania`;
-- agregacja 5H.2 nadal usuwa wyłącznie rzeczywiste duplikaty i zachowuje osobne konflikty dla różnych budów, kursów, zasobów, przyczyn i par dostaw;
-- każdy znormalizowany konflikt otrzymuje osobne pole `komunikatOperatora`;
-- `komunikatOperatora` jest przygotowany do prostego przedstawienia problemu operatorowi i nie wymaga odczytywania kodów ani pól diagnostycznych;
-- dotychczasowe pole `opis` i wszystkie pola techniczne pozostają zachowane bez zmian dla kompatybilności, diagnostyki i dalszego rozwoju;
-- komunikaty rozróżniają brak gruszek, brak pompy, niedostępność pompy, niewystarczający wysięg, brak trasy, przekroczenie limitu startu, przekroczenie limitu przestoju, niestabilność harmonogramu i kolizję zasobu;
-- tam, gdzie dane są dostępne, komunikat podaje nazwę budowy, godziny, liczbę minut, wykorzystany limit oraz problematyczne kursy;
-- brak trasy zawiera prostą wskazówkę operatorską: uzupełnić czas przejazdu pompy między budowami;
-- nieznana przyszła kategoria bez osobnego szablonu wykorzystuje dotychczasowy `opis` jako bezpieczny fallback;
-- tekst `komunikatOperatora` nie uczestniczy w kluczu tożsamości konfliktu, więc zmiana jego sformułowania nie wpływa na agregację 5H.2;
-- generowanie komunikatu nie mutuje konfliktu źródłowego;
-- publiczna funkcja `utworzKomunikatOperatora` jest dostępna w `aplikacja.konflikty`;
-- test `testy/etap_5h_3.test.js` sprawdza główne kategorie, konkretne dane liczbowe, fallback, brak mutowania, współpracę z deduplikacją i oznaczenie wersji webowej;
-- `ETAPY_ROZWOJU.md`, `PROJECT_DECISIONS.md` i `README.md` są zsynchronizowane z zakończeniem całego punktu 5H.
+- główna tabela ma zwartą kolumnę **Start budowy** zamiast wcześniejszego nagłówka **Start do przeliczenia**;
+- w jednej komórce są rozdzielone trzy różne znaczenia godziny: **Plan**, edytowalny **Zadany** i wynikowy **Roboczy**;
+- **Plan** pozostaje źródłową godziną lub pełnym oknem z KDX i nie jest nadpisywany przez korektę operatora ani silnik;
+- **Zadany** jest godziną używaną do bieżącego przeliczenia i zachowuje dotychczasową ręczną edycję oraz przycisk `↺`;
+- **Roboczy** jest pokazywany jako `—`, dopóki nie istnieje aktualny wynik pełnego przeliczenia; dzięki temu wartość inicjalizacyjna modelu nie udaje wyniku silnika;
+- po przeliczeniu **Roboczy** pokazuje końcowy `StartRoboczy` z pełnego sprzężonego harmonogramu;
+- gdy `StartRoboczy` jest późniejszy od `StartZadany`, komórka pokazuje liczbę minut przesunięcia oraz krótką przyczynę, np. `pompa zajęta`, `pompa dostępna później` albo `poprzednia budowa zakończyła się później`;
+- dla przyszłej, nierozpoznanej przyczyny przesunięcia używany jest bezpieczny tekst `korekta harmonogramu`;
+- wielkość przesunięcia jest brana z końcowej `ocenaOpoznieniaStartu`, więc ręczna różnica między Planem a Zadanym nie jest mylona z opóźnieniem wygenerowanym przez silnik;
+- zachowano dotychczasową strukturę komórki startu potrzebną przez pamięć planu i starsze testy, dzięki czemu migracja starszych zapisów nadal działa;
+- układ pozostaje kompaktowy i nie dodaje trzech osobnych szerokich kolumn;
+- test `testy/etap_5i_1.test.js` sprawdza stan przed przeliczeniem, trzy znaczenia godziny, brak przesunięcia, przyczyny przesunięcia, integrację z rzeczywistym silnikiem pomp i oznaczenie wersji webowej;
+- `ETAPY_ROZWOJU.md`, `PROJECT_DECISIONS.md` i `README.md` są zsynchronizowane z zakończeniem 5I.1.
 
 ## Następny krok
 
-**5I.1 — trzy godziny i przesunięcie.**
+**5I.2 — konflikty i przestoje w interfejsie.**
 
 Zakres następnego podetapu:
 
-1. tabela operatora ma pokazywać źródłowy plan rozpoczęcia budowy;
-2. osobno ma być widoczna godzina zadana do bieżącego przeliczenia;
-3. osobno ma być widoczny rzeczywisty `StartRoboczy` wyliczony przez pełny silnik;
-4. przy różnicy między godziną zadaną a `StartRoboczy` operator ma widzieć wielkość przesunięcia oraz jego czytelną przyczynę;
-5. nie mieszać tych trzech znaczeń w jednym polu i nie nadpisywać danych źródłowych;
-6. zachować działanie offline, pamięć planu i dotychczasowy kompaktowy układ tabeli;
-7. dodać test 5I.1 oraz uruchomić pełną regresję przed publikacją.
+1. pokazać operatorowi końcowe konflikty tekstowo w interfejsie, korzystając z `komunikatOperatora` przygotowanego w 5H.3;
+2. wyraźnie pokazać problemy z ciągłością dostaw i przestojami, bez wymagania odczytywania danych diagnostycznych;
+3. kolor ma pozostać wyłącznie sygnałem pomocniczym — sens problemu musi wynikać z tekstu;
+4. zachować powiązanie konfliktu z właściwą budową, kursem albo zasobem;
+5. nie zmieniać zasad planowania, klasyfikacji konfliktów ani agregacji 5H;
+6. zachować działanie offline i kompaktowy układ operatora;
+7. dodać test 5I.2 oraz uruchomić pełną regresję przed publikacją.
 
 ## Ważna zasada wznowienia
 
-Na początku kolejnego wątku najpierw przeczytać `AGENTS.md`, `ZASADY_KODU.md`, `PROJECT_DECISIONS.md`, `POMYSLY_I_BACKLOG.md`, `ETAPY_ROZWOJU.md` oraz ten plik, a następnie sprawdzić aktualny `main` przed rozpoczęciem 5I.1.
+Na początku kolejnego wątku najpierw przeczytać `AGENTS.md`, `ZASADY_KODU.md`, `PROJECT_DECISIONS.md`, `POMYSLY_I_BACKLOG.md`, `ETAPY_ROZWOJU.md` oraz ten plik, a następnie sprawdzić aktualny `main` przed rozpoczęciem 5I.2.
