@@ -2212,3 +2212,21 @@ Granica jest dozwolona: przerwa równa `15 min` nie przekracza limitu. Dla plan�
 liczonych w pełnych minutach pierwszy konflikt powstanie więc od `16 min`.
 Porównanie każdej rzeczywistej pary z limitem i utworzenie konfliktu należą do
 5G.3. Pole operatora oraz trwałe odtwarzanie parametru pozostają zakresem 5I.
+
+---
+
+## 113. Konflikt przestoju dotyczy konkretnej pary rzeczywistych dostaw
+
+Podetap 5G.3 porównuje każdą parę z `analizaPrzestojowBetonowania.przerwyMiedzyDostawami` ze skutecznym `maksymalnyPrzestojMinuty`. Granica jest dozwolona: przestój równy limitowi nie jest konfliktem, a konflikt powstaje dopiero po ścisłym przekroczeniu.
+
+Każda problematyczna para tworzy osobny konflikt `PRZEKROCZONY_LIMIT_PRZESTOJU_BETONOWANIA`. Konflikt zachowuje ID i numery obu kursów, rzeczywisty koniec poprzedniego i początek następnego rozładunku, pełny przestój, wykorzystany limit oraz liczbę minut ponad limit. Pierwsza dostawa, kurs nieprzydzielony oraz przerwa mieszcząca się w limicie nie tworzą konfliktu ciągłości.
+
+---
+
+## 114. Konflikty mają wspólny wersjonowany rdzeń kontraktu
+
+Od 5H.1 końcowa lista `wynik.konflikty` jest normalizowana do wspólnego kontraktu bez usuwania dotychczasowych pól szczegółowych. Wersja kontraktu `1` wymaga pól `wersjaKontraktu`, `poziom`, `kod`, `rodzaj`, `kategoriaKonfliktu`, `opis` oraz `powiazania`. `poziom` ma obecnie wartość `konflikt`.
+
+`powiazania` są listą elementów `{ typ, id, rola }`. Typ może wskazywać `harmonogram`, `budowa`, `kurs`, `zasob` albo `parametr`. Dzięki temu jeden konflikt może odnosić się do wielu obiektów jednocześnie, np. konflikt ciągłości do budowy oraz dwóch kolejnych kursów. Brak konkretnego obiektu otrzymuje powiązanie z całym harmonogramem zamiast pustej listy.
+
+Wspólne kategorie obejmują co najmniej brak gruszki, brak pompy, niedostępność, niezgodny parametr, kolizję, brak trasy, przekroczenie limitu startu i przekroczenie limitu przestoju. Szczegółowe przyczyny istniejących konfliktów pozostają zachowane; 5H.1 nie zmienia sposobu planowania, nie usuwa duplikatów i nie definiuje jeszcze finalnych komunikatów operatorskich. Te dwa ostatnie zadania należą do 5H.2 i 5H.3.

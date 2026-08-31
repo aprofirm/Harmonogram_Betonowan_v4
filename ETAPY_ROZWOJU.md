@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5G.3**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5H.2**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -737,16 +737,16 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
     zachowywana w bieżącym planie i historii.
   - [x] **5F.3 — klasyfikacja wyniku:** korekta w limicie pozostaje zwykłym
     przesunięciem, przekroczenie staje się konfliktem z godziną i liczbą minut.
-- [ ] **5G — maksymalny przestój podczas betonowania.**
+- [x] **5G — maksymalny przestój podczas betonowania.**
   - [x] **5G.1 — osobna definicja:** przestój liczyć pomiędzy rzeczywistym końcem
     rozładunku poprzedniej dostawy a rzeczywistym początkiem następnej; nie mieszać
     go z opóźnieniem pierwszej dostawy.
   - [x] **5G.2 — parametr `MaksPrzestojMin`:** ustalić wartość domyślną przed
     implementacją i przechowywać ją jako parametr programu.
-  - [ ] **5G.3 — konflikt ciągłości:** przekroczenie limitu jest jawne przy
+  - [x] **5G.3 — konflikt ciągłości:** przekroczenie limitu jest jawne przy
     konkretnej budowie i wskazuje problematyczną parę dostaw oraz wielkość przerwy.
 - [ ] **5H — wspólny model konfliktów i przyczyn.**
-  - [ ] **5H.1 — kontrakt konfliktu:** jeden format dla braku gruszki, braku pompy,
+  - [x] **5H.1 — kontrakt konfliktu:** jeden format dla braku gruszki, braku pompy,
     niedostępności, niezgodnego parametru, kolizji, braku trasy, limitu startu i przestoju.
   - [ ] **5H.2 — agregacja:** wynik końcowy zbiera konflikty bez dublowania i
     zachowuje powiązanie z budową, kursem albo zasobem.
@@ -1414,6 +1414,36 @@ Następny niezakończony podetap: **5G.2 — parametr `MaksPrzestojMin`**, któr
 
 Podetap **5G.2** jest zakończony. Punkt nadrzędny **5G — maksymalny przestój podczas betonowania** i cały Etap 5 pozostają otwarte.
 Następny niezakończony podetap: **5G.3 — konflikt ciągłości dla konkretnej pary dostaw**.
+
+## Zamknięcie 5G.3 — konflikt ciągłości dla konkretnej pary dostaw — 2026-08-31
+
+- [x] każda rzeczywista para dostaw po stabilizacji jest porównywana ze skutecznym `maksymalnyPrzestojMinuty`;
+- [x] przerwa równa limitowi jest dozwolona, więc przy wartości domyślnej `15 min` pierwszy konflikt powstaje od `16 min`;
+- [x] każda para przekraczająca limit tworzy osobny konflikt `PRZEKROCZONY_LIMIT_PRZESTOJU_BETONOWANIA`;
+- [x] konflikt wskazuje budowę, oba kursy, obie rzeczywiste godziny, pełny przestój, użyty limit i liczbę minut ponad limit;
+- [x] pierwsza dostawa, para z `0 min`, przerwa mieszcząca się w limicie oraz kurs nieprzydzielony nie tworzą fikcyjnego konfliktu;
+- [x] klasyfikacja została wydzielona do `js/harmonogram/konflikty_przestojow.js`;
+- [x] test `testy/etap_5g_3.test.js` potwierdza granicę `15/16 min`, wiele problematycznych par, deterministyczność i brak mutowania źródła;
+- [x] pełna regresja **85 zestawów** `testy/*.test.js` przechodzi poprawnie.
+
+Podetap **5G.3** oraz cały punkt **5G — maksymalny przestój podczas betonowania** są zakończone. Etap 5 pozostaje otwarty.
+Następny niezakończony podetap: **5H.1 — wspólny kontrakt konfliktu**.
+
+## Zamknięcie 5H.1 — wspólny kontrakt konfliktu — 2026-08-31
+
+- [x] każdy konflikt przechodzący przez pełny publiczny silnik otrzymuje wspólny, wersjonowany rdzeń: `wersjaKontraktu`, `poziom`, `kod`, `rodzaj`, `kategoriaKonfliktu`, `opis` i `powiazania`;
+- [x] dotychczasowe pola szczegółowe pozostają bez zmian, dzięki czemu kontrakt nie usuwa informacji potrzebnych starszym regułom ani operatorowi;
+- [x] `powiazania` mają wspólny format `{ typ, id, rola }` i mogą wskazać harmonogram, budowę, kurs, zasób albo parametr;
+- [x] konflikt przestoju może jednocześnie wskazać budowę oraz poprzedni i następny kurs, a brak gruszek lub pomp zachowuje jawne powiązanie z typem zasobu;
+- [x] klasyfikacja obejmuje co najmniej: `brak-gruszki`, `brak-pompy`, `niedostepnosc`, `niezgodny-parametr`, `kolizja`, `brak-trasy`, `limit-startu` i `limit-przestoju`;
+- [x] istniejące przyczyny braku pompy (`brak-trasy`, `po-dostepnosci`, `pompa-nieaktywna`, `niewystarczajacy-wysieg`) są mapowane do wspólnych kategorii bez zmiany wcześniejszej logiki przydziału;
+- [x] moduł `js/harmonogram/kontrakt_konfliktow.js` normalizuje końcową listę dopiero po dołączeniu konfliktów 5G.3 i pozostaje częścią silnika, a nie interfejsu;
+- [x] 5H.1 nie usuwa duplikatów ani nie zmienia docelowych komunikatów operatorskich — to zakres odpowiednio 5H.2 i 5H.3;
+- [x] test `testy/etap_5h_1.test.js` sprawdza wszystkie wymagane kategorie, powiązania, kompatybilność, brak mutowania danych i kolejność modułów wersji webowej;
+- [x] pełna regresja **86 zestawów** `testy/*.test.js` przechodzi poprawnie lokalnie przed publikacją.
+
+Podetap **5H.1** jest zakończony. Punkt nadrzędny **5H — wspólny model konfliktów i przyczyn** oraz cały Etap 5 pozostają otwarte.
+Następny niezakończony podetap: **5H.2 — agregacja konfliktów bez dublowania**.
 
 
 ## Weryfikacja produkcyjnego KDX — 2026-08-14
