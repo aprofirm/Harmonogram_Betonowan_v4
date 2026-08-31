@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5J.1**
+- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5J.2**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -760,7 +760,7 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
   - [x] **5I.3 — pamięć i stan nieaktualny:** parametry oraz wyjątki budów są
     odtwarzane, a każda istotna zmiana wymaga nowego pełnego przeliczenia.
 - [ ] **5J — pełna regresja, publikacja i test operatora.**
-  - [ ] **5J.1 — testy automatyczne:** cały Etap 5 oraz pełna regresja importu,
+  - [x] **5J.1 — testy automatyczne:** cały Etap 5 oraz pełna regresja importu,
     pamięci, gruszek i pomp.
   - [ ] **5J.2 — publikacja:** `main`, GitHub Actions i GitHub Pages.
   - [ ] **5J.3 — test operatora:** rzeczywisty plan obejmujący przesunięcie przez
@@ -2767,3 +2767,17 @@ Następny niezakończony podetap: **4H.2 — ograniczony przydział pomp**.
 
 Zamknięty podetap: **4H.2**. Punkt nadrzędny **4H** pozostaje otwarty.
 Następny niezakończony podetap: **4H.3 — jawne konsekwencje**.
+
+
+## Zamknięcie 5J.1 — pełna regresja automatyczna — 2026-08-31
+
+- [x] istnieją wszystkie 27 testów podetapów 5A–5I;
+- [x] końcowy test `testy/etap_5j_1.test.js` pilnuje kompletności testów Etapu 5;
+- [x] regresja obejmuje także import KDX/CSV, pamięć planu i tras, gruszki, pompy, przejazdy oraz interfejs;
+- [x] workflow `.github/workflows/testy.yml` uruchamia każdy plik `testy/*.test.js` zarówno dla `main`, jak i pull requestu;
+- [x] plan `testy/TESTY_ETAP_5.md` został zsynchronizowany z faktycznie zakończonymi 5G.3, 5H i 5I;
+- [x] pełna regresja po dodaniu 5J.1 obejmuje **92 zestawy testów** i musi przejść przed scaleniem;
+- [x] 5J.1 nie zmienia logiki biznesowej harmonogramu.
+
+Podetap **5J.1** jest zakończony. Punkt **5J** oraz cały **Etap 5** pozostają otwarte.
+Następny niezakończony podetap: **5J.2 — publikacja (`main`, GitHub Actions i GitHub Pages)**.

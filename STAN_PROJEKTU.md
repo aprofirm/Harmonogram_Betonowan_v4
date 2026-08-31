@@ -7,40 +7,34 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **5I.3 — pamięć i stan nieaktualny**.
-- Commit scalający implementację 5I.3 do `main`: `b60d0fa8a84bf967ce03106787faa7eac0ceaf44`.
-- Punkty **5A–5I** są zakończone; cały Etap 5 pozostaje otwarty do wykonania 5J.
-- Pełna regresja obejmuje **91 zestawów testów — wszystkie poprawne**.
-- Pełna regresja **91/91** została wykonana na gałęzi roboczej oraz ponownie przez niezależne CI pull requestu przed scaleniem.
-- Tymczasowe pliki użyte wyłącznie do bezpiecznego wdrożenia nie weszły do `main`.
+- Ostatni zakończony podetap: **5J.1 — pełna regresja automatyczna Etapu 5**.
+- Punkty **5A–5I** oraz **5J.1** są zakończone; punkt 5J i cały Etap 5 pozostają otwarte.
+- Końcowy test `testy/etap_5j_1.test.js` pilnuje obecności wszystkich 27 testów 5A–5I oraz kluczowej regresji wcześniejszych etapów.
+- `testy/TESTY_ETAP_5.md` jest zsynchronizowany z faktycznym stanem 5G.3, 5H i 5I.
+- Pełny runner `.github/workflows/testy.yml` uruchamia każdy `testy/*.test.js` dla `main` i pull requestów.
+- Po dodaniu 5J.1 pełna regresja obejmuje **92 zestawy testów**.
+- 5J.1 nie zmienia logiki planowania, konfliktów, gruszek ani pomp.
 
-## Co działa po 5I.3
+## Zakres potwierdzony przez 5J.1
 
-- ustawienia planu zawierają osobne pole **Maksymalny przestój między dostawami**;
-- domyślna wartość `maksymalnyPrzestojMinuty` pozostaje `15 min`, niezależnie od limitu opóźnienia startu;
-- parametr jest walidowany w interfejsie, przekazywany do centralnego przeliczenia i zapisywany razem z pozostałymi parametrami planu;
-- bieżący plan i zapis historyczny zachowują `maksymalnyPrzestojMinuty`;
-- starszy zapis bez tego pola korzysta z bieżącej wartości domyślnej `15 min`, a nie z `0`;
-- indywidualny `maksymalneOpoznienieStartuBudowyMinuty` nadal jest przechowywany przy konkretnej budowie i zachowywany w planie oraz historii zgodnie z 5F.2;
-- każda istotna zmiana parametrów planu albo indywidualnego wyjątku budowy ustawia plan jako nieprzeliczony i czyści poprzedni wynik w interfejsie;
-- operator musi wtedy świadomie uruchomić ponownie **Przelicz harmonogram**;
-- jeżeli zapisany plan był wcześniej przeliczony, po odtworzeniu program liczy wynik ponownie z zapisanych danych zamiast traktować stary wynik, kursy lub konflikty jako źródło prawdy;
-- zachowano kompatybilność ze starszymi zapisami, działanie offline oraz wcześniejsze minimalistyczne środowiska testowe;
-- test `testy/etap_5i_3.test.js` sprawdza pole operatorskie, pamięć bieżącą i historyczną, wyjątek budowy, fallback starszego zapisu oraz unieważnianie wyniku;
-- `ETAPY_ROZWOJU.md`, `PROJECT_DECISIONS.md` i `README.md` są zsynchronizowane z zakończeniem całego punktu 5I.
+- import KDX/CSV i zmienne kolumny;
+- pamięć planu, historia, pamięć tras i ponowne odtwarzanie;
+- Etap 3 — generowanie kursów, przydział gruszek i ograniczona flota;
+- Etap 4 — pompy, przejazdy, dostępność i oba tryby zasobów;
+- Etap 5 — StartPlanowany/StartZadany/StartRoboczy, sprzężenie pomp i gruszek, kaskady, stabilizacja, limity startu, przestoje, wspólny kontrakt konfliktów, tekst operatorski, interfejs i stan nieaktualny.
 
 ## Następny krok
 
-**5J.1 — pełna regresja automatyczna Etapu 5.**
+**5J.2 — publikacja.**
 
-Zakres następnego podetapu zgodnie z `ETAPY_ROZWOJU.md`:
+Zakres:
 
-1. uruchomić pełną regresję całego Etapu 5 oraz wcześniejszych etapów;
-2. objąć kontrolą scenariusze braku zasobów, korekt startów, limitów, przestojów, stabilizacji, konfliktów, pamięci i ponownego odtwarzania;
-3. sprawdzić brak regresji importu KDX, gruszek, pomp, tras lokalnych i interfejsu;
-4. nie dodawać nowych funkcji biznesowych — 5J.1 jest etapem weryfikacyjnym przed publikacją 5J.2 i testem operatora 5J.3;
-5. po zielonej regresji zaktualizować status i przejść do 5J.2.
+1. potwierdzić aktualny `main` po 5J.1;
+2. potwierdzić zielony GitHub Actions dla pełnych 92 testów;
+3. potwierdzić poprawne GitHub Pages dla tego samego stanu;
+4. nie dodawać nowych funkcji biznesowych;
+5. po publikacji przejść do **5J.3 — test operatora**.
 
 ## Ważna zasada wznowienia
 
-Na początku kolejnego wątku najpierw przeczytać `AGENTS.md`, `ZASADY_KODU.md`, `PROJECT_DECISIONS.md`, `POMYSLY_I_BACKLOG.md`, `ETAPY_ROZWOJU.md` oraz ten plik, a następnie sprawdzić aktualny `main` przed rozpoczęciem 5J.1.
+Na początku kolejnego wątku najpierw przeczytać `AGENTS.md`, `ZASADY_KODU.md`, `PROJECT_DECISIONS.md`, `POMYSLY_I_BACKLOG.md`, `ETAPY_ROZWOJU.md` oraz ten plik, a następnie sprawdzić aktualny `main` przed rozpoczęciem 5J.2.
