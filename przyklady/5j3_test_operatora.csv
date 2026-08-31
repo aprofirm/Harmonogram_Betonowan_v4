@@ -1,0 +1,5 @@
+ID_Budowy;Firma;Budowa;StartPlanowany;IloscBetonu;RodzajRozladunku;CzasDojazdu;CzasPowrotu
+A;Alfa;Budowa A;08:00;16;Pompa;0;0
+B;Beta;Budowa B;09:20;16;Pompa;0;0
+X;Delta;Budowa X;09:40;8;Lej;0;0
+C;Gamma;Budowa C;10:50;16;Pompa;0;0
