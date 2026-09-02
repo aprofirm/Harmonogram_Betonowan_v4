@@ -23,7 +23,9 @@ jobs:
           node-version: "20"
 
       - name: Wprowadz zmiany 6C.1
-        run: python3 .github/patch_6c1.py
+        run: |
+          python3 .github/patch_6c1.py
+          python3 .github/patch_6c1_historyczne_testy.py
 
       - name: Sprawdz skladnie
         run: |
@@ -52,7 +54,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          rm .github/patch_6c1.py .github/workflows/wdrozenie_6c1.yml
+          rm .github/patch_6c1.py .github/patch_6c1_historyczne_testy.py .github/workflows/wdrozenie_6c1.yml
           git config user.name "PawelP"
           git config user.email "53014565+aprofirm@users.noreply.github.com"
           git add -A
