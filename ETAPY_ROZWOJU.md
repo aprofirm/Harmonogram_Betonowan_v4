@@ -51,7 +51,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
 - [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
-- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A oraz 6B.1 zakończone; następny podetap 6B.2**
+- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A oraz 6B.1–6B.2 zakończone; następny podetap 6B.3**
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
@@ -833,7 +833,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
 - [ ] **6B — adres z KDX/CSV i lokalna ocena jakości.**
   - [x] **6B.1 — rozpoznawanie kolumn adresowych:** obsłużyć warianty nazw i
     osobne części adresu bez wymagania jednego sztywnego układu eksportu.
-  - [ ] **6B.2 — normalizacja bez utraty źródła:** zachować tekst oryginalny,
+  - [x] **6B.2 — normalizacja bez utraty źródła:** zachować tekst oryginalny,
     utworzyć powtarzalny adres do wyszukania i nie łączyć podobnych budów tylko
     na podstawie swobodnej nazwy.
   - [ ] **6B.3 — statusy i komunikaty:** rozróżniać adres pełny, niepełny, zbyt
@@ -908,7 +908,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
     niepełny/niejednoznaczny, wybór lokalizacji, trasę drogową, ręczną korektę,
     przejazd pompy, ponowne użycie cache i pracę po odłączeniu internetu.
 
-Następny niezakończony podetap: **6B.2 — normalizacja bez utraty źródła**.
+Następny niezakończony podetap: **6B.3 — statusy i komunikaty**.
 
 ## Zakres
 
@@ -3010,3 +3010,29 @@ otwarty. Następny podetap: **6B.1 — rozpoznawanie kolumn adresowych**.
 
 Podetap **6B.1** jest zakończony. Punkt nadrzędny **6B** oraz cały **Etap 6**
 pozostają otwarte. Następny podetap: **6B.2 — normalizacja bez utraty źródła**.
+
+## Zamknięcie 6B.2 — normalizacja bez utraty źródła — 2026-09-02
+
+- [x] źródłowy tekst i części adresu pozostają w warstwie `daneZrodlowe` bez
+  nadpisywania ich wersją roboczą;
+- [x] warstwa `daneRobocze` otrzymuje powtarzalny tekst do późniejszego
+  wyszukania: pełny adres ma pierwszeństwo, a przy jego braku części są składane
+  w stałej kolejności;
+- [x] `tekstZnormalizowany` usuwa różnice wielkości liter, polskich znaków,
+  interpunkcji i wielokrotnych odstępów, ale nie rozwija skrótów, nie stosuje
+  podobieństwa tekstowego i nie zgaduje lokalizacji;
+- [x] różny numer budynku lub inna treść adresu pozostają różnymi kluczami;
+- [x] zgodnościowy opis oparty na nazwie budowy nie zmienia stabilnego
+  `idLokalizacji`, więc podobne lub identyczne swobodne nazwy nie scalają dwóch
+  różnych budów;
+- [x] starszy model wersji `1` bez znormalizowanego tekstu jest uzupełniany przy
+  migracji, a istniejąca ręczna warstwa robocza zachowuje tekst, źródło i
+  znacznik korekty;
+- [x] 6B.2 nie ocenia jakości adresu i nie podłącza usługi mapowej; statusy
+  jakości pozostają zakresem 6B.3, a wybór dostawcy map — 6E.1;
+- [x] test `testy/etap_6b_2.test.js` oraz pełna regresja przechodzą **100/100
+  zestawów testów**.
+
+Podetap **6B.2** jest zakończony. Punkt nadrzędny **6B** oraz cały **Etap 6**
+pozostają otwarte. Następny podetap: **6B.3 — statusy i komunikaty**.
+

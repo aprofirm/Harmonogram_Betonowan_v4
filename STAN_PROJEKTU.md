@@ -7,12 +7,12 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6B.1 — rozpoznawanie kolumn adresowych**.
+- Ostatni zakończony podetap: **6B.2 — normalizacja bez utraty źródła**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
 - **Etap 6** jest rozpoczęty. Podetapy **6A.1–6A.3**, cały punkt **6A** oraz
-  podetap **6B.1** są zakończone; punkt 6B i cały Etap 6 pozostają otwarte.
-- Pełna lokalna regresja po 6B.1 przechodzi **99/99 zestawów testów**.
+  podetapy **6B.1–6B.2** są zakończone; punkt 6B i cały Etap 6 pozostają otwarte.
+- Pełna regresja po 6B.2 przechodzi **100/100 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -21,6 +21,10 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
   ręcznych czasów. Zapis planu aplikacji ma wersję `4` i przechowuje modele.
 - Importer rozpoznaje pełny adres albo osobne części adresu w zmiennym układzie
   KDX/CSV, zachowując nazwę budowy jako oddzielną informację.
+- Źródłowy adres pozostaje nienadpisany, a warstwa robocza ma deterministycznie
+  składany tekst i `tekstZnormalizowany` do późniejszego wyszukania.
+- Normalizacja nie używa podobieństwa tekstowego; stabilne `idLokalizacji` nadal
+  rozdziela różne budowy nawet przy identycznym swobodnym opisie.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -58,10 +62,10 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6B.2 — normalizacja bez utraty źródła**. Zachować oryginalne dane,
-zbudować powtarzalny adres do późniejszego wyszukania i nie utożsamiać podobnych
-budów wyłącznie po swobodnej nazwie. Nie podłączać jeszcze konkretnej usługi
-mapowej — jej porównanie i wybór należą do **6E.1**.
+Rozpocząć **6B.3 — statusy i komunikaty adresu**. Lokalnie rozróżnić adres
+pełny, niepełny, zbyt ubogi, niejednoznaczny i nieznaleziony. Brak lub słaba
+jakość adresu nie mogą blokować ręcznych czasów ani harmonogramu. Konkretnej
+usługi mapowej nadal nie podłączać — jej porównanie i wybór należą do **6E.1**.
 
 ## Ważna zasada wznowienia
 

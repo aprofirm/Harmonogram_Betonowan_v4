@@ -200,14 +200,41 @@
     };
   }
 
+
+  function utworzWarstweRoboczaLokalizacji(warstwaBazowa) {
+    const warstwa = warstwaBazowa && typeof warstwaBazowa === "object"
+      ? warstwaBazowa
+      : {};
+
+    return Object.assign({}, warstwa, {
+      adres: aplikacja.lokalizacje.utworzAdresRoboczy(warstwa.adres)
+    });
+  }
+
+  function czyAdresySaRozne(adresA, adresB) {
+    return JSON.stringify(adresA || null) !== JSON.stringify(adresB || null);
+  }
+
   function utworzLubZaktualizujModelLokalizacjiBudowy(budowa) {
     const istniejacyModel = sprobujZnormalizowacModelLokalizacji(
       budowa.modelLokalizacji
     );
 
     if (istniejacyModel) {
-      budowa.modelLokalizacji = istniejacyModel;
-      return false;
+      const warstwaRobocza = utworzWarstweRoboczaLokalizacji(
+        istniejacyModel.daneRobocze
+      );
+      const czyZnormalizowanoAdres = czyAdresySaRozne(
+        istniejacyModel.daneRobocze.adres,
+        warstwaRobocza.adres
+      );
+
+      budowa.modelLokalizacji = aplikacja.lokalizacje.utworzModelLokalizacji(
+        Object.assign({}, istniejacyModel, {
+          daneRobocze: warstwaRobocza
+        })
+      );
+      return czyZnormalizowanoAdres;
     }
 
     const adresZrodlowy = pobierzAdresZrodlowyBudowy(budowa);
@@ -221,12 +248,15 @@
       statusJakosci: czyMaAdres ? "nieoceniona" : "brak",
       zrodlo: czyMaAdres ? zrodlo : "brak"
     };
+    const warstwaRobocza = utworzWarstweRoboczaLokalizacji(
+      warstwaZrodlowa
+    );
 
     budowa.modelLokalizacji = aplikacja.lokalizacje.utworzModelLokalizacji({
       idLokalizacji: String(budowa.idBudowy),
       typLokalizacji: "budowa",
       daneZrodlowe: warstwaZrodlowa,
-      daneRobocze: warstwaZrodlowa
+      daneRobocze: warstwaRobocza
     });
     return true;
   }

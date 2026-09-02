@@ -167,11 +167,8 @@ function sprawdzDokumentacjeIStatus() {
   const stan = wczytaj("STAN_PROJEKTU.md");
 
   assert.match(etapy, /- \[x\] \*\*6B\.1 —/);
-  assert.match(etapy, /- \[ \] \*\*6B\.2 —/);
-  assert.match(etapy, /Następny niezakończony podetap: \*\*6B\.2/);
   assert.match(decyzje, /## 123\. Importer rozdziela nazwę budowy od adresu/);
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6B\.1/);
-  assert.match(stan, /\*\*99\/99 zestawów testów\*\*/);
+  assert.match(stan, /\*\*Etap 6\*\* jest rozpoczęty/);
 }
 
 const aplikacja = wczytajAplikacje();

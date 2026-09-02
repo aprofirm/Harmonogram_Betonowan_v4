@@ -1,6 +1,6 @@
 # Kontrakt lokalizacji i tras — granice modułów
 
-Status: **6A.1–6A.3 i cały punkt 6A zakończone 2026-09-02**.
+Status: **6A.1–6A.3, cały punkt 6A oraz 6B.1–6B.2 zakończone 2026-09-02**.
 
 Ten dokument opisuje wynik inwentaryzacji 6A.1, model danych wersji `1`
 wdrożony w 6A.2 oraz migrację zgodnościową z 6A.3. Ustala miejsce, w którym
@@ -165,5 +165,22 @@ gotowe płaskie wartości robocze.
 - zapis i odtworzenie zachowują trzy modele;
 - silnik nie zna modeli lokalizacji, sieci ani konkretnego dostawcy map.
 
-Po zakończeniu 6B.1 następny podetap projektu to **6B.2 — normalizacja bez
-utraty źródła**.
+## Normalizacja 6B.2
+
+Normalizacja nie zmienia `daneZrodlowe`. Powtarzalny tekst przeznaczony do
+późniejszego wyszukania powstaje wyłącznie w `daneRobocze.adres`:
+
+- istniejący pełny tekst adresu ma pierwszeństwo przed ponownym składaniem;
+- jeżeli pełnego tekstu nie ma, znane części są składane w stałej kolejności:
+  ulica i numer, kod i miejscowość, gmina, powiat, województwo, kraj;
+- `tekstZnormalizowany` ujednolica wielkość liter, polskie znaki, interpunkcję i
+  odstępy;
+- normalizacja nie rozwija skrótów, nie stosuje podobieństwa tekstowego i nie
+  może sama uznać dwóch swobodnych nazw za tę samą lokalizację;
+- `idLokalizacji` nadal pochodzi ze stabilnego ID budowy, dlatego identyczny
+  opis zgodnościowy nie scala różnych pozycji;
+- starszy model wersji `1` jest uzupełniany bez nadpisywania tekstu ręcznej
+  warstwy roboczej ani jej źródła;
+- 6B.2 nie przyznaje statusu jakości i nie wywołuje sieci.
+
+Następny podetap projektu to **6B.3 — statusy i komunikaty**.

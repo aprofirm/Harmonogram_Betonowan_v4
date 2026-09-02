@@ -140,6 +140,63 @@
     return wartosc;
   }
 
+
+  function normalizujTekstAdresu(wartosc) {
+    const tekst = pobierzTekstLubBrak(wartosc);
+
+    if (!tekst) {
+      return null;
+    }
+
+    const tekstZnormalizowany = tekst
+      .toLowerCase()
+      .replace(/ł/g, "l")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim()
+      .replace(/\s+/g, " ");
+
+    return tekstZnormalizowany || null;
+  }
+
+  function pobierzCzescAdresu(czesci, nazwaPola) {
+    return pobierzTekstLubBrak(czesci && czesci[nazwaPola]);
+  }
+
+  function zlozTekstAdresuZCzesci(czesciAdresu) {
+    const czesci = pobierzObiektLubPusty(czesciAdresu, "Części adresu");
+    const ulicaINumer = [
+      pobierzCzescAdresu(czesci, "ulica"),
+      pobierzCzescAdresu(czesci, "numerBudynku")
+    ].filter(Boolean).join(" ") || null;
+    const kodIMiejscowosc = [
+      pobierzCzescAdresu(czesci, "kodPocztowy"),
+      pobierzCzescAdresu(czesci, "miejscowosc")
+    ].filter(Boolean).join(" ") || null;
+    const segmenty = [
+      ulicaINumer,
+      kodIMiejscowosc,
+      pobierzCzescAdresu(czesci, "gmina"),
+      pobierzCzescAdresu(czesci, "powiat"),
+      pobierzCzescAdresu(czesci, "wojewodztwo"),
+      pobierzCzescAdresu(czesci, "kraj")
+    ].filter(Boolean);
+
+    return segmenty.length ? segmenty.join(", ") : null;
+  }
+
+  function utworzAdresRoboczy(daneAdresu) {
+    const adres = utworzAdres(daneAdresu);
+    const tekstRoboczy = adres.tekst || zlozTekstAdresuZCzesci(adres.czesci);
+
+    return {
+      tekst: tekstRoboczy,
+      tekstZnormalizowany: normalizujTekstAdresu(tekstRoboczy),
+      czesci: skopiujDane(adres.czesci)
+    };
+  }
+
   function utworzAdres(daneAdresu) {
     const dane = pobierzObiektLubPusty(daneAdresu, "Adres");
     const czesci = pobierzObiektLubPusty(dane.czesci, "Części adresu");
@@ -411,6 +468,9 @@
     KIERUNKI_TRASY: KIERUNKI_TRASY,
     STATUSY_JAKOSCI: STATUSY_JAKOSCI,
     ZRODLA_DANYCH: ZRODLA_DANYCH,
+    normalizujTekstAdresu: normalizujTekstAdresu,
+    zlozTekstAdresuZCzesci: zlozTekstAdresuZCzesci,
+    utworzAdresRoboczy: utworzAdresRoboczy,
     utworzModelLokalizacji: utworzModelLokalizacji,
     utworzModelTrasy: utworzModelTrasy
   });

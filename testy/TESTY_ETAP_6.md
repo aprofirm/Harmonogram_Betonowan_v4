@@ -3,8 +3,8 @@
 ## Status
 
 Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetapy **6A.1–6A.3**,
-cały punkt **6A** oraz **6B.1** są zakończone. Następny podetap to **6B.2 —
-normalizacja bez utraty źródła**.
+cały punkt **6A** oraz **6B.1–6B.2** są zakończone. Następny podetap to **6B.3 —
+statusy i komunikaty**.
 
 ## Zasada nadrzędna
 
@@ -93,6 +93,24 @@ Test `testy/etap_6b_1.test.js` sprawdza:
 - przekazanie rozpoznanych wartości do modelu lokalizacji bez przedwczesnej
   normalizacji lub oceny jakości;
 - zgodność pliku bez kolumn adresowych z dotychczasowym importem.
+
+
+### 6B.2 — normalizacja bez utraty źródła
+
+Test `testy/etap_6b_2.test.js` sprawdza:
+
+- zachowanie pełnego źródłowego tekstu i części adresu bez wpisywania
+  normalizacji do `daneZrodlowe`;
+- utworzenie `daneRobocze.adres.tekstZnormalizowany` z pełnego adresu;
+- deterministyczne złożenie tekstu roboczego z ulicy, numeru, kodu,
+  miejscowości i dostępnych danych administracyjnych, gdy brak pełnego tekstu;
+- usuwanie wyłącznie technicznych różnic zapisu: wielkości liter, polskich
+  znaków, interpunkcji i nadmiarowych odstępów;
+- brak podobieństwa tekstowego: rzeczywiście różne adresy pozostają różne;
+- zachowanie osobnych `idLokalizacji` dla dwóch budów o identycznym lub podobnym
+  swobodnym opisie;
+- uzupełnienie starszego modelu wersji `1` bez utraty ręcznej warstwy roboczej;
+- brak przedwczesnej oceny jakości i brak zależności od usługi mapowej.
 
 ## Końcowy test operatora 6J.3
 

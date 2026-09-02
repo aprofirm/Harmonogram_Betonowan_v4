@@ -21,7 +21,7 @@ function sprawdzKompletnyPodzialEtapu6() {
     );
 
     [1, 2, 3].forEach(function (numer) {
-      const stan = litera === "A" || (litera === "B" && numer === 1)
+      const stan = litera === "A" || (litera === "B" && numer <= 2)
         ? "x"
         : " ";
       assert.match(
@@ -31,7 +31,7 @@ function sprawdzKompletnyPodzialEtapu6() {
     });
   });
 
-  assert.match(etapy, /Następny niezakończony podetap: \*\*6B\.2/);
+  assert.match(etapy, /Następny niezakończony podetap: \*\*6B\.3/);
   assert.match(etapy, /brak sieci, limit, timeout lub zły wynik/);
   assert.match(etapy, /A → B` pozostaje niezależne od `B → A/);
   assert.match(etapy, /nie\s+nadpisuje ręcznej korekty/);
@@ -45,7 +45,7 @@ function sprawdzGranicePlanu() {
 
   assert.match(
     etapy,
-    /Etap 6 — Adresy, lokalizacje i trasy — \*\*rozpoczęty 2026-09-02; 6A oraz 6B\.1 zakończone; następny podetap 6B\.2\*\*/
+    /Etap 6 — Adresy, lokalizacje i trasy — \*\*rozpoczęty 2026-09-02; 6A oraz 6B\.1–6B\.2 zakończone; następny podetap 6B\.3\*\*/
   );
   assert.match(etapy, /wybór należy do 6E\.1/);
   assert.match(
@@ -54,12 +54,12 @@ function sprawdzGranicePlanu() {
   );
   assert.match(
     stan,
-    /Rozpocząć \*\*6B\.2 — normalizacja bez utraty źródła\*\*/
+    /Rozpocząć \*\*6B\.3 — statusy i komunikaty adresu\*\*/
   );
   assert.match(readme, /testy\/TESTY_ETAP_6\.md/);
   assert.match(
     planTestow,
-    /Podetapy \*\*6A\.1–6A\.3\*\*[\s\S]*?punkt \*\*6A\*\*[\s\S]*?\*\*6B\.1\*\*[\s\S]*?są zakończone/
+    /Podetapy \*\*6A\.1–6A\.3\*\*[\s\S]*?punkt \*\*6A\*\*[\s\S]*?\*\*6B\.1–6B\.2\*\*[\s\S]*?są zakończone/
   );
   assert.match(
     planTestow,
@@ -75,5 +75,5 @@ sprawdzKompletnyPodzialEtapu6();
 sprawdzGranicePlanu();
 
 console.log(
-  "OK — Etap 6 ma kompletny plan 6A–6J, zakończone 6A i 6B.1 oraz następny krok 6B.2."
+  "OK — Etap 6 ma kompletny plan 6A–6J, zakończone 6A i 6B.1–6B.2 oraz następny krok 6B.3."
 );

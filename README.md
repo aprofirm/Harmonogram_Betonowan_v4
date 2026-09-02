@@ -62,9 +62,15 @@ adres rozbity na części: `Ulica`, `Numer budynku`, `Kod pocztowy`,
 typowe warianty, m.in. `Nazwa ulicy`, `Nr domu`, `Miasto`, `Państwo`, `Region`,
 `Postal code` i `City`. Kolejność tych kolumn jest dowolna.
 
-`Budowa` pozostaje nazwą obiektu, a dane adresowe są przechowywane osobno. Na
-tym etapie aplikacja zachowuje wartości źródłowe bez automatycznego poprawiania
-lub oceniania adresu. Plik bez kolumn adresowych nadal działa tak jak wcześniej.
+`Budowa` pozostaje nazwą obiektu, a dane adresowe są przechowywane osobno.
+Aplikacja zachowuje adres źródłowy bez nadpisywania. Osobna warstwa robocza
+korzysta z pełnego adresu, a gdy go nie ma — składa dostępne części w stałej
+kolejności i tworzy **znormalizowany tekst adresu roboczego** do późniejszego
+wyszukania. Normalizacja usuwa różnice wielkości liter, polskich znaków,
+interpunkcji i nadmiarowych odstępów, ale nie zgaduje podobnych nazw ani nie
+stosuje dopasowania rozmytego. Jakość adresu pozostaje jeszcze `nieoceniona`;
+statusy jakości są zakresem 6B.3. Plik bez kolumn adresowych nadal działa tak
+jak wcześniej.
 
 Opcjonalna kolumna `PrzejazdyPompy` może dostarczyć początkowe czasy przejazdów. Wartość ma format `ID=MINUTY|ID=MINUTY`, np. `B-002=30|B-003=20`. Nie jest jednak wymagana do normalnej obsługi: po wczytaniu planu operator widzi osobny panel **Przejazdy między budowami**, w którym każda potrzebna relacja ma jawne pole czasu. Wartość z CSV można ręcznie nadpisać i później przywrócić przyciskiem `↺`. Jeżeli silnik dostanie w przyszłości jawny provider przejazdów, np. routing na podstawie adresów, ma on pierwszeństwo przed danymi zapisanymi przy budowie.
 
