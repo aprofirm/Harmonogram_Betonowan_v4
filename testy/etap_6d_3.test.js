@@ -257,9 +257,8 @@ function sprawdzDokumentacje() {
 
   assert.match(etapy, /- \[x\] \*\*6D — pamięć lokalizacji i tras/);
   assert.match(etapy, /- \[x\] \*\*6D\.3 — cache i lokalne podpowiedzi/);
-  assert.match(etapy, /Następny niezakończony podetap: \*\*6E\.1/);
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6D\.3/);
-  assert.match(stan, /107\/107 zestawów testów/);
+  assert.match(etapy, /Podetap \*\*6D\.3\*\* i cały punkt \*\*6D/);
+  assert.match(etapy, /test `testy\/etap_6d_3\.test\.js` oraz pełna regresja przechodzą \*\*107\/107/);
   assert.match(plan, /### 6D\.3 — cache i lokalne podpowiedzi/);
   assert.match(decyzje, /## 129\. Podpowiedź cache nie jest automatycznym wyborem lokalizacji/);
   assert.match(kontrakt, /## Cache i lokalne podpowiedzi — 6D\.3/);

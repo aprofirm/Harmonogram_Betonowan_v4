@@ -51,7 +51,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
 - [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
-- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6D zakończone; następny podetap 6E.1**
+- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6D i 6E.1 zakończone; następny podetap 6E.2**
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
@@ -857,7 +857,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
     umożliwić wyszukanie znanej budowy offline i zastosować wpis dopiero po
     świadomym wyborze operatora.
 - [ ] **6E — wybór dostawcy i wymienna warstwa usług mapowych.**
-  - [ ] **6E.1 — porównanie i decyzja:** ocenić kandydatów opartych o
+  - [x] **6E.1 — porównanie i decyzja:** ocenić kandydatów opartych o
     OpenStreetMap i inne rozwiązania pod kątem kosztów, limitów, licencji,
     CORS, działania z GitHub Pages i routingu ciężarowego; zapisać wybór przed
     integracją, bez zakładania z góry Google Maps ani konkretnej usługi.
@@ -3159,3 +3159,20 @@ Podetap **6D.2** jest zakończony. Punkt 6D pozostaje otwarty. Następny podetap
 
 Podetap **6D.3** i cały punkt **6D — pamięć lokalizacji i tras oparta na jednoznacznym miejscu** są zakończone. Etap 6 pozostaje otwarty.
 Następny niezakończony podetap: **6E.1 — porównanie i wybór dostawcy**.
+
+
+## Zamknięcie 6E.1 — porównanie i wybór dostawcy — 2026-09-02
+
+- [x] porównano openrouteservice/HeiGIT, TomTom, Geoapify, HERE, GraphHopper i Google pod kątem kosztu, limitów, licencji, CORS, pracy z aplikacją webową i routingu ciężarowego;
+- [x] do pierwszej integracji wybrano **openrouteservice / HeiGIT** z profilem `driving-hgv`;
+- [x] nowa integracja ma używać aktualnego hosta `api.heigit.org`, a nie wycofywanego `api.openrouteservice.org`;
+- [x] wybór uwzględnia dokładne ograniczenia pojazdu ciężarowego: długość, szerokość, wysokość, nacisk osi i masę;
+- [x] **TomTom** pozostaje pierwszym kandydatem do drugiego adaptera, jeżeli potrzebne będą bieżące dane o ruchu drogowym;
+- [x] Google Routes nie jest obecnie wybierany dla Polski, ponieważ bieżąca dostępność Large Vehicle Routing nie obejmuje Polski;
+- [x] klucz API nie może trafić do repozytorium, historii planu ani diagnostyki i ma być przekazywany wyłącznie do warstwy adaptera w czasie działania;
+- [x] nazwa dostawcy, endpoint, autoryzacja i surowa odpowiedź usługi nie należą do silnika harmonogramu; neutralna granica zostanie wdrożona w 6E.2;
+- [x] szczegółowe porównanie i źródła są zapisane w `DOSTAWCA_MAP_6E1.md`;
+- [x] test `testy/etap_6e_1.test.js` wraz z pełną regresją przechodzi **108/108 zestawów testów**.
+
+Podetap **6E.1 — porównanie i decyzja** jest zakończony. Punkt **6E — wybór dostawcy i wymienna warstwa usług mapowych** pozostaje otwarty.
+Następny niezakończony podetap: **6E.2 — neutralny adapter**.

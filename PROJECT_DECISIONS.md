@@ -2490,3 +2490,25 @@ Zasady:
 - istniejące ręczne albo odtworzone czasy mają pierwszeństwo i nie są nadpisywane przez wybór z cache;
 - wybór z pamięci nie zmienia źródłowego adresu KDX/CSV; zmienia wyłącznie warstwę roboczą;
 - konkretny dostawca geokodowania i routingu nadal nie jest wybrany w 6D.3; decyzja należy do **6E.1**.
+
+
+---
+
+## 130. openrouteservice jako pierwszy dostawca Etapu 6
+
+Od **6E.1** pierwszym dostawcą geokodowania i routingu dla integracji Etapu 6 jest **openrouteservice / HeiGIT**. Nowa integracja korzysta wyłącznie z aktualnego hosta `api.heigit.org`; wycofywany host `api.openrouteservice.org` nie może być podstawą nowego kodu.
+
+Decyzja wynika z połączenia bezpłatnego planu Standard, dostępności dla Polski i Europy, geokodowania oraz profilu `driving-hgv`, który przyjmuje rzeczywiste ograniczenia ciężkiego pojazdu: długość, szerokość, wysokość, nacisk osi, masę i odpowiednie ograniczenia ładunku. Możliwość późniejszego uruchomienia własnego backendu zmniejsza ryzyko trwałego uzależnienia projektu od publicznego limitu.
+
+Obowiązują następujące zasady:
+
+- **TomTom** jest pierwszym kandydatem do późniejszego drugiego adaptera, jeżeli praktyka wykaże potrzebę bieżących danych o ruchu lub dokładniejszych danych komercyjnych;
+- Google Routes nie jest obecnie wybierany dla polskiego routingu ciężarowego, ponieważ bieżąca dostępność Large Vehicle Routing nie obejmuje Polski;
+- HERE nie jest wybierany jako pierwszy z powodu ograniczeń i niejednoznaczności planu Base dla zastosowań związanych z zarządzaniem pojazdami i obliczaniem tras;
+- GraphHopper i Geoapify pozostają technicznie możliwymi alternatywami, ale na pierwszym wdrożeniu nie dają lepszego połączenia kosztu i elastycznych ograniczeń pojazdu niż openrouteservice;
+- wybór dostawcy **nie zmienia kontraktu domenowego**. Nazwa usługi, URL, nagłówki, klucz, limity i surowy format odpowiedzi należą wyłącznie do wymiennego adaptera z 6E.2;
+- silnik harmonogramu nie może importować ani rozpoznawać openrouteservice, TomTom ani innego dostawcy;
+- klucza API nie zapisujemy w repozytorium, historii planu, pamięci tras ani logach diagnostycznych. Klucz ma być dostarczany adapterowi w czasie działania;
+- cache i ręczne czasy są sprawdzane przed internetem, a awaria usługi nie może blokować harmonogramu;
+- testy automatyczne adapterów używają atrap odpowiedzi zamiast rzeczywistych wywołań publicznych serwerów;
+- dokładne porównanie kandydatów, aktualne limity i sprawdzone źródła z 2026-09-02 znajdują się w `DOSTAWCA_MAP_6E1.md`.

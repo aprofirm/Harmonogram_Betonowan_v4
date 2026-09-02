@@ -3,9 +3,9 @@
 ## Status
 
 Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetapy **6A.1–6A.3**
-i **6B.1–6B.3** oraz całe punkty **6A–6B** są zakończone. Zakończony jest
-również całe punkty **6C–6D**. Następny podetap to
-**6E.1 — porównanie i wybór dostawcy**.
+i **6B.1–6B.3** oraz całe punkty **6A–6D** są zakończone. Zakończony jest
+również podetap **6E.1 — porównanie i wybór dostawcy**. Następny podetap to
+**6E.2 — neutralny adapter**.
 
 ## Zasada nadrzędna
 
@@ -244,3 +244,16 @@ Test `testy/etap_6d_3.test.js` sprawdza:
 - zamknięcie całego punktu 6D, aktualizację dokumentacji i przejście do 6E.1.
 
 Pełna regresja po 6D.3 obejmuje **107/107 zestawów testów**.
+
+
+### 6E.1 — porównanie i decyzja
+
+Test `testy/etap_6e_1.test.js` sprawdza, że:
+
+- dokument `DOSTAWCA_MAP_6E1.md` jawnie wybiera openrouteservice / HeiGIT do pierwszej integracji i używa aktualnego hosta `api.heigit.org`;
+- zapisane są sprawdzone limity planu Standard oraz wymagane parametry ciężkiego pojazdu;
+- TomTom pozostaje jawnym kandydatem rezerwowym, a ograniczenie geograficzne Google dla Large Vehicle Routing jest odnotowane;
+- klucz API nie może być zapisany w repozytorium;
+- 6E.1 nie dodaje zależności dostawcy do plików silnika harmonogramu;
+- punkt 6E pozostaje otwarty, 6E.1 jest zakończony, a następnym krokiem jest 6E.2;
+- pełna regresja obejmuje **108/108 zestawów testów**.
