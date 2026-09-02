@@ -245,3 +245,19 @@ Kontrakt zapisu:
 
 Korekta operatora nie zmienia `idWezla`. Różne fizyczne węzły i osobne ID są
 zakresem 6C.3.
+
+
+## Zakres wielu węzłów 6C.3
+
+Od 6C.3 modele używane przez aplikację są jawnie zakresowane aktywnym węzłem.
+`idLokalizacji` i `idTrasy` pozostają zgodnymi wstecz identyfikatorami domenowymi,
+a osobne pola zakresu zapobiegają mieszaniu danych pomiędzy betoniarniami:
+
+- `modelLokalizacji.idWezla` wskazuje węzeł, w którego kontekście używana jest lokalizacja;
+- `modelLokalizacji.kluczLokalizacji` ma postać `ID_WEZLA::lokalizacja::ID_LOKALIZACJI`;
+- `modelTrasy.idWezla` wskazuje węzeł zakresu trasy;
+- `modelTrasy.kluczTrasy` ma postać `ID_WEZLA::trasa::PUNKT_A->PUNKT_B`;
+- dla trasy węzeł ↔ budowa ID węzła jest wyznaczane z punktu typu `wezel`;
+- dla przyszłej relacji budowa → budowa ID węzła musi zostać przekazane jawnie, aby trasa pompy nie była współdzielona pomiędzy betoniarniami.
+
+Pamięć tras `v1` nadal zachowuje obecny format, ale wymaga jawnego `idWezla` przy zapisie i odczycie. Brak ID jest błędem, a nie sygnałem do użycia `wezel-domyslny`. Pełne rozszerzenie formatu pamięci, adresy, współrzędne i migracja należą do 6D.1.

@@ -51,7 +51,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
 - [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
-- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6B i 6C.1–6C.2 zakończone; następny podetap 6C.3**
+- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6C zakończone; następny podetap 6D.1**
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
@@ -839,12 +839,12 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
   - [x] **6B.3 — statusy i komunikaty:** rozróżniać adres pełny, niepełny, zbyt
     ubogi, niejednoznaczny i nieznaleziony; brak adresu nie blokuje ręcznych
     czasów ani harmonogramu.
-- [ ] **6C — węzeł/betoniarnia jako początek tras.**
+- [x] **6C — węzeł/betoniarnia jako początek tras.**
   - [x] **6C.1 — model węzła:** przechowywać stabilne ID, nazwę, adres oraz
     współrzędne aktywnego węzła bez ponownego geokodowania przy każdym planie.
   - [x] **6C.2 — ustawienie i pamięć:** walidować oraz lokalnie zapisywać dane
     węzła, umożliwiając świadomą korektę operatora.
-  - [ ] **6C.3 — gotowość na wiele węzłów:** klucze lokalizacji i tras zawierają
+  - [x] **6C.3 — gotowość na wiele węzłów:** klucze lokalizacji i tras zawierają
     ID węzła, choć pierwsza wersja interfejsu może używać jednego aktywnego.
 - [ ] **6D — pamięć lokalizacji i tras oparta na jednoznacznym miejscu.**
   - [ ] **6D.1 — rozszerzenie formatu pamięci:** zapisywać adres, współrzędne,
@@ -908,7 +908,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
     niepełny/niejednoznaczny, wybór lokalizacji, trasę drogową, ręczną korektę,
     przejazd pompy, ponowne użycie cache i pracę po odłączeniu internetu.
 
-Następny niezakończony podetap: **6C.3 — gotowość na wiele węzłów**.
+Następny niezakończony podetap: **6D.1 — rozszerzenie formatu pamięci**.
 
 ## Zakres
 
@@ -3094,3 +3094,16 @@ otwarte. Następny podetap: **6C.2 — ustawienie i pamięć**.
 
 Podetap **6C.2** jest zakończony. Punkt **6C** i cały **Etap 6** pozostają
 otwarte. Następny podetap: **6C.3 — gotowość na wiele węzłów**.
+
+
+### Wynik podetapu 6C.3 — gotowość na wiele węzłów
+
+- [x] modele lokalizacji budów przechowują `idWezla` i stabilny `kluczLokalizacji` zakresowany aktywnym węzłem;
+- [x] modele tras węzeł ↔ budowa przechowują `idWezla` i `kluczTrasy`, a relacje budowa → budowa mogą być jawnie zakresowane węzłem;
+- [x] sprzeczne ID węzła i punkt węzła w modelu trasy jest odrzucane;
+- [x] pamięć tras wymaga jawnego ID węzła i nie stosuje już cichego fallbacku `wezel-domyslny`;
+- [x] identyczny opis budowy zapisany dla dwóch węzłów tworzy dwa niezależne wpisy cache;
+- [x] zachowano format pamięci tras `v1` — jego rozszerzenie i migracja pozostają zakresem 6D.1;
+- [x] test `testy/etap_6c_3.test.js` oraz pełna regresja przechodzą **104/104 zestawów testów**.
+
+Podetap **6C.3** i cały punkt **6C** są zakończone. Etap 6 pozostaje otwarty. Następny podetap: **6D.1 — rozszerzenie formatu pamięci**.

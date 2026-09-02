@@ -631,3 +631,8 @@ nazwę oraz adres albo pełną parę współrzędnych i wybiera **Zapisz betonia
 Dane są zapamiętywane lokalnie w przeglądarce i odtwarzane przy następnym
 uruchomieniu. Brak trwałej pamięci nie blokuje programu — wtedy ustawienie działa
 do końca bieżącej sesji.
+
+
+## Zakres danych aktywnego węzła
+
+Od 6C.3 lokalizacje i trasy używane przez aplikację są przypisane do ID aktywnego węzła. Dzięki temu przyszłe użycie kilku betoniarni nie pomiesza zapisanych lokalizacji ani czasów tras. Obecny interfejs nadal pracuje z jednym aktywnym węzłem.

@@ -2433,3 +2433,19 @@ niedostępny, program zachowuje dane w bieżącej sesji i nadal działa offline.
 Uszkodzony zapis nie może zablokować uruchomienia aplikacji.
 
 Zmiana na inny fizyczny węzeł i obsługa wielu identyfikatorów należą do **6C.3**.
+
+
+---
+
+## 127. Klucze lokalizacji i tras są zakresowane ID węzła
+
+Od **6C.3** jedna nazwa budowy lub jedno `idBudowy` nie wystarcza do uznania danych za wspólne pomiędzy różnymi betoniarniami. Modele lokalizacji i tras używane przez aplikację przechowują `idWezla` i wyznaczają stabilny klucz zawierający ten identyfikator.
+
+Zasady:
+
+- ta sama budowa może mieć osobne dane dla `WEZEL-A` i `WEZEL-B`;
+- trasa węzeł ↔ budowa pobiera zakres z punktu węzła;
+- przyszła trasa budowa → budowa musi dostać ID węzła jawnie;
+- pamięć tras nie może już cicho podstawiać `wezel-domyslny`, gdy ID węzła nie zostało przekazane;
+- format książki tras pozostaje `v1` do czasu świadomej migracji w 6D.1;
+- interfejs nadal może pracować z jednym aktywnym węzłem — lista i przełączanie wielu węzłów nie są wymagane w 6C.3.
