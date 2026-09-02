@@ -197,6 +197,172 @@
     };
   }
 
+
+  function pobierzRozpoznaneCzesciAdresu(czesciAdresu) {
+    const czesci = pobierzObiektLubPusty(czesciAdresu, "Części adresu");
+
+    return {
+      ulica: pobierzCzescAdresu(czesci, "ulica"),
+      numerBudynku: pobierzCzescAdresu(czesci, "numerBudynku"),
+      kodPocztowy: pobierzCzescAdresu(czesci, "kodPocztowy"),
+      miejscowosc: pobierzCzescAdresu(czesci, "miejscowosc"),
+      gmina: pobierzCzescAdresu(czesci, "gmina"),
+      powiat: pobierzCzescAdresu(czesci, "powiat"),
+      wojewodztwo: pobierzCzescAdresu(czesci, "wojewodztwo"),
+      kraj: pobierzCzescAdresu(czesci, "kraj"),
+      firma: pobierzCzescAdresu(czesci, "firma"),
+      nazwaBudowy: pobierzCzescAdresu(czesci, "nazwaBudowy")
+    };
+  }
+
+  function czyTekstMaNumerBudynku(tekst) {
+    return /(?:^|[\s,])\d+[a-zA-Z]?(?:[\/-]\d+[a-zA-Z]?)?(?=$|[\s,])/i.test(
+      String(tekst || "")
+    );
+  }
+
+  function czyTekstMaKodPocztowy(tekst) {
+    return /\b\d{2}[-\s]\d{3}\b/.test(String(tekst || ""));
+  }
+
+  function policzZnaczaceSlowaAdresu(tekst) {
+    const tekstZnormalizowany = normalizujTekstAdresu(tekst);
+
+    if (!tekstZnormalizowany) {
+      return 0;
+    }
+
+    return tekstZnormalizowany.split(" ").filter(function (slowo) {
+      return /[a-z]/.test(slowo);
+    }).length;
+  }
+
+  function czyAdresJestTylkoOpisemZgodnosciowym(czesci) {
+    const czyMaWlasciwaCzescAdresu = [
+      "ulica",
+      "numerBudynku",
+      "kodPocztowy",
+      "miejscowosc",
+      "gmina",
+      "powiat",
+      "wojewodztwo",
+      "kraj"
+    ].some(function (nazwaPola) {
+      return Boolean(czesci[nazwaPola]);
+    });
+    const czyMaOpisZgodnosciowy = Boolean(czesci.firma || czesci.nazwaBudowy);
+
+    return !czyMaWlasciwaCzescAdresu && czyMaOpisZgodnosciowy;
+  }
+
+  function ocenAdresLokalnie(daneAdresu) {
+    const adres = utworzAdresRoboczy(daneAdresu);
+    const czesci = pobierzRozpoznaneCzesciAdresu(adres.czesci);
+    const tekst = adres.tekst || "";
+    const czyMaTekst = Boolean(adres.tekstZnormalizowany);
+    const czyMaWlasciwaCzesc = [
+      czesci.ulica,
+      czesci.numerBudynku,
+      czesci.kodPocztowy,
+      czesci.miejscowosc,
+      czesci.gmina,
+      czesci.powiat,
+      czesci.wojewodztwo,
+      czesci.kraj
+    ].some(Boolean);
+
+    if (!czyMaTekst && !czyMaWlasciwaCzesc) {
+      return { statusJakosci: "brak", czyMoznaSzukacAutomatycznie: false };
+    }
+
+    if (czyAdresJestTylkoOpisemZgodnosciowym(czesci)) {
+      return {
+        statusJakosci: "niewystarczajaca",
+        czyMoznaSzukacAutomatycznie: false
+      };
+    }
+
+    if (czesci.ulica && czesci.numerBudynku && czesci.miejscowosc) {
+      return { statusJakosci: "pelna", czyMoznaSzukacAutomatycznie: true };
+    }
+
+    if (
+      (czesci.ulica && czesci.miejscowosc) ||
+      (czesci.kodPocztowy && czesci.miejscowosc) ||
+      (
+        czesci.miejscowosc &&
+        Boolean(czesci.gmina || czesci.powiat || czesci.wojewodztwo || czesci.kraj)
+      )
+    ) {
+      return { statusJakosci: "niepelna", czyMoznaSzukacAutomatycznie: true };
+    }
+
+    const liczbaSlow = policzZnaczaceSlowaAdresu(tekst);
+    const czyMaNumer = czyTekstMaNumerBudynku(tekst);
+    const czyMaKod = czyTekstMaKodPocztowy(tekst);
+    const czyMaSeparatorCzesci = /[,;]/.test(tekst);
+
+    if (czyMaNumer && liczbaSlow >= 2 && (czyMaKod || czyMaSeparatorCzesci)) {
+      return { statusJakosci: "pelna", czyMoznaSzukacAutomatycznie: true };
+    }
+
+    if (liczbaSlow >= 2 && (czyMaNumer || czyMaKod || czyMaSeparatorCzesci)) {
+      return { statusJakosci: "niepelna", czyMoznaSzukacAutomatycznie: true };
+    }
+
+    return {
+      statusJakosci: "niewystarczajaca",
+      czyMoznaSzukacAutomatycznie: false
+    };
+  }
+
+  function utworzKomunikatJakosciAdresu(statusJakosci) {
+    const status = pobierzDozwolonaWartosc(
+      statusJakosci,
+      "brak",
+      STATUSY_JAKOSCI,
+      "Status jakości adresu"
+    );
+    const komunikaty = {
+      brak: "Brak danych adresowych. Możesz nadal użyć zapamiętanych lub ręcznych czasów przejazdu.",
+      nieoceniona: "Adres nie został jeszcze oceniony.",
+      pelna: "Adres wygląda na kompletny i jest gotowy do wyszukania.",
+      niepelna: "Adres jest niepełny, ale zawiera dane wystarczające do próby wyszukania. Wynik wymaga sprawdzenia.",
+      niewystarczajaca: "Za mało danych adresowych do bezpiecznego wyszukania. Uzupełnij adres albo użyj zapamiętanych lub ręcznych czasów.",
+      niejednoznaczna: "Znaleziono więcej niż jedną pasującą lokalizację. Wybierz właściwą lokalizację ręcznie.",
+      nieznaleziona: "Nie znaleziono lokalizacji dla tego adresu. Popraw adres albo użyj zapamiętanych lub ręcznych czasów.",
+      potwierdzona: "Lokalizacja została potwierdzona przez operatora."
+    };
+
+    return komunikaty[status];
+  }
+
+  function pobierzInformacjeJakosciAdresu(daneAdresu, statusJakosci) {
+    const podanyStatus = pobierzDozwolonaWartosc(
+      statusJakosci,
+      "nieoceniona",
+      STATUSY_JAKOSCI,
+      "Status jakości adresu"
+    );
+    const ocenaLokalna = ocenAdresLokalnie(daneAdresu);
+    const status = ["brak", "nieoceniona"].includes(podanyStatus)
+      ? ocenaLokalna.statusJakosci
+      : podanyStatus;
+
+    return {
+      statusJakosci: status,
+      czyMoznaSzukacAutomatycznie: ["pelna", "niepelna"].includes(status),
+      czyWymagaUwagiOperatora: [
+        "brak",
+        "niepelna",
+        "niewystarczajaca",
+        "niejednoznaczna",
+        "nieznaleziona"
+      ].includes(status),
+      komunikatOperatora: utworzKomunikatJakosciAdresu(status)
+    };
+  }
+
   function utworzAdres(daneAdresu) {
     const dane = pobierzObiektLubPusty(daneAdresu, "Adres");
     const czesci = pobierzObiektLubPusty(dane.czesci, "Części adresu");
@@ -271,8 +437,18 @@
     };
   }
 
+
   function utworzModelLokalizacji(daneModelu) {
     const dane = pobierzObiektLubPusty(daneModelu, "Model lokalizacji");
+    const daneZrodlowe = utworzWarstweLokalizacji(dane.daneZrodlowe);
+    const daneAutomatyczne = utworzWarstweLokalizacji(dane.daneAutomatyczne);
+    const daneRobocze = utworzWarstweLokalizacji(dane.daneRobocze);
+
+    if (["brak", "nieoceniona"].includes(daneRobocze.statusJakosci)) {
+      daneRobocze.statusJakosci = ocenAdresLokalnie(
+        daneRobocze.adres
+      ).statusJakosci;
+    }
 
     return {
       wersjaKontraktu: WERSJA_KONTRAKTU_LOKALIZACJI_I_TRASY,
@@ -283,9 +459,9 @@
         TYPY_LOKALIZACJI,
         "Typ lokalizacji"
       ),
-      daneZrodlowe: utworzWarstweLokalizacji(dane.daneZrodlowe),
-      daneAutomatyczne: utworzWarstweLokalizacji(dane.daneAutomatyczne),
-      daneRobocze: utworzWarstweLokalizacji(dane.daneRobocze)
+      daneZrodlowe: daneZrodlowe,
+      daneAutomatyczne: daneAutomatyczne,
+      daneRobocze: daneRobocze
     };
   }
 
@@ -471,6 +647,9 @@
     normalizujTekstAdresu: normalizujTekstAdresu,
     zlozTekstAdresuZCzesci: zlozTekstAdresuZCzesci,
     utworzAdresRoboczy: utworzAdresRoboczy,
+    ocenAdresLokalnie: ocenAdresLokalnie,
+    utworzKomunikatJakosciAdresu: utworzKomunikatJakosciAdresu,
+    pobierzInformacjeJakosciAdresu: pobierzInformacjeJakosciAdresu,
     utworzModelLokalizacji: utworzModelLokalizacji,
     utworzModelTrasy: utworzModelTrasy
   });

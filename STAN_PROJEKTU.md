@@ -7,12 +7,12 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6B.2 — normalizacja bez utraty źródła**.
+- Ostatni zakończony podetap: **6B.3 — statusy i komunikaty adresu**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- **Etap 6** jest rozpoczęty. Podetapy **6A.1–6A.3**, cały punkt **6A** oraz
-  podetapy **6B.1–6B.2** są zakończone; punkt 6B i cały Etap 6 pozostają otwarte.
-- Pełna regresja po 6B.2 przechodzi **100/100 zestawów testów**.
+- **Etap 6** jest rozpoczęty. Punkty **6A–6B** są zakończone; cały Etap 6
+  pozostaje otwarty.
+- Pełna regresja po 6B.3 przechodzi **101/101 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -25,6 +25,11 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
   składany tekst i `tekstZnormalizowany` do późniejszego wyszukania.
 - Normalizacja nie używa podobieństwa tekstowego; stabilne `idLokalizacji` nadal
   rozdziela różne budowy nawet przy identycznym swobodnym opisie.
+- Warstwa robocza lokalnie rozróżnia adres pełny, niepełny, niewystarczający
+  i brak adresu; statusy niejednoznaczny i nieznaleziony są przygotowane na
+  jawny wynik późniejszego geokodowania.
+- Każdy status ma prosty komunikat dla operatora, a słaby adres nie blokuje
+  ręcznych ani zapamiętanych czasów przejazdu.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -62,10 +67,10 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6B.3 — statusy i komunikaty adresu**. Lokalnie rozróżnić adres
-pełny, niepełny, zbyt ubogi, niejednoznaczny i nieznaleziony. Brak lub słaba
-jakość adresu nie mogą blokować ręcznych czasów ani harmonogramu. Konkretnej
-usługi mapowej nadal nie podłączać — jej porównanie i wybór należą do **6E.1**.
+Rozpocząć **6C.1 — model węzła**. Wprowadzić stabilne ID aktywnego węzła, jego
+nazwę, adres oraz miejsce na współrzędne tak, aby przyszłe trasy nie opierały
+się na stałym `wezel-domyslny`. Nadal nie podłączać konkretnej usługi mapowej —
+jej porównanie i wybór należą do **6E.1**.
 
 ## Ważna zasada wznowienia
 

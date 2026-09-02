@@ -1,6 +1,6 @@
 # Kontrakt lokalizacji i tras — granice modułów
 
-Status: **6A.1–6A.3, cały punkt 6A oraz 6B.1–6B.2 zakończone 2026-09-02**.
+Status: **6A.1–6A.3 i 6B.1–6B.3 oraz całe punkty 6A–6B zakończone 2026-09-02**.
 
 Ten dokument opisuje wynik inwentaryzacji 6A.1, model danych wersji `1`
 wdrożony w 6A.2 oraz migrację zgodnościową z 6A.3. Ustala miejsce, w którym
@@ -183,4 +183,26 @@ późniejszego wyszukania powstaje wyłącznie w `daneRobocze.adres`:
   warstwy roboczej ani jej źródła;
 - 6B.2 nie przyznaje statusu jakości i nie wywołuje sieci.
 
-Następny podetap projektu to **6B.3 — statusy i komunikaty**.
+## Jakość adresu 6B.3
+
+Lokalna ocena dotyczy wyłącznie warstwy `daneRobocze` i nie zmienia treści ani
+statusu warstwy źródłowej. Obowiązują następujące zasady:
+
+- `pelna` — adres ma ulicę, numer i miejscowość albo pełny tekst zawiera numer
+  oraz wyraźnie rozdzielone części lub kod pocztowy;
+- `niepelna` — danych jest dość do ostrożnej próby przyszłego wyszukania, ale
+  wynik wymaga sprawdzenia;
+- `niewystarczajaca` — danych jest za mało, a sama firma lub swobodna nazwa
+  budowy nie są traktowane jako bezpieczny adres;
+- `brak` — nie ma rzeczywistych danych adresowych;
+- `niejednoznaczna` i `nieznaleziona` są jawnymi statusami przyszłego wyniku
+  geokodowania i nie mogą być lokalnie zgadywane;
+- `potwierdzona` oznacza świadomie zaakceptowaną lokalizację i nie jest
+  nadpisywana ponowną lokalną oceną.
+
+Każdy status ma prosty komunikat operatorski dostępny przez model lokalizacji.
+Status adresu nie decyduje o możliwości użycia ręcznych lub zapamiętanych
+czasów i nie może sam zatrzymać harmonogramu. 6B.3 nadal nie wykonuje zapytań
+sieciowych ani nie wybiera dostawcy map.
+
+Następny podetap projektu to **6C.1 — model węzła**.

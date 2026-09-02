@@ -68,9 +68,16 @@ korzysta z pełnego adresu, a gdy go nie ma — składa dostępne części w sta
 kolejności i tworzy **znormalizowany tekst adresu roboczego** do późniejszego
 wyszukania. Normalizacja usuwa różnice wielkości liter, polskich znaków,
 interpunkcji i nadmiarowych odstępów, ale nie zgaduje podobnych nazw ani nie
-stosuje dopasowania rozmytego. Jakość adresu pozostaje jeszcze `nieoceniona`;
-statusy jakości są zakresem 6B.3. Plik bez kolumn adresowych nadal działa tak
-jak wcześniej.
+stosuje dopasowania rozmytego.
+
+Jakość adresu jest oceniana lokalnie i konserwatywnie. **Pełny** oznacza adres
+z ulicą, numerem i miejscowością albo odpowiednio rozdzielony pełny tekst.
+**Niepełny** może nadawać się do przyszłej próby wyszukania, ale wynik wymaga
+sprawdzenia. **Niewystarczający** oznacza za mało danych do bezpiecznego
+automatycznego wyszukania. Statusy **niejednoznaczny** i **nieznaleziony** są
+przygotowane na jawny wynik późniejszego geokodowania i nie są zgadywane
+lokalnie. Brak lub słaba jakość adresu nie blokują zapamiętanych ani ręcznie
+wpisanych czasów. Plik bez kolumn adresowych nadal działa tak jak wcześniej.
 
 Opcjonalna kolumna `PrzejazdyPompy` może dostarczyć początkowe czasy przejazdów. Wartość ma format `ID=MINUTY|ID=MINUTY`, np. `B-002=30|B-003=20`. Nie jest jednak wymagana do normalnej obsługi: po wczytaniu planu operator widzi osobny panel **Przejazdy między budowami**, w którym każda potrzebna relacja ma jawne pole czasu. Wartość z CSV można ręcznie nadpisać i później przywrócić przyciskiem `↺`. Jeżeli silnik dostanie w przyszłości jawny provider przejazdów, np. routing na podstawie adresów, ma on pierwszeństwo przed danymi zapisanymi przy budowie.
 

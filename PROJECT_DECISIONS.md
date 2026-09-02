@@ -2363,3 +2363,27 @@ wyszukania, nie poprawia pisowni i nie przyznaje statusu jakości — te reguły
 należą odpowiednio do 6B.2 i 6B.3. Plik bez kolumn adresowych zachowuje
 dotychczasowe działanie i może nadal korzystać z nazwy budowy jako opisu
 zgodnościowego.
+
+---
+
+## 124. Lokalna jakość adresu nie blokuje harmonogramu
+
+Od 6B.3 aplikacja ocenia jakość wyłącznie roboczego adresu, nie modyfikując
+danych źródłowych z KDX/CSV. Lokalna ocena jest celowo konserwatywna:
+
+- `pelna` wymaga ulicy, numeru i miejscowości albo pełnego tekstu z numerem i
+  wyraźnym rozdzieleniem części adresu;
+- `niepelna` oznacza dane nadające się do ostrożnej próby wyszukania, ale
+  wymagające sprawdzenia wyniku;
+- `niewystarczajaca` oznacza zbyt mało danych; sama firma lub swobodna nazwa
+  budowy nie stają się automatycznie adresem;
+- `brak` oznacza rzeczywisty brak danych adresowych;
+- `niejednoznaczna` i `nieznaleziona` mogą pochodzić dopiero z jawnego wyniku
+  geokodowania i nie są lokalnie zgadywane;
+- `potwierdzona` jest świadomą decyzją operatora i ma pierwszeństwo przed
+  ponowną lokalną oceną.
+
+Każdy status ma prosty komunikat dla operatora. Brak albo słaba jakość adresu
+nie mogą blokować harmonogramu, jeżeli dostępne są ręczne lub zapamiętane czasy
+przejazdu. 6B.3 nie podłącza jeszcze żadnej usługi mapowej; wybór dostawcy
+pozostaje zakresem 6E.1.
