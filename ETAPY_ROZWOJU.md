@@ -50,7 +50,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 2 — Import CSV i model Budowy
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
-- [ ] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **rozpoczęty; następny podetap 5J.3**
+- [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
 - [ ] Etap 6 — Adresy, lokalizacje i trasy
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
@@ -759,15 +759,14 @@ Połączyć Budowy, Pompy i Gruszki w jeden kontrolowany proces tworzenia harmon
     jest tylko sygnałem pomocniczym.
   - [x] **5I.3 — pamięć i stan nieaktualny:** parametry oraz wyjątki budów są
     odtwarzane, a każda istotna zmiana wymaga nowego pełnego przeliczenia.
-- [ ] **5J — pełna regresja, publikacja i test operatora.**
+- [x] **5J — pełna regresja, publikacja i test operatora.**
   - [x] **5J.1 — testy automatyczne:** cały Etap 5 oraz pełna regresja importu,
     pamięci, gruszek i pomp.
   - [x] **5J.2 — publikacja:** `main`, GitHub Actions i GitHub Pages.
-  - [ ] **5J.3 — test operatora:** rzeczywisty plan obejmujący przesunięcie przez
+  - [x] **5J.3 — test operatora:** rzeczywisty plan obejmujący przesunięcie przez
     pompę, niedobór gruszek, kaskadę, limit startu, przestój i brak możliwego zasobu.
 
-Po każdym podetapie ponownie przeglądamy tę listę. Nie zamykamy Etapu 5, dopóki
-nie przejdą pełna regresja oraz test operatora 5J.3.
+Pełna regresja oraz test operatora 5J.3 przeszły. Etap 5 jest zakończony.
 
 ## Zakres
 
@@ -792,20 +791,20 @@ nie przejdą pełna regresja oraz test operatora 5J.3.
 
 ## Kryteria zakończenia
 
-- [ ] `StartPlanowany` nigdy nie jest nadpisywany przez silnik,
-- [ ] `StartRoboczy` pokazuje realny możliwy start,
-- [ ] operator widzi wielkość i przyczynę przesunięcia,
-- [ ] przekroczenie limitu jest jawnie oznaczone jako konflikt,
-- [ ] przestój po rozpoczęciu betonowania nie jest mylony z opóźnieniem startu,
-- [ ] zmiana liczby gruszek lub pomp przebudowuje cały plan,
-- [ ] po przeliczeniu nie pozostają kursy ani zajętości z poprzedniego wyniku,
-- [ ] konflikty nie są ukrywane przez automatyczne przesuwanie w nieskończoność.
+- [x] `StartPlanowany` nigdy nie jest nadpisywany przez silnik,
+- [x] `StartRoboczy` pokazuje realny możliwy start,
+- [x] operator widzi wielkość i przyczynę przesunięcia,
+- [x] przekroczenie limitu jest jawnie oznaczone jako konflikt,
+- [x] przestój po rozpoczęciu betonowania nie jest mylony z opóźnieniem startu,
+- [x] zmiana liczby gruszek lub pomp przebudowuje cały plan,
+- [x] po przeliczeniu nie pozostają kursy ani zajętości z poprzedniego wyniku,
+- [x] konflikty nie są ukrywane przez automatyczne przesuwanie w nieskończoność.
 
 ## Test regresji
 
-- [ ] wcześniejsze testy importu przechodzą,
-- [ ] wcześniejsze testy gruszek przechodzą,
-- [ ] wcześniejsze testy pomp przechodzą.
+- [x] wcześniejsze testy importu przechodzą,
+- [x] wcześniejsze testy gruszek przechodzą,
+- [x] wcześniejsze testy pomp przechodzą.
 
 ---
 
@@ -2779,8 +2778,8 @@ Następny niezakończony podetap: **4H.3 — jawne konsekwencje**.
 - [x] pełna regresja po dodaniu 5J.1 obejmuje **92 zestawy testów** i musi przejść przed scaleniem;
 - [x] 5J.1 nie zmienia logiki biznesowej harmonogramu.
 
-Podetapy **5J.1–5J.2** są zakończone. Punkt **5J** oraz cały **Etap 5** pozostają otwarte.
-Następny niezakończony podetap: **5J.3 — test operatora**.
+Podetapy **5J.1–5J.2** są zakończone. Test operatora 5J.3 został następnie
+zaliczony 2026-09-02.
 
 
 ### 5J.2 — publikacja potwierdzona — 2026-08-31
@@ -2792,16 +2791,24 @@ Następny niezakończony podetap: **5J.3 — test operatora**.
 - [x] środowisko Pages wskazało adres `https://aprofirm.github.io/Harmonogram_Betonowan_v4/`;
 - [x] 5J.2 nie dodaje funkcji biznesowych.
 
-Podetap **5J.2** jest zakończony. Następny niezakończony podetap: **5J.3 — test operatora**.
+Podetap **5J.2** jest zakończony. Test operatora 5J.3 został następnie
+wykonany na opublikowanej stronie.
 
 
-### 5J.3 — scenariusz testu operatora przygotowany — 2026-08-31
+### 5J.3 — test operatora zaliczony — 2026-09-02
 
 - [x] przygotowano sztuczny plik `przyklady/5j3_test_operatora.csv`;
 - [x] przygotowano instrukcję `testy/SCENARIUSZ_OPERATORA_5J_3.md`;
 - [x] przygotowano automatyczną kontrolę oczekiwanego wyniku;
-- [ ] operator wykonał scenariusz A w prawdziwej przeglądarce;
-- [ ] operator wykonał scenariusz B1 — brak gruszki;
-- [ ] operator wykonał scenariusz B2 — brak pompy.
+- [x] operator wykonał scenariusz A na opublikowanej stronie i potwierdził
+  przesunięcia A `08:00`, B `09:30`, C `11:25`, skutek jednej gruszki,
+  konflikt limitu startu oraz czytelny konflikt przestoju;
+- [x] operator wykonał B1 z `0` gruszek i potwierdził jawny konflikt
+  **Brak gruszki** bez fikcyjnego przydziału;
+- [x] operator wykonał B2 z `1` gruszką i `0` pomp oraz potwierdził trzy
+  jawne konflikty **Brak pompy** dla budów A, B i C.
 
-Samo przygotowanie danych i automatyczna kontrola **nie zamykają 5J.3**. Punkt 5J i cały Etap 5 pozostają otwarte do rzeczywistego potwierdzenia operatora.
+Podetap **5J.3**, cały punkt **5J** oraz cały **Etap 5** są zakończone.
+Pełna lokalna regresja po zapisie wyniku obejmuje **94/94 zestawy testów**.
+Następny krok: przed rozpoczęciem kodowania rozpisać kompletne podetapy
+**Etapu 6 — Adresy, lokalizacje i trasy**.

@@ -178,13 +178,16 @@ function sprawdzDokumentacjePrzygotowania() {
   const csv = wczytaj("przyklady/5j3_test_operatora.csv");
   const konfiguracja = wczytaj("js/konfiguracja/konfiguracja.js");
 
-  assert.match(scenariusz, /PRZYGOTOWANY — jeszcze niewykonany przez operatora/);
+  assert.match(scenariusz, /ZALICZONY PRZEZ OPERATORA/);
+  assert.match(scenariusz, /A — OK/);
+  assert.match(scenariusz, /B1 — OK/);
+  assert.match(scenariusz, /B2 — OK/);
   assert.match(scenariusz, /A — OK \/ NIE/);
   assert.match(scenariusz, /B1 — OK \/ NIE/);
   assert.match(scenariusz, /B2 — OK \/ NIE/);
   assert.match(csv, /A;Alfa;Budowa A;08:00;16;Pompa;0;0/);
   assert.match(csv, /X;Delta;Budowa X;09:40;8;Lej;0;0/);
-  assert.match(konfiguracja, /punktEtapu:\s*"5J\.2"/);
+  assert.match(konfiguracja, /punktEtapu:\s*"5J\.3"/);
 }
 
 sprawdzScenariuszA();
@@ -192,5 +195,5 @@ sprawdzScenariuszB();
 sprawdzDokumentacjePrzygotowania();
 
 console.log(
-  "OK — przygotowanie 5J.3 ma powtarzalne dane i oczekiwany wynik, ale test operatora nadal wymaga rzeczywistego wykonania w przeglądarce."
+  "OK — 5J.3 ma powtarzalne dane, oczekiwany wynik i zapisane zaliczenie testu operatora."
 );

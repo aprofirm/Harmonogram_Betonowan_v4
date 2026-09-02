@@ -97,7 +97,7 @@ function sprawdzStatus4J1() {
   assert.match(etapy, /\[x\] \*\*4J\.1 — testy automatyczne:/);
   assert.match(etapy, /- \[x\] \*\*4J — pełna regresja, publikacja i test operatora\.\*\*/);
   assert.match(etapy, /- \[x\] Etap 4 — Pompy — \*\*zakończony 2026-08-30;/);
-  assert.match(etapy, /Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — \*\*(?:zaplanowany|rozpoczęty); następny podetap 5[A-Z]\.\d+\*\*/);
+  assert.match(etapy, /Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — \*\*zakończony 2026-09-02;/);
   assert.match(planTestow, /### 4J\.1 — pełna regresja automatyczna/);
   assert.doesNotMatch(planTestow, /Następny podetap to \*\*4G\.3/);
 }

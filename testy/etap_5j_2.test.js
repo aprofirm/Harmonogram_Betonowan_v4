@@ -20,7 +20,7 @@ function sprawdzDowodyPublikacji() {
   assert.match(etapy, /33396511183/);
   assert.match(etapy, /33396509870/);
   assert.match(etapy, /1d3f9d02ceb79293b71dd4a77386244eb9eee050/);
-  assert.match(etapy, /Następny niezakończony podetap: \*\*5J\.3 — test operatora\*\*/);
+  assert.match(etapy, /5J\.3 — test operatora zaliczony/);
 
   assert.match(plan, /- \[x\] publikacja `main` i GitHub Pages;/);
   assert.match(plan, /### 5J\.2 — publikacja/);
@@ -30,15 +30,15 @@ function sprawdzDowodyPublikacji() {
 
   assert.match(readme, /https:\/\/aprofirm\.github\.io\/Harmonogram_Betonowan_v4\//);
   assert.match(readme, /## Publikacja 5J\.2/);
-  assert.match(stan, /Ostatni zakończony podetap: \*\*5J\.2 — publikacja\*\*/);
-  assert.match(stan, /5J\.3[\s\S]*?test operatora/i);
+  assert.match(stan, /Ostatni zakończony podetap: \*\*5J\.3 — test operatora\*\*/);
+  assert.match(stan, /Cały \*\*Etap 5[\s\S]*?jest zakończony/i);
 }
 
-function sprawdzBrakPrzedwczesnegoZamknieciaEtapu5() {
+function sprawdzZamknieciePoTescieOperatora() {
   const etapy = wczytaj("ETAPY_ROZWOJU.md");
-  assert.match(etapy, /- \[ \] Etap 5 — Pełny silnik harmonogramu/);
-  assert.match(etapy, /- \[ \] \*\*5J — pełna regresja, publikacja i test operatora\.\*\*/);
-  assert.match(etapy, /- \[ \] \*\*5J\.3 — test operatora:/);
+  assert.match(etapy, /- \[x\] Etap 5 — Pełny silnik harmonogramu/);
+  assert.match(etapy, /- \[x\] \*\*5J — pełna regresja, publikacja i test operatora\.\*\*/);
+  assert.match(etapy, /- \[x\] \*\*5J\.3 — test operatora:/);
 }
 
 function sprawdzOznaczeniePublikacji() {
@@ -52,9 +52,9 @@ function sprawdzOznaczeniePublikacji() {
 }
 
 sprawdzDowodyPublikacji();
-sprawdzBrakPrzedwczesnegoZamknieciaEtapu5();
+sprawdzZamknieciePoTescieOperatora();
 sprawdzOznaczeniePublikacji();
 
 console.log(
-  "OK — 5J.2 potwierdza publikację main, zielone Actions i GitHub Pages bez przedwczesnego zamknięcia Etapu 5."
+  "OK — 5J.2 zachowuje dowody publikacji, a Etap 5 jest zamknięty dopiero po zaliczeniu 5J.3."
 );

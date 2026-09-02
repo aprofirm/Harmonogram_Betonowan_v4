@@ -1,7 +1,18 @@
 # 5J.3 — scenariusz testu operatora Etapu 5
 
-Status: **PRZYGOTOWANY — jeszcze niewykonany przez operatora**  
+Status: **ZALICZONY PRZEZ OPERATORA**
+
 Data przygotowania: 2026-08-31
+
+Data wykonania: 2026-09-02
+
+## Wynik testu
+
+- **A — OK:** poprawne przesunięcia A `08:00`, B `09:30`, C `11:25`,
+  widoczny skutek jednej gruszki, konflikt limitu startu i konflikt przestoju;
+- **B1 — OK:** przy `0` gruszek widoczny jawny konflikt **Brak gruszki**;
+- **B2 — OK:** przy `1` gruszce i `0` pomp widoczne trzy konflikty
+  **Brak pompy** dla budów A, B i C.
 
 Celem tego testu jest ostatnia kontrola Etapu 5 w prawdziwej przeglądarce. Test nie ma zastępować automatycznych testów 5A–5I; ma potwierdzić, że operator rzeczywiście widzi i rozumie skutki działania silnika.
 
@@ -185,9 +196,10 @@ Jeżeli coś się nie zgadza, najlepiej dołączyć zrzut ekranu części z budo
 
 ## Kryterium zamknięcia 5J.3
 
-5J.3 można oznaczyć jako zakończone dopiero po rzeczywistym wykonaniu powyższego scenariusza w przeglądarce i potwierdzeniu wyniku przez operatora.
+5J.3 zostało zakończone po rzeczywistym wykonaniu powyższego scenariusza
+w przeglądarce i potwierdzeniu wyniku przez operatora 2026-09-02.
 
-Po zaliczeniu:
+Po zaliczeniu wykonano:
 
 1. zapisujemy wynik testu w repo;
 2. oznaczamy 5J.3 jako zakończone;
@@ -195,4 +207,4 @@ Po zaliczeniu:
 4. zamykamy cały **Etap 5**;
 5. wskazujemy następny etap projektu.
 
-Do tego momentu **5J.3, 5J i Etap 5 pozostają otwarte**.
+**5J.3, 5J i cały Etap 5 są zakończone.**

@@ -2,7 +2,9 @@
 
 ## Status
 
-Etap 4 jest zamknięty. Punkty **5A–5I** oraz **5J.1–5J.2** są zakończone. Trwa końcowe domknięcie Etapu 5: scenariusz **5J.3 — test operatora** jest przygotowany i czeka na rzeczywiste wykonanie w przeglądarce.
+Etap 4 jest zamknięty. Punkty **5A–5J** są zakończone. Scenariusz
+**5J.3 — test operatora** został zaliczony 2026-09-02, dlatego cały Etap 5
+jest zamknięty.
 
 ## Najważniejsza zasada testowa
 
@@ -141,7 +143,7 @@ unieważnianie wyniku po istotnej zmianie.
 - [x] pełna regresja Etapu 3 — gruszki;
 - [x] pełna regresja Etapu 4 — pompy;
 - [x] publikacja `main` i GitHub Pages;
-- [ ] test operatora: przesunięcie pompą, niedobór gruszek, kaskada, limit startu, przestój i brak możliwego zasobu.
+- [x] test operatora: przesunięcie pompą, niedobór gruszek, kaskada, limit startu, przestój i brak możliwego zasobu.
 
 Test automatyczny 5J.1: `testy/etap_5j_1.test.js` — pilnuje obecności wszystkich
 27 testów podetapów 5A–5I, kluczowych testów wcześniejszych etapów oraz tego,
@@ -157,19 +159,24 @@ pełną regresję każdego zestawu; po dodaniu 5J.1 obejmuje ona 92 testy.
 - docelowy adres: `https://aprofirm.github.io/Harmonogram_Betonowan_v4/`;
 - 5J.2 nie zmienia reguł harmonogramu.
 
-Test automatyczny 5J.2: `testy/etap_5j_2.test.js` pilnuje trwałego zapisu tych dowodów publikacji i pozostawia 5J otwarte do testu operatora.
+Test automatyczny 5J.2: `testy/etap_5j_2.test.js` pilnuje trwałego zapisu tych dowodów publikacji.
 
-Etap 5 można zamknąć dopiero po wykonaniu całego 5J.
+Etap 5 został zamknięty po wykonaniu całego 5J.
 
 
-### 5J.3 — scenariusz operatora przygotowany — 2026-08-31
+### 5J.3 — scenariusz operatora zaliczony — 2026-09-02
 
-- status: **przygotowany, jeszcze niezaliczony przez operatora**;
+- status: **zaliczony przez operatora**;
 - instrukcja: `testy/SCENARIUSZ_OPERATORA_5J_3.md`;
 - sztuczne dane: `przyklady/5j3_test_operatora.csv`;
 - automatyczna kontrola oczekiwanego wyniku: `testy/etap_5j_3_przygotowanie.test.js`;
 - scenariusz A obejmuje jedną gruszkę, jedną pompę, kaskadę A → B → X → C, przesunięcia B i C, limit startu i przestój;
 - scenariusz B1 sprawdza `0` gruszek, a B2 `0` pomp;
-- test przygotowawczy nie zastępuje testu operatorskiego i nie może sam zamknąć 5J.3.
+- A — OK: potwierdzono kaskadę, godziny A `08:00`, B `09:30`, C `11:25`,
+  skutek jednej gruszki, limit startu i przestój;
+- B1 — OK: `0` gruszek tworzy jawny konflikt **Brak gruszki**;
+- B2 — OK: `1` gruszka i `0` pomp tworzą trzy jawne konflikty
+  **Brak pompy** dla budów A, B i C.
 
-Po zielonej regresji przygotowania repo powinno zawierać **94 zestawy testów**. Checkbox testu operatora pozostaje niezaznaczony do chwili rzeczywistego wykonania A, B1 i B2 w przeglądarce.
+Po zapisie wyniku pełna lokalna regresja zawiera **94 zestawy testów** i
+przechodzi w całości. Punkt 5J i Etap 5 są zakończone.

@@ -541,7 +541,7 @@ GitHub Actions wykonuje każdy plik `testy/*.test.js`; po dodaniu 5J.1 zestaw
 obejmuje **92 testy**. Logika biznesowa harmonogramu nie została w tym kroku
 zmieniona.
 
-Następny podetap: **5J.2 — publikacja i weryfikacja `main`, GitHub Actions oraz GitHub Pages**.
+Następnym wykonanym podetapem było **5J.2 — publikacja i weryfikacja `main`, GitHub Actions oraz GitHub Pages**.
 
 
 ## Publikacja 5J.2 — 2026-08-31
@@ -549,4 +549,19 @@ Następny podetap: **5J.2 — publikacja i weryfikacja `main`, GitHub Actions or
 Wersja po pełnej regresji Etapu 5 została poprawnie opublikowana przez GitHub Pages.
 Adres: `https://aprofirm.github.io/Harmonogram_Betonowan_v4/`.
 
-Dla commita `1d3f9d02ceb79293b71dd4a77386244eb9eee050` GitHub Actions zakończył pełne 92 testy powodzeniem (run `33396511183`), a GitHub Pages zakończył build i deployment powodzeniem (run `33396509870`). Kolejny krok projektu to **5J.3 — test operatora**.
+Dla commita `1d3f9d02ceb79293b71dd4a77386244eb9eee050` GitHub Actions zakończył pełne 92 testy powodzeniem (run `33396511183`), a GitHub Pages zakończył build i deployment powodzeniem (run `33396509870`).
+
+## Zamknięcie Etapu 5 — 2026-09-02
+
+Test operatora **5J.3** został zaliczony na opublikowanej stronie z użyciem
+`przyklady/5j3_test_operatora.csv`:
+
+- A — OK: potwierdzone godziny A `08:00`, B `09:30`, C `11:25`, skutek jednej
+  gruszki, konflikt limitu startu i konflikt przestoju;
+- B1 — OK: przy `0` gruszek program pokazał jawny konflikt **Brak gruszki**;
+- B2 — OK: przy `1` gruszce i `0` pomp program pokazał trzy jawne konflikty
+  **Brak pompy** dla A, B i C.
+
+Punkty **5A–5J** i cały **Etap 5** są zakończone. Pełna lokalna regresja po
+zapisie wyniku przechodzi **94/94 zestawy testów**. Przed kodowaniem Etapu 6
+należy najpierw rozpisać jego kompletne podetapy.
