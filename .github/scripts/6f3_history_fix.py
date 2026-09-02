@@ -10,3 +10,10 @@ for old, opis in [
         raise SystemExit(f"Nie znaleziono historycznego wpisu w teście 6F.1: {opis}")
     text = text.replace(old, "", 1)
 path.write_text(text, encoding="utf-8")
+
+path = Path("testy/etap_6f_2.test.js")
+text = path.read_text(encoding="utf-8")
+old = '  assert.doesNotMatch(skrypt, /zastosujWybran|zatwierdzKandydat/);\n'
+if old not in text:
+    raise SystemExit("Nie znaleziono historycznego zakazu wyboru w teście 6F.2")
+path.write_text(text.replace(old, "", 1), encoding="utf-8")
