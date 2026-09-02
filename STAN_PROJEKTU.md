@@ -7,11 +7,11 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6D.1 — rozszerzenie formatu pamięci**.
+- Ostatni zakończony podetap: **6D.2 — stabilny klucz i duplikaty**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- **Etap 6** jest rozpoczęty. Punkty **6A–6C** oraz podetap **6D.1** są zakończone; punkt 6D i cały Etap 6 pozostają otwarte.
-- Pełna regresja po 6D.1 przechodzi **105/105 zestawów testów**.
+- **Etap 6** jest rozpoczęty. Punkty **6A–6C** oraz podetapy **6D.1–6D.2** są zakończone; punkt 6D i cały Etap 6 pozostają otwarte.
+- Pełna regresja po 6D.2 przechodzi **106/106 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -42,6 +42,8 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - Pamięć tras nie uzupełnia już brakującego ID węzła wartością domyślną.
 - Książka tras ma format `v2`: przechowuje adres, współrzędne, dystanse, oba kierunki czasu, źródło, dostawcę danych i daty.
 - Gdy `v2` nie istnieje, wcześniejsza książka `v1` jest bezpiecznie kopiowana do nowego formatu; oryginalny zapis `v1` pozostaje kopią bezpieczeństwa.
+- Tożsamość wpisu pamięci tras preferuje współrzędne, potem znormalizowany rzeczywisty adres; opis `Firma | Budowa` jest tylko ścieżką zgodnościową.
+- Ten sam opis przy różnych adresach pozostaje rozdzielony, a opis bez adresu nie wybiera automatycznie między kilkoma zapamiętanymi lokalizacjami.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -79,7 +81,7 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6D.2 — stabilny klucz i duplikaty**. Zmienić identyfikację wpisu tak, aby opierała się na ID węzła oraz znormalizowanym adresie i/lub współrzędnych, a podobna nazwa budowy nie była automatycznie uznawana za tę samą lokalizację. Nadal nie podłączać konkretnego dostawcy map — jego wybór należy do **6E.1**.
+Rozpocząć **6D.3 — cache i lokalne podpowiedzi**. Przed próbą internetu wykorzystywać stabilną pamięć lokalizacji i tras oraz przygotować bezpieczne wyszukanie znanej budowy offline. Zastosowanie podpowiedzi nie może zgadywać lokalizacji — przy wielu kandydatach wymagany będzie świadomy wybór operatora. Nadal nie podłączać konkretnego dostawcy map — jego wybór należy do **6E.1**.
 
 ## Ważna zasada wznowienia
 

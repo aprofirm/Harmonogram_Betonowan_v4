@@ -479,9 +479,19 @@
       return "";
     }
 
-    // Do czasu wydzielenia osobnego adresu w Etapie 6 bezpieczniej łączymy
-    // firmę i pole Budowa, zamiast zgadywać podobieństwo samych nazw obiektów.
+    // Opis pozostaje etykietą zgodnościową. Od 6D.2 tożsamość wpisu cache
+    // wykorzystuje rzeczywisty adres lub współrzędne, gdy są dostępne.
     return firma + " | " + miejsce;
+  }
+
+  function pobierzDaneTozsamosciPamieciBudowy(budowa) {
+    const modelLokalizacji = budowa && budowa.modelLokalizacji || {};
+    const warstwaLokalizacji = modelLokalizacji.daneRobocze || {};
+
+    return {
+      adresLokalizacji: warstwaLokalizacji.adres || null,
+      wspolrzedneLokalizacji: warstwaLokalizacji.wspolrzedne || null
+    };
   }
 
   function pobierzPierwotneZrodlo(zrodloBudowy, zrodloZapamietane) {
@@ -507,9 +517,11 @@
       return { status: "pominieto-niekompletne-czasy", liczbaTras: null };
     }
 
+    const daneTozsamosci = pobierzDaneTozsamosciPamieciBudowy(budowa);
     const poprzedniWpis = aplikacja.pamiecTras.pobierzTrase(
       opisLokalizacji,
-      pobierzIdAktywnegoWezla()
+      pobierzIdAktywnegoWezla(),
+      daneTozsamosci
     );
     const poprzedniaTrasa = poprzedniWpis.trasa || {};
 
@@ -562,7 +574,8 @@
       if (ustawienia.tylkoBrakujace) {
         const istniejacaTrasa = aplikacja.pamiecTras.pobierzTrase(
           opisLokalizacji,
-          pobierzIdAktywnegoWezla()
+          pobierzIdAktywnegoWezla(),
+          pobierzDaneTozsamosciPamieciBudowy(budowa)
         );
 
         if (istniejacaTrasa.trasa) {
@@ -609,7 +622,8 @@
 
     const wynikOdczytu = aplikacja.pamiecTras.pobierzTrase(
       opisLokalizacji,
-      pobierzIdAktywnegoWezla()
+      pobierzIdAktywnegoWezla(),
+      pobierzDaneTozsamosciPamieciBudowy(budowa)
     );
 
     if (!wynikOdczytu.trasa) {

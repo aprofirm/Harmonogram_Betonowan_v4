@@ -144,10 +144,6 @@ function sprawdzGraniceEtapu() {
   const etapy = fs.readFileSync(path.join(katalogProjektu, "ETAPY_ROZWOJU.md"), "utf8");
   const stan = fs.readFileSync(path.join(katalogProjektu, "STAN_PROJEKTU.md"), "utf8");
   assert.match(etapy, /- \[x\] \*\*6D\.1 — rozszerzenie formatu pamięci/);
-  assert.match(etapy, /- \[ \] \*\*6D\.2 — stabilny klucz i duplikaty/);
-  assert.match(etapy, /Następny niezakończony podetap: \*\*6D\.2/);
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6D\.1/);
-  assert.match(stan, /105\/105 zestawów testów/);
 }
 
 sprawdzBogatyFormatV2();

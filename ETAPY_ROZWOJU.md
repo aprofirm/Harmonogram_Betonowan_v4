@@ -51,7 +51,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
 - [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
-- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6C i 6D.1 zakończone; następny podetap 6D.2**
+- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6C i 6D.1–6D.2 zakończone; następny podetap 6D.3**
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
@@ -850,7 +850,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
   - [x] **6D.1 — rozszerzenie formatu pamięci:** zapisywać adres, współrzędne,
     dystans, oba kierunki czasu, źródło, dostawcę i daty z bezpieczną migracją
     dotychczasowej książki tras.
-  - [ ] **6D.2 — stabilny klucz i duplikaty:** identyfikować wpis przez węzeł
+  - [x] **6D.2 — stabilny klucz i duplikaty:** identyfikować wpis przez węzeł
     oraz znormalizowany adres i/lub współrzędne; podobna nazwa nie oznacza
     automatycznie tej samej lokalizacji.
   - [ ] **6D.3 — cache i lokalne podpowiedzi:** przed internetem sprawdzać pamięć,
@@ -908,7 +908,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
     niepełny/niejednoznaczny, wybór lokalizacji, trasę drogową, ręczną korektę,
     przejazd pompy, ponowne użycie cache i pracę po odłączeniu internetu.
 
-Następny niezakończony podetap: **6D.2 — stabilny klucz i duplikaty**.
+Następny niezakończony podetap: **6D.3 — cache i lokalne podpowiedzi**.
 
 ## Zakres
 
@@ -3122,3 +3122,25 @@ Podetap **6C.3** i cały punkt **6C** są zakończone. Etap 6 pozostaje otwarty.
 - [x] nie podłączono konkretnego dostawcy map — pole dostawcy jest wyłącznie metadanym formatu.
 
 Podetap **6D.1** jest zakończony. Punkt 6D pozostaje otwarty. Następny podetap: **6D.2 — stabilny klucz i duplikaty**.
+
+## Wynik 6D.2 — stabilny klucz i duplikaty
+
+- [x] wpis pamięci nadal jest zawsze zakresowany `idWezla`;
+- [x] jeżeli są współrzędne, klucz wykorzystuje dokładnie znormalizowaną parę
+  współrzędnych i nie zależy od nazwy ani zapisu adresu;
+- [x] bez współrzędnych klucz wykorzystuje znormalizowany rzeczywisty adres;
+- [x] `Firma | Budowa` pozostaje wyłącznie ścieżką zgodnościową, gdy nie ma
+  rzeczywistego adresu ani współrzędnych;
+- [x] podobna lub identyczna nazwa z innym adresem nie nadpisuje innej trasy;
+- [x] stary interfejs oparty tylko na opisie może użyć dokładnego opisu tylko
+  wtedy, gdy wskazuje on najwyżej jeden wpis; przy kilku lokalizacjach wynik
+  jest jawnie niejednoznaczny;
+- [x] istniejąca książka `v2` sprzed 6D.2 jest przy odczycie bezpiecznie
+  przekluczowana, a duplikaty tej samej stabilnej lokalizacji są scalane tak,
+  aby nowszy wpis pozostał aktywny;
+- [x] format książki pozostaje `v2`; zmienia się semantyka tożsamości wpisu,
+  nie kontrakt domenowy wersji `1`;
+- [x] nie podłączono dostawcy map ani fuzzy matchingu.
+
+Podetap **6D.2** jest zakończony. Punkt 6D pozostaje otwarty. Następny podetap:
+**6D.3 — cache i lokalne podpowiedzi**.

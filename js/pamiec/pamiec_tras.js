@@ -17,6 +17,11 @@
     "pamiec",
     "mieszane"
   ]);
+  const RODZAJE_KLUCZA_LOKALIZACJI = Object.freeze([
+    "wspolrzedne",
+    "adres",
+    "opis-zgodnosciowy"
+  ]);
   let pamiecLokalna = null;
   let trybPamieci = "biezaca-sesja";
   let zapisBiezacejSesji = null;
@@ -85,7 +90,7 @@
     return znormalizowane;
   }
 
-  function utworzKluczTrasy(opisLokalizacji, idWezla) {
+  function utworzStaryKluczTrasyV2(opisLokalizacji, idWezla) {
     const opis = pobierzPoprawnyOpis(opisLokalizacji);
     const opisZnormalizowany = normalizujOpisLokalizacji(opis);
 
@@ -94,6 +99,16 @@
     }
 
     return pobierzZnormalizowanyIdWezla(idWezla) + "::" + opisZnormalizowany;
+  }
+
+  function utworzKluczTrasy(opisLokalizacji, idWezla, daneLokalizacji) {
+    const tozsamosc = utworzTozsamoscLokalizacji(
+      opisLokalizacji,
+      daneLokalizacji
+    );
+
+    return pobierzZnormalizowanyIdWezla(idWezla) +
+      "::" + tozsamosc.kluczLokalizacji;
   }
 
   function pobierzCzasPrzejazdu(wartosc, nazwaPola) {
@@ -141,10 +156,14 @@
   function przygotujAdresLokalizacji(adres) {
     const dane = czyPoprawnyObiekt(adres) ? adres : {};
     const czesci = czyPoprawnyObiekt(dane.czesci) ? skopiujDane(dane.czesci) : {};
+    const tekst = pobierzTekstLubBrak(dane.tekst);
+    const tekstZnormalizowany =
+      pobierzTekstLubBrak(dane.tekstZnormalizowany) ||
+      normalizujOpisLokalizacji(tekst) || null;
 
     return {
-      tekst: pobierzTekstLubBrak(dane.tekst),
-      tekstZnormalizowany: pobierzTekstLubBrak(dane.tekstZnormalizowany),
+      tekst: tekst,
+      tekstZnormalizowany: tekstZnormalizowany,
       czesci: czesci
     };
   }
@@ -169,6 +188,97 @@
     return {
       szerokoscGeograficzna: szerokosc,
       dlugoscGeograficzna: dlugosc
+    };
+  }
+
+  function czyAdresMaRzeczywisteCzesci(adres) {
+    const czesci = adres && czyPoprawnyObiekt(adres.czesci)
+      ? adres.czesci
+      : {};
+    const polaAdresowe = [
+      "ulica",
+      "numerBudynku",
+      "kodPocztowy",
+      "miejscowosc",
+      "gmina",
+      "powiat",
+      "wojewodztwo",
+      "kraj"
+    ];
+
+    return polaAdresowe.some(function (nazwaPola) {
+      return Boolean(pobierzTekstLubBrak(czesci[nazwaPola]));
+    });
+  }
+
+  function czyAdresJestTylkoOpisemZgodnosciowym(adres) {
+    const czesci = adres && czyPoprawnyObiekt(adres.czesci)
+      ? adres.czesci
+      : {};
+    const czyMaOpis = Boolean(
+      pobierzTekstLubBrak(czesci.firma) ||
+      pobierzTekstLubBrak(czesci.nazwaBudowy)
+    );
+
+    return czyMaOpis && !czyAdresMaRzeczywisteCzesci(adres);
+  }
+
+  function pobierzZnormalizowanyAdresDoKlucza(adres) {
+    const przygotowanyAdres = przygotujAdresLokalizacji(adres);
+
+    if (!przygotowanyAdres.tekstZnormalizowany ||
+        czyAdresJestTylkoOpisemZgodnosciowym(przygotowanyAdres)) {
+      return null;
+    }
+
+    return przygotowanyAdres.tekstZnormalizowany;
+  }
+
+  function utworzTekstKluczaWspolrzednych(wspolrzedne) {
+    const przygotowane = przygotujWspolrzedne(wspolrzedne);
+
+    if (!przygotowane) {
+      return null;
+    }
+
+    return String(przygotowane.szerokoscGeograficzna) + "," +
+      String(przygotowane.dlugoscGeograficzna);
+  }
+
+  function utworzTozsamoscLokalizacji(opisLokalizacji, daneLokalizacji) {
+    const dane = czyPoprawnyObiekt(daneLokalizacji) ? daneLokalizacji : {};
+    const kluczWspolrzednych = utworzTekstKluczaWspolrzednych(
+      dane.wspolrzedneLokalizacji
+    );
+
+    if (kluczWspolrzednych) {
+      return {
+        rodzaj: "wspolrzedne",
+        kluczLokalizacji: "wspolrzedne::" + kluczWspolrzednych
+      };
+    }
+
+    const adresZnormalizowany = pobierzZnormalizowanyAdresDoKlucza(
+      dane.adresLokalizacji
+    );
+
+    if (adresZnormalizowany) {
+      return {
+        rodzaj: "adres",
+        kluczLokalizacji: "adres::" + adresZnormalizowany
+      };
+    }
+
+    const opis = pobierzPoprawnyOpis(opisLokalizacji);
+    const opisZnormalizowany = normalizujOpisLokalizacji(opis);
+
+    if (!opisZnormalizowany) {
+      throw new Error("Opis lokalizacji nie zawiera znaków pozwalających ją rozpoznać.");
+    }
+
+    return {
+      rodzaj: "opis-zgodnosciowy",
+      kluczLokalizacji: "opis::" + opisZnormalizowany
     };
   }
 
@@ -276,7 +386,7 @@
     return zapisBiezacejSesji;
   }
 
-  function czyPoprawnaTrasa(trasa) {
+  function czyWspolnePolaTrasySaPoprawne(trasa) {
     if (!czyPoprawnyObiekt(trasa) ||
         !trasa.kluczTrasy ||
         !trasa.opisLokalizacji ||
@@ -307,16 +417,52 @@
         "Dystans powrotu"
       );
 
-      return trasa.kluczTrasy === utworzKluczTrasy(
-        trasa.opisLokalizacji,
+      return trasa.idWezlaZnormalizowany === pobierzZnormalizowanyIdWezla(
         trasa.idWezla
       ) &&
-        trasa.idWezlaZnormalizowany === pobierzZnormalizowanyIdWezla(
-          trasa.idWezla
-        ) &&
         trasa.opisZnormalizowany === normalizujOpisLokalizacji(
           trasa.opisLokalizacji
         );
+    } catch (bladWalidacji) {
+      return false;
+    }
+  }
+
+  function czyPoprawnaTrasaV2Przed6D2(trasa) {
+    if (!czyWspolnePolaTrasySaPoprawne(trasa)) {
+      return false;
+    }
+
+    try {
+      return trasa.kluczTrasy === utworzStaryKluczTrasyV2(
+        trasa.opisLokalizacji,
+        trasa.idWezla
+      );
+    } catch (bladWalidacji) {
+      return false;
+    }
+  }
+
+  function czyPoprawnaTrasa(trasa) {
+    if (!czyWspolnePolaTrasySaPoprawne(trasa) ||
+        !RODZAJE_KLUCZA_LOKALIZACJI.includes(trasa.rodzajKluczaLokalizacji) ||
+        !trasa.kluczLokalizacji) {
+      return false;
+    }
+
+    try {
+      const tozsamosc = utworzTozsamoscLokalizacji(
+        trasa.opisLokalizacji,
+        {
+          adresLokalizacji: trasa.adresLokalizacji,
+          wspolrzedneLokalizacji: trasa.wspolrzedneLokalizacji
+        }
+      );
+
+      return trasa.rodzajKluczaLokalizacji === tozsamosc.rodzaj &&
+        trasa.kluczLokalizacji === tozsamosc.kluczLokalizacji &&
+        trasa.kluczTrasy === pobierzZnormalizowanyIdWezla(trasa.idWezla) +
+          "::" + tozsamosc.kluczLokalizacji;
     } catch (bladWalidacji) {
       return false;
     }
@@ -332,8 +478,12 @@
     const zrodloPowrotu = pobierzZrodlo(trasa.zrodloCzasuPowrotu);
     const teraz = new Date().toISOString();
 
+    const tozsamosc = utworzTozsamoscLokalizacji(trasa.opisLokalizacji, {});
+
     return {
-      kluczTrasy: utworzKluczTrasy(trasa.opisLokalizacji, idWezla),
+      kluczTrasy: utworzKluczTrasy(trasa.opisLokalizacji, idWezla, {}),
+      rodzajKluczaLokalizacji: tozsamosc.rodzaj,
+      kluczLokalizacji: tozsamosc.kluczLokalizacji,
       opisLokalizacji: pobierzPoprawnyOpis(trasa.opisLokalizacji),
       opisZnormalizowany: normalizujOpisLokalizacji(trasa.opisLokalizacji),
       idWezla: idWezla,
@@ -361,6 +511,58 @@
       utworzono: pobierzTekstLubBrak(trasa.utworzono) || teraz,
       zaktualizowano: pobierzTekstLubBrak(trasa.zaktualizowano) || teraz,
       ostatnioUzyto: pobierzTekstLubBrak(trasa.ostatnioUzyto) || teraz
+    };
+  }
+
+  function migrujTraseV2DoStabilnegoKlucza(trasa) {
+    const adresLokalizacji = przygotujAdresLokalizacji(trasa.adresLokalizacji);
+    const wspolrzedneLokalizacji = przygotujWspolrzedne(
+      trasa.wspolrzedneLokalizacji
+    );
+    const tozsamosc = utworzTozsamoscLokalizacji(
+      trasa.opisLokalizacji,
+      {
+        adresLokalizacji: adresLokalizacji,
+        wspolrzedneLokalizacji: wspolrzedneLokalizacji
+      }
+    );
+
+    return Object.assign({}, trasa, {
+      kluczTrasy: pobierzZnormalizowanyIdWezla(trasa.idWezla) +
+        "::" + tozsamosc.kluczLokalizacji,
+      rodzajKluczaLokalizacji: tozsamosc.rodzaj,
+      kluczLokalizacji: tozsamosc.kluczLokalizacji,
+      adresLokalizacji: adresLokalizacji,
+      wspolrzedneLokalizacji: wspolrzedneLokalizacji
+    });
+  }
+
+  function migrujKsiazkeV2DoStabilnychKluczy(ksiazka) {
+    const trasy = [];
+    let liczbaScalonychDuplikatow = 0;
+
+    ksiazka.trasy.forEach(function (staraTrasa) {
+      const trasa = migrujTraseV2DoStabilnegoKlucza(staraTrasa);
+      const indeksDuplikatu = trasy.findIndex(function (istniejacaTrasa) {
+        return istniejacaTrasa.kluczTrasy === trasa.kluczTrasy;
+      });
+
+      if (indeksDuplikatu !== -1) {
+        const poprzedniaTrasa = trasy[indeksDuplikatu];
+        trasa.utworzono = poprzedniaTrasa.utworzono || trasa.utworzono;
+        trasy.splice(indeksDuplikatu, 1);
+        liczbaScalonychDuplikatow += 1;
+      }
+
+      trasy.push(trasa);
+    });
+
+    return {
+      ksiazka: {
+        wersja: WERSJA_FORMATU,
+        trasy: trasy
+      },
+      liczbaScalonychDuplikatow: liczbaScalonychDuplikatow
     };
   }
 
@@ -464,17 +666,45 @@
       };
     }
 
-    if (!ksiazka.trasy.every(czyPoprawnaTrasa)) {
-      usunUszkodzonyZapis();
+    if (ksiazka.trasy.every(czyPoprawnaTrasa)) {
       return {
-        status: "uszkodzony-zapis",
-        ksiazka: utworzPustaKsiazke()
+        status: "odczytano",
+        ksiazka: ksiazka
       };
     }
 
+    if (ksiazka.trasy.every(function (trasa) {
+      return czyPoprawnaTrasa(trasa) || czyPoprawnaTrasaV2Przed6D2(trasa);
+    })) {
+      try {
+        const migracja = migrujKsiazkeV2DoStabilnychKluczy(ksiazka);
+
+        if (!migracja.ksiazka.trasy.every(czyPoprawnaTrasa)) {
+          throw new Error("Nie udało się zweryfikować stabilnych kluczy tras.");
+        }
+
+        const ograniczona = ograniczKsiazke(migracja.ksiazka);
+        const statusZapisu = zapiszTekstPamieci(ograniczona.tekstPamieci);
+
+        return {
+          status: "zmigrowano-klucze-6d2",
+          statusZapisu: statusZapisu,
+          ksiazka: ograniczona.ksiazka,
+          liczbaScalonychDuplikatow: migracja.liczbaScalonychDuplikatow
+        };
+      } catch (bladMigracji) {
+        return {
+          status: "blad-migracji-kluczy-6d2",
+          ksiazka: utworzPustaKsiazke(),
+          komunikat: bladMigracji.message
+        };
+      }
+    }
+
+    usunUszkodzonyZapis();
     return {
-      status: "odczytano",
-      ksiazka: ksiazka
+      status: "uszkodzony-zapis",
+      ksiazka: utworzPustaKsiazke()
     };
   }
 
@@ -533,23 +763,35 @@
     const poprzednia = poprzedniaTrasa || {};
     const zrodloDojazdu = pobierzZrodlo(daneTrasy.zrodloCzasuDojazdu);
     const zrodloPowrotu = pobierzZrodlo(daneTrasy.zrodloCzasuPowrotu);
+    const adresLokalizacji = wybierzMetadane(
+      daneTrasy.adresLokalizacji,
+      poprzednia.adresLokalizacji,
+      przygotujAdresLokalizacji
+    );
+    const wspolrzedneLokalizacji = wybierzMetadane(
+      daneTrasy.wspolrzedneLokalizacji,
+      poprzednia.wspolrzedneLokalizacji,
+      przygotujWspolrzedne
+    );
+    const tozsamosc = utworzTozsamoscLokalizacji(
+      opisLokalizacji,
+      {
+        adresLokalizacji: adresLokalizacji,
+        wspolrzedneLokalizacji: wspolrzedneLokalizacji
+      }
+    );
 
     return {
-      kluczTrasy: utworzKluczTrasy(opisLokalizacji, idWezla),
+      kluczTrasy: pobierzZnormalizowanyIdWezla(idWezla) +
+        "::" + tozsamosc.kluczLokalizacji,
+      rodzajKluczaLokalizacji: tozsamosc.rodzaj,
+      kluczLokalizacji: tozsamosc.kluczLokalizacji,
       opisLokalizacji: opisLokalizacji,
       opisZnormalizowany: normalizujOpisLokalizacji(opisLokalizacji),
       idWezla: idWezla,
       idWezlaZnormalizowany: pobierzZnormalizowanyIdWezla(idWezla),
-      adresLokalizacji: wybierzMetadane(
-        daneTrasy.adresLokalizacji,
-        poprzednia.adresLokalizacji,
-        przygotujAdresLokalizacji
-      ),
-      wspolrzedneLokalizacji: wybierzMetadane(
-        daneTrasy.wspolrzedneLokalizacji,
-        poprzednia.wspolrzedneLokalizacji,
-        przygotujWspolrzedne
-      ),
+      adresLokalizacji: adresLokalizacji,
+      wspolrzedneLokalizacji: wspolrzedneLokalizacji,
       dystansDojazduMetry: wybierzMetadane(
         daneTrasy.dystansDojazduMetry,
         poprzednia.dystansDojazduMetry,
@@ -588,15 +830,48 @@
     };
   }
 
+  function znajdzIndeksyPoDokladnymOpisie(ksiazka, opisLokalizacji, idWezla) {
+    const opisZnormalizowany = normalizujOpisLokalizacji(
+      pobierzPoprawnyOpis(opisLokalizacji)
+    );
+    const idWezlaZnormalizowany = pobierzZnormalizowanyIdWezla(idWezla);
+    const indeksy = [];
+
+    ksiazka.trasy.forEach(function (trasa, indeksTrasy) {
+      if (trasa.idWezlaZnormalizowany === idWezlaZnormalizowany &&
+          trasa.opisZnormalizowany === opisZnormalizowany) {
+        indeksy.push(indeksTrasy);
+      }
+    });
+
+    return indeksy;
+  }
+
   function zapiszTrase(daneTrasy) {
     zapewnijUruchomienie();
 
-    let kluczTrasy;
+    let tozsamoscPodana;
+    let kluczPodany;
 
     try {
-      kluczTrasy = utworzKluczTrasy(
-        daneTrasy && daneTrasy.opisLokalizacji,
-        daneTrasy && daneTrasy.idWezla
+      if (!czyPoprawnyObiekt(daneTrasy)) {
+        throw new Error("Dane trasy muszą być obiektem.");
+      }
+
+      tozsamoscPodana = utworzTozsamoscLokalizacji(
+        daneTrasy.opisLokalizacji,
+        {
+          adresLokalizacji: daneTrasy.adresLokalizacji,
+          wspolrzedneLokalizacji: daneTrasy.wspolrzedneLokalizacji
+        }
+      );
+      kluczPodany = utworzKluczTrasy(
+        daneTrasy.opisLokalizacji,
+        daneTrasy.idWezla,
+        {
+          adresLokalizacji: daneTrasy.adresLokalizacji,
+          wspolrzedneLokalizacji: daneTrasy.wspolrzedneLokalizacji
+        }
       );
     } catch (bladDanych) {
       return utworzWynik("blad-zapisu", { komunikat: bladDanych.message });
@@ -611,9 +886,29 @@
     }
 
     const ksiazka = wynikOdczytu.ksiazka;
-    const indeksIstniejacejTrasy = ksiazka.trasy.findIndex(function (trasa) {
-      return trasa.kluczTrasy === kluczTrasy;
+    let indeksIstniejacejTrasy = ksiazka.trasy.findIndex(function (trasa) {
+      return trasa.kluczTrasy === kluczPodany;
     });
+
+    if (indeksIstniejacejTrasy === -1 &&
+        tozsamoscPodana.rodzaj === "opis-zgodnosciowy") {
+      const indeksyPoOpisie = znajdzIndeksyPoDokladnymOpisie(
+        ksiazka,
+        daneTrasy.opisLokalizacji,
+        daneTrasy.idWezla
+      );
+
+      if (indeksyPoOpisie.length > 1) {
+        return utworzWynik("blad-zapisu", {
+          komunikat: "Ten opis pasuje do kilku zapamiętanych lokalizacji. Podaj adres lub współrzędne."
+        });
+      }
+
+      if (indeksyPoOpisie.length === 1) {
+        indeksIstniejacejTrasy = indeksyPoOpisie[0];
+      }
+    }
+
     const poprzedniaTrasa = indeksIstniejacejTrasy === -1
       ? null
       : ksiazka.trasy[indeksIstniejacejTrasy];
@@ -629,6 +924,14 @@
       ksiazka.trasy.splice(indeksIstniejacejTrasy, 1);
     }
 
+    const indeksDuplikatuKlucza = ksiazka.trasy.findIndex(function (trasa) {
+      return trasa.kluczTrasy === nowaTrasa.kluczTrasy;
+    });
+
+    if (indeksDuplikatuKlucza !== -1) {
+      ksiazka.trasy.splice(indeksDuplikatuKlucza, 1);
+    }
+
     // Najnowszy lub ostatnio używany wpis znajduje się na końcu listy.
     ksiazka.trasy.push(nowaTrasa);
     const ograniczonaKsiazka = ograniczKsiazke(ksiazka);
@@ -642,13 +945,22 @@
     });
   }
 
-  function pobierzTrase(opisLokalizacji, idWezla) {
+  function pobierzTrase(opisLokalizacji, idWezla, daneLokalizacji) {
     zapewnijUruchomienie();
 
+    let tozsamosc;
     let kluczTrasy;
 
     try {
-      kluczTrasy = utworzKluczTrasy(opisLokalizacji, idWezla);
+      tozsamosc = utworzTozsamoscLokalizacji(
+        opisLokalizacji,
+        daneLokalizacji
+      );
+      kluczTrasy = utworzKluczTrasy(
+        opisLokalizacji,
+        idWezla,
+        daneLokalizacji
+      );
     } catch (bladDanych) {
       return utworzWynik("blad-odczytu", {
         trasa: null,
@@ -665,9 +977,30 @@
       });
     }
 
-    const indeksZnalezionejTrasy = wynikOdczytu.ksiazka.trasy.findIndex(function (trasa) {
+    let indeksZnalezionejTrasy = wynikOdczytu.ksiazka.trasy.findIndex(function (trasa) {
       return trasa.kluczTrasy === kluczTrasy;
     });
+
+    if (indeksZnalezionejTrasy === -1 &&
+        tozsamosc.rodzaj === "opis-zgodnosciowy") {
+      const indeksyPoOpisie = znajdzIndeksyPoDokladnymOpisie(
+        wynikOdczytu.ksiazka,
+        opisLokalizacji,
+        idWezla
+      );
+
+      if (indeksyPoOpisie.length > 1) {
+        return utworzWynik("niejednoznaczna-lokalizacja", {
+          trasa: null,
+          liczbaPasujacychTras: indeksyPoOpisie.length,
+          komunikat: "Ten opis odpowiada kilku zapamiętanym lokalizacjom. Wymagany jest adres lub współrzędne."
+        });
+      }
+
+      if (indeksyPoOpisie.length === 1) {
+        indeksZnalezionejTrasy = indeksyPoOpisie[0];
+      }
+    }
 
     if (indeksZnalezionejTrasy === -1) {
       return utworzWynik("brak-trasy", { trasa: null });
@@ -776,6 +1109,7 @@
     pobierzStanPamieci: pobierzStanPamieci,
     normalizujOpisLokalizacji: normalizujOpisLokalizacji,
     utworzKluczTrasy: utworzKluczTrasy,
+    utworzTozsamoscLokalizacji: utworzTozsamoscLokalizacji,
     zapiszTrase: zapiszTrase,
     pobierzTrase: pobierzTrase,
     pobierzListeTras: pobierzListeTras,
