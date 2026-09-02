@@ -1,0 +1,66 @@
+name: Kontrolowane wdrozenie 6F.1
+
+on:
+  push:
+    branches:
+      - work/6f1-wyszukiwanie-lokalizacji
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  wdrozenie:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          ref: work/6f1-wyszukiwanie-lokalizacji
+          fetch-depth: 0
+
+      - name: Przygotuj Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Wprowadz zmiany 6F.1
+        run: python .github/scripts/6f1_patch.py
+
+      - name: Sprawdz skladnie JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          find js testy -name '*.js' -print0 | xargs -0 -n1 node --check
+
+      - name: Sprawdz liczbe zestawow testow
+        shell: bash
+        run: |
+          set -euo pipefail
+          LICZBA=$(find testy -maxdepth 1 -name '*.test.js' | wc -l | tr -d ' ')
+          echo "Liczba zestawow testow: $LICZBA"
+          test "$LICZBA" -eq 111
+
+      - name: Uruchom pelna regresje
+        shell: bash
+        run: |
+          set -euo pipefail
+          for plik in testy/*.test.js; do
+            echo "=== $plik ==="
+            node "$plik"
+          done
+
+      - name: Zapisz sprawdzony pakiet 6F.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/scripts/6f1_patch.py .github/workflows/wdrozenie_6f1.yml
+          git config user.name "PawelP"
+          git config user.email "53014565+aprofirm@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Brak zmian do zapisania."
+            exit 1
+          fi
+          git commit -m "6F.1: dodaj wyszukiwanie lokalizacji"
+          git push origin HEAD:work/6f1-wyszukiwanie-lokalizacji
