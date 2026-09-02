@@ -39,6 +39,14 @@ jobs:
           ]:
               s = s.replace(linia, "")
           p.write_text(s, encoding="utf-8")
+
+          p = Path("testy/pamiec_aplikacji.test.js")
+          s = p.read_text(encoding="utf-8")
+          s = s.replace(
+              'const kluczPamieciTras = "harmonogramBetonowan.pamiecTras.v1";',
+              'const kluczPamieciTras = "harmonogramBetonowan.pamiecTras.v2";'
+          )
+          p.write_text(s, encoding="utf-8")
           PY
 
       - name: Sprawdz skladnie
@@ -48,6 +56,7 @@ jobs:
           node --check testy/etap_6d_1.test.js
           node --check testy/etap_6_plan.test.js
           node --check testy/etap_6c_3.test.js
+          node --check testy/pamiec_aplikacji.test.js
 
       - name: Sprawdz liczbe zestawow testow
         shell: bash
