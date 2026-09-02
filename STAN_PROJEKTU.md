@@ -7,11 +7,11 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6D.3 — cache i lokalne podpowiedzi**.
+- Ostatni zakończony podetap: **6E.1 — porównanie i wybór dostawcy**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- **Etap 6** jest rozpoczęty. Punkty **6A–6D** są zakończone; cały Etap 6 pozostaje otwarty.
-- Pełna regresja po 6D.3 przechodzi **107/107 zestawów testów**.
+- **Etap 6** jest rozpoczęty. Punkty **6A–6D** oraz podetap **6E.1** są zakończone; cały Etap 6 pozostaje otwarty.
+- Pełna regresja po 6E.1 przechodzi **108/108 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -46,6 +46,9 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - Ten sam opis przy różnych adresach pozostaje rozdzielony, a opis bez adresu nie wybiera automatycznie między kilkoma zapamiętanymi lokalizacjami.
 - Po braku dokładnego trafienia aplikacja przeszukuje pamięć lokalnie przed internetem; znalezione wpisy są tylko podpowiedziami i wymagają jawnego wyboru konkretnego klucza trasy.
 - Okno zapisanych tras pozwala offline wyszukiwać po nazwie i adresie, a samo wyszukiwanie nie zmienia wpisu ani daty ostatniego użycia.
+- Do pierwszej integracji internetowej wybrano **openrouteservice / HeiGIT** i aktualny host `api.heigit.org`; routing ciężarowy ma korzystać z profilu `driving-hgv`.
+- **TomTom** pozostaje pierwszym kandydatem do dodatkowego adaptera, jeżeli później potrzebne będą bieżące dane o ruchu drogowym.
+- Klucz API dostawcy nie trafia do repozytorium, planu ani diagnostyki; nazwa dostawcy, endpoint i sposób autoryzacji mają pozostać za neutralnym adapterem.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -83,7 +86,7 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6E.1 — porównanie i wybór dostawcy**. Porównać realne usługi geokodowania i routingu pod kątem kosztu, limitów, licencji, stabilności, działania web/lokalnego i ewentualnej obsługi ciężkich pojazdów. W tym kroku podjąć decyzję o dostawcy, ale nie przenosić logiki dostawcy do silnika harmonogramu.
+Rozpocząć **6E.2 — neutralny adapter**. Wprowadzić wymienny moduł usług mapowych, który przyjmuje własny kontrakt projektu i potrafi obsłużyć geokodowanie oraz routing przez openrouteservice bez przenoszenia endpointu, klucza, limitów ani formatu odpowiedzi dostawcy do silnika harmonogramu. Testy adaptera mają używać atrap, a brak internetu nadal nie może blokować cache ani ręcznych czasów.
 
 ## Ważna zasada wznowienia
 

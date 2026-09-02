@@ -1,13 +1,13 @@
 # Kontrakt lokalizacji i tras — granice modułów
 
-Status: **6A–6C oraz 6D.1–6D.2 zakończone 2026-09-02; następny podetap 6D.3**.
+Status: **6A–6D oraz 6E.1 zakończone 2026-09-02; następny podetap 6E.2**.
 
 Ten dokument opisuje wynik inwentaryzacji 6A.1, model danych wersji `1`
 wdrożony w 6A.2 oraz migrację zgodnościową z 6A.3. Ustala miejsce, w którym
 powstaje roboczy wynik trasy,
 odpowiedzialności obecnych modułów i rozdział danych źródłowych, automatycznych
-oraz roboczych. Nie podłącza dostawcy map i nie zmienia dotychczasowego
-działania interfejsu.
+oraz roboczych. Od 6E.1 zapisuje wybór dostawcy dla pierwszej integracji, ale
+nie podłącza jeszcze jego API i nie zmienia dotychczasowego działania interfejsu.
 
 ## Jedna brama domenowa
 
@@ -313,4 +313,18 @@ Jeżeli po braku dokładnego cache istnieje co najmniej jedna lokalna podpowied�
 
 Świadomie wybrany wpis może uzupełnić roboczy adres lub współrzędne oraz oba czasy ze źródłem `pamiec`, ale nie zmienia `daneZrodlowe`. Jeżeli budowa ma już którykolwiek roboczy czas, wybór z pamięci go nie nadpisuje. Samo wyszukiwanie nie aktualizuje `ostatnioUzyto`; data zmienia się dopiero po faktycznym odczycie wybranego wpisu.
 
-Kolejność bramy po 6D.3: **bieżące czasy → dokładny cache → lokalne podpowiedzi wymagające wyboru → adapter internetowy → jawny brak trasy**. Konkretna usługa mapowa nadal nie należy do 6D i zostanie wybrana w 6E.1.
+Kolejność bramy po 6D.3: **bieżące czasy → dokładny cache → lokalne podpowiedzi wymagające wyboru → adapter internetowy → jawny brak trasy**. Konkretna usługa mapowa nie należy do 6D. W 6E.1 wybrano openrouteservice / HeiGIT do pierwszej integracji, natomiast jej wywołanie pozostaje zakresem neutralnego adaptera 6E.2.
+
+
+## Granica dostawcy po 6E.1
+
+Do pierwszej integracji wybrano **openrouteservice / HeiGIT**, ale ta decyzja nie rozszerza kontraktu domenowego o pola konkretnej usługi. Obowiązuje następująca granica:
+
+- `aplikacja.lokalizacje` i model wersji `1` operują wyłącznie na własnych danych projektu;
+- endpoint `api.heigit.org`, klucz API, limity, nagłówki i format odpowiedzi są szczegółami adaptera;
+- adapter ma przekształcić wynik dostawcy do istniejącego modelu lokalizacji albo trasy i nie może sam zmieniać budowy, cache ani harmonogramu;
+- późniejszy adapter TomTom lub innego dostawcy może zastąpić albo uzupełnić openrouteservice bez zmiany silnika;
+- testy adaptera nie wykonują rzeczywistych zapytań sieciowych;
+- ręczna korekta i dokładny cache nadal mają pierwszeństwo przed usługą zewnętrzną.
+
+Implementacja tej granicy jest zakresem **6E.2 — neutralny adapter**.
