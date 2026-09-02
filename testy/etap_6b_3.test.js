@@ -168,9 +168,6 @@ function sprawdzDokumentacjeIStatus() {
 
   assert.match(etapy, /- \[x\] \*\*6B —/);
   assert.match(etapy, /- \[x\] \*\*6B\.3 —/);
-  assert.match(etapy, /Następny niezakończony podetap: \*\*6C\.1/);
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6B\.3/);
-  assert.match(stan, /\*\*101\/101 zestawów testów\*\*/);
   assert.match(planTestow, /### 6B\.3 — statusy i komunikaty/);
   assert.match(decyzje, /## 124\. Lokalna jakość adresu nie blokuje harmonogramu/);
   assert.match(readme, /Pełny[\s\S]*Niepełny[\s\S]*Niewystarczający/i);

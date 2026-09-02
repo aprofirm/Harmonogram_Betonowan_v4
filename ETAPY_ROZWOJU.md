@@ -51,7 +51,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
 - [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
-- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6B zakończone; następny podetap 6C.1**
+- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6B i 6C.1 zakończone; następny podetap 6C.2**
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
@@ -840,7 +840,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
     ubogi, niejednoznaczny i nieznaleziony; brak adresu nie blokuje ręcznych
     czasów ani harmonogramu.
 - [ ] **6C — węzeł/betoniarnia jako początek tras.**
-  - [ ] **6C.1 — model węzła:** przechowywać stabilne ID, nazwę, adres oraz
+  - [x] **6C.1 — model węzła:** przechowywać stabilne ID, nazwę, adres oraz
     współrzędne aktywnego węzła bez ponownego geokodowania przy każdym planie.
   - [ ] **6C.2 — ustawienie i pamięć:** walidować oraz lokalnie zapisywać dane
     węzła, umożliwiając świadomą korektę operatora.
@@ -908,7 +908,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
     niepełny/niejednoznaczny, wybór lokalizacji, trasę drogową, ręczną korektę,
     przejazd pompy, ponowne użycie cache i pracę po odłączeniu internetu.
 
-Następny niezakończony podetap: **6C.1 — model węzła**.
+Następny niezakończony podetap: **6C.2 — ustawienie i pamięć**.
 
 ## Zakres
 
@@ -3055,4 +3055,23 @@ Podetap **6B.2** jest zakończony.
 
 Podetap **6B.3** i cały punkt **6B** są zakończone. Cały **Etap 6** pozostaje
 otwarty. Następny podetap: **6C.1 — model węzła**.
+
+### Wynik 6C.1 — model węzła
+
+- [x] dodano `utworzModelWezla(...)` z wymaganym stabilnym `idWezla` i nazwą;
+- [x] model węzła używa tego samego wersjonowanego modelu lokalizacji co budowa,
+  dzięki czemu przechowuje adres, współrzędne, status jakości, źródło i ręczną
+  korektę bez duplikowania kontraktu;
+- [x] aktywny węzeł jest utrzymywany jako jeden model w bieżącej sesji, więc
+  jego dane nie są odtwarzane przy każdym przeliczeniu planu;
+- [x] modele tras węzeł ↔ budowa, pamięć tras i zapytanie do przyszłego adaptera
+  mapowego pobierają ID z modelu aktywnego węzła zamiast korzystać bezpośrednio
+  z rozrzuconej stałej `wezel-domyslny`;
+- [x] etap nie dodaje jeszcze formularza ani trwałego zapisu węzła — to zakres
+  **6C.2**;
+- [x] test `testy/etap_6c_1.test.js` oraz pełna regresja przechodzą **102/102
+  zestawów testów**.
+
+Podetap **6C.1** jest zakończony. Punkt **6C** i cały **Etap 6** pozostają
+otwarte. Następny podetap: **6C.2 — ustawienie i pamięć**.
 

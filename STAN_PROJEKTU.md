@@ -7,12 +7,12 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6B.3 — statusy i komunikaty adresu**.
+- Ostatni zakończony podetap: **6C.1 — model węzła**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- **Etap 6** jest rozpoczęty. Punkty **6A–6B** są zakończone; cały Etap 6
-  pozostaje otwarty.
-- Pełna regresja po 6B.3 przechodzi **101/101 zestawów testów**.
+- **Etap 6** jest rozpoczęty. Punkty **6A–6B** oraz podetap **6C.1** są
+  zakończone; punkt 6C i cały Etap 6 pozostają otwarte.
+- Pełna regresja po 6C.1 przechodzi **102/102 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -30,6 +30,10 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
   jawny wynik późniejszego geokodowania.
 - Każdy status ma prosty komunikat dla operatora, a słaby adres nie blokuje
   ręcznych ani zapamiętanych czasów przejazdu.
+- Aktywny węzeł ma własny model ze stabilnym ID, nazwą oraz wersjonowanym
+  modelem lokalizacji przechowującym adres i współrzędne.
+- Bieżące modele tras, pamięć tras i przyszłe zapytanie mapowe pobierają ID z
+  modelu aktywnego węzła; formularz i trwała pamięć należą do 6C.2.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -67,10 +71,10 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6C.1 — model węzła**. Wprowadzić stabilne ID aktywnego węzła, jego
-nazwę, adres oraz miejsce na współrzędne tak, aby przyszłe trasy nie opierały
-się na stałym `wezel-domyslny`. Nadal nie podłączać konkretnej usługi mapowej —
-jej porównanie i wybór należą do **6E.1**.
+Rozpocząć **6C.2 — ustawienie i pamięć**. Dodać walidowane ustawianie danych
+aktywnego węzła i lokalny trwały zapis, tak aby operator mógł raz podać nazwę,
+adres lub potwierdzone współrzędne i odzyskać je po ponownym uruchomieniu. Nadal
+nie podłączać konkretnego dostawcy map — jego wybór należy do **6E.1**.
 
 ## Ważna zasada wznowienia
 
