@@ -2,9 +2,9 @@
 
 ## Status
 
-Plan punktów **6A–6J** został przygotowany 2026-09-02. Implementacja Etapu 6
-nie została jeszcze rozpoczęta. Pierwszy podetap to **6A.1 — inwentaryzacja i
-granice modułów**.
+Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetap **6A.1 —
+inwentaryzacja i granice modułów** jest zakończony. Następny podetap to **6A.2 —
+wersjonowany model lokalizacji i trasy**.
 
 ## Zasada nadrzędna
 
@@ -37,6 +37,18 @@ lub z ręcznie wpisanych czasów.
 
 Każdy adapter sieciowy ma być testowany funkcją zastępczą. Testy automatyczne
 nie mogą zależeć od chwilowej dostępności publicznego serwera map.
+
+### 6A.1 — granice modułów
+
+Test `testy/etap_6a_1.test.js` sprawdza, że:
+
+- `KONTRAKT_LOKALIZACJI_I_TRAS.md` obejmuje wszystkie obecne moduły przepływu;
+- jedyną bramą domenową roboczego wyniku trasy jest
+  `aplikacja.lokalizacje`;
+- `pobierzLubUstalTrase` pozostaje istniejącym wejściem do wspólnego przepływu;
+- harmonogram nie używa `fetch`, dostawcy map ani pamięci przeglądarki;
+- przejazdy pomp nadal przyjmują kierunkowe `czasPrzejazduMinuty` i źródło;
+- 6A oraz Etap 6 pozostają otwarte, a następnym podetapem jest 6A.2.
 
 ## Końcowy test operatora 6J.3
 

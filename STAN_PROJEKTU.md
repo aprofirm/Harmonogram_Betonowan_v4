@@ -7,13 +7,14 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **5J.3 — test operatora**.
+- Ostatni zakończony podetap: **6A.1 — inwentaryzacja i granice modułów**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- Pełna lokalna regresja po dodaniu kontroli planu Etapu 6 przechodzi
-  **95/95 zestawów testów**.
-- Kompletny plan **Etapu 6** obejmuje punkty **6A–6J**; implementacja nie została
-  jeszcze rozpoczęta.
+- **Etap 6** jest rozpoczęty. Podetap **6A.1** jest zakończony, ale punkt **6A**
+  i cały Etap 6 pozostają otwarte.
+- Pełna lokalna regresja po 6A.1 przechodzi **96/96 zestawów testów**.
+- `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
+  bramę roboczego wyniku trasy i opisuje granice obecnych modułów.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -51,9 +52,9 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6A.1 — inwentaryzacja i granice modułów**. Najpierw opisać, jak
-obecne `budowy`, `lokalizacje`, `pamiecTras`, przejazdy pomp i harmonogram mają
-korzystać z jednego kontraktu trasy. Nie podłączać jeszcze konkretnej usługi
+Rozpocząć **6A.2 — wersjonowany model lokalizacji i trasy**. Dodać osobne dane
+źródłowe, automatyczne i robocze zgodnie z granicami opisanymi w
+`KONTRAKT_LOKALIZACJI_I_TRAS.md`. Nie podłączać jeszcze konkretnej usługi
 mapowej — jej porównanie i wybór należą do **6E.1**.
 
 ## Ważna zasada wznowienia

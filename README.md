@@ -11,6 +11,7 @@ Najpierw przejrzyj aktualny stan repozytorium, wszystkie pliki z zasadami i usta
 - [PROJECT_DECISIONS.md](PROJECT_DECISIONS.md) — obowiązujące decyzje biznesowe i architektoniczne.
 - [POMYSLY_I_BACKLOG.md](POMYSLY_I_BACKLOG.md) — pomysły, propozycje i tematy wymagające doprecyzowania.
 - [ETAPY_ROZWOJU.md](ETAPY_ROZWOJU.md) — kolejność wdrażania funkcji, kryteria zakończenia i testy po każdym etapie.
+- [KONTRAKT_LOKALIZACJI_I_TRAS.md](KONTRAKT_LOKALIZACJI_I_TRAS.md) — granice modułów i jedna brama roboczego wyniku trasy dla Etapu 6.
 
 ## Trwała pamięć projektu
 
@@ -537,8 +538,8 @@ zakończony. Punkty **5A–5J** i cały Etap 5 również są zakończone; pełny
 kontrolowanym przeliczeniu. Wersja webowa jest publikowana z `main` pod adresem
 `https://aprofirm.github.io/Harmonogram_Betonowan_v4/`.
 
-Etap 6 ma kompletny plan **6A–6J**. Następny krok to
-**6A.1 — inwentaryzacja i granice modułów**.
+Etap 6 ma kompletny plan **6A–6J**. Podetap **6A.1** jest zakończony, a następny
+krok to **6A.2 — wersjonowany model lokalizacji i trasy**.
 
 
 ## Status końcowej regresji Etapu 5
@@ -582,8 +583,10 @@ geokodowanie, trasy węzeł ↔ budowa, przejazdy pomp, interfejs i odporność 
 oraz końcową regresję, publikację i test operatora.
 
 Istniejące ręczne czasy i książka tras pozostają fundamentem. Internet będzie
-pomocą, a nie warunkiem ułożenia harmonogramu. Następny podetap to
-**6A.1 — inwentaryzacja i granice modułów**.
+pomocą, a nie warunkiem ułożenia harmonogramu. Podetap **6A.1** ustalił w
+`KONTRAKT_LOKALIZACJI_I_TRAS.md`, że jedyną bramą roboczego wyniku trasy jest
+`aplikacja.lokalizacje`. Następny podetap to **6A.2 — wersjonowany model
+lokalizacji i trasy**.
 
-Test `testy/etap_6_plan.test.js` chroni kompletność planu. Pełna lokalna
-regresja po jego dodaniu przechodzi **95/95 zestawów testów**.
+Testy `testy/etap_6_plan.test.js` i `testy/etap_6a_1.test.js` chronią plan oraz
+granice modułów. Pełna lokalna regresja przechodzi **96/96 zestawów testów**.

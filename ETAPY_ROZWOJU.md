@@ -51,7 +51,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
 - [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
-- [ ] Etap 6 — Adresy, lokalizacje i trasy — **zaplanowany 2026-09-02; następny podetap 6A.1**
+- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A.1 zakończony; następny podetap 6A.2**
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
@@ -821,7 +821,7 @@ istniejących ręcznych czasów, książki tras i kontraktu przejazdów pomp; ni
 tworzy drugiego, równoległego mechanizmu czasu dojazdu.
 
 - [ ] **6A — kontrakt danych lokalizacji i zgodność wsteczna.**
-  - [ ] **6A.1 — inwentaryzacja i granice modułów:** opisać połączenia obecnych
+  - [x] **6A.1 — inwentaryzacja i granice modułów:** opisać połączenia obecnych
     `budowy`, `lokalizacje`, `pamiecTras`, przejazdów pomp i harmonogramu oraz
     wskazać jedno miejsce, w którym powstaje roboczy wynik trasy.
   - [ ] **6A.2 — wersjonowany model lokalizacji i trasy:** dodać osobne dane
@@ -908,7 +908,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
     niepełny/niejednoznaczny, wybór lokalizacji, trasę drogową, ręczną korektę,
     przejazd pompy, ponowne użycie cache i pracę po odłączeniu internetu.
 
-Następny niezakończony podetap: **6A.1 — inwentaryzacja i granice modułów**.
+Następny niezakończony podetap: **6A.2 — wersjonowany model lokalizacji i trasy**.
 
 ## Zakres
 
@@ -2924,5 +2924,26 @@ Następny krok: przed rozpoczęciem kodowania rozpisać kompletne podetapy
 - [x] pełna lokalna regresja po dodaniu kontroli planu przechodzi
   **95/95 zestawów testów**.
 
-Plan Etapu 6 jest przygotowany, ale żaden podetap implementacyjny nie został
-jeszcze zamknięty. Następny krok: **6A.1 — inwentaryzacja i granice modułów**.
+Plan Etapu 6 jest przygotowany. Pierwszy podetap został następnie zamknięty w
+ramach inwentaryzacji i ustalenia granic modułów.
+
+## Zamknięcie 6A.1 — inwentaryzacja i granice modułów — 2026-09-02
+
+- [x] w `KONTRAKT_LOKALIZACJI_I_TRAS.md` zinwentaryzowano role importu,
+  `budowy`, `lokalizacje`, `pamiecTras`, przejazdów pomp, harmonogramu i
+  interfejsu;
+- [x] `aplikacja.lokalizacje` została wskazana jako jedyna brama wyboru,
+  utworzenia i zastosowania roboczego wyniku trasy;
+- [x] zapisano dozwolony kierunek zależności oraz obecne luki formatu `v1` i
+  czasową ścieżkę zgodności ręcznej edycji;
+- [x] silnik harmonogramu nadal otrzymuje wyłącznie gotowe wartości robocze i
+  nie korzysta z sieci, geokodowania ani pamięci przeglądarki;
+- [x] nie podłączono dostawcy map, nie zmieniono interfejsu ani zachowania
+  ręcznych i zapamiętanych czasów;
+- [x] `testy/etap_6a_1.test.js` pilnuje kontraktu, granic modułów i następnego
+  podetapu;
+- [x] pełna lokalna regresja przechodzi **96/96 zestawów testów**.
+
+Podetap **6A.1** jest zakończony. Punkt nadrzędny **6A** i cały **Etap 6**
+pozostają otwarte. Następny podetap: **6A.2 — wersjonowany model lokalizacji i
+trasy**.

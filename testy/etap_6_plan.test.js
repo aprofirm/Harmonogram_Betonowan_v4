@@ -17,14 +17,15 @@ function sprawdzKompletnyPodzialEtapu6() {
     assert.match(etapy, new RegExp("- \\[ \\] \\*\\*6" + litera + " —"));
 
     [1, 2, 3].forEach(function (numer) {
+      const stan = litera === "A" && numer === 1 ? "x" : " ";
       assert.match(
         etapy,
-        new RegExp("- \\[ \\] \\*\\*6" + litera + "\\." + numer + " —")
+        new RegExp("- \\[" + stan + "\\] \\*\\*6" + litera + "\\." + numer + " —")
       );
     });
   });
 
-  assert.match(etapy, /Następny niezakończony podetap: \*\*6A\.1/);
+  assert.match(etapy, /Następny niezakończony podetap: \*\*6A\.2/);
   assert.match(etapy, /brak sieci, limit, timeout lub zły wynik/);
   assert.match(etapy, /A → B` pozostaje niezależne od `B → A/);
   assert.match(etapy, /nie\s+nadpisuje ręcznej korekty/);
@@ -38,21 +39,21 @@ function sprawdzGranicePlanu() {
 
   assert.match(
     etapy,
-    /Etap 6 — Adresy, lokalizacje i trasy — \*\*zaplanowany 2026-09-02; następny podetap 6A\.1\*\*/
+    /Etap 6 — Adresy, lokalizacje i trasy — \*\*rozpoczęty 2026-09-02; 6A\.1 zakończony; następny podetap 6A\.2\*\*/
   );
   assert.match(etapy, /wybór należy do 6E\.1/);
   assert.match(
     stan,
-    /Kompletny plan \*\*Etapu 6\*\* obejmuje punkty \*\*6A–6J\*\*/
+    /\*\*Etap 6\*\* jest rozpoczęty/
   );
   assert.match(
     stan,
-    /Rozpocząć \*\*6A\.1 — inwentaryzacja i granice modułów\*\*/
+    /Rozpocząć \*\*6A\.2 — wersjonowany model lokalizacji i trasy\*\*/
   );
   assert.match(readme, /testy\/TESTY_ETAP_6\.md/);
   assert.match(
     planTestow,
-    /Implementacja Etapu 6[\s\S]*?nie została jeszcze rozpoczęta/
+    /Podetap \*\*6A\.1[\s\S]*?jest zakończony/
   );
   assert.match(
     planTestow,
@@ -68,5 +69,5 @@ sprawdzKompletnyPodzialEtapu6();
 sprawdzGranicePlanu();
 
 console.log(
-  "OK — Etap 6 ma kompletny plan 6A–6J, zachowuje tryb offline i zaczyna się od 6A.1."
+  "OK — Etap 6 ma kompletny plan 6A–6J, zakończone 6A.1 i następny krok 6A.2."
 );

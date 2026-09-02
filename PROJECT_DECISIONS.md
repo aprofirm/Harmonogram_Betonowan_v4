@@ -2280,3 +2280,22 @@ Od 5I.3 globalny `maksymalnyPrzestojMinuty` jest pełnoprawnym parametrem operat
 Indywidualny `maksymalneOpoznienieStartuBudowyMinuty` nadal należy do stanu konkretnej budowy. Każda istotna zmiana parametrów planu, zasobów albo wyjątku budowy oznacza poprzedni wynik jako nieaktualny i wymaga nowego pełnego przeliczenia.
 
 Gotowy wynik harmonogramu nie jest źródłem prawdy w pamięci. Jeżeli odtworzony plan był wcześniej przeliczony, aplikacja odbudowuje wynik od nowa z zapisanych danych, parametrów, budów i zasobów.
+
+---
+
+## 120. `aplikacja.lokalizacje` jest jedyną bramą roboczego wyniku trasy
+
+Od 6A.1 wszystkie źródła lokalizacji i trasy mają zbiegać się w module
+`js/lokalizacje/lokalizacje.js`. Bieżący plan, import, ręczna decyzja operatora,
+`pamiecTras` i przyszły wymienny adapter map nie mogą niezależnie zasilać
+silnika harmonogramu. Brama wybiera i akceptuje roboczy wynik, a silnik dostaje
+wyłącznie gotowe wartości robocze.
+
+`budowy` przechowują oraz walidują te wartości, lecz nie ustalają pierwszeństwa
+źródeł. `pamiecTras` jest wyłącznie pamięcią przyjętych danych, a adapter usługi
+nie może mutować budowy, pamięci ani wyniku harmonogramu. Obecna bezpośrednia
+ścieżka ręcznej edycji z interfejsu do prymitywu `budowy` pozostaje czasowo dla
+zgodności; 6A.2–6A.3 przeprowadzą ją przez wspólną bramę bez utraty zachowania.
+
+Pełna inwentaryzacja, dozwolone zależności i niezmienniki są zapisane w
+`KONTRAKT_LOKALIZACJI_I_TRAS.md`.
