@@ -51,7 +51,6 @@ function sprawdzStatusPlanuIDecyzje() {
   const decyzje = wczytaj("PROJECT_DECISIONS.md");
   const stan = wczytaj("STAN_PROJEKTU.md");
 
-  assert.match(etapy, /- \[ \] \*\*6A —/);
   assert.match(etapy, /- \[x\] \*\*6A\.1 —/);
   assert.match(
     etapy,

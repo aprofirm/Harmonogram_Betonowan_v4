@@ -2,8 +2,9 @@
 
 ## Status
 
-Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetapy **6A.1–6A.2**
-są zakończone. Następny podetap to **6A.3 — migracja i niezmienniki**.
+Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetapy **6A.1–6A.3**
+i cały punkt **6A** są zakończone. Następny podetap to **6B.1 — rozpoznawanie
+kolumn adresowych**.
 
 ## Zasada nadrzędna
 
@@ -62,6 +63,20 @@ Test `testy/etap_6a_2.test.js` sprawdza:
   sprzecznego kierunku;
 - zachowanie istniejącego API bramy `aplikacja.lokalizacje`;
 - brak nazwy konkretnego dostawcy w modelu.
+
+### 6A.3 — migracja i niezmienniki
+
+Test `testy/etap_6a_3.test.js` sprawdza:
+
+- automatyczną migrację starszych płaskich czasów do modeli wersji `1`;
+- podłączenie dotychczasowej książki tras do warstwy roboczej ze źródłem
+  `pamiec`;
+- pierwszeństwo istniejącej ręcznej korekty przed wartością automatyczną;
+- zachowanie warstwy automatycznej po ręcznej zmianie i świadomym usunięciu
+  wartości roboczej;
+- przejście edycji z tabeli przez bramę `aplikacja.lokalizacje`;
+- zapis modeli w planie aplikacji wersji `4` i migrację starszego zapisu;
+- dalszą izolację silnika od modeli lokalizacji, pamięci, sieci i dostawcy map.
 
 ## Końcowy test operatora 6J.3
 

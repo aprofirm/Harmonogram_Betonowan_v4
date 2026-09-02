@@ -37,6 +37,7 @@ function wczytajModuly() {
   [
     "js/pamiec/pamiec_tras.js",
     "js/budowy/budowy.js",
+    "js/lokalizacje/model_lokalizacji_i_trasy.js",
     "js/lokalizacje/lokalizacje.js"
   ].forEach(function (sciezkaPliku) {
     const kod = fs.readFileSync(path.join(katalogProjektu, sciezkaPliku), "utf8");

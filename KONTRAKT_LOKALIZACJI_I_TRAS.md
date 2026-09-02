@@ -1,9 +1,10 @@
 # Kontrakt lokalizacji i tras — granice modułów
 
-Status: **6A.1–6A.2 zakończone 2026-09-02**.
+Status: **6A.1–6A.3 i cały punkt 6A zakończone 2026-09-02**.
 
-Ten dokument opisuje wynik inwentaryzacji 6A.1 oraz model danych wersji `1`
-wdrożony w 6A.2. Ustala miejsce, w którym powstaje roboczy wynik trasy,
+Ten dokument opisuje wynik inwentaryzacji 6A.1, model danych wersji `1`
+wdrożony w 6A.2 oraz migrację zgodnościową z 6A.3. Ustala miejsce, w którym
+powstaje roboczy wynik trasy,
 odpowiedzialności obecnych modułów i rozdział danych źródłowych, automatycznych
 oraz roboczych. Nie podłącza dostawcy map i nie zmienia dotychczasowego
 działania interfejsu.
@@ -19,11 +20,10 @@ Wszystkie źródła trasy — bieżący plan, import, ręczna wartość operator
 zaakceptowany wynik roboczy może zasilić model budowy albo istniejący kontrakt
 przejazdu pompy. Silnik harmonogramu nie wybiera źródła i nie pobiera trasy.
 
-Obecna funkcja `pobierzLubUstalTrase` jest pierwszym przepływem tej bramy:
+Funkcja `pobierzLubUstalTrase` jest wspólnym przepływem tej bramy:
 zachowuje kolejność bieżące czasy → pamięć tras → wstrzyknięta funkcja mapowa →
-jawny brak trasy. Model wersji `1` jest już dostępny; przeprowadzenie tego
-przepływu i starszych danych przez model należy do 6A.3. Bezpieczne
-pierwszeństwo źródeł pozostaje obowiązujące.
+jawny brak trasy. Od 6A.3 każdy z tych wyników jest synchronizowany z modelem
+wersji `1`, a bezpieczne pierwszeństwo ręcznej warstwy pozostaje obowiązujące.
 
 ## Inwentaryzacja obecnych modułów
 
@@ -38,17 +38,14 @@ pierwszeństwo źródeł pozostaje obowiązujące.
 | `js/harmonogram/harmonogram.js` | Składa robocze budowy, kursy, pompy, gruszki i konflikty. | Otrzymuje gotowe wartości robocze; nie używa sieci, geokodowania ani `localStorage`. |
 | `js/aplikacja.js` i interfejs | Importują dane, zbierają decyzje operatora i uruchamiają przeliczenie. | Sterują przepływem i prezentacją; nie implementują reguł routingu ani pierwszeństwa źródeł. |
 
-## Obecne luki, które pozostają otwarte
+## Obecne luki po zamknięciu 6A
 
 - Budowa nie ma jeszcze oddzielnych pól adresu, współrzędnych, dystansu i
   statusu jakości lokalizacji.
 - `pamiecTras` w wersji `v1` tworzy klucz z domyślnego ID węzła oraz tekstu
   `firma | budowa`, a nie z jednoznacznego adresu lub współrzędnych.
-- Wstrzyknięta funkcja mapowa zwraca obecnie głównie czasy; przeprowadzenie
-  dotychczasowego przepływu przez model wersji `1` należy do 6A.3.
-- Ręczna edycja czasu w interfejsie wywołuje dziś bezpośrednio prymityw modelu
-  `budowy`, a następnie osobno zapisuje pamięć. Ta ścieżka pozostaje czasowo dla
-  zgodności i ma przejść przez bramę `aplikacja.lokalizacje` w 6A.3.
+- Wstrzyknięta funkcja mapowa zwraca obecnie głównie czasy; pełny dystans,
+  współrzędne i metadane wyniku zostaną podłączone w 6E–6G.
 - Nie istnieje jeszcze wersjonowany model punktu węzła; jego zakres zaczyna się
   w 6C.
 
@@ -135,4 +132,37 @@ przechowuje nazw ani pól charakterystycznych dla konkretnego dostawcy map.
 - konstruktory walidują liczby, współrzędne, statusy i zgodność relacji;
 - dotychczasowa brama `aplikacja.lokalizacje` pozostaje dostępna.
 
-Następny podetap: **6A.3 — migracja i niezmienniki**.
+## Migracja zgodnościowa 6A.3
+
+Każda budowa używana przez aplikację przechowuje trzy pola:
+
+- `modelLokalizacji` — lokalizacja budowy;
+- `modelTrasyDojazdu` — kierunek domyślny węzeł → budowa;
+- `modelTrasyPowrotu` — kierunek budowa → domyślny węzeł.
+
+Starsze płaskie czasy są przy pierwszym użyciu przenoszone do warstwy źródłowej
+i roboczej. Czas ze źródłem `mapa` trafia również do warstwy automatycznej.
+Trafienie w dotychczasowej książce tras zasila warstwę roboczą ze źródłem
+`pamiec`, bez przedwczesnej zmiany formatu cache `v1`.
+
+Ręczna warstwa robocza ma pierwszeństwo przed niespójną płaską wartością
+automatyczną. Ręczna edycja z tabeli przechodzi przez
+`aplikacja.lokalizacje.zmienCzasRoboczyBudowy`, zachowuje podpowiedź
+automatyczną i aktualizuje zgodnościowe płaskie pole używane przez silnik.
+Usunięcie ręcznej wartości jest świadomą zmianą i nie przywraca jej samoczynnie.
+
+Zapis planu aplikacji ma wersję `4` i przechowuje wszystkie trzy modele. Starszy
+plan bez modeli jest migrowany przy odtworzeniu oraz ponownie zapisany. Moduł
+harmonogramu nadal nie odczytuje modeli, pamięci ani sieci — otrzymuje wyłącznie
+gotowe płaskie wartości robocze.
+
+## Kryterium zamknięcia 6A.3
+
+- starsze plany zachowują czasy i otrzymują modele wersji `1`;
+- obecna książka tras nadal zasila plan przed ewentualną usługą mapową;
+- ręczna wartość nie jest nadpisywana przez cache ani automatykę;
+- edycja ręczna przechodzi przez jedną bramę domenową;
+- zapis i odtworzenie zachowują trzy modele;
+- silnik nie zna modeli lokalizacji, sieci ani konkretnego dostawcy map.
+
+Następny podetap: **6B.1 — rozpoznawanie kolumn adresowych**.

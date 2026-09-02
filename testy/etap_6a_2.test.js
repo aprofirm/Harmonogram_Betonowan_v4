@@ -259,17 +259,11 @@ function sprawdzIntegracjeIDokumentacje(aplikacja) {
   assert.ok(pozycjaModelu < pozycjaBramy);
   assert.doesNotMatch(kodModelu, /Nominatim|OSRM|Google Maps/i);
   assert.match(etapy, /- \[x\] \*\*6A\.2 —/);
-  assert.match(etapy, /- \[ \] \*\*6A\.3 —/);
-  assert.match(
-    etapy,
-    /Następny niezakończony podetap: \*\*6A\.3 — migracja i niezmienniki\*\*/
-  );
   assert.match(
     decyzje,
     /## 121\. Kontrakt lokalizacji i trasy ma wersję `1`/
   );
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6A\.2/);
-  assert.match(stan, /\*\*97\/97 zestawów testów\*\*/);
+  assert.match(stan, /`js\/lokalizacje\/model_lokalizacji_i_trasy\.js` rozdziela/);
 }
 
 const aplikacja = wczytajAplikacje();

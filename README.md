@@ -538,8 +538,8 @@ zakończony. Punkty **5A–5J** i cały Etap 5 również są zakończone; pełny
 kontrolowanym przeliczeniu. Wersja webowa jest publikowana z `main` pod adresem
 `https://aprofirm.github.io/Harmonogram_Betonowan_v4/`.
 
-Etap 6 ma kompletny plan **6A–6J**. Podetapy **6A.1–6A.2** są zakończone, a
-następny krok to **6A.3 — migracja i niezmienniki**.
+Etap 6 ma kompletny plan **6A–6J**. Podetapy **6A.1–6A.3** i cały punkt **6A**
+są zakończone, a następny krok to **6B.1 — rozpoznawanie kolumn adresowych**.
 
 
 ## Status końcowej regresji Etapu 5
@@ -586,9 +586,12 @@ Istniejące ręczne czasy i książka tras pozostają fundamentem. Internet będ
 pomocą, a nie warunkiem ułożenia harmonogramu. Podetap **6A.1** ustalił w
 `KONTRAKT_LOKALIZACJI_I_TRAS.md`, że jedyną bramą roboczego wyniku trasy jest
 `aplikacja.lokalizacje`. Podetap **6A.2** dodał model wersji `1`, który rozdziela
-dane źródłowe, automatyczne i robocze lokalizacji oraz trasy. Następny podetap
-to **6A.3 — migracja i niezmienniki**.
+dane źródłowe, automatyczne i robocze lokalizacji oraz trasy. Podetap **6A.3**
+podłączył starsze plany i dotychczasową książkę tras do tego modelu, zachowując
+pierwszeństwo ręcznych czasów i izolację silnika. Następny podetap to **6B.1 —
+rozpoznawanie kolumn adresowych**.
 
-Testy `testy/etap_6_plan.test.js`, `testy/etap_6a_1.test.js` i
-`testy/etap_6a_2.test.js` chronią plan, granice modułów oraz wersjonowany model.
-Pełna lokalna regresja przechodzi **97/97 zestawów testów**.
+Testy `testy/etap_6_plan.test.js`, `testy/etap_6a_1.test.js`,
+`testy/etap_6a_2.test.js` i `testy/etap_6a_3.test.js` chronią plan, granice
+modułów, wersjonowany model, migrację oraz niezmienniki źródeł. Pełna lokalna
+regresja przechodzi **98/98 zestawów testów**.

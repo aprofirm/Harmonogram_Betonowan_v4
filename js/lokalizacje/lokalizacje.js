@@ -18,6 +18,238 @@
       Number.isFinite(Number(wartosc)) && Number(wartosc) >= 0;
   }
 
+  function czyDostepnyModelWersji1() {
+    return typeof aplikacja.lokalizacje.utworzModelLokalizacji === "function" &&
+      typeof aplikacja.lokalizacje.utworzModelTrasy === "function" &&
+      aplikacja.lokalizacje.WERSJA_KONTRAKTU_LOKALIZACJI_I_TRASY === 1;
+  }
+
+  function pobierzZrodloModelu(zrodlo) {
+    const wartosc = String(zrodlo || "").trim();
+
+    if (["csv", "reczny", "pamiec", "mapa"].includes(wartosc)) {
+      return wartosc;
+    }
+
+    if (wartosc === "reczna") {
+      return "reczny";
+    }
+
+    return "brak";
+  }
+
+  function utworzWarstweTrasyZCzasu(czas, zrodlo) {
+    const czyMaCzas = czyJestCzas(czas);
+    const zrodloModelu = czyMaCzas ? pobierzZrodloModelu(zrodlo) : "brak";
+    const czyReczna = zrodloModelu === "reczny";
+
+    return {
+      czasPrzejazduMinuty: czyMaCzas ? Number(czas) : null,
+      statusJakosci: czyMaCzas
+        ? (czyReczna ? "potwierdzona" : "pelna")
+        : "brak",
+      zrodlo: zrodloModelu,
+      czyKorektaReczna: czyReczna
+    };
+  }
+
+  function utworzPunktyTrasyBudowy(budowa, kierunek) {
+    const punktWezla = {
+      idLokalizacji: DOMYSLNY_ID_WEZLA,
+      typLokalizacji: "wezel"
+    };
+    const punktBudowy = {
+      idLokalizacji: String(budowa.idBudowy),
+      typLokalizacji: "budowa"
+    };
+
+    return kierunek === "do-budowy"
+      ? { punktPoczatkowy: punktWezla, punktDocelowy: punktBudowy }
+      : { punktPoczatkowy: punktBudowy, punktDocelowy: punktWezla };
+  }
+
+  function pobierzPolaCzasuTrasy(kierunek) {
+    return kierunek === "do-budowy"
+      ? {
+        model: "modelTrasyDojazdu",
+        czas: "czasDojazduRoboczyMinuty",
+        zrodlo: "zrodloCzasuDojazdu"
+      }
+      : {
+        model: "modelTrasyPowrotu",
+        czas: "czasPowrotuRoboczyMinuty",
+        zrodlo: "zrodloCzasuPowrotu"
+      };
+  }
+
+  function sprobujZnormalizowacModelTrasy(model, punkty) {
+    if (!model || model.wersjaKontraktu !== 1) {
+      return null;
+    }
+
+    try {
+      return aplikacja.lokalizacje.utworzModelTrasy(Object.assign({}, model, punkty));
+    } catch (blad) {
+      return null;
+    }
+  }
+
+  function zastosujRecznaWarstweModeluDoBudowy(budowa, pola, model) {
+    const warstwa = model && model.daneRobocze;
+
+    if (!warstwa || !czyJestCzas(warstwa.czasPrzejazduMinuty) ||
+        (!warstwa.czyKorektaReczna && warstwa.zrodlo !== "reczny")) {
+      return false;
+    }
+
+    budowa[pola.czas] = Number(warstwa.czasPrzejazduMinuty);
+    budowa[pola.zrodlo] = "reczny";
+    return true;
+  }
+
+  function utworzLubZaktualizujModelTrasyBudowy(budowa, kierunek, opcje) {
+    const ustawienia = opcje || {};
+    const pola = pobierzPolaCzasuTrasy(kierunek);
+    const punkty = utworzPunktyTrasyBudowy(budowa, kierunek);
+    const istniejacyModel = sprobujZnormalizowacModelTrasy(
+      budowa[pola.model],
+      punkty
+    );
+    const plaskiCzasJestReczny = czyJestCzas(budowa[pola.czas]) &&
+      pobierzZrodloModelu(budowa[pola.zrodlo]) === "reczny";
+
+    if (istniejacyModel && !plaskiCzasJestReczny &&
+        !ustawienia.czyWymusicWartoscRobocza) {
+      zastosujRecznaWarstweModeluDoBudowy(budowa, pola, istniejacyModel);
+    }
+
+    const warstwaRobocza = utworzWarstweTrasyZCzasu(
+      budowa[pola.czas],
+      budowa[pola.zrodlo]
+    );
+    const warstwaZrodlowa = istniejacyModel
+      ? istniejacyModel.daneZrodlowe
+      : warstwaRobocza;
+    let warstwaAutomatyczna = istniejacyModel
+      ? istniejacyModel.daneAutomatyczne
+      : {};
+
+    if (ustawienia.czyDaneAutomatyczne ||
+        (!istniejacyModel && warstwaRobocza.zrodlo === "mapa")) {
+      warstwaAutomatyczna = warstwaRobocza;
+    }
+
+    budowa[pola.model] = aplikacja.lokalizacje.utworzModelTrasy(Object.assign({
+      idTrasy: kierunek === "do-budowy"
+        ? DOMYSLNY_ID_WEZLA + "->" + String(budowa.idBudowy)
+        : String(budowa.idBudowy) + "->" + DOMYSLNY_ID_WEZLA,
+      daneZrodlowe: warstwaZrodlowa,
+      daneAutomatyczne: warstwaAutomatyczna,
+      daneRobocze: warstwaRobocza
+    }, punkty));
+
+    return !istniejacyModel;
+  }
+
+  function sprobujZnormalizowacModelLokalizacji(model) {
+    if (!model || model.wersjaKontraktu !== 1) {
+      return null;
+    }
+
+    try {
+      return aplikacja.lokalizacje.utworzModelLokalizacji(model);
+    } catch (blad) {
+      return null;
+    }
+  }
+
+  function utworzLubZaktualizujModelLokalizacjiBudowy(budowa) {
+    const istniejacyModel = sprobujZnormalizowacModelLokalizacji(
+      budowa.modelLokalizacji
+    );
+
+    if (istniejacyModel) {
+      budowa.modelLokalizacji = istniejacyModel;
+      return false;
+    }
+
+    const tekstAdresu = String(budowa.budowa || "").trim() || null;
+    const zrodlo = pobierzZrodloModelu(budowa.zrodlo);
+    const warstwaZrodlowa = {
+      adres: {
+        tekst: tekstAdresu,
+        czesci: {
+          firma: String(budowa.firma || "").trim() || null,
+          nazwaBudowy: tekstAdresu
+        }
+      },
+      statusJakosci: tekstAdresu ? "nieoceniona" : "brak",
+      zrodlo: tekstAdresu ? zrodlo : "brak"
+    };
+
+    budowa.modelLokalizacji = aplikacja.lokalizacje.utworzModelLokalizacji({
+      idLokalizacji: String(budowa.idBudowy),
+      typLokalizacji: "budowa",
+      daneZrodlowe: warstwaZrodlowa,
+      daneRobocze: warstwaZrodlowa
+    });
+    return true;
+  }
+
+  function migrujBudoweDoKontraktuTras(budowa, opcje) {
+    if (!budowa || !czyDostepnyModelWersji1()) {
+      return { czyZmigrowano: false, budowa: budowa || null };
+    }
+
+    const czyZmigrowanoLokalizacje =
+      utworzLubZaktualizujModelLokalizacjiBudowy(budowa);
+    const czyZmigrowanoDojazd = utworzLubZaktualizujModelTrasyBudowy(
+      budowa,
+      "do-budowy",
+      opcje
+    );
+    const czyZmigrowanoPowrot = utworzLubZaktualizujModelTrasyBudowy(
+      budowa,
+      "do-wezla",
+      opcje
+    );
+
+    return {
+      czyZmigrowano: czyZmigrowanoLokalizacje ||
+        czyZmigrowanoDojazd || czyZmigrowanoPowrot,
+      budowa: budowa
+    };
+  }
+
+  function migrujListeBudowDoKontraktuTras(listaBudow) {
+    const budowy = Array.isArray(listaBudow) ? listaBudow : [];
+    let liczbaZmigrowanych = 0;
+
+    budowy.forEach(function (budowa) {
+      if (migrujBudoweDoKontraktuTras(budowa).czyZmigrowano) {
+        liczbaZmigrowanych += 1;
+      }
+    });
+
+    return {
+      liczbaBudow: budowy.length,
+      liczbaZmigrowanych: liczbaZmigrowanych
+    };
+  }
+
+  function zmienCzasRoboczyBudowy(budowa, nazwaPola, wartosc) {
+    aplikacja.budowy.zmienCzasRoboczyBudowy(budowa, nazwaPola, wartosc);
+
+    if (nazwaPola === "czasDojazduRoboczyMinuty" ||
+        nazwaPola === "czasPowrotuRoboczyMinuty") {
+      migrujBudoweDoKontraktuTras(budowa, {
+        czyWymusicWartoscRobocza: true
+      });
+    }
+
+    return budowa;
+  }
+
   function utworzOpisLokalizacjiBudowy(budowa) {
     const firma = String(budowa && budowa.firma || "").trim();
     const miejsce = String(budowa && budowa.budowa || "").trim();
@@ -40,6 +272,8 @@
   }
 
   function zapiszCzasyBudowyWPamieci(budowa) {
+    migrujBudoweDoKontraktuTras(budowa);
+
     if (!aplikacja.pamiecTras) {
       return { status: "brak-modulu-pamieci-tras", liczbaTras: 0 };
     }
@@ -127,6 +361,8 @@
       return { status: "brak-modulu-pamieci-tras", czyUzupelniono: false };
     }
 
+    migrujBudoweDoKontraktuTras(budowa);
+
     // Dane obecne w bieżącym albo odtworzonym planie zawsze mają pierwszeństwo.
     if (czyJestCzas(budowa.czasDojazduRoboczyMinuty) ||
         czyJestCzas(budowa.czasPowrotuRoboczyMinuty)) {
@@ -157,6 +393,7 @@
       zrodloCzasuDojazdu: "pamiec",
       zrodloCzasuPowrotu: "pamiec"
     });
+    migrujBudoweDoKontraktuTras(budowa);
 
     return Object.assign({}, wynikOdczytu, { czyUzupelniono: true });
   }
@@ -194,6 +431,8 @@
         czyWywolanoMape: false
       });
     }
+
+    migrujBudoweDoKontraktuTras(budowa);
 
     if (czyJestCzas(budowa.czasDojazduRoboczyMinuty) &&
         czyJestCzas(budowa.czasPowrotuRoboczyMinuty)) {
@@ -250,6 +489,9 @@
         zrodloCzasuDojazdu: "mapa",
         zrodloCzasuPowrotu: "mapa"
       });
+      migrujBudoweDoKontraktuTras(budowa, {
+        czyDaneAutomatyczne: true
+      });
       const wynikZapisu = zapiszCzasyBudowyWPamieci(budowa);
 
       return {
@@ -277,6 +519,9 @@
     zapiszKompletneTrasyBudowWPamieci: zapiszKompletneTrasyBudowWPamieci,
     uzupelnijBudoweZPamieci: uzupelnijBudoweZPamieci,
     uzupelnijListeBudowZPamieci: uzupelnijListeBudowZPamieci,
+    migrujBudoweDoKontraktuTras: migrujBudoweDoKontraktuTras,
+    migrujListeBudowDoKontraktuTras: migrujListeBudowDoKontraktuTras,
+    zmienCzasRoboczyBudowy: zmienCzasRoboczyBudowy,
     pobierzLubUstalTrase: pobierzLubUstalTrase
   });
 })(window);

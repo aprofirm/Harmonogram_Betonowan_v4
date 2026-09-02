@@ -51,7 +51,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
 - [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
-- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A.1–6A.2 zakończone; następny podetap 6A.3**
+- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A zakończone; następny podetap 6B.1**
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
@@ -820,14 +820,14 @@ Plan został rozpisany 2026-09-02 po zamknięciu Etapu 5. Etap 6 korzysta z
 istniejących ręcznych czasów, książki tras i kontraktu przejazdów pomp; nie
 tworzy drugiego, równoległego mechanizmu czasu dojazdu.
 
-- [ ] **6A — kontrakt danych lokalizacji i zgodność wsteczna.**
+- [x] **6A — kontrakt danych lokalizacji i zgodność wsteczna.**
   - [x] **6A.1 — inwentaryzacja i granice modułów:** opisać połączenia obecnych
     `budowy`, `lokalizacje`, `pamiecTras`, przejazdów pomp i harmonogramu oraz
     wskazać jedno miejsce, w którym powstaje roboczy wynik trasy.
   - [x] **6A.2 — wersjonowany model lokalizacji i trasy:** dodać osobne dane
     źródłowe, automatyczne i robocze dla adresu, współrzędnych, odległości,
     czasu, statusu jakości, źródła i ręcznej korekty.
-  - [ ] **6A.3 — migracja i niezmienniki:** starsze plany oraz książka tras
+  - [x] **6A.3 — migracja i niezmienniki:** starsze plany oraz książka tras
     nadal działają, ręczne czasy nie znikają, a silnik korzysta wyłącznie z
     wartości roboczych i nie zna konkretnej usługi mapowej.
 - [ ] **6B — adres z KDX/CSV i lokalna ocena jakości.**
@@ -908,7 +908,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
     niepełny/niejednoznaczny, wybór lokalizacji, trasę drogową, ręczną korektę,
     przejazd pompy, ponowne użycie cache i pracę po odłączeniu internetu.
 
-Następny niezakończony podetap: **6A.3 — migracja i niezmienniki**.
+Następny niezakończony podetap: **6B.1 — rozpoznawanie kolumn adresowych**.
 
 ## Zakres
 
@@ -2968,3 +2968,23 @@ trasy**.
 
 Podetap **6A.2** jest zakończony. Punkt nadrzędny **6A** i cały **Etap 6**
 pozostają otwarte. Następny podetap: **6A.3 — migracja i niezmienniki**.
+
+## Zamknięcie 6A.3 — migracja i niezmienniki — 2026-09-02
+
+- [x] starsze budowy z płaskimi czasami dojazdu i powrotu są automatycznie
+  podłączane do kontraktu lokalizacji i kierunkowych tras wersji `1`;
+- [x] istniejąca książka tras `v1` nadal działa bez zmiany formatu, a odczytane
+  czasy trafiają do warstwy roboczej ze źródłem `pamiec`;
+- [x] ręczna warstwa robocza ma pierwszeństwo przed starszą wartością mapową,
+  a nowa ręczna edycja zachowuje osobną podpowiedź automatyczną;
+- [x] ręczna edycja czasu przechodzi przez `aplikacja.lokalizacje`, zaś silnik
+  harmonogramu nadal zna wyłącznie płaskie wartości robocze;
+- [x] zapis planu aplikacji ma wersję `4` i zachowuje modele lokalizacji,
+  dojazdu oraz powrotu; starsze zapisy są migrowane przy odtworzeniu;
+- [x] nie podłączono konkretnego dostawcy map ani zależności sieciowej;
+- [x] test `testy/etap_6a_3.test.js` chroni migrację, cache, pierwszeństwo
+  ręcznych wartości, rozdzielenie warstw i granicę silnika;
+- [x] pełna lokalna regresja przechodzi **98/98 zestawów testów**.
+
+Podetap **6A.3** oraz cały punkt **6A** są zakończone. **Etap 6** pozostaje
+otwarty. Następny podetap: **6B.1 — rozpoznawanie kolumn adresowych**.

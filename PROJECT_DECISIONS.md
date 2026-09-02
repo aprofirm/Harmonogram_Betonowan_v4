@@ -2320,3 +2320,24 @@ Kontrakt nie zawiera nazw ani pól konkretnego dostawcy map. W 6A.2 istnieje
 jako niezależny model w `js/lokalizacje/model_lokalizacji_i_trasy.js`;
 podłączenie istniejących budów, pamięci tras i dotychczasowych czasów do tego
 modelu pozostaje zakresem 6A.3.
+
+---
+
+## 122. Starsze czasy są migrowane do modelu, a ręczna warstwa ma pierwszeństwo
+
+Od 6A.3 każda budowa używana przez aplikację otrzymuje `modelLokalizacji`,
+`modelTrasyDojazdu` i `modelTrasyPowrotu` w kontrakcie wersji `1`. Starsze
+płaskie pola czasu pozostają zgodnościowym wejściem i wyjściem silnika, ale są
+synchronizowane wyłącznie przez bramę `aplikacja.lokalizacje`.
+
+Zapis planu aplikacji ma wersję `4` i przechowuje trzy modele razem z budową.
+Starszy plan bez modeli jest uzupełniany przy odtworzeniu i ponownie zapisywany.
+Istniejąca książka tras `v1` nie zmienia jeszcze formatu: trafienie w cache
+zasila warstwę roboczą ze źródłem `pamiec`. Rozszerzenie i właściwa migracja
+formatu samej książki pozostają zadaniem 6D.1.
+
+Jeżeli model zawiera ręczną wartość roboczą, nie może jej zastąpić płaska
+wartość automatyczna ani późniejsze wywołanie mapy. Nowa ręczna edycja przechodzi
+przez bramę lokalizacji, zmienia tylko warstwę roboczą i zachowuje wcześniejszą
+warstwę automatyczną. Silnik harmonogramu nadal nie zna modeli lokalizacji,
+pamięci przeglądarki, sieci ani dostawcy map.

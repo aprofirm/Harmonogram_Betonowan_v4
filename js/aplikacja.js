@@ -42,7 +42,10 @@
     "czasPrzygotowaniaPompyRoboczyMinuty",
     "czasZakonczeniaObslugiPompyRoboczyMinuty",
     "zrodloCzasuDojazdu",
-    "zrodloCzasuPowrotu"
+    "zrodloCzasuPowrotu",
+    "modelLokalizacji",
+    "modelTrasyDojazdu",
+    "modelTrasyPowrotu"
   ]);
 
   function zapiszZdarzenieDiagnostyczne(poziom, kod, opis, szczegoly) {
@@ -82,8 +85,12 @@
   }
 
   function utworzDanePlanuDoZapisu() {
+    aplikacja.lokalizacje.migrujListeBudowDoKontraktuTras(
+      stanImportu.budowy.concat(budowyReczne)
+    );
+
     return {
-      wersjaStanuAplikacji: 3,
+      wersjaStanuAplikacji: 4,
       nazwaPliku: stanImportu.nazwaPliku || null,
       separator: stanImportu.separator || null,
       ostrzezeniaImportu: Array.isArray(stanImportu.ostrzezenia)
@@ -165,6 +172,9 @@
   }
 
   function pobierzAktualnaListeBudow() {
+    aplikacja.lokalizacje.migrujListeBudowDoKontraktuTras(
+      stanImportu.budowy.concat(budowyReczne)
+    );
     return aplikacja.budowy.utworzListeRobocza(stanImportu.budowy, budowyReczne);
   }
 
@@ -182,7 +192,11 @@
         throw new Error("Nie znaleziono budowy o ID „" + idBudowy + "”.");
       }
 
-      aplikacja.budowy.zmienCzasRoboczyBudowy(budowa, nazwaPola, wartosc);
+      aplikacja.lokalizacje.zmienCzasRoboczyBudowy(
+        budowa,
+        nazwaPola,
+        wartosc
+      );
       const czyZmienionoCzasTrasy =
         nazwaPola === "czasDojazduRoboczyMinuty" ||
         nazwaPola === "czasPowrotuRoboczyMinuty";
@@ -854,6 +868,10 @@
     });
     stanImportu.budowy.forEach(aplikacja.budowy.uzupelnijBazowaIloscBetonu);
     budowyReczne.forEach(aplikacja.budowy.uzupelnijBazowaIloscBetonu);
+    const wynikMigracjiModeliTras =
+      aplikacja.lokalizacje.migrujListeBudowDoKontraktuTras(
+        stanImportu.budowy.concat(budowyReczne)
+      );
     czyOstatniPlanPrzeliczony = Boolean(danePlanu.czyHarmonogramPrzeliczony);
     const wynikMigracjiTras = archiwizujKompletneTrasy({
       tylkoBrakujace: true
@@ -871,7 +889,8 @@
       liczbaMigrowanychCzasowRozladunku > 0 ||
       liczbaMigrowanychStartowZadanych > 0 ||
       liczbaMigrowanychWysiegowPomp > 0 ||
-      liczbaMigrowanychWymaganWysiegu > 0
+      liczbaMigrowanychWymaganWysiegu > 0 ||
+      wynikMigracjiModeliTras.liczbaZmigrowanych > 0
     ) {
       zapiszBiezacyPlan();
     }
@@ -906,6 +925,15 @@
           liczbaPomp: liczbaMigrowanychWysiegowPomp,
           liczbaBudow: liczbaMigrowanychWymaganWysiegu
         }
+      );
+    }
+
+    if (wynikMigracjiModeliTras.liczbaZmigrowanych > 0) {
+      zapiszZdarzenieDiagnostyczne(
+        "informacja",
+        "migracja-modeli-lokalizacji-i-tras",
+        "Podłączono starsze budowy do kontraktu lokalizacji i tras wersji 1.",
+        { liczbaBudow: wynikMigracjiModeliTras.liczbaZmigrowanych }
       );
     }
 

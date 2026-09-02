@@ -14,10 +14,14 @@ function sprawdzKompletnyPodzialEtapu6() {
   const etapy = wczytaj("ETAPY_ROZWOJU.md");
 
   "ABCDEFGHIJ".split("").forEach(function (litera) {
-    assert.match(etapy, new RegExp("- \\[ \\] \\*\\*6" + litera + " —"));
+    const stanPunktu = litera === "A" ? "x" : " ";
+    assert.match(
+      etapy,
+      new RegExp("- \\[" + stanPunktu + "\\] \\*\\*6" + litera + " —")
+    );
 
     [1, 2, 3].forEach(function (numer) {
-      const stan = litera === "A" && numer <= 2 ? "x" : " ";
+      const stan = litera === "A" ? "x" : " ";
       assert.match(
         etapy,
         new RegExp("- \\[" + stan + "\\] \\*\\*6" + litera + "\\." + numer + " —")
@@ -25,7 +29,7 @@ function sprawdzKompletnyPodzialEtapu6() {
     });
   });
 
-  assert.match(etapy, /Następny niezakończony podetap: \*\*6A\.3/);
+  assert.match(etapy, /Następny niezakończony podetap: \*\*6B\.1/);
   assert.match(etapy, /brak sieci, limit, timeout lub zły wynik/);
   assert.match(etapy, /A → B` pozostaje niezależne od `B → A/);
   assert.match(etapy, /nie\s+nadpisuje ręcznej korekty/);
@@ -39,7 +43,7 @@ function sprawdzGranicePlanu() {
 
   assert.match(
     etapy,
-    /Etap 6 — Adresy, lokalizacje i trasy — \*\*rozpoczęty 2026-09-02; 6A\.1–6A\.2 zakończone; następny podetap 6A\.3\*\*/
+    /Etap 6 — Adresy, lokalizacje i trasy — \*\*rozpoczęty 2026-09-02; 6A zakończone; następny podetap 6B\.1\*\*/
   );
   assert.match(etapy, /wybór należy do 6E\.1/);
   assert.match(
@@ -48,12 +52,12 @@ function sprawdzGranicePlanu() {
   );
   assert.match(
     stan,
-    /Rozpocząć \*\*6A\.3 — migracja i niezmienniki\*\*/
+    /Rozpocząć \*\*6B\.1 — rozpoznawanie kolumn adresowych\*\*/
   );
   assert.match(readme, /testy\/TESTY_ETAP_6\.md/);
   assert.match(
     planTestow,
-    /Podetapy \*\*6A\.1–6A\.2\*\*[\s\S]*?są zakończone/
+    /Podetapy \*\*6A\.1–6A\.3\*\*[\s\S]*?punkt \*\*6A\*\*[\s\S]*?są zakończone/
   );
   assert.match(
     planTestow,
@@ -69,5 +73,5 @@ sprawdzKompletnyPodzialEtapu6();
 sprawdzGranicePlanu();
 
 console.log(
-  "OK — Etap 6 ma kompletny plan 6A–6J, zakończone 6A.1–6A.2 i następny krok 6A.3."
+  "OK — Etap 6 ma kompletny plan 6A–6J, zakończony punkt 6A i następny krok 6B.1."
 );

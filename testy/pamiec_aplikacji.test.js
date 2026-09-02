@@ -19,6 +19,7 @@ const plikiJavaScript = [
   "js/pompy/pompy.js",
   "js/gruszki/gruszki.js",
   "js/gruszki/przydzial_gruszek.js",
+  "js/lokalizacje/model_lokalizacji_i_trasy.js",
   "js/lokalizacje/lokalizacje.js",
   "js/harmonogram/harmonogram.js",
   "js/interfejs/interfejs.js",
@@ -715,7 +716,10 @@ async function uruchomTest() {
   assert.equal(danePlanu.budowyReczne[0].iloscBetonuBazowaLiczbaM3, 8);
   assert.equal(danePlanu.czyHarmonogramPrzeliczony, false);
   assert.equal(Object.prototype.hasOwnProperty.call(danePlanu, "wierszeZrodlowe"), false);
-  assert.doesNotMatch(tekstDanychPlanu, /daneZrodlowe/);
+  assert.doesNotMatch(tekstDanychPlanu, /"daneZrodlowe":\{"ID_Budowy"/);
+  assert.equal(danePlanu.wersjaStanuAplikacji, 4);
+  assert.equal(danePlanu.budowyZImportu[0].modelLokalizacji.wersjaKontraktu, 1);
+  assert.equal(danePlanu.budowyZImportu[0].modelTrasyDojazdu.wersjaKontraktu, 1);
 
   const poleDojazdu = znajdzPierwszePoleDojazdu(pierwszaStrona);
   poleDojazdu.value = "25";
@@ -860,7 +864,7 @@ async function uruchomTest() {
   drugaPompa.children[4].children[1].zdarzenia.change();
 
   const danePompPrzedPrzeliczeniem = odczytajDanePlanu(pamiecLokalna);
-  assert.equal(danePompPrzedPrzeliczeniem.wersjaStanuAplikacji, 3);
+  assert.equal(danePompPrzedPrzeliczeniem.wersjaStanuAplikacji, 4);
   assert.equal(danePompPrzedPrzeliczeniem.parametry.trybPomp, "mam-okreslona-liczbe");
   assert.equal(danePompPrzedPrzeliczeniem.parametry.liczbaDostepnychPomp, "2");
   assert.equal(danePompPrzedPrzeliczeniem.listaPomp.length, 2);
