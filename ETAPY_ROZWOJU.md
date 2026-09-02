@@ -51,7 +51,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
 - [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
-- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6E zakończone; następny podetap 6F.1**
+- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6E zakończone; 6F.1 zakończone; następny podetap 6F.2**
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
@@ -867,7 +867,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
   - [x] **6E.3 — bezpieczne błędy:** brak sieci, limit, timeout lub zły wynik
     usługi kończą się czytelnym statusem i diagnostyką, nigdy awarią aplikacji.
 - [ ] **6F — geokodowanie i potwierdzenie lokalizacji budowy.**
-  - [ ] **6F.1 — wyszukiwanie lokalizacji:** wysyłać tylko wystarczający adres,
+  - [x] **6F.1 — wyszukiwanie lokalizacji:** wysyłać tylko wystarczający adres,
     najpierw używać cache i zapisywać wynik wraz z metadanymi źródła.
   - [ ] **6F.2 — wiele wyników:** nie wybierać po cichu pierwszego dopasowania;
     pokazać kandydatów i poziom pewności do decyzji operatora.
@@ -3205,4 +3205,24 @@ Podetap **6E.2 — neutralny adapter** jest zakończony.
 - [x] test `testy/etap_6e_3.test.js` wraz z pełną regresją przechodzi **110/110 zestawów testów**.
 
 Cały punkt **6E — wybór dostawcy i wymienna warstwa usług mapowych** jest zakończony.
-Następny niezakończony podetap: **6F.1 — wyszukiwanie lokalizacji**.
+Następny niezakończony podetap: **6F.2 — wiele wyników**.
+
+
+## Wynik 6F.1 — wyszukiwanie lokalizacji
+
+- [x] geokodowanie jest uruchamiane wyłącznie dla adresu o jakości `pelna` lub
+  `niepelna`; opis zgodnościowy, adres niewystarczający i brak adresu nie są
+  wysyłane do internetu;
+- [x] przed geokodowaniem brama sprawdza bieżącą potwierdzoną lokalizację,
+  zapisaną podpowiedź automatyczną, dokładny cache i lokalne podpowiedzi z
+  zapisanymi współrzędnymi;
+- [x] pojedynczy wynik mapy trafia wyłącznie do `daneAutomatyczne` ze źródłem
+  `mapa` i nie zmienia `daneRobocze` bez decyzji operatora;
+- [x] brak wyniku zapisuje automatyczny status `nieznaleziona`, a wiele wyników
+  status `niejednoznaczna`; żaden kandydat nie jest wybierany po cichu;
+- [x] neutralne błędy adaptera są przekazywane bez nadpisania lokalizacji;
+- [x] test `testy/etap_6f_1.test.js` wraz z pełną regresją przechodzi
+  **111/111 zestawów testów**.
+
+Punkt **6F — geokodowanie i potwierdzenie lokalizacji budowy** pozostaje
+otwarty. Następny niezakończony podetap: **6F.2 — wiele wyników**.

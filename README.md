@@ -79,6 +79,11 @@ przygotowane na jawny wynik późniejszego geokodowania i nie są zgadywane
 lokalnie. Brak lub słaba jakość adresu nie blokują zapamiętanych ani ręcznie
 wpisanych czasów. Plik bez kolumn adresowych nadal działa tak jak wcześniej.
 
+Dla adresu pełnego lub niepełnego aplikacja może uruchomić geokodowanie dopiero
+po sprawdzeniu danych lokalnych. Pojedynczy wynik jest zapisywany w **warstwie automatycznej**
+razem ze źródłem `mapa` i współrzędnymi, ale nie staje się od razu lokalizacją roboczą —
+**wymaga potwierdzenia**. Przy wielu wynikach program nie wybiera pierwszego kandydata po cichu.
+
 Pamięć tras rozpoznaje lokalizację niezależnie od samej nazwy budowy. Dla danego
 węzła najpierw używa współrzędnych, a gdy ich nie ma — znormalizowanego
 rzeczywistego adresu. Dzięki temu dwie różnie nazwane pozycje pod tym samym
