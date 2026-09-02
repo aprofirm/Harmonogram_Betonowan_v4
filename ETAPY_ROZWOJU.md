@@ -51,7 +51,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
 - [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
-- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A zakończone; następny podetap 6B.1**
+- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A oraz 6B.1 zakończone; następny podetap 6B.2**
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
@@ -831,7 +831,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
     nadal działają, ręczne czasy nie znikają, a silnik korzysta wyłącznie z
     wartości roboczych i nie zna konkretnej usługi mapowej.
 - [ ] **6B — adres z KDX/CSV i lokalna ocena jakości.**
-  - [ ] **6B.1 — rozpoznawanie kolumn adresowych:** obsłużyć warianty nazw i
+  - [x] **6B.1 — rozpoznawanie kolumn adresowych:** obsłużyć warianty nazw i
     osobne części adresu bez wymagania jednego sztywnego układu eksportu.
   - [ ] **6B.2 — normalizacja bez utraty źródła:** zachować tekst oryginalny,
     utworzyć powtarzalny adres do wyszukania i nie łączyć podobnych budów tylko
@@ -908,7 +908,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
     niepełny/niejednoznaczny, wybór lokalizacji, trasę drogową, ręczną korektę,
     przejazd pompy, ponowne użycie cache i pracę po odłączeniu internetu.
 
-Następny niezakończony podetap: **6B.1 — rozpoznawanie kolumn adresowych**.
+Następny niezakończony podetap: **6B.2 — normalizacja bez utraty źródła**.
 
 ## Zakres
 
@@ -2988,3 +2988,25 @@ pozostają otwarte. Następny podetap: **6A.3 — migracja i niezmienniki**.
 
 Podetap **6A.3** oraz cały punkt **6A** są zakończone. **Etap 6** pozostaje
 otwarty. Następny podetap: **6B.1 — rozpoznawanie kolumn adresowych**.
+
+## Zamknięcie 6B.1 — rozpoznawanie kolumn adresowych — 2026-09-02
+
+- [x] importer rozpoznaje pojedynczą kolumnę pełnego adresu pod typowymi
+  wariantami nazw, m.in. `Adres budowy`, `Adres dostawy`, `Miejsce dostawy` i
+  `Lokalizacja`;
+- [x] importer rozpoznaje osobne części: ulicę, numer budynku, kod pocztowy,
+  miejscowość, gminę, powiat, województwo i kraj;
+- [x] polskie znaki, spacje, kropki i różna kolejność kolumn nie wpływają na
+  dopasowanie nagłówków;
+- [x] nazwa budowy pozostaje oddzielona od danych adresowych, a oryginalne
+  wartości kolumn nadal są zachowane w danych źródłowych importu;
+- [x] dane adresowe z importu trafiają do źródłowej i roboczej warstwy modelu
+  lokalizacji bez wykonywania normalizacji, oceny jakości ani zapytania do map;
+- [x] dotychczasowy plik bez kolumn adresowych nadal działa i używa nazwy budowy
+  jako zgodnościowego opisu lokalizacji;
+- [x] test `testy/etap_6b_1.test.js` chroni pełny adres, osobne części, aliasy,
+  dowolną kolejność i zgodność starszego CSV;
+- [x] pełna lokalna regresja przechodzi **99/99 zestawów testów**.
+
+Podetap **6B.1** jest zakończony. Punkt nadrzędny **6B** oraz cały **Etap 6**
+pozostają otwarte. Następny podetap: **6B.2 — normalizacja bez utraty źródła**.

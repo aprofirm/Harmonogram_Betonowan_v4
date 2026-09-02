@@ -165,4 +165,5 @@ gotowe płaskie wartości robocze.
 - zapis i odtworzenie zachowują trzy modele;
 - silnik nie zna modeli lokalizacji, sieci ani konkretnego dostawcy map.
 
-Następny podetap: **6B.1 — rozpoznawanie kolumn adresowych**.
+Po zakończeniu 6B.1 następny podetap projektu to **6B.2 — normalizacja bez
+utraty źródła**.

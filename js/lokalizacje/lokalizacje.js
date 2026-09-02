@@ -163,6 +163,43 @@
     }
   }
 
+  function pobierzAdresZrodlowyBudowy(budowa) {
+    const adres = budowa && budowa.adresZrodlowy;
+
+    if (adres && typeof adres === "object" && !Array.isArray(adres)) {
+      const tekst = String(adres.tekst || "").trim() || null;
+      const czesciWejsciowe = adres.czesci &&
+        typeof adres.czesci === "object" && !Array.isArray(adres.czesci)
+        ? adres.czesci
+        : {};
+      const czesci = Object.keys(czesciWejsciowe).reduce(function (
+        wynik,
+        nazwaCzesci
+      ) {
+        const wartosc = String(czesciWejsciowe[nazwaCzesci] || "").trim();
+        wynik[nazwaCzesci] = wartosc || null;
+        return wynik;
+      }, {});
+      const czyMaCzescAdresu = Object.keys(czesci).some(function (nazwaCzesci) {
+        return Boolean(czesci[nazwaCzesci]);
+      });
+
+      if (tekst || czyMaCzescAdresu) {
+        return { tekst: tekst, czesci: czesci };
+      }
+    }
+
+    const nazwaBudowy = String(budowa.budowa || "").trim() || null;
+
+    return {
+      tekst: nazwaBudowy,
+      czesci: {
+        firma: String(budowa.firma || "").trim() || null,
+        nazwaBudowy: nazwaBudowy
+      }
+    };
+  }
+
   function utworzLubZaktualizujModelLokalizacjiBudowy(budowa) {
     const istniejacyModel = sprobujZnormalizowacModelLokalizacji(
       budowa.modelLokalizacji
@@ -173,18 +210,16 @@
       return false;
     }
 
-    const tekstAdresu = String(budowa.budowa || "").trim() || null;
+    const adresZrodlowy = pobierzAdresZrodlowyBudowy(budowa);
+    const czyMaAdres = Boolean(adresZrodlowy.tekst) ||
+      Object.keys(adresZrodlowy.czesci).some(function (nazwaCzesci) {
+        return Boolean(adresZrodlowy.czesci[nazwaCzesci]);
+      });
     const zrodlo = pobierzZrodloModelu(budowa.zrodlo);
     const warstwaZrodlowa = {
-      adres: {
-        tekst: tekstAdresu,
-        czesci: {
-          firma: String(budowa.firma || "").trim() || null,
-          nazwaBudowy: tekstAdresu
-        }
-      },
-      statusJakosci: tekstAdresu ? "nieoceniona" : "brak",
-      zrodlo: tekstAdresu ? zrodlo : "brak"
+      adres: adresZrodlowy,
+      statusJakosci: czyMaAdres ? "nieoceniona" : "brak",
+      zrodlo: czyMaAdres ? zrodlo : "brak"
     };
 
     budowa.modelLokalizacji = aplikacja.lokalizacje.utworzModelLokalizacji({

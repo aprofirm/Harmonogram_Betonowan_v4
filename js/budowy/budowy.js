@@ -386,6 +386,7 @@
       wymaganyWysiegPompyMetry: null,
       maksymalneOpoznienieStartuBudowyMinuty: null,
       zrodlo: "csv",
+      adresZrodlowy: daneBudowy.adresZrodlowy || null,
       daneZrodlowe: daneBudowy.daneZrodlowe
     }, utworzPoczatkoweCzasyRobocze());
   }
@@ -441,6 +442,7 @@
       wymaganyWysiegPompyMetry: null,
       maksymalneOpoznienieStartuBudowyMinuty: null,
       zrodlo: "reczna",
+      adresZrodlowy: null,
       daneZrodlowe: null
     }, utworzPoczatkoweCzasyRobocze());
   }

@@ -55,6 +55,17 @@ Importer wymaga informacji odpowiadających kolumnom:
 
 Opcjonalne kolumny `CzasDojazdu` i `CzasPowrotu` podają czasy w minutach i są wczytywane bezpośrednio do roboczych czasów budowy. Jeśli tych kolumn nie ma, importer zachowuje dotychczasowe działanie.
 
+Adres budowy jest opcjonalny. Importer rozpoznaje jedną kolumnę, np. `Adres`,
+`Adres budowy`, `Adres dostawy`, `Miejsce dostawy` lub `Lokalizacja`, a także
+adres rozbity na części: `Ulica`, `Numer budynku`, `Kod pocztowy`,
+`Miejscowość`, `Gmina`, `Powiat`, `Województwo` i `Kraj`. Obsługiwane są też
+typowe warianty, m.in. `Nazwa ulicy`, `Nr domu`, `Miasto`, `Państwo`, `Region`,
+`Postal code` i `City`. Kolejność tych kolumn jest dowolna.
+
+`Budowa` pozostaje nazwą obiektu, a dane adresowe są przechowywane osobno. Na
+tym etapie aplikacja zachowuje wartości źródłowe bez automatycznego poprawiania
+lub oceniania adresu. Plik bez kolumn adresowych nadal działa tak jak wcześniej.
+
 Opcjonalna kolumna `PrzejazdyPompy` może dostarczyć początkowe czasy przejazdów. Wartość ma format `ID=MINUTY|ID=MINUTY`, np. `B-002=30|B-003=20`. Nie jest jednak wymagana do normalnej obsługi: po wczytaniu planu operator widzi osobny panel **Przejazdy między budowami**, w którym każda potrzebna relacja ma jawne pole czasu. Wartość z CSV można ręcznie nadpisać i później przywrócić przyciskiem `↺`. Jeżeli silnik dostanie w przyszłości jawny provider przejazdów, np. routing na podstawie adresów, ma on pierwszeństwo przed danymi zapisanymi przy budowie.
 
 > GitHub Pages: skrypty zmieniane dla przejazdów pomp mają parametr wersji w `index.html`, aby po publikacji przeglądarka nie uruchamiała starszej kopii JavaScript z cache. Nie zmienia to działania wersji offline `file://`.
@@ -538,8 +549,9 @@ zakończony. Punkty **5A–5J** i cały Etap 5 również są zakończone; pełny
 kontrolowanym przeliczeniu. Wersja webowa jest publikowana z `main` pod adresem
 `https://aprofirm.github.io/Harmonogram_Betonowan_v4/`.
 
-Etap 6 ma kompletny plan **6A–6J**. Podetapy **6A.1–6A.3** i cały punkt **6A**
-są zakończone, a następny krok to **6B.1 — rozpoznawanie kolumn adresowych**.
+Etap 6 ma kompletny plan **6A–6J**. Podetapy **6A.1–6A.3**, cały punkt **6A**
+oraz **6B.1** są zakończone, a następny krok to **6B.2 — normalizacja bez
+utraty źródła**.
 
 
 ## Status końcowej regresji Etapu 5
@@ -588,10 +600,12 @@ pomocą, a nie warunkiem ułożenia harmonogramu. Podetap **6A.1** ustalił w
 `aplikacja.lokalizacje`. Podetap **6A.2** dodał model wersji `1`, który rozdziela
 dane źródłowe, automatyczne i robocze lokalizacji oraz trasy. Podetap **6A.3**
 podłączył starsze plany i dotychczasową książkę tras do tego modelu, zachowując
-pierwszeństwo ręcznych czasów i izolację silnika. Następny podetap to **6B.1 —
-rozpoznawanie kolumn adresowych**.
+pierwszeństwo ręcznych czasów i izolację silnika. Podetap **6B.1** dodał
+rozpoznawanie pełnego adresu i jego osobnych części w zmiennym układzie KDX/CSV.
+Następny podetap to **6B.2 — normalizacja bez utraty źródła**.
 
 Testy `testy/etap_6_plan.test.js`, `testy/etap_6a_1.test.js`,
-`testy/etap_6a_2.test.js` i `testy/etap_6a_3.test.js` chronią plan, granice
-modułów, wersjonowany model, migrację oraz niezmienniki źródeł. Pełna lokalna
-regresja przechodzi **98/98 zestawów testów**.
+`testy/etap_6a_2.test.js`, `testy/etap_6a_3.test.js` i
+`testy/etap_6b_1.test.js` chronią plan, granice modułów, wersjonowany model,
+migrację, niezmienniki źródeł i import danych adresowych. Pełna lokalna regresja
+przechodzi **99/99 zestawów testów**.

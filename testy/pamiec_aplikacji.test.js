@@ -236,8 +236,8 @@ function dodajBudoweReczna(srodowisko) {
 
 async function wczytajCsv(srodowisko) {
   const csv = [
-    "ID_Budowy;Firma;Budowa;StartPlanowany;Beton;Ilosc_m3",
-    "B-001;Firma CSV;Budowa CSV;08:00;C25/30;16"
+    "ID_Budowy;Firma;Budowa;StartPlanowany;Beton;Ilosc_m3;Adres budowy",
+    "B-001;Firma CSV;Budowa CSV;08:00;C25/30;16;Testowa 1, Miasto Testowe"
   ].join("\n");
   const bufor = new TextEncoder().encode(csv);
   const polePliku = srodowisko.dokument.elementy["pole-pliku-csv"];
@@ -719,6 +719,10 @@ async function uruchomTest() {
   assert.doesNotMatch(tekstDanychPlanu, /"daneZrodlowe":\{"ID_Budowy"/);
   assert.equal(danePlanu.wersjaStanuAplikacji, 4);
   assert.equal(danePlanu.budowyZImportu[0].modelLokalizacji.wersjaKontraktu, 1);
+  assert.equal(
+    danePlanu.budowyZImportu[0].modelLokalizacji.daneZrodlowe.adres.tekst,
+    "Testowa 1, Miasto Testowe"
+  );
   assert.equal(danePlanu.budowyZImportu[0].modelTrasyDojazdu.wersjaKontraktu, 1);
 
   const poleDojazdu = znajdzPierwszePoleDojazdu(pierwszaStrona);

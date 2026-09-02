@@ -51,8 +51,57 @@
       "przejazdypompy",
       "czasyprzejazdowpompy",
       "trasypompy"
-    ]
+    ],
+    adres: [
+      "adresbudowy",
+      "adresdostawy",
+      "adresobiektu",
+      "miejscedostawy",
+      "ulicainumer",
+      "ulicainr",
+      "adres",
+      "lokalizacja"
+    ],
+    ulica: ["ulicabudowy", "adresulica", "nazwaulicy", "ulica"],
+    numerBudynku: [
+      "numerbudynku",
+      "nrbudynku",
+      "numerdomu",
+      "nrdomu",
+      "numerposesji",
+      "nrposesji"
+    ],
+    kodPocztowy: [
+      "kodpocztowybudowy",
+      "kodpocztowy",
+      "postalcode",
+      "zipcode"
+    ],
+    miejscowosc: [
+      "miejscowoscbudowy",
+      "miastobudowy",
+      "miejscowosc",
+      "miasto",
+      "poczta",
+      "city"
+    ],
+    gmina: ["gmina"],
+    powiat: ["powiat"],
+    wojewodztwo: ["wojewodztwo", "region"],
+    kraj: ["kraj", "panstwo", "country"]
   });
+
+  const POLA_ADRESU = Object.freeze([
+    "adres",
+    "ulica",
+    "numerBudynku",
+    "kodPocztowy",
+    "miejscowosc",
+    "gmina",
+    "powiat",
+    "wojewodztwo",
+    "kraj"
+  ]);
 
   const wymaganeKolumny = Object.freeze([
     { pole: "firma", nazwa: "Firma" },
@@ -214,7 +263,7 @@
       "czasDojazduMinuty",
       "czasPowrotuMinuty",
       "przejazdyPompy"
-    ].forEach(function (nazwaPola) {
+    ].concat(POLA_ADRESU).forEach(function (nazwaPola) {
       indeksyKolumn[nazwaPola] = znajdzIndeksKolumny(
         naglowkiZnormalizowane,
         nazwaPola
@@ -226,6 +275,36 @@
 
   function pobierzWartoscOpcjonalna(wiersz, indeksKolumny) {
     return indeksKolumny === -1 ? "" : wiersz[indeksKolumny] || "";
+  }
+
+  function pobierzTekstAdresu(wiersz, indeksKolumny) {
+    return String(pobierzWartoscOpcjonalna(wiersz, indeksKolumny)).trim();
+  }
+
+  function utworzAdresZrodlowy(wiersz, indeksyKolumn) {
+    const tekstAdresu = pobierzTekstAdresu(wiersz, indeksyKolumn.adres);
+    const czesci = {
+      ulica: pobierzTekstAdresu(wiersz, indeksyKolumn.ulica),
+      numerBudynku: pobierzTekstAdresu(wiersz, indeksyKolumn.numerBudynku),
+      kodPocztowy: pobierzTekstAdresu(wiersz, indeksyKolumn.kodPocztowy),
+      miejscowosc: pobierzTekstAdresu(wiersz, indeksyKolumn.miejscowosc),
+      gmina: pobierzTekstAdresu(wiersz, indeksyKolumn.gmina),
+      powiat: pobierzTekstAdresu(wiersz, indeksyKolumn.powiat),
+      wojewodztwo: pobierzTekstAdresu(wiersz, indeksyKolumn.wojewodztwo),
+      kraj: pobierzTekstAdresu(wiersz, indeksyKolumn.kraj)
+    };
+    const czyMaCzescAdresu = Object.keys(czesci).some(function (nazwaCzesci) {
+      return Boolean(czesci[nazwaCzesci]);
+    });
+
+    if (!tekstAdresu && !czyMaCzescAdresu) {
+      return null;
+    }
+
+    return {
+      tekst: tekstAdresu || null,
+      czesci: czesci
+    };
   }
 
   function utworzDaneZrodlowe(naglowki, wiersz) {
@@ -453,6 +532,7 @@
             wiersz,
             indeksyKolumn.rodzajRozladunku
           ),
+          adresZrodlowy: utworzAdresZrodlowy(wiersz, indeksyKolumn),
           daneZrodlowe: daneZrodlowe
         },
         numerWiersza

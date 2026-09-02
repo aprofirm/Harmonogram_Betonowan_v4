@@ -2,9 +2,9 @@
 
 ## Status
 
-Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetapy **6A.1–6A.3**
-i cały punkt **6A** są zakończone. Następny podetap to **6B.1 — rozpoznawanie
-kolumn adresowych**.
+Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetapy **6A.1–6A.3**,
+cały punkt **6A** oraz **6B.1** są zakończone. Następny podetap to **6B.2 —
+normalizacja bez utraty źródła**.
 
 ## Zasada nadrzędna
 
@@ -48,7 +48,8 @@ Test `testy/etap_6a_1.test.js` sprawdza, że:
 - `pobierzLubUstalTrase` pozostaje istniejącym wejściem do wspólnego przepływu;
 - harmonogram nie używa `fetch`, dostawcy map ani pamięci przeglądarki;
 - przejazdy pomp nadal przyjmują kierunkowe `czasPrzejazduMinuty` i źródło;
-- 6A oraz Etap 6 pozostają otwarte, a następnym podetapem jest 6A.2.
+- test zachowuje historyczne kryteria zamknięcia 6A.1 niezależnie od dalszego
+  postępu Etapu 6.
 
 ### 6A.2 — wersjonowany model
 
@@ -77,6 +78,21 @@ Test `testy/etap_6a_3.test.js` sprawdza:
 - przejście edycji z tabeli przez bramę `aplikacja.lokalizacje`;
 - zapis modeli w planie aplikacji wersji `4` i migrację starszego zapisu;
 - dalszą izolację silnika od modeli lokalizacji, pamięci, sieci i dostawcy map.
+
+### 6B.1 — rozpoznawanie kolumn adresowych
+
+Test `testy/etap_6b_1.test.js` sprawdza:
+
+- pełny adres w pojedynczej kolumnie;
+- adres rozbity na ulicę, numer budynku, kod pocztowy, miejscowość, gminę,
+  powiat, województwo i kraj;
+- polskie i angielskie warianty nazw, polskie znaki oraz dowolną kolejność
+  kolumn;
+- jednoczesne zachowanie pełnego tekstu i osobnych części adresu;
+- rozdzielenie nazwy budowy od danych adresowych;
+- przekazanie rozpoznanych wartości do modelu lokalizacji bez przedwczesnej
+  normalizacji lub oceny jakości;
+- zgodność pliku bez kolumn adresowych z dotychczasowym importem.
 
 ## Końcowy test operatora 6J.3
 

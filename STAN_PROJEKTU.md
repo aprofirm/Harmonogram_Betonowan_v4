@@ -7,18 +7,20 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6A.3 — migracja i niezmienniki**.
+- Ostatni zakończony podetap: **6B.1 — rozpoznawanie kolumn adresowych**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- **Etap 6** jest rozpoczęty. Podetapy **6A.1–6A.3** i cały punkt **6A** są
-  zakończone; cały Etap 6 pozostaje otwarty.
-- Pełna lokalna regresja po 6A.3 przechodzi **98/98 zestawów testów**.
+- **Etap 6** jest rozpoczęty. Podetapy **6A.1–6A.3**, cały punkt **6A** oraz
+  podetap **6B.1** są zakończone; punkt 6B i cały Etap 6 pozostają otwarte.
+- Pełna lokalna regresja po 6B.1 przechodzi **99/99 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
   automatyczne i robocze lokalizacji oraz kierunkowej trasy.
 - Starsze plany i książka tras `v1` są podłączane do nowego modelu bez utraty
   ręcznych czasów. Zapis planu aplikacji ma wersję `4` i przechowuje modele.
+- Importer rozpoznaje pełny adres albo osobne części adresu w zmiennym układzie
+  KDX/CSV, zachowując nazwę budowy jako oddzielną informację.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -56,10 +58,10 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6B.1 — rozpoznawanie kolumn adresowych**. Obsłużyć warianty nazw
-kolumn adresu w KDX/CSV oraz osobne części adresu bez wymagania jednego
-sztywnego układu eksportu. Nie podłączać jeszcze konkretnej usługi mapowej — jej
-porównanie i wybór należą do **6E.1**.
+Rozpocząć **6B.2 — normalizacja bez utraty źródła**. Zachować oryginalne dane,
+zbudować powtarzalny adres do późniejszego wyszukania i nie utożsamiać podobnych
+budów wyłącznie po swobodnej nazwie. Nie podłączać jeszcze konkretnej usługi
+mapowej — jej porównanie i wybór należą do **6E.1**.
 
 ## Ważna zasada wznowienia
 

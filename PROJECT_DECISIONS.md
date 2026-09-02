@@ -2341,3 +2341,25 @@ wartość automatyczna ani późniejsze wywołanie mapy. Nowa ręczna edycja prz
 przez bramę lokalizacji, zmienia tylko warstwę roboczą i zachowuje wcześniejszą
 warstwę automatyczną. Silnik harmonogramu nadal nie zna modeli lokalizacji,
 pamięci przeglądarki, sieci ani dostawcy map.
+
+---
+
+## 123. Importer rozdziela nazwę budowy od adresu
+
+Od 6B.1 pole `Budowa` nadal opisuje nazwę lub oznaczenie budowy i nie jest
+automatycznie uznawane za dokładny adres, jeżeli CSV/KDX zawiera osobne dane
+adresowe. Importer rozpoznaje zarówno jedną kolumnę pełnego adresu, jak i
+oddzielne części: ulicę, numer budynku, kod pocztowy, miejscowość, gminę, powiat,
+województwo i kraj.
+
+Nagłówki są dopasowywane po znormalizowanych aliasach, niezależnie od polskich
+znaków, wielkości liter, odstępów, interpunkcji i kolejności kolumn. Nie używamy
+jednak niejednoznacznych aliasów takich jak samo `Nr` albo samo `Kod`, ponieważ
+w eksporcie KDX mogłyby oznaczać materiał, zamówienie lub inny obiekt.
+
+Rozpoznane wartości są zachowywane jako `adresZrodlowy` i zasilają warstwę
+źródłową modelu lokalizacji. 6B.1 nie składa jeszcze części w adres do
+wyszukania, nie poprawia pisowni i nie przyznaje statusu jakości — te reguły
+należą odpowiednio do 6B.2 i 6B.3. Plik bez kolumn adresowych zachowuje
+dotychczasowe działanie i może nadal korzystać z nazwy budowy jako opisu
+zgodnościowego.

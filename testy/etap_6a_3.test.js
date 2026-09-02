@@ -225,9 +225,7 @@ function sprawdzGraniceIPamiecPlanu() {
   assert.doesNotMatch(harmonogram, /fetch\s*\(|localStorage|Nominatim|OSRM|Google Maps/i);
   assert.match(etapy, /- \[x\] \*\*6A —/);
   assert.match(etapy, /- \[x\] \*\*6A\.3 —/);
-  assert.match(etapy, /Następny niezakończony podetap: \*\*6B\.1/);
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6A\.3/);
-  assert.match(stan, /\*\*98\/98 zestawów testów\*\*/);
+  assert.match(stan, /Starsze plany i książka tras `v1` są podłączane/);
 }
 
 async function uruchomTest() {
