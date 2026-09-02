@@ -1,0 +1,53 @@
+name: Jednorazowe wdrozenie 6B.2
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  wdrozenie:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Przygotuj Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Wprowadz zmiany 6B.2
+        run: python3 .github/patch_6b2.py
+
+      - name: Sprawdz skladnie JavaScript
+        run: find js -name '*.js' -type f -print0 | xargs -0 -n1 node --check
+
+      - name: Uruchom pelna regresje
+        shell: bash
+        run: |
+          set -euo pipefail
+          liczba=0
+          for plik in testy/*.test.js; do
+            echo "=== $plik ==="
+            node "$plik"
+            liczba=$((liczba + 1))
+          done
+          test "$liczba" -eq 100
+          echo "Pelna regresja: 100/100 zestawow testow."
+
+      - name: Zapisz sprawdzony pakiet 6B.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/jednorazowo_6b2.yml .github/patch_6b2.py
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "6B.2: normalizuj adres bez utraty zrodla"
+          git push origin HEAD:main
