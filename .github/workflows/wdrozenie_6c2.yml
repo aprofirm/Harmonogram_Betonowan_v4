@@ -1,0 +1,62 @@
+name: Kontrolowane wdrozenie 6C.2
+
+on:
+  push:
+    branches:
+      - work/6c2-ustawienie-pamiec-wezla
+
+permissions:
+  contents: write
+
+jobs:
+  wdrozenie:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Przygotuj Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Wprowadz zmiany 6C.2
+        run: python3 .github/patch_6c2.py
+
+      - name: Sprawdz skladnie
+        run: |
+          node --check js/pamiec/pamiec_wezla.js
+          node --check js/lokalizacje/lokalizacje.js
+          node --check js/interfejs/interfejs.js
+          node --check js/aplikacja.js
+          node --check testy/etap_6c_2.test.js
+
+      - name: Sprawdz liczbe zestawow testow
+        shell: bash
+        run: |
+          set -euo pipefail
+          LICZBA=$(find testy -maxdepth 1 -name '*.test.js' | wc -l | tr -d ' ')
+          echo "Zestawy testów: $LICZBA"
+          test "$LICZBA" -eq 103
+
+      - name: Uruchom pelna regresje
+        shell: bash
+        run: |
+          set -euo pipefail
+          for plik in testy/*.test.js; do
+            echo "=== $plik ==="
+            node "$plik"
+          done
+
+      - name: Zapisz sprawdzony pakiet 6C.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/patch_6c2.py .github/workflows/wdrozenie_6c2.yml
+          git config user.name "PawelP"
+          git config user.email "53014565+aprofirm@users.noreply.github.com"
+          git add -A
+          git commit -m "6C.2: zapisz ustawienia aktywnego węzła"
+          git push origin HEAD:work/6c2-ustawienie-pamiec-wezla
