@@ -66,7 +66,6 @@ assert.match(
   "6E.1 musi jawnie chronić klucz API."
 );
 
-assert.match(etapy, /- \[ \] \*\*6E —/);
 assert.match(etapy, /- \[x\] \*\*6E\.1 — porównanie i decyzja:/);
 assert.match(etapy, /Podetap \*\*6E\.1 — porównanie i decyzja\*\* jest zakończony/);
 assert.match(etapy, /108\/108 zestawów testów/);

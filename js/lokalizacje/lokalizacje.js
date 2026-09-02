@@ -874,6 +874,18 @@
     return Promise.resolve().then(function () {
       return funkcjaTrasyMapowej(zapytanieMapowe);
     }).then(function (trasaZMapy) {
+      if (trasaZMapy && trasaZMapy.status && trasaZMapy.status !== "ok") {
+        return {
+          status: trasaZMapy.status,
+          trasa: null,
+          czyWywolanoMape: true,
+          komunikat: trasaZMapy.komunikatOperatora ||
+            "Usługa mapowa nie zwróciła poprawnego wyniku.",
+          czyPonowicPozniej: Boolean(trasaZMapy.czyPonowicPozniej),
+          statusHttp: trasaZMapy.statusHttp || null
+        };
+      }
+
       if (!trasaZMapy ||
           !czyJestCzas(trasaZMapy.czasDojazduMinuty) ||
           !czyJestCzas(trasaZMapy.czasPowrotuMinuty)) {
@@ -904,14 +916,24 @@
         czyWywolanoMape: true,
         statusZapisu: wynikZapisu.status
       };
-    }).catch(function (bladMapy) {
+    }).catch(function () {
+      if (aplikacja.diagnostyka &&
+          typeof aplikacja.diagnostyka.zapiszZdarzenie === "function") {
+        aplikacja.diagnostyka.zapiszZdarzenie(
+          "ostrzezenie",
+          "usluga-mapowa-blad-uslugi",
+          "Usługa mapowa jest chwilowo niedostępna. Możesz użyć pamięci tras lub wpisać czas ręcznie.",
+          { status: "blad-uslugi", czyPonowicPozniej: true }
+        );
+      }
+
       return {
-        status: "blad-uslugi-mapowej",
+        status: "blad-uslugi",
         trasa: null,
         czyWywolanoMape: true,
-        komunikat: bladMapy && bladMapy.message
-          ? bladMapy.message
-          : "Nie udało się pobrać trasy z usługi mapowej."
+        komunikat: "Usługa mapowa jest chwilowo niedostępna. Możesz użyć pamięci tras lub wpisać czas ręcznie.",
+        czyPonowicPozniej: true,
+        statusHttp: null
       };
     });
   }
