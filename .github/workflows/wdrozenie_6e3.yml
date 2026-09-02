@@ -27,6 +27,9 @@ jobs:
       - name: Dopasuj skrypt wdrozenia
         run: python .github/scripts/6e3_fix.py
 
+      - name: Dopasuj test historyczny 6E.1
+        run: python .github/scripts/6e3_fix2.py
+
       - name: Wprowadz zmiany 6E.3
         run: python .github/scripts/6e3_patch.py
 
@@ -57,7 +60,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          rm -f .github/scripts/6e3_patch.py .github/scripts/6e3_fix.py .github/workflows/wdrozenie_6e3.yml
+          rm -f .github/scripts/6e3_patch.py .github/scripts/6e3_fix.py .github/scripts/6e3_fix2.py .github/workflows/wdrozenie_6e3.yml
           git config user.name "PawelP"
           git config user.email "53014565+aprofirm@users.noreply.github.com"
           git add -A
