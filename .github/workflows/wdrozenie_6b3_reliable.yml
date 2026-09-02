@@ -1,0 +1,57 @@
+name: Test wdrozenia 6B.3
+
+on:
+  push:
+    branches:
+      - work/6b3-statusy-adresu-v2
+
+permissions:
+  contents: write
+
+jobs:
+  test_i_zapis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Przygotuj Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Wprowadz 6B.3
+        run: python3 .github/patch_6b3_reliable.py
+
+      - name: Sprawdz skladnie
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check js/lokalizacje/model_lokalizacji_i_trasy.js
+          node --check testy/etap_6b_3.test.js
+          node --check testy/etap_6_plan.test.js
+
+      - name: Uruchom 101 zestawow testow
+        shell: bash
+        run: |
+          set -euo pipefail
+          LICZBA=$(find testy -maxdepth 1 -name '*.test.js' | wc -l | tr -d ' ')
+          echo "Zestawy testów: $LICZBA"
+          test "$LICZBA" -eq 101
+          for plik in testy/*.test.js; do
+            echo "=== $plik ==="
+            node "$plik"
+          done
+
+      - name: Zapisz sprawdzony pakiet
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/patch_6b3_reliable.py .github/workflows/wdrozenie_6b3_reliable.yml
+          git config user.name "PawelP"
+          git config user.email "53014565+aprofirm@users.noreply.github.com"
+          git add -A
+          git commit -m "6B.3: dodaj statusy jakości adresu"
+          git push origin HEAD:work/6b3-statusy-adresu-v2
