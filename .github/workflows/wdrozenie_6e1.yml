@@ -25,7 +25,11 @@ jobs:
           node-version: "20"
 
       - name: Wprowadz dokumentacje i status 6E.1
-        run: python3 .github/scripts/wdrozenie_6e1.py
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/popraw_wdrozenie_6e1.py
+          python3 .github/scripts/wdrozenie_6e1.py
 
       - name: Sprawdz skladnie JavaScript
         shell: bash
@@ -56,7 +60,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          rm -f .github/scripts/wdrozenie_6e1.py .github/workflows/wdrozenie_6e1.yml
+          rm -f .github/scripts/wdrozenie_6e1.py .github/scripts/popraw_wdrozenie_6e1.py .github/workflows/wdrozenie_6e1.yml
           git config user.name "PawelP"
           git config user.email "53014565+aprofirm@users.noreply.github.com"
           git add -A
