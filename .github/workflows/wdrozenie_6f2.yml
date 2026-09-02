@@ -30,6 +30,9 @@ jobs:
       - name: Wprowadz zmiany 6F.2
         run: python .github/scripts/6f2_patch.py
 
+      - name: Zachowaj historyczny kontrakt 6E.2
+        run: python .github/scripts/6f2_fix_6e2.py
+
       - name: Sprawdz skladnie JavaScript
         shell: bash
         run: |
@@ -57,7 +60,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          rm -f .github/scripts/6f2_patch.py .github/scripts/6f2_pre_fix.py .github/workflows/wdrozenie_6f2.yml
+          rm -f .github/scripts/6f2_patch.py .github/scripts/6f2_pre_fix.py .github/scripts/6f2_fix_6e2.py .github/workflows/wdrozenie_6f2.yml
           git config user.name "PawelP"
           git config user.email "53014565+aprofirm@users.noreply.github.com"
           git add -A
