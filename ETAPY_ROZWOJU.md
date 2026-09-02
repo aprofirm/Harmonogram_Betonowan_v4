@@ -51,7 +51,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
 - [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
-- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6D oraz 6E.1–6E.2 zakończone; następny podetap 6E.3**
+- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6E zakończone; następny podetap 6F.1**
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
@@ -856,7 +856,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
   - [x] **6D.3 — cache i lokalne podpowiedzi:** przed internetem sprawdzać pamięć,
     umożliwić wyszukanie znanej budowy offline i zastosować wpis dopiero po
     świadomym wyborze operatora.
-- [ ] **6E — wybór dostawcy i wymienna warstwa usług mapowych.**
+- [x] **6E — wybór dostawcy i wymienna warstwa usług mapowych.**
   - [x] **6E.1 — porównanie i decyzja:** ocenić kandydatów opartych o
     OpenStreetMap i inne rozwiązania pod kątem kosztów, limitów, licencji,
     CORS, działania z GitHub Pages i routingu ciężarowego; zapisać wybór przed
@@ -864,7 +864,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
   - [x] **6E.2 — neutralny adapter:** geokodowanie i routing udostępniają własny
     kontrakt projektu, a limity, timeout i sposób zapytania pozostają poza
     silnikiem harmonogramu.
-  - [ ] **6E.3 — bezpieczne błędy:** brak sieci, limit, timeout lub zły wynik
+  - [x] **6E.3 — bezpieczne błędy:** brak sieci, limit, timeout lub zły wynik
     usługi kończą się czytelnym statusem i diagnostyką, nigdy awarią aplikacji.
 - [ ] **6F — geokodowanie i potwierdzenie lokalizacji budowy.**
   - [ ] **6F.1 — wyszukiwanie lokalizacji:** wysyłać tylko wystarczający adres,
@@ -3190,5 +3190,19 @@ Następny niezakończony podetap: **6E.3 — bezpieczne błędy**.
 - [x] testy używają wyłącznie atrap HTTP i nie wykonują prawdziwych zapytań do zewnętrznego API;
 - [x] test `testy/etap_6e_2.test.js` wraz z pełną regresją przechodzi **109/109 zestawów testów**.
 
-Podetap **6E.2 — neutralny adapter** jest zakończony. Punkt **6E** pozostaje otwarty do zakończenia 6E.3.
-Następny niezakończony podetap: **6E.3 — bezpieczne błędy**.
+Podetap **6E.2 — neutralny adapter** jest zakończony.
+
+## Wynik 6E.3 — bezpieczne błędy usług mapowych — 2026-09-02
+
+- [x] neutralny adapter rozróżnia `brak-konfiguracji`, `brak-sieci`, `timeout`, `limit-uslugi`, `blad-zapytania-uslugi`, `blad-uslugi` i `niepoprawna-odpowiedz`;
+- [x] domyślny timeout zapytania wynosi 10 s i pozostaje ustawieniem warstwy adaptera, nie silnika harmonogramu;
+- [x] HTTP 429 ma osobny status limitu, HTTP 5xx status niedostępności usługi, a HTTP 4xx status odrzuconego zapytania;
+- [x] błąd transportu i timeout nie odrzucają obietnicy do silnika — kończą się neutralnym wynikiem z komunikatem dla operatora;
+- [x] wadliwy JSON albo niekompletne dane routingu nie są używane jako trasa i dostają status `niepoprawna-odpowiedz`;
+- [x] diagnostyka zapisuje tylko operację, neutralny status, kod HTTP i możliwość ponowienia; nie zapisuje adresu, URL-a, treści odpowiedzi ani klucza API;
+- [x] przy nieudanym dojeździe adapter nie wykonuje zbędnego drugiego zapytania o powrót;
+- [x] brama lokalizacji przekazuje neutralny status dalej i nadal sprawdza bieżące/ręczne czasy, dokładny cache i lokalne podpowiedzi przed internetem;
+- [x] test `testy/etap_6e_3.test.js` wraz z pełną regresją przechodzi **110/110 zestawów testów**.
+
+Cały punkt **6E — wybór dostawcy i wymienna warstwa usług mapowych** jest zakończony.
+Następny niezakończony podetap: **6F.1 — wyszukiwanie lokalizacji**.

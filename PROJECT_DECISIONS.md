@@ -2523,3 +2523,12 @@ Obowiązują następujące zasady:
 - Brama lokalizacji zachowuje zgodność ze starszym wstrzykiwaniem funkcji mapowej i dodatkowo rozpoznaje obiekt adaptera przez `pobierzTraseDlaBudowy`.
 - Cache, podpowiedzi lokalne i ręczne/bieżące czasy zachowują pierwszeństwo przed internetem.
 - Polityka timeoutów, limitów i błędów sieciowych zostaje domknięta osobno w 6E.3; 6E.2 zapewnia granicę i normalizację danych, nie zmieniając zasad awaryjnych aplikacji.
+
+## 132. Błędy usług mapowych są danymi domenowymi, nie awarią aplikacji
+
+- Warstwa mapowa rozróżnia stałe statusy projektu zamiast przekazywać wyjątki, tekst dostawcy albo surowe HTTP do silnika.
+- Timeout pierwszej integracji wynosi domyślnie 10 s i jest konfigurowalny wyłącznie na granicy adaptera.
+- HTTP 429 oznacza `limit-uslugi`, HTTP 5xx `blad-uslugi`, HTTP 4xx `blad-zapytania-uslugi`; brak sieci i timeout mają własne statusy.
+- Niepełna lub niepoprawna odpowiedź nigdy nie może zostać zapisana jako poprawna trasa.
+- Błąd internetowy nie może nadpisać ręcznych czasów ani wyniku z cache i nie może zatrzymać harmonogramu.
+- Diagnostyka zapisuje wyłącznie bezpieczne metadane: rodzaj operacji, neutralny status, opcjonalny kod HTTP i informację, czy warto ponowić. Nie zapisuje adresu, współrzędnych, endpointu, treści odpowiedzi ani klucza API.

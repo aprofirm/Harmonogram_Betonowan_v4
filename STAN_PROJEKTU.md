@@ -7,11 +7,11 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6E.2 — neutralny adapter**.
+- Ostatni zakończony podetap: **6E.3 — bezpieczne błędy**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- **Etap 6** jest rozpoczęty. Punkty **6A–6D** oraz podetapy **6E.1–6E.2** są zakończone; cały Etap 6 pozostaje otwarty.
-- Pełna regresja po 6E.2 przechodzi **109/109 zestawów testów**.
+- **Etap 6** jest rozpoczęty. Punkty **6A–6E** są zakończone; cały Etap 6 pozostaje otwarty.
+- Pełna regresja po 6E.3 przechodzi **110/110 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -52,6 +52,8 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - `js/lokalizacje/adapter_uslug_mapowych.js` wystawia własny kontrakt geokodowania i routingu, niezależny od formatu konkretnego API.
 - Implementacja openrouteservice mapuje adresy, współrzędne, dystans, czas i ograniczenia HGV wewnątrz adaptera; surowa odpowiedź dostawcy nie przechodzi do silnika.
 - Brama lokalizacji przyjmuje zarówno starszą funkcję mapową, jak i obiekt neutralnego adaptera, zachowując kolejność bieżące czasy → dokładny cache → lokalne podpowiedzi → internet.
+- Błędy zewnętrznej usługi są neutralizowane do stałych statusów projektu; timeout, brak sieci, limit, HTTP 4xx/5xx i wadliwa odpowiedź nie przerywają działania harmonogramu.
+- Diagnostyka błędu mapy nie zapisuje adresów, URL-i, surowych odpowiedzi ani klucza API.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -89,7 +91,7 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6E.3 — bezpieczne błędy**. Ujednolicić timeout, brak sieci, HTTP 429/5xx i niepoprawne odpowiedzi w neutralne statusy oraz czytelne komunikaty diagnostyczne. Błąd usługi nie może przerwać działania aplikacji ani naruszyć pierwszeństwa cache i ręcznych czasów.
+Rozpocząć **6F.1 — wyszukiwanie lokalizacji**. Podłączyć geokodowanie tylko dla adresów wystarczających do wyszukania, nadal sprawdzając cache przed internetem, i zapisywać neutralny wynik lokalizacji wraz z metadanymi źródła bez automatycznego zatwierdzania niejednoznacznych wyników.
 
 ## Ważna zasada wznowienia
 

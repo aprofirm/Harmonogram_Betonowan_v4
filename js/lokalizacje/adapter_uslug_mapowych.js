@@ -8,6 +8,161 @@
   const WERSJA_KONTRAKTU_ADAPTERA_MAP = 1;
   const DOMYSLNY_ADRES_API_ORS = "https://api.heigit.org";
   const PROFIL_CIEZAROWY_ORS = "driving-hgv";
+  const DOMYSLNY_TIMEOUT_MS = 10000;
+  const STATUSY_BLEDOW_USLUG_MAPOWYCH = Object.freeze([
+    "brak-konfiguracji",
+    "brak-sieci",
+    "timeout",
+    "limit-uslugi",
+    "blad-zapytania-uslugi",
+    "blad-uslugi",
+    "niepoprawna-odpowiedz"
+  ]);
+  const KOMUNIKATY_BLEDOW_USLUG_MAPOWYCH = Object.freeze({
+    "brak-konfiguracji":
+      "Usługa mapowa nie jest skonfigurowana. Możesz użyć pamięci tras lub wpisać czas ręcznie.",
+    "brak-sieci":
+      "Brak połączenia z usługą mapową. Możesz użyć pamięci tras lub wpisać czas ręcznie.",
+    "timeout":
+      "Usługa mapowa nie odpowiedziała na czas. Spróbuj ponownie później albo użyj pamięci tras lub ręcznych czasów.",
+    "limit-uslugi":
+      "Osiągnięto chwilowy limit usługi mapowej. Spróbuj ponownie później albo użyj pamięci tras lub ręcznych czasów.",
+    "blad-zapytania-uslugi":
+      "Usługa mapowa odrzuciła zapytanie. Sprawdź dane lokalizacji albo użyj pamięci tras lub ręcznych czasów.",
+    "blad-uslugi":
+      "Usługa mapowa jest chwilowo niedostępna. Spróbuj ponownie później albo użyj pamięci tras lub ręcznych czasów.",
+    "niepoprawna-odpowiedz":
+      "Usługa mapowa zwróciła niepełne dane. Wynik nie został użyty; możesz skorzystać z pamięci tras lub ręcznych czasów."
+  });
+
+  function utworzBladUslugiMapowej(status, komunikatTechniczny, statusHttp) {
+    const blad = new Error(komunikatTechniczny || "Błąd usługi mapowej.");
+    blad.kodUslugiMapowej = STATUSY_BLEDOW_USLUG_MAPOWYCH.includes(status)
+      ? status
+      : "blad-uslugi";
+    blad.statusHttp = Number.isFinite(Number(statusHttp))
+      ? Number(statusHttp)
+      : null;
+    return blad;
+  }
+
+  function rozpoznajBladUslugiMapowej(blad, statusDomyslny) {
+    if (blad && STATUSY_BLEDOW_USLUG_MAPOWYCH.includes(blad.kodUslugiMapowej)) {
+      return {
+        status: blad.kodUslugiMapowej,
+        statusHttp: Number.isFinite(Number(blad.statusHttp))
+          ? Number(blad.statusHttp)
+          : null
+      };
+    }
+
+    if (blad && blad.name === "AbortError") {
+      return { status: "timeout", statusHttp: null };
+    }
+
+    if (blad && blad.name === "TypeError") {
+      return { status: "brak-sieci", statusHttp: null };
+    }
+
+    return {
+      status: STATUSY_BLEDOW_USLUG_MAPOWYCH.includes(statusDomyslny)
+        ? statusDomyslny
+        : "blad-uslugi",
+      statusHttp: null
+    };
+  }
+
+  function czyWartoPonowicPozniej(status) {
+    return [
+      "brak-sieci",
+      "timeout",
+      "limit-uslugi",
+      "blad-uslugi",
+      "niepoprawna-odpowiedz"
+    ].includes(status);
+  }
+
+  function zapiszDiagnostykeBleduUslugi(status, operacja, statusHttp) {
+    if (!aplikacja.diagnostyka ||
+        typeof aplikacja.diagnostyka.zapiszZdarzenie !== "function") {
+      return;
+    }
+
+    aplikacja.diagnostyka.zapiszZdarzenie(
+      "ostrzezenie",
+      "usluga-mapowa-" + status,
+      KOMUNIKATY_BLEDOW_USLUG_MAPOWYCH[status] ||
+        "Usługa mapowa nie zwróciła poprawnego wyniku.",
+      {
+        operacja: operacja,
+        status: status,
+        statusHttp: Number.isFinite(Number(statusHttp))
+          ? Number(statusHttp)
+          : null,
+        czyPonowicPozniej: czyWartoPonowicPozniej(status)
+      }
+    );
+  }
+
+  function utworzNeutralnyWynikBledu(status, operacja, statusHttp) {
+    const wspolne = {
+      wersjaKontraktu: WERSJA_KONTRAKTU_ADAPTERA_MAP,
+      status: status,
+      komunikatOperatora: KOMUNIKATY_BLEDOW_USLUG_MAPOWYCH[status] ||
+        "Usługa mapowa nie zwróciła poprawnego wyniku.",
+      czyPonowicPozniej: czyWartoPonowicPozniej(status),
+      statusHttp: Number.isFinite(Number(statusHttp))
+        ? Number(statusHttp)
+        : null
+    };
+
+    if (operacja === "geokodowanie") {
+      return Object.assign(wspolne, { kandydaci: [] });
+    }
+
+    return Object.assign(wspolne, {
+      dystansDrogowyMetry: null,
+      czasPrzejazduMinuty: null,
+      zrodlo: "mapa"
+    });
+  }
+
+  function wykonajNeutralnie(operacja, wykonaj, normalizuj) {
+    return Promise.resolve()
+      .then(wykonaj)
+      .then(function (wynikDostawcy) {
+        try {
+          return normalizuj(wynikDostawcy);
+        } catch (bladFormatu) {
+          zapiszDiagnostykeBleduUslugi(
+            "niepoprawna-odpowiedz",
+            operacja,
+            null
+          );
+          return utworzNeutralnyWynikBledu(
+            "niepoprawna-odpowiedz",
+            operacja,
+            null
+          );
+        }
+      })
+      .catch(function (bladUslugi) {
+        const rozpoznany = rozpoznajBladUslugiMapowej(
+          bladUslugi,
+          "blad-uslugi"
+        );
+        zapiszDiagnostykeBleduUslugi(
+          rozpoznany.status,
+          operacja,
+          rozpoznany.statusHttp
+        );
+        return utworzNeutralnyWynikBledu(
+          rozpoznany.status,
+          operacja,
+          rozpoznany.statusHttp
+        );
+      });
+  }
 
   function czyObiekt(wartosc) {
     return Boolean(wartosc) &&
@@ -207,21 +362,21 @@
       geokoduj: function (zapytanie) {
         const dane = przygotujZapytanieGeokodowania(zapytanie);
 
-        return Promise.resolve()
-          .then(function () {
-            return dostawca.geokoduj(dane);
-          })
-          .then(normalizujWynikGeokodowania);
+        return wykonajNeutralnie(
+          "geokodowanie",
+          function () { return dostawca.geokoduj(dane); },
+          normalizujWynikGeokodowania
+        );
       },
 
       wyznaczTrase: function (zapytanie) {
         const dane = przygotujZapytanieTrasy(zapytanie);
 
-        return Promise.resolve()
-          .then(function () {
-            return dostawca.wyznaczTrase(dane);
-          })
-          .then(normalizujWynikTrasy);
+        return wykonajNeutralnie(
+          "routing",
+          function () { return dostawca.wyznaczTrase(dane); },
+          normalizujWynikTrasy
+        );
       }
     };
 
@@ -247,26 +402,49 @@
         ? dane.profilPojazdu
         : {};
 
-      return Promise.all([
-        adapter.wyznaczTrase({
-          punktPoczatkowy: { wspolrzedne: wspolrzedneWezla },
-          punktDocelowy: { wspolrzedne: wspolrzedneBudowy },
-          profilPojazdu: profilPojazdu
-        }),
-        adapter.wyznaczTrase({
+      return adapter.wyznaczTrase({
+        punktPoczatkowy: { wspolrzedne: wspolrzedneWezla },
+        punktDocelowy: { wspolrzedne: wspolrzedneBudowy },
+        profilPojazdu: profilPojazdu
+      }).then(function (dojazd) {
+        if (!dojazd || dojazd.status !== "ok") {
+          return {
+            status: dojazd && dojazd.status || "blad-uslugi",
+            czasDojazduMinuty: null,
+            czasPowrotuMinuty: null,
+            komunikatOperatora: dojazd && dojazd.komunikatOperatora ||
+              KOMUNIKATY_BLEDOW_USLUG_MAPOWYCH["blad-uslugi"],
+            czyPonowicPozniej: Boolean(dojazd && dojazd.czyPonowicPozniej),
+            statusHttp: dojazd && dojazd.statusHttp || null
+          };
+        }
+
+        return adapter.wyznaczTrase({
           punktPoczatkowy: { wspolrzedne: wspolrzedneBudowy },
           punktDocelowy: { wspolrzedne: wspolrzedneWezla },
           profilPojazdu: profilPojazdu
-        })
-      ]).then(function (wyniki) {
-        return {
-          status: "ok",
-          czasDojazduMinuty: wyniki[0].czasPrzejazduMinuty,
-          czasPowrotuMinuty: wyniki[1].czasPrzejazduMinuty,
-          dystansDojazduMetry: wyniki[0].dystansDrogowyMetry,
-          dystansPowrotuMetry: wyniki[1].dystansDrogowyMetry,
-          zrodlo: "mapa"
-        };
+        }).then(function (powrot) {
+          if (!powrot || powrot.status !== "ok") {
+            return {
+              status: powrot && powrot.status || "blad-uslugi",
+              czasDojazduMinuty: null,
+              czasPowrotuMinuty: null,
+              komunikatOperatora: powrot && powrot.komunikatOperatora ||
+                KOMUNIKATY_BLEDOW_USLUG_MAPOWYCH["blad-uslugi"],
+              czyPonowicPozniej: Boolean(powrot && powrot.czyPonowicPozniej),
+              statusHttp: powrot && powrot.statusHttp || null
+            };
+          }
+
+          return {
+            status: "ok",
+            czasDojazduMinuty: dojazd.czasPrzejazduMinuty,
+            czasPowrotuMinuty: powrot.czasPrzejazduMinuty,
+            dystansDojazduMetry: dojazd.dystansDrogowyMetry,
+            dystansPowrotuMetry: powrot.dystansDrogowyMetry,
+            zrodlo: "mapa"
+          };
+        });
       });
     };
 
@@ -287,20 +465,43 @@
 
   function pobierzJsonZOdpowiedzi(odpowiedz) {
     if (odpowiedz && odpowiedz.ok === false) {
-      throw new Error(
-        "Usługa mapowa zwróciła HTTP " + String(odpowiedz.status || "błąd") + "."
+      const statusHttp = Number(odpowiedz.status);
+      let status = "blad-uslugi";
+
+      if (statusHttp === 429) {
+        status = "limit-uslugi";
+      } else if (statusHttp >= 400 && statusHttp < 500) {
+        status = "blad-zapytania-uslugi";
+      } else if (statusHttp >= 500) {
+        status = "blad-uslugi";
+      }
+
+      throw utworzBladUslugiMapowej(
+        status,
+        "Usługa mapowa zwróciła błąd HTTP.",
+        statusHttp
       );
     }
 
     if (odpowiedz && typeof odpowiedz.json === "function") {
-      return odpowiedz.json();
+      return Promise.resolve()
+        .then(function () { return odpowiedz.json(); })
+        .catch(function () {
+          throw utworzBladUslugiMapowej(
+            "niepoprawna-odpowiedz",
+            "Usługa mapowa zwróciła niepoprawny JSON."
+          );
+        });
     }
 
     if (czyObiekt(odpowiedz)) {
       return odpowiedz;
     }
 
-    throw new Error("Usługa mapowa zwróciła niepoprawną odpowiedź.");
+    throw utworzBladUslugiMapowej(
+      "niepoprawna-odpowiedz",
+      "Usługa mapowa zwróciła niepoprawną odpowiedź."
+    );
   }
 
   function utworzNaglowki(kluczApi, dodatkoweNaglowki) {
@@ -338,14 +539,62 @@
       .replace(/\/+$/, "");
     const kluczApi = pobierzTekst(opcje.kluczApi);
     const wykonajZapytanie = pobierzFunkcjeZapytania(opcje);
+    const timeoutMs = opcje.timeoutMs === null || opcje.timeoutMs === undefined
+      ? DOMYSLNY_TIMEOUT_MS
+      : Math.floor(pobierzNieujemnaLiczbe(opcje.timeoutMs, "Timeout usługi mapowej"));
+    const ustawTimeout = typeof opcje.ustawTimeout === "function"
+      ? opcje.ustawTimeout
+      : (typeof zakresGlobalny.setTimeout === "function"
+        ? zakresGlobalny.setTimeout.bind(zakresGlobalny)
+        : null);
+    const anulujTimeout = typeof opcje.anulujTimeout === "function"
+      ? opcje.anulujTimeout
+      : (typeof zakresGlobalny.clearTimeout === "function"
+        ? zakresGlobalny.clearTimeout.bind(zakresGlobalny)
+        : null);
+
+    if (timeoutMs < 1) {
+      throw new Error("Timeout usługi mapowej musi być większy od 0 ms.");
+    }
+
+    function zamienBladTransportu(blad) {
+      if (blad && STATUSY_BLEDOW_USLUG_MAPOWYCH.includes(blad.kodUslugiMapowej)) {
+        throw blad;
+      }
+
+      if (blad && blad.name === "AbortError") {
+        throw utworzBladUslugiMapowej(
+          "timeout",
+          "Przekroczono czas oczekiwania na usługę mapową."
+        );
+      }
+
+      if (blad && blad.name === "TypeError") {
+        throw utworzBladUslugiMapowej(
+          "brak-sieci",
+          "Nie udało się połączyć z usługą mapową."
+        );
+      }
+
+      throw utworzBladUslugiMapowej(
+        "blad-uslugi",
+        "Nie udało się wykonać zapytania do usługi mapowej."
+      );
+    }
 
     function wykonaj(url, ustawienia) {
       if (!wykonajZapytanie) {
-        return Promise.reject(new Error("Brak funkcji wykonującej zapytania HTTP."));
+        return Promise.reject(utworzBladUslugiMapowej(
+          "brak-konfiguracji",
+          "Brak funkcji wykonującej zapytania HTTP."
+        ));
       }
 
       if (!kluczApi) {
-        return Promise.reject(new Error("Brak klucza API usługi mapowej."));
+        return Promise.reject(utworzBladUslugiMapowej(
+          "brak-konfiguracji",
+          "Brak klucza API usługi mapowej."
+        ));
       }
 
       const opcjeZapytania = Object.assign({}, ustawienia, {
@@ -354,9 +603,39 @@
           ustawienia && ustawienia.headers
         )
       });
-
-      return Promise.resolve(wykonajZapytanie(url, opcjeZapytania))
+      const zapytanie = Promise.resolve()
+        .then(function () {
+          return wykonajZapytanie(url, opcjeZapytania);
+        })
         .then(pobierzJsonZOdpowiedzi);
+
+      if (!ustawTimeout) {
+        return zapytanie.catch(zamienBladTransportu);
+      }
+
+      let identyfikatorTimeoutu = null;
+      const oczekiwanieNaTimeout = new Promise(function (_resolve, reject) {
+        identyfikatorTimeoutu = ustawTimeout(function () {
+          reject(utworzBladUslugiMapowej(
+            "timeout",
+            "Przekroczono czas oczekiwania na usługę mapową."
+          ));
+        }, timeoutMs);
+      });
+
+      return Promise.race([zapytanie, oczekiwanieNaTimeout])
+        .catch(zamienBladTransportu)
+        .then(function (wynik) {
+          if (identyfikatorTimeoutu !== null && anulujTimeout) {
+            anulujTimeout(identyfikatorTimeoutu);
+          }
+          return wynik;
+        }, function (blad) {
+          if (identyfikatorTimeoutu !== null && anulujTimeout) {
+            anulujTimeout(identyfikatorTimeoutu);
+          }
+          throw blad;
+        });
     }
 
     function geokoduj(zapytanie) {
@@ -480,6 +759,8 @@
 
   Object.assign(uslugiMapowe, {
     WERSJA_KONTRAKTU_ADAPTERA_MAP: WERSJA_KONTRAKTU_ADAPTERA_MAP,
+    STATUSY_BLEDOW_USLUG_MAPOWYCH: STATUSY_BLEDOW_USLUG_MAPOWYCH,
+    KOMUNIKATY_BLEDOW_USLUG_MAPOWYCH: KOMUNIKATY_BLEDOW_USLUG_MAPOWYCH,
     utworzNeutralnyAdapter: utworzNeutralnyAdapter,
     utworzAdapterOpenrouteservice: utworzAdapterOpenrouteservice
   });

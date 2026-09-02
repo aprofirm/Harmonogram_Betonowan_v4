@@ -3,9 +3,8 @@
 ## Status
 
 Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetapy **6A.1–6A.3**
-i **6B.1–6B.3** oraz całe punkty **6A–6D** są zakończone. Zakończony jest
-również podetapy **6E.1–6E.2**. Następny podetap to
-**6E.3 — bezpieczne błędy**.
+i **6B.1–6B.3** oraz całe punkty **6A–6E** są zakończone. Następny podetap to
+**6F.1 — wyszukiwanie lokalizacji**.
 
 ## Zasada nadrzędna
 
@@ -275,3 +274,17 @@ Test `testy/etap_6e_2.test.js` sprawdza:
 - brak nazwy konkretnego dostawcy w kodzie silnika harmonogramu;
 - użycie wyłącznie atrap HTTP w testach automatycznych;
 - aktualizację dokumentacji, 109/109 zestawów regresji i przejście do 6E.3.
+
+### 6E.3 — bezpieczne błędy
+
+Test `testy/etap_6e_3.test.js` sprawdza:
+
+- neutralne statusy dla braku konfiguracji, braku sieci, timeoutu, HTTP 429, HTTP 4xx/5xx i wadliwej odpowiedzi;
+- prosty komunikat operatora i znacznik `czyPonowicPozniej`;
+- brak odrzucenia obietnicy do silnika dla błędów zewnętrznej usługi;
+- brak drugiego zapytania o powrót, gdy pierwszy kierunek zakończył się błędem;
+- diagnostykę bez adresu, endpointu, odpowiedzi dostawcy i klucza API;
+- propagowanie neutralnego statusu przez `pobierzLubUstalTrase`;
+- zachowanie pierwszeństwa bieżących/ręcznych czasów, cache i lokalnych podpowiedzi przed internetem.
+
+Po 6E.3 cały punkt **6E** jest zakończony, a następny podetap to **6F.1**.

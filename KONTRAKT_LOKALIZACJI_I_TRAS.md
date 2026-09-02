@@ -342,3 +342,9 @@ Dodatkowa metoda `pobierzTraseDlaBudowy` jest mostem zgodnościowym do istnieją
 Implementacja openrouteservice pozostaje wewnątrz adaptera. Do silnika harmonogramu i modeli domenowych nie mogą przenikać `api.heigit.org`, profil `driving-hgv`, nagłówek autoryzacji, nazwy pól ograniczeń dostawcy ani surowa odpowiedź HTTP. Klucz API jest przekazywany adapterowi wyłącznie w runtime i nie może być zapisywany w danych projektu.
 
 6E.2 normalizuje poprawne wyniki i utrzymuje wymienność dostawcy. Ujednolicone statusy dla timeoutu, braku sieci, limitu, HTTP 5xx i wadliwej odpowiedzi należą do 6E.3.
+
+## Bezpieczne błędy adaptera — 6E.3
+
+Neutralny adapter nie przekazuje błędów dostawcy do silnika. Operacja geokodowania lub routingu może zakończyć się statusem `brak-konfiguracji`, `brak-sieci`, `timeout`, `limit-uslugi`, `blad-zapytania-uslugi`, `blad-uslugi` albo `niepoprawna-odpowiedz`. Wynik błędu zawiera prosty `komunikatOperatora`, `czyPonowicPozniej` i opcjonalny `statusHttp`, ale nie zawiera URL-a, klucza, surowej odpowiedzi ani danych wejściowych adresu.
+
+Domyślny timeout pierwszego adaptera wynosi 10 s. `pobierzLubUstalTrase()` nadal sprawdza ręczne/bieżące czasy i pamięć przed internetem; jeśli adapter zwróci błąd, brama przekazuje neutralny status i nie modyfikuje budowy.

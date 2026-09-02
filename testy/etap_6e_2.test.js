@@ -271,11 +271,7 @@ function sprawdzGraniceArchitektury() {
     "Silnik harmonogramu nie może znać szczegółów dostawcy map."
   );
   assert.match(etapy, /- \[x\] \*\*6E\.2 — neutralny adapter:/);
-  assert.match(etapy, /- \[ \] \*\*6E\.3 — bezpieczne błędy:/);
-  assert.match(etapy, /Następny niezakończony podetap: \*\*6E\.3/);
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6E\.2/);
-  assert.match(stan, /109\/109 zestawów testów/);
-  assert.match(stan, /Rozpocząć \*\*6E\.3 — bezpieczne błędy/);
+  assert.match(etapy, /Wynik 6E\.2[\s\S]*109\/109 zestawów testów/);
   assert.match(decyzje, /## 131\. Neutralny adapter jest granicą dostawcy map/);
   assert.match(kontrakt, /## Neutralny adapter usług mapowych — 6E\.2/);
   assert.match(plan, /### 6E\.2 — neutralny adapter/);
