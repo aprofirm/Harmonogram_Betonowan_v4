@@ -2449,3 +2449,25 @@ Zasady:
 - pamięć tras nie może już cicho podstawiać `wezel-domyslny`, gdy ID węzła nie zostało przekazane;
 - format książki tras pozostaje `v1` do czasu świadomej migracji w 6D.1;
 - interfejs nadal może pracować z jednym aktywnym węzłem — lista i przełączanie wielu węzłów nie są wymagane w 6C.3.
+
+## 128. Tożsamość pamięci tras preferuje współrzędne i adres
+
+Od **6D.2** nazwa firmy ani swobodna nazwa budowy nie są podstawowym
+identyfikatorem znanej lokalizacji.
+
+Zasady:
+
+- każdy wpis jest zawsze zakresowany stabilnym `idWezla`;
+- jeżeli lokalizacja ma współrzędne, dokładna znormalizowana para współrzędnych
+  jest najsilniejszą tożsamością wpisu;
+- bez współrzędnych używany jest znormalizowany rzeczywisty adres;
+- opis `Firma | Budowa` jest dozwolony wyłącznie jako zgodność dla starszych lub
+  niepełnych danych bez adresu i współrzędnych;
+- identyczna albo podobna nazwa nie może połączyć dwóch różnych adresów;
+- brak adresu nie pozwala automatycznie wybrać jednej z kilku lokalizacji o tym
+  samym dokładnym opisie;
+- normalizacja usuwa wyłącznie techniczne różnice zapisu; nie stosujemy fuzzy
+  matchingu ani tolerancji odległości punktów;
+- dotychczasowe ręczne czasy bez danych lokalizacyjnych nadal są zachowywane i
+  dostępne przez bezpieczną ścieżkę zgodnościową;
+- wybór konkretnej usługi mapowej pozostaje zakresem 6E.1.

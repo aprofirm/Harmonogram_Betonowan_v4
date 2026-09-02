@@ -79,6 +79,14 @@ przygotowane na jawny wynik późniejszego geokodowania i nie są zgadywane
 lokalnie. Brak lub słaba jakość adresu nie blokują zapamiętanych ani ręcznie
 wpisanych czasów. Plik bez kolumn adresowych nadal działa tak jak wcześniej.
 
+Pamięć tras rozpoznaje lokalizację niezależnie od samej nazwy budowy. Dla danego
+węzła najpierw używa współrzędnych, a gdy ich nie ma — znormalizowanego
+rzeczywistego adresu. Dzięki temu dwie różnie nazwane pozycje pod tym samym
+adresem mogą korzystać z jednego wpisu, a identyczna nazwa użyta przy dwóch
+różnych adresach nie miesza czasów. `Firma | Budowa` pozostaje tylko zgodnością
+dla starych danych bez adresu; przy kilku takich kandydatach program nie wybiera
+trasy automatycznie. Nie ma tu dopasowania rozmytego ani zgadywania lokalizacji.
+
 Opcjonalna kolumna `PrzejazdyPompy` może dostarczyć początkowe czasy przejazdów. Wartość ma format `ID=MINUTY|ID=MINUTY`, np. `B-002=30|B-003=20`. Nie jest jednak wymagana do normalnej obsługi: po wczytaniu planu operator widzi osobny panel **Przejazdy między budowami**, w którym każda potrzebna relacja ma jawne pole czasu. Wartość z CSV można ręcznie nadpisać i później przywrócić przyciskiem `↺`. Jeżeli silnik dostanie w przyszłości jawny provider przejazdów, np. routing na podstawie adresów, ma on pierwszeństwo przed danymi zapisanymi przy budowie.
 
 > GitHub Pages: skrypty zmieniane dla przejazdów pomp mają parametr wersji w `index.html`, aby po publikacji przeglądarka nie uruchamiała starszej kopii JavaScript z cache. Nie zmienia to działania wersji offline `file://`.

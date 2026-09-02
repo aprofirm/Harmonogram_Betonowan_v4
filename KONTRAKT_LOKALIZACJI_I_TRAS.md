@@ -1,6 +1,6 @@
 # Kontrakt lokalizacji i tras — granice modułów
 
-Status: **6A.1–6A.3 i 6B.1–6B.3 oraz całe punkty 6A–6B zakończone 2026-09-02**.
+Status: **6A–6C oraz 6D.1–6D.2 zakończone 2026-09-02; następny podetap 6D.3**.
 
 Ten dokument opisuje wynik inwentaryzacji 6A.1, model danych wersji `1`
 wdrożony w 6A.2 oraz migrację zgodnościową z 6A.3. Ustala miejsce, w którym
@@ -33,7 +33,7 @@ wersji `1`, a bezpieczne pierwszeństwo ręcznej warstwy pozostaje obowiązując
 | `js/budowy/budowy.js` | Przechowuje i waliduje roboczy dojazd, powrót oraz ich źródła. | Jest modelem wartości używanych przez plan; nie ustala pierwszeństwa źródeł i nie zna dostawcy map. |
 | `js/lokalizacje/model_lokalizacji_i_trasy.js` | Tworzy i waliduje kontrakt danych wersji `1`. | Rozdziela trzy warstwy danych bez wybierania dostawcy i bez wykonywania zapytań. |
 | `js/lokalizacje/lokalizacje.js` | Łączy budowę z książką tras i ma przepływ `pobierzLubUstalTrase`. | Jest jedyną bramą domenową roboczego wyniku trasy. |
-| `js/pamiec/pamiec_tras.js` | Zapisuje wersję `v1` lokalnej książki tras i rozpoznaje dokładny klucz. | Jest wyłącznie trwałą pamięcią przyjętych danych; nie mutuje modelu i nie wyznacza tras. |
+| `js/pamiec/pamiec_tras.js` | Zapisuje wersję `v2` lokalnej książki tras i rozpoznaje stabilny klucz zakresowany węzłem. | Jest wyłącznie trwałą pamięcią przyjętych danych; nie mutuje modelu i nie wyznacza tras. |
 | `js/pompy/przejazdy_pomp.js` oraz moduły edycji przejazdów | Zużywają kierunkowe `czasPrzejazduMinuty` i `zrodloCzasuPrzejazdu`. | Nie pytają map ani pamięci; otrzymują przygotowany roboczy wynik relacji budowa → budowa. |
 | `js/harmonogram/harmonogram.js` | Składa robocze budowy, kursy, pompy, gruszki i konflikty. | Otrzymuje gotowe wartości robocze; nie używa sieci, geokodowania ani `localStorage`. |
 | `js/aplikacja.js` i interfejs | Importują dane, zbierają decyzje operatora i uruchamiają przeliczenie. | Sterują przepływem i prezentacją; nie implementują reguł routingu ani pierwszeństwa źródeł. |
@@ -270,3 +270,31 @@ Format trwałej książki tras jest niezależnie wersjonowany od kontraktu domen
 `v2` może przechować adres i współrzędne lokalizacji, dystanse kierunkowe, oba czasy przejazdu, pierwotne źródła czasu, ogólne źródło danych, identyfikator dostawcy oraz daty utworzenia, aktualizacji i ostatniego użycia. Brak tych metadanych po migracji starego wpisu jest poprawnym stanem i nie unieważnia zachowanych ręcznych czasów.
 
 Migracja jest jednokierunkową kopią: gdy nie ma zapisu `v2`, poprawny `v1` zostaje przekształcony i zapisany pod nowym kluczem, a oryginalny `v1` nie jest kasowany. 6D.1 nie zmienia jeszcze tożsamości wpisu; stabilny klucz na podstawie adresu lub współrzędnych należy do 6D.2.
+
+## Stabilny klucz pamięci tras — 6D.2
+
+Format książki pozostaje `v2`, ale tożsamość wpisu nie jest już oparta wyłącznie
+na etykiecie `Firma | Budowa`. Klucz ma zawsze zakres `idWezla`, a część
+lokalizacyjna jest wybierana deterministycznie w kolejności:
+
+1. dokładna para współrzędnych po normalizacji liczbowej;
+2. znormalizowany rzeczywisty adres;
+3. dokładnie znormalizowany opis zgodnościowy — tylko gdy brakuje dwóch
+   silniejszych danych.
+
+Adres zawierający wyłącznie zgodnościowe części `firma`/`nazwaBudowy` nie jest
+udawany jako rzeczywisty adres. Nie stosujemy podobieństwa tekstowego, odległości
+współrzędnych ani innych progów fuzzy.
+
+Stare wywołanie `pobierzTrase(opis, idWezla)` pozostaje zgodne: może odnaleźć
+wpis przez dokładny opis tylko wtedy, gdy dla danego węzła istnieje najwyżej
+jedna taka lokalizacja. Jeżeli ten sam opis występuje przy kilku stabilnych
+adresach lub punktach, pamięć zwraca stan `niejednoznaczna-lokalizacja` zamiast
+wybierać wpis automatycznie.
+
+Istniejący zapis `v2` sprzed 6D.2 jest rozpoznawany przy pierwszym odczycie,
+przekluczowany według powyższej reguły i zapisany ponownie jako `v2`. Jeżeli
+kilka starych etykiet prowadzi do dokładnie tego samego stabilnego klucza,
+zostaje jeden, najnowszy wpis. Migracja `v1 → v2` z 6D.1 nadal działa, a wpisy
+bez adresu i współrzędnych zachowują opis zgodnościowy, więc wcześniejsze ręczne
+czasy nie znikają.

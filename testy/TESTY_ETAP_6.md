@@ -4,7 +4,8 @@
 
 Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetapy **6A.1–6A.3**
 i **6B.1–6B.3** oraz całe punkty **6A–6B** są zakończone. Zakończony jest
-również cały punkt **6C**. Następny podetap to **6D.1 — rozszerzenie formatu pamięci**.
+również cały punkt **6C** oraz podetapy **6D.1–6D.2**. Następny podetap to
+**6D.3 — cache i lokalne podpowiedzi**.
 
 ## Zasada nadrzędna
 
@@ -206,3 +207,22 @@ operatora.
 - brak nowych metadanych w starym wpisie nie blokuje ręcznych ani zapamiętanych czasów;
 - 6D.1 nie zmienia jeszcze reguły identyfikacji duplikatów — to zakres 6D.2;
 - test `testy/etap_6d_1.test.js` wraz z pełną regresją przechodzi **105/105 zestawów testów**.
+
+### 6D.2 — stabilny klucz i duplikaty
+
+Test `testy/etap_6d_2.test.js` sprawdza:
+
+- jeden wpis dla tego samego węzła i tego samego znormalizowanego adresu mimo
+  zmiany etykiety firmy lub budowy;
+- osobne wpisy dla identycznej nazwy przy różnych adresach;
+- pierwszeństwo dokładnych współrzędnych przed tekstem adresu;
+- osobny zakres tej samej lokalizacji dla różnych `idWezla`;
+- pozostawienie `Firma | Budowa` jako zgodności dla danych bez rzeczywistego
+  adresu i brak dopasowania podobnych opisów;
+- jawny stan niejednoznaczny, gdy stare wywołanie tylko po opisie pasuje do
+  kilku stabilnych lokalizacji;
+- migrację istniejącego `v2` sprzed 6D.2 i scalenie duplikatów tego samego
+  stabilnego klucza bez utraty najnowszych czasów;
+- integrację bramy `aplikacja.lokalizacje`: inna nazwa pod tym samym adresem
+  korzysta z cache, a ta sama nazwa pod innym adresem nie;
+- aktualizację dokumentacji, **106/106 zestawów testów** i przejście do 6D.3.
