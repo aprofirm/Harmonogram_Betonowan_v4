@@ -52,7 +52,7 @@ function sprawdzGranicePlanu() {
   assert.match(stan, /\*\*Etap 6\*\* jest rozpoczęty/);
   assert.match(stan, /Rozpocząć \*\*6F\.3/);
   assert.match(readme, /testy\/TESTY_ETAP_6\.md/);
-  assert.match(planTestow, /całe punkty \*\*6A–6E\*\*/);
+  assert.match(planTestow, /całe punkty \*\*6A–6F\*\*/);
   assert.match(
     planTestow,
     /Testy automatyczne[\s\S]*?nie mogą zależeć od chwilowej dostępności publicznego serwera map/
