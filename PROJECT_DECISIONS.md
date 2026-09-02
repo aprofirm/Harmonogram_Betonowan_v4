@@ -2471,3 +2471,22 @@ Zasady:
 - dotychczasowe ręczne czasy bez danych lokalizacyjnych nadal są zachowywane i
   dostępne przez bezpieczną ścieżkę zgodnościową;
 - wybór konkretnej usługi mapowej pozostaje zakresem 6E.1.
+
+
+---
+
+## 129. Podpowiedź cache nie jest automatycznym wyborem lokalizacji
+
+Od **6D.3** rozróżniamy dokładne trafienie stabilnego klucza od lokalnego wyszukania kandydatów. Dokładne, jednoznaczne trafienie pamięci może nadal automatycznie uzupełnić czasy zgodnie z wcześniejszym kontraktem. Wyszukiwanie po nazwie lub części adresu zwraca wyłącznie podpowiedzi.
+
+Zasady:
+
+- pamięć jest sprawdzana lokalnie przed próbą użycia internetu;
+- wyszukiwanie obejmuje tylko wpisy aktywnego `idWezla`;
+- wyszukiwanie może korzystać z nazwy i rzeczywistego adresu, ale nie stosuje fuzzy matchingu ani progów podobieństwa;
+- wynik wyszukiwania nie zmienia `ostatnioUzyto` i nie jest traktowany jako użycie trasy;
+- żadna podpowiedź nie jest stosowana automatycznie, nawet gdy wyszukiwanie zwróci jednego kandydata;
+- świadomy wybór operatora wskazuje dokładny `kluczTrasy`; dopiero wtedy wpis może zasilić roboczą lokalizację i czasy;
+- istniejące ręczne albo odtworzone czasy mają pierwszeństwo i nie są nadpisywane przez wybór z cache;
+- wybór z pamięci nie zmienia źródłowego adresu KDX/CSV; zmienia wyłącznie warstwę roboczą;
+- konkretny dostawca geokodowania i routingu nadal nie jest wybrany w 6D.3; decyzja należy do **6E.1**.

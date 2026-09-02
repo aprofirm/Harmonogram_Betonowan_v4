@@ -649,3 +649,10 @@ Od 6C.3 lokalizacje i trasy używane przez aplikację są przypisane do ID aktyw
 ### Etap 6D.1 — pamięć tras v2
 
 Książka tras ma wersję `v2` i może przechowywać pełniejsze metadane lokalizacji oraz trasy. Istniejący zapis `v1` jest migrowany bez kasowania starej kopii, a program nadal działa z ręcznymi czasami i offline.
+
+
+## Lokalne podpowiedzi zapisanych tras — 6D.3
+
+Wyszukiwanie zapisanych tras działa lokalnie i nie wymaga internetu. Okno **Zapisane trasy** przeszukuje teraz zarówno nazwę lokalizacji, jak i zapamiętany adres oraz pokazuje adres w osobnej kolumnie.
+
+Dokładne trafienie stabilnej lokalizacji może nadal automatycznie przywrócić czasy. Jeżeli dokładnego trafienia nie ma, ale pamięć zawiera możliwe lokalne dopasowania, aplikacja zatrzymuje się przed internetem i zwraca je jako podpowiedzi. Taka podpowiedź nie jest używana samoczynnie — zastosowanie wymaga świadomego wskazania konkretnego wpisu. Ręcznie wpisane lub odtworzone czasy mają zawsze pierwszeństwo.

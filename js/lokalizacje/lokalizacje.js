@@ -494,6 +494,135 @@
     };
   }
 
+  function pobierzFrazePodpowiedziPamieciBudowy(budowa) {
+    const modelLokalizacji = budowa && budowa.modelLokalizacji || {};
+    const warstwa = modelLokalizacji.daneRobocze || {};
+    const adres = warstwa.adres || {};
+    const status = String(warstwa.statusJakosci || "").trim();
+    const tekstAdresu = String(
+      adres.tekstZnormalizowany || adres.tekst || ""
+    ).trim();
+
+    if (tekstAdresu && !["brak", "niewystarczajaca"].includes(status)) {
+      return tekstAdresu;
+    }
+
+    return utworzOpisLokalizacjiBudowy(budowa);
+  }
+
+  function wyszukajPodpowiedziPamieciDlaBudowy(budowa) {
+    if (!budowa || !aplikacja.pamiecTras ||
+        typeof aplikacja.pamiecTras.wyszukajTrasy !== "function") {
+      return {
+        status: "brak-modulu-podpowiedzi-pamieci",
+        podpowiedzi: [],
+        liczbaPodpowiedzi: 0
+      };
+    }
+
+    migrujBudoweDoKontraktuTras(budowa);
+    const fraza = pobierzFrazePodpowiedziPamieciBudowy(budowa);
+
+    if (!fraza) {
+      return {
+        status: "brak-frazy-podpowiedzi",
+        podpowiedzi: [],
+        liczbaPodpowiedzi: 0
+      };
+    }
+
+    const wynik = aplikacja.pamiecTras.wyszukajTrasy(
+      fraza,
+      pobierzIdAktywnegoWezla(),
+      10
+    );
+    const podpowiedzi = Array.isArray(wynik.trasy) ? wynik.trasy : [];
+
+    return Object.assign({}, wynik, {
+      status: podpowiedzi.length ? "znaleziono-podpowiedzi" : "brak-podpowiedzi",
+      podpowiedzi: podpowiedzi,
+      liczbaPodpowiedzi: podpowiedzi.length
+    });
+  }
+
+  function zastosujLokalizacjeZWybranejTrasy(budowa, trasa) {
+    if (!trasa ||
+        !["adres", "wspolrzedne"].includes(trasa.rodzajKluczaLokalizacji)) {
+      return;
+    }
+
+    const model = budowa.modelLokalizacji || {};
+    const warstwaRobocza = model.daneRobocze || {};
+    const adresTrasy = trasa.adresLokalizacji || {};
+    const czyTrasaMaAdres = Boolean(
+      String(adresTrasy.tekst || adresTrasy.tekstZnormalizowany || "").trim()
+    );
+    const nowaWarstwa = Object.assign({}, warstwaRobocza, {
+      adres: czyTrasaMaAdres ? adresTrasy : warstwaRobocza.adres,
+      wspolrzedne: trasa.wspolrzedneLokalizacji || warstwaRobocza.wspolrzedne,
+      statusJakosci: "potwierdzona",
+      zrodlo: "pamiec",
+      czyKorektaReczna: true
+    });
+
+    budowa.modelLokalizacji = aplikacja.lokalizacje.utworzModelLokalizacji(
+      Object.assign({}, model, {
+        idWezla: pobierzIdAktywnegoWezla(),
+        daneRobocze: nowaWarstwa
+      })
+    );
+  }
+
+  function zastosujWybranaTraseZPamieci(budowa, kluczTrasy) {
+    if (!budowa || !aplikacja.pamiecTras ||
+        typeof aplikacja.pamiecTras.pobierzTrasePoKluczu !== "function") {
+      return {
+        status: "brak-modulu-pamieci-tras",
+        czyUzupelniono: false,
+        trasa: null
+      };
+    }
+
+    migrujBudoweDoKontraktuTras(budowa);
+
+    if (czyJestCzas(budowa.czasDojazduRoboczyMinuty) ||
+        czyJestCzas(budowa.czasPowrotuRoboczyMinuty)) {
+      return {
+        status: "pozostawiono-istniejace-czasy",
+        czyUzupelniono: false,
+        trasa: null
+      };
+    }
+
+    const wynik = aplikacja.pamiecTras.pobierzTrasePoKluczu(
+      kluczTrasy,
+      pobierzIdAktywnegoWezla()
+    );
+
+    if (!wynik.trasa) {
+      return Object.assign({}, wynik, { czyUzupelniono: false });
+    }
+
+    zastosujLokalizacjeZWybranejTrasy(budowa, wynik.trasa);
+    aplikacja.budowy.ustawCzasyRobocze(budowa, {
+      czasDojazduRoboczyMinuty: wynik.trasa.czasDojazduMinuty,
+      czasPowrotuRoboczyMinuty: wynik.trasa.czasPowrotuMinuty,
+      dodatkowyCzasZaladunkuMinuty: budowa.dodatkowyCzasZaladunkuMinuty,
+      czasRozladunkuRoboczyMinuty: budowa.czasRozladunkuRoboczyMinuty,
+      dodatkowyCzasRozladunkuMinuty: budowa.dodatkowyCzasRozladunkuMinuty,
+      zrodloCzasuDojazdu: "pamiec",
+      zrodloCzasuPowrotu: "pamiec"
+    });
+    migrujBudoweDoKontraktuTras(budowa, {
+      czyWymusicWartoscRobocza: true
+    });
+
+    return Object.assign({}, wynik, {
+      status: "zastosowano-wybrana-trase-z-pamieci",
+      czyUzupelniono: true
+    });
+  }
+
   function pobierzPierwotneZrodlo(zrodloBudowy, zrodloZapamietane) {
     if (zrodloBudowy === "pamiec") {
       return zrodloZapamietane || "reczny";
@@ -699,6 +828,18 @@
       });
     }
 
+    const wynikPodpowiedzi = wyszukajPodpowiedziPamieciDlaBudowy(budowa);
+
+    if (wynikPodpowiedzi.liczbaPodpowiedzi > 0) {
+      return Promise.resolve({
+        status: "wymagany-wybor-z-pamieci",
+        trasa: null,
+        podpowiedzi: wynikPodpowiedzi.podpowiedzi,
+        liczbaPodpowiedzi: wynikPodpowiedzi.liczbaPodpowiedzi,
+        czyWywolanoMape: false
+      });
+    }
+
     if (typeof pobierzTraseZMapy !== "function") {
       return Promise.resolve({
         status: "brak-trasy-i-uslugi-mapowej",
@@ -768,6 +909,8 @@
     zapiszKompletneTrasyBudowWPamieci: zapiszKompletneTrasyBudowWPamieci,
     uzupelnijBudoweZPamieci: uzupelnijBudoweZPamieci,
     uzupelnijListeBudowZPamieci: uzupelnijListeBudowZPamieci,
+    wyszukajPodpowiedziPamieciDlaBudowy: wyszukajPodpowiedziPamieciDlaBudowy,
+    zastosujWybranaTraseZPamieci: zastosujWybranaTraseZPamieci,
     migrujBudoweDoKontraktuTras: migrujBudoweDoKontraktuTras,
     migrujListeBudowDoKontraktuTras: migrujListeBudowDoKontraktuTras,
     zmienCzasRoboczyBudowy: zmienCzasRoboczyBudowy,

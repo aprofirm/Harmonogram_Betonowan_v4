@@ -4,8 +4,8 @@
 
 Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetapy **6A.1–6A.3**
 i **6B.1–6B.3** oraz całe punkty **6A–6B** są zakończone. Zakończony jest
-również cały punkt **6C** oraz podetapy **6D.1–6D.2**. Następny podetap to
-**6D.3 — cache i lokalne podpowiedzi**.
+również całe punkty **6C–6D**. Następny podetap to
+**6E.1 — porównanie i wybór dostawcy**.
 
 ## Zasada nadrzędna
 
@@ -226,3 +226,21 @@ Test `testy/etap_6d_2.test.js` sprawdza:
 - integrację bramy `aplikacja.lokalizacje`: inna nazwa pod tym samym adresem
   korzysta z cache, a ta sama nazwa pod innym adresem nie;
 - aktualizację dokumentacji, **106/106 zestawów testów** i przejście do 6D.3.
+
+
+### 6D.3 — cache i lokalne podpowiedzi
+
+Test `testy/etap_6d_3.test.js` sprawdza:
+
+- lokalne wyszukiwanie pamięci po nazwie i rzeczywistym adresie bez wywołania sieci;
+- ograniczenie wyników do aktywnego `idWezla`;
+- brak fuzzy matchingu i brak zmiany `ostatnioUzyto` przez samo wyszukiwanie;
+- wiele kandydatów dla wspólnej nazwy przy różnych adresach bez automatycznego wyboru;
+- pierwszeństwo dokładnego cache przed podpowiedziami i internetem;
+- zatrzymanie przed internetem przy niejednoznacznej lokalnej podpowiedzi;
+- jawne zastosowanie wyłącznie konkretnego `kluczTrasy`;
+- zachowanie źródłowego adresu oraz istniejących ręcznych czasów;
+- wyszukiwanie adresu w istniejącym oknie **Zapisane trasy**;
+- zamknięcie całego punktu 6D, aktualizację dokumentacji i przejście do 6E.1.
+
+Pełna regresja po 6D.3 obejmuje **107/107 zestawów testów**.

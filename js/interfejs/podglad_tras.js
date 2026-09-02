@@ -17,6 +17,26 @@
       .replace(/\s+/g, " ");
   }
 
+  function pobierzTekstWyszukiwaniaTrasy(trasa) {
+    const adres = trasa && trasa.adresLokalizacji || {};
+    const czesci = adres.czesci && typeof adres.czesci === "object"
+      ? adres.czesci
+      : {};
+
+    return [
+      trasa && trasa.opisLokalizacji,
+      adres.tekst,
+      adres.tekstZnormalizowany
+    ].concat(Object.keys(czesci).map(function (nazwaPola) {
+      return czesci[nazwaPola];
+    })).filter(Boolean).join(" ");
+  }
+
+  function opiszAdresTrasy(trasa) {
+    const adres = trasa && trasa.adresLokalizacji || {};
+    return String(adres.tekst || "").trim() || "—";
+  }
+
   function porownajNazwyTras(trasaPierwsza, trasaDruga) {
     const nazwaPierwsza = normalizujTekstWyszukiwania(
       trasaPierwsza && trasaPierwsza.opisLokalizacji
@@ -35,7 +55,7 @@
     const przefiltrowaneTrasy = szukanaFraza
       ? listaTras.filter(function (trasa) {
           return normalizujTekstWyszukiwania(
-            trasa && trasa.opisLokalizacji
+            pobierzTekstWyszukiwaniaTrasy(trasa)
           ).includes(szukanaFraza);
         })
       : listaTras;
@@ -137,7 +157,7 @@
     opisWyszukiwania.textContent = "Szukaj lokalizacji";
     poleWyszukiwania.type = "search";
     poleWyszukiwania.autocomplete = "off";
-    poleWyszukiwania.placeholder = "np. Świebodzice, POLST, Jachimowicza";
+    poleWyszukiwania.placeholder = "np. nazwa budowy albo adres";
     poleWyszukiwania.setAttribute("aria-label", "Szukaj w zapisanych trasach");
     etykietaWyszukiwania.appendChild(opisWyszukiwania);
     etykietaWyszukiwania.appendChild(poleWyszukiwania);
@@ -270,6 +290,7 @@
 
     [
       "Lokalizacja",
+      "Adres",
       "Dojazd",
       "Powrót",
       "Źródło",
@@ -290,6 +311,7 @@
       const komorkaAkcji = document.createElement("td");
 
       wiersz.appendChild(utworzKomorke(trasa.opisLokalizacji));
+      wiersz.appendChild(utworzKomorke(opiszAdresTrasy(trasa)));
       wiersz.appendChild(utworzKomorke(trasa.czasDojazduMinuty + " min"));
       wiersz.appendChild(utworzKomorke(trasa.czasPowrotuMinuty + " min"));
       wiersz.appendChild(utworzKomorke(opiszZrodlaTrasy(trasa)));

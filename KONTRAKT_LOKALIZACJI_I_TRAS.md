@@ -298,3 +298,19 @@ kilka starych etykiet prowadzi do dokładnie tego samego stabilnego klucza,
 zostaje jeden, najnowszy wpis. Migracja `v1 → v2` z 6D.1 nadal działa, a wpisy
 bez adresu i współrzędnych zachowują opis zgodnościowy, więc wcześniejsze ręczne
 czasy nie znikają.
+
+
+## Cache i lokalne podpowiedzi — 6D.3
+
+Po 6D.3 brama `aplikacja.lokalizacje` rozróżnia dwa poziomy użycia pamięci:
+
+1. **dokładne trafienie stabilnej tożsamości** — może automatycznie zasilić robocze czasy i kończy przepływ przed internetem;
+2. **lokalne wyszukanie kandydatów** — zwraca podpowiedzi, ale nie zmienia budowy i nie wybiera wpisu automatycznie.
+
+Wyszukiwanie działa wyłącznie na lokalnej książce `v2`, w obrębie aktywnego `idWezla`, i przeszukuje znormalizowaną etykietę oraz rzeczywisty adres. To wyszukiwanie deterministyczne: wszystkie słowa zapytania muszą występować w danych wpisu. Nie jest to fuzzy matching ani reguła tożsamości.
+
+Jeżeli po braku dokładnego cache istnieje co najmniej jedna lokalna podpowiedź, `pobierzLubUstalTrase` zwraca stan `wymagany-wybor-z-pamieci` i **nie wywołuje adaptera internetowego**. Operator albo późniejszy interfejs może zastosować wyłącznie konkretny wpis wskazany przez jego pełny `kluczTrasy`.
+
+Świadomie wybrany wpis może uzupełnić roboczy adres lub współrzędne oraz oba czasy ze źródłem `pamiec`, ale nie zmienia `daneZrodlowe`. Jeżeli budowa ma już którykolwiek roboczy czas, wybór z pamięci go nie nadpisuje. Samo wyszukiwanie nie aktualizuje `ostatnioUzyto`; data zmienia się dopiero po faktycznym odczycie wybranego wpisu.
+
+Kolejność bramy po 6D.3: **bieżące czasy → dokładny cache → lokalne podpowiedzi wymagające wyboru → adapter internetowy → jawny brak trasy**. Konkretna usługa mapowa nadal nie należy do 6D i zostanie wybrana w 6E.1.
