@@ -23,7 +23,7 @@ jobs:
           node-version: "20"
 
       - name: Wprowadz zmiany 6B.3
-        run: python3 .github/patch_6b3.py
+        run: python3 .github/patch_6b3_fix.py
 
       - name: Sprawdz skladnie zmienionego modelu
         run: node --check js/lokalizacje/model_lokalizacji_i_trasy.js
@@ -49,7 +49,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          rm .github/patch_6b3.py .github/workflows/wdrozenie_6b3.yml
+          rm .github/patch_6b3.py .github/patch_6b3_fix.py .github/workflows/wdrozenie_6b3.yml
           git config user.name "PawelP"
           git config user.email "53014565+aprofirm@users.noreply.github.com"
           git add -A
