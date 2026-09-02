@@ -7,12 +7,12 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6C.1 — model węzła**.
+- Ostatni zakończony podetap: **6C.2 — ustawienie i pamięć**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- **Etap 6** jest rozpoczęty. Punkty **6A–6B** oraz podetap **6C.1** są
+- **Etap 6** jest rozpoczęty. Punkty **6A–6B** oraz podetapy **6C.1–6C.2** są
   zakończone; punkt 6C i cały Etap 6 pozostają otwarte.
-- Pełna regresja po 6C.1 przechodzi **102/102 zestawów testów**.
+- Pełna regresja po 6C.2 przechodzi **103/103 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -33,7 +33,11 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - Aktywny węzeł ma własny model ze stabilnym ID, nazwą oraz wersjonowanym
   modelem lokalizacji przechowującym adres i współrzędne.
 - Bieżące modele tras, pamięć tras i przyszłe zapytanie mapowe pobierają ID z
-  modelu aktywnego węzła; formularz i trwała pamięć należą do 6C.2.
+  modelu aktywnego węzła.
+- Operator może świadomie ustawić nazwę, adres albo pełne współrzędne aktywnego
+  węzła w kompaktowym formularzu; korekta nie zmienia jego stabilnego ID.
+- Dane węzła są wersjonowane i lokalnie zapamiętywane, a przy niedostępnej
+  pamięci trwałej działają do końca bieżącej sesji.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -71,10 +75,10 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6C.2 — ustawienie i pamięć**. Dodać walidowane ustawianie danych
-aktywnego węzła i lokalny trwały zapis, tak aby operator mógł raz podać nazwę,
-adres lub potwierdzone współrzędne i odzyskać je po ponownym uruchomieniu. Nadal
-nie podłączać konkretnego dostawcy map — jego wybór należy do **6E.1**.
+Rozpocząć **6C.3 — gotowość na wiele węzłów**. Uporządkować klucze i kontrakt
+tak, aby każda lokalizacja i trasa jednoznacznie zawierała ID aktywnego węzła,
+choć interfejs nadal może pracować z jednym wybranym węzłem. Nadal nie podłączać
+konkretnego dostawcy map — jego wybór należy do **6E.1**.
 
 ## Ważna zasada wznowienia
 

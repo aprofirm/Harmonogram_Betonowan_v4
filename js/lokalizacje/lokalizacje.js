@@ -7,6 +7,7 @@
   const ID_WEZLA_STARTOWEGO = "wezel-domyslny";
   const NAZWA_WEZLA_STARTOWEGO = "Węzeł domyślny";
   let aktywnyWezel = null;
+  let czyProbowanoOdtworzycWezel = false;
 
   function utworzPustyStanLokalizacji() {
     return {
@@ -34,7 +35,32 @@
     });
   }
 
+  function sprobujOdtworzycAktywnyWezel() {
+    if (czyProbowanoOdtworzycWezel) {
+      return null;
+    }
+
+    czyProbowanoOdtworzycWezel = true;
+
+    if (!aplikacja.pamiecWezla ||
+        typeof aplikacja.pamiecWezla.odczytajWezel !== "function") {
+      return null;
+    }
+
+    const wynik = aplikacja.pamiecWezla.odczytajWezel();
+
+    if (wynik && wynik.wezel) {
+      aktywnyWezel = aplikacja.lokalizacje.utworzModelWezla(wynik.wezel);
+    }
+
+    return wynik;
+  }
+
   function pobierzAktywnyWezel() {
+    if (!aktywnyWezel) {
+      sprobujOdtworzycAktywnyWezel();
+    }
+
     if (!aktywnyWezel) {
       aktywnyWezel = utworzPoczatkowyModelWezla();
     }
@@ -44,6 +70,111 @@
 
   function pobierzIdAktywnegoWezla() {
     return pobierzAktywnyWezel().idWezla;
+  }
+
+  function pobierzTekstDanychWezla(wartosc) {
+    if (wartosc === null || wartosc === undefined) {
+      return "";
+    }
+
+    return String(wartosc).trim();
+  }
+
+  function przygotujWspolrzedneWezla(daneWezla) {
+    const szerokosc = pobierzTekstDanychWezla(
+      daneWezla && daneWezla.szerokoscGeograficzna
+    );
+    const dlugosc = pobierzTekstDanychWezla(
+      daneWezla && daneWezla.dlugoscGeograficzna
+    );
+    const czyMaSzerokosc = szerokosc !== "";
+    const czyMaDlugosc = dlugosc !== "";
+
+    if (czyMaSzerokosc !== czyMaDlugosc) {
+      throw new Error(
+        "Współrzędne węzła wymagają jednocześnie szerokości i długości geograficznej."
+      );
+    }
+
+    if (!czyMaSzerokosc) {
+      return null;
+    }
+
+    return {
+      szerokoscGeograficzna: szerokosc,
+      dlugoscGeograficzna: dlugosc
+    };
+  }
+
+  function ustawAktywnyWezel(daneWezla) {
+    const dane = daneWezla && typeof daneWezla === "object"
+      ? daneWezla
+      : {};
+    const poprzedniWezel = pobierzAktywnyWezel();
+    const nazwa = pobierzTekstDanychWezla(dane.nazwa);
+    const adresTekst = pobierzTekstDanychWezla(dane.adres);
+    const wspolrzedne = przygotujWspolrzedneWezla(dane);
+
+    if (!nazwa) {
+      throw new Error("Nazwa betoniarni nie może być pusta.");
+    }
+
+    if (!adresTekst && !wspolrzedne) {
+      throw new Error(
+        "Podaj adres betoniarni albo pełną parę współrzędnych."
+      );
+    }
+
+    const adresRoboczy = aplikacja.lokalizacje.utworzAdresRoboczy({
+      tekst: adresTekst || null
+    });
+    const ocenaAdresu = aplikacja.lokalizacje.ocenAdresLokalnie(adresRoboczy);
+    const statusRoboczy = wspolrzedne
+      ? "potwierdzona"
+      : ocenaAdresu.statusJakosci;
+    const warstwaZrodlowa = {
+      adres: { tekst: adresTekst || null },
+      wspolrzedne: wspolrzedne,
+      statusJakosci: "nieoceniona",
+      zrodlo: "reczny",
+      czyKorektaReczna: false
+    };
+    const warstwaRobocza = {
+      adres: adresRoboczy,
+      wspolrzedne: wspolrzedne,
+      statusJakosci: statusRoboczy,
+      zrodlo: "reczny",
+      czyKorektaReczna: true
+    };
+
+    aktywnyWezel = aplikacja.lokalizacje.utworzModelWezla({
+      idWezla: poprzedniWezel.idWezla,
+      nazwa: nazwa,
+      modelLokalizacji: {
+        daneZrodlowe: warstwaZrodlowa,
+        daneAutomatyczne:
+          poprzedniWezel.modelLokalizacji.daneAutomatyczne || {},
+        daneRobocze: warstwaRobocza
+      }
+    });
+    czyProbowanoOdtworzycWezel = true;
+
+    const wynikZapisu = aplikacja.pamiecWezla &&
+      typeof aplikacja.pamiecWezla.zapiszWezel === "function"
+      ? aplikacja.pamiecWezla.zapiszWezel(aktywnyWezel)
+      : { status: "brak-modulu-pamieci", trybPamieci: "biezaca-sesja" };
+
+    if (wynikZapisu.status === "blad-zapisu") {
+      throw new Error(
+        wynikZapisu.komunikat || "Nie udało się zapisać danych betoniarni."
+      );
+    }
+
+    return {
+      wezel: aktywnyWezel,
+      statusZapisu: wynikZapisu.status,
+      trybPamieci: wynikZapisu.trybPamieci
+    };
   }
 
   function pobierzZrodloModelu(zrodlo) {
@@ -603,6 +734,7 @@
   aplikacja.lokalizacje = Object.assign(aplikacja.lokalizacje || {}, {
     utworzPustyStanLokalizacji: utworzPustyStanLokalizacji,
     pobierzAktywnyWezel: pobierzAktywnyWezel,
+    ustawAktywnyWezel: ustawAktywnyWezel,
     utworzOpisLokalizacjiBudowy: utworzOpisLokalizacjiBudowy,
     zapiszCzasyBudowyWPamieci: zapiszCzasyBudowyWPamieci,
     zapiszKompletneTrasyBudowWPamieci: zapiszKompletneTrasyBudowWPamieci,

@@ -622,3 +622,12 @@ Testy `testy/etap_6_plan.test.js`, `testy/etap_6a_1.test.js`,
 `testy/etap_6b_1.test.js` chronią plan, granice modułów, wersjonowany model,
 migrację, niezmienniki źródeł i import danych adresowych. Pełna lokalna regresja
 przechodzi **99/99 zestawów testów**.
+
+
+## Ustawienie betoniarni
+
+W panelu ustawień dostępna jest sekcja **Betoniarnia / węzeł**. Operator podaje
+nazwę oraz adres albo pełną parę współrzędnych i wybiera **Zapisz betoniarnię**.
+Dane są zapamiętywane lokalnie w przeglądarce i odtwarzane przy następnym
+uruchomieniu. Brak trwałej pamięci nie blokuje programu — wtedy ustawienie działa
+do końca bieżącej sesji.

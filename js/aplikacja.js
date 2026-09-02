@@ -1047,6 +1047,49 @@
     );
   }
 
+  function obsluzZmianeWezla(daneWezla) {
+    try {
+      const wynik = aplikacja.lokalizacje.ustawAktywnyWezel(daneWezla);
+      aplikacja.interfejs.pokazAktywnyWezel(wynik.wezel, {
+        trybPamieci: wynik.trybPamieci
+      });
+
+      if (pobierzAktualnaListeBudow().length > 0) {
+        oznaczPlanJakoNieprzeliczony(true);
+      }
+
+      zapiszZdarzenieDiagnostyczne(
+        "informacja",
+        "zmiana-aktywnego-wezla",
+        "Zapisano dane aktywnego węzła.",
+        {
+          idWezla: wynik.wezel.idWezla,
+          statusZapisu: wynik.statusZapisu
+        }
+      );
+      return wynik.wezel;
+    } catch (blad) {
+      aplikacja.interfejs.pokazBladWezla(blad);
+      zapiszBladDiagnostyczny(
+        blad,
+        "blad-zmiany-aktywnego-wezla",
+        "Nie udało się zapisać danych aktywnego węzła."
+      );
+      return null;
+    }
+  }
+
+  function uruchomIOdtworzPamiecWezla() {
+    if (!aplikacja.pamiecWezla) {
+      return null;
+    }
+
+    const stanPamieci = aplikacja.pamiecWezla.uruchomPamiecWezla();
+    const wezel = aplikacja.lokalizacje.pobierzAktywnyWezel();
+    aplikacja.interfejs.pokazAktywnyWezel(wezel, stanPamieci);
+    return wezel;
+  }
+
   function uruchomIOdtworzPamiecPlanu() {
     const stanPamieci = aplikacja.pamiecPlanu.uruchomPamiecPlanu();
     const historia = pobierzHistorieIOdswiezStan(stanPamieci);
@@ -1109,6 +1152,8 @@
         obsluzZmianePrzejazduPompy,
         obsluzZmianeLimituOpoznieniaBudowy
       );
+      aplikacja.interfejs.podlaczUstawieniaWezla(obsluzZmianeWezla);
+      uruchomIOdtworzPamiecWezla();
       aplikacja.pamiecTras.uruchomPamiecTras();
       odswiezStanPamieciTras();
       uruchomIOdtworzPamiecPlanu();

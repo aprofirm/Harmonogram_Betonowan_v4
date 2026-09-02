@@ -2408,3 +2408,28 @@ modelu, a nie rozrzuconym po kodzie źródłem prawdy.
 
 W **6C.1** aktywny model żyje tylko w bieżącej sesji. Interfejs ustawiania,
 walidacja danych operatora i trwały zapis lokalny należą do **6C.2**.
+
+
+---
+
+## 126. Dane aktywnego węzła są ustawiane świadomie i zapamiętywane lokalnie
+
+Od **6C.2** operator może ustawić aktywną betoniarnię w osobnym, kompaktowym
+formularzu. Wymagana jest nazwa oraz co najmniej adres albo pełna para
+współrzędnych. Pojedyncza współrzędna jest błędem.
+
+Ręczna korekta:
+
+- nie zmienia stabilnego `idWezla`,
+- zachowuje oryginalny tekst adresu w warstwie źródłowej,
+- tworzy osobny tekst roboczy i jego normalizację,
+- zapisuje warstwę roboczą ze źródłem `reczny` i `czyKorektaReczna = true`,
+- przy pełnej parze ręcznie podanych współrzędnych oznacza lokalizację jako
+  `potwierdzona`.
+
+Model aktywnego węzła jest przechowywany osobno od planu dnia pod wersjonowanym
+kluczem `harmonogramBetonowan.aktywnyWezel.v1`. Jeżeli trwały `localStorage` jest
+niedostępny, program zachowuje dane w bieżącej sesji i nadal działa offline.
+Uszkodzony zapis nie może zablokować uruchomienia aplikacji.
+
+Zmiana na inny fizyczny węzeł i obsługa wielu identyfikatorów należą do **6C.3**.

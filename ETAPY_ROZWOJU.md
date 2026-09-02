@@ -51,7 +51,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
 - [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
-- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6B i 6C.1 zakończone; następny podetap 6C.2**
+- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6B i 6C.1–6C.2 zakończone; następny podetap 6C.3**
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
@@ -842,7 +842,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
 - [ ] **6C — węzeł/betoniarnia jako początek tras.**
   - [x] **6C.1 — model węzła:** przechowywać stabilne ID, nazwę, adres oraz
     współrzędne aktywnego węzła bez ponownego geokodowania przy każdym planie.
-  - [ ] **6C.2 — ustawienie i pamięć:** walidować oraz lokalnie zapisywać dane
+  - [x] **6C.2 — ustawienie i pamięć:** walidować oraz lokalnie zapisywać dane
     węzła, umożliwiając świadomą korektę operatora.
   - [ ] **6C.3 — gotowość na wiele węzłów:** klucze lokalizacji i tras zawierają
     ID węzła, choć pierwsza wersja interfejsu może używać jednego aktywnego.
@@ -908,7 +908,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
     niepełny/niejednoznaczny, wybór lokalizacji, trasę drogową, ręczną korektę,
     przejazd pompy, ponowne użycie cache i pracę po odłączeniu internetu.
 
-Następny niezakończony podetap: **6C.2 — ustawienie i pamięć**.
+Następny niezakończony podetap: **6C.3 — gotowość na wiele węzłów**.
 
 ## Zakres
 
@@ -3075,3 +3075,22 @@ otwarty. Następny podetap: **6C.1 — model węzła**.
 Podetap **6C.1** jest zakończony. Punkt **6C** i cały **Etap 6** pozostają
 otwarte. Następny podetap: **6C.2 — ustawienie i pamięć**.
 
+
+
+### Wynik podetapu 6C.2 — ustawienie i pamięć
+
+- [x] operator ma kompaktowy formularz **Betoniarnia / węzeł** z nazwą,
+  adresem oraz opcjonalną pełną parą współrzędnych;
+- [x] zapis wymaga nazwy i co najmniej adresu albo obu współrzędnych, a model
+  odrzuca niepełną parę oraz wartości poza zakresem geograficznym;
+- [x] ręczna korekta zachowuje stabilne ID aktywnego węzła i zapisuje dane w
+  roboczej warstwie ze źródłem `reczny` oraz znacznikiem korekty;
+- [x] aktywny węzeł ma osobny wersjonowany zapis `v1` w `localStorage`, z
+  bezpiecznym trybem bieżącej sesji przy blokadzie pamięci;
+- [x] poprawny zapis jest odtwarzany przy następnym uruchomieniu, a uszkodzony
+  zapis jest pomijany bez blokowania harmonogramu;
+- [x] test `testy/etap_6c_2.test.js` oraz pełna regresja przechodzą **103/103
+  zestawów testów**.
+
+Podetap **6C.2** jest zakończony. Punkt **6C** i cały **Etap 6** pozostają
+otwarte. Następny podetap: **6C.3 — gotowość na wiele węzłów**.
