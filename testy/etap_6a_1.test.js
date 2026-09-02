@@ -30,7 +30,7 @@ function sprawdzInwentaryzacjeIJednaBrame() {
     /Jedyną bramą domenową[\s\S]*?\*\*\`aplikacja\.lokalizacje\`\*\*/
   );
   assert.match(kontrakt, /bieżące czasy → pamięć tras →[\s\S]*?mapow/);
-  assert.match(kontrakt, /Nie definiuje jeszcze finalnego modelu pól z 6A\.2/);
+  assert.match(kontrakt, /wynik inwentaryzacji 6A\.1/);
 }
 
 function sprawdzGraniceIstniejacegoKodu() {
@@ -53,17 +53,15 @@ function sprawdzStatusPlanuIDecyzje() {
 
   assert.match(etapy, /- \[ \] \*\*6A —/);
   assert.match(etapy, /- \[x\] \*\*6A\.1 —/);
-  assert.match(etapy, /- \[ \] \*\*6A\.2 —/);
   assert.match(
     etapy,
-    /Następny niezakończony podetap: \*\*6A\.2 — wersjonowany model lokalizacji i trasy\*\*/
+    /## Zamknięcie 6A\.1 — inwentaryzacja i granice modułów/
   );
   assert.match(
     decyzje,
-    /## 120\. \`aplikacja\.lokalizacje\` jest jedyną bramą roboczego wyniku trasy/
+    /## 120\. `aplikacja\.lokalizacje` jest jedyną bramą roboczego wyniku trasy/
   );
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6A\.1/);
-  assert.match(stan, /\*\*96\/96 zestawów testów\*\*/);
+  assert.match(stan, /`KONTRAKT_LOKALIZACJI_I_TRAS\.md` wskazuje/);
 }
 
 sprawdzInwentaryzacjeIJednaBrame();

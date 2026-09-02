@@ -270,7 +270,7 @@
     });
   }
 
-  aplikacja.lokalizacje = {
+  aplikacja.lokalizacje = Object.assign(aplikacja.lokalizacje || {}, {
     utworzPustyStanLokalizacji: utworzPustyStanLokalizacji,
     utworzOpisLokalizacjiBudowy: utworzOpisLokalizacjiBudowy,
     zapiszCzasyBudowyWPamieci: zapiszCzasyBudowyWPamieci,
@@ -278,5 +278,5 @@
     uzupelnijBudoweZPamieci: uzupelnijBudoweZPamieci,
     uzupelnijListeBudowZPamieci: uzupelnijListeBudowZPamieci,
     pobierzLubUstalTrase: pobierzLubUstalTrase
-  };
+  });
 })(window);

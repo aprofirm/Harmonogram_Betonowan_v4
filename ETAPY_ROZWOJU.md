@@ -51,7 +51,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
 - [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
-- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A.1 zakończony; następny podetap 6A.2**
+- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A.1–6A.2 zakończone; następny podetap 6A.3**
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
@@ -824,7 +824,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
   - [x] **6A.1 — inwentaryzacja i granice modułów:** opisać połączenia obecnych
     `budowy`, `lokalizacje`, `pamiecTras`, przejazdów pomp i harmonogramu oraz
     wskazać jedno miejsce, w którym powstaje roboczy wynik trasy.
-  - [ ] **6A.2 — wersjonowany model lokalizacji i trasy:** dodać osobne dane
+  - [x] **6A.2 — wersjonowany model lokalizacji i trasy:** dodać osobne dane
     źródłowe, automatyczne i robocze dla adresu, współrzędnych, odległości,
     czasu, statusu jakości, źródła i ręcznej korekty.
   - [ ] **6A.3 — migracja i niezmienniki:** starsze plany oraz książka tras
@@ -908,7 +908,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
     niepełny/niejednoznaczny, wybór lokalizacji, trasę drogową, ręczną korektę,
     przejazd pompy, ponowne użycie cache i pracę po odłączeniu internetu.
 
-Następny niezakończony podetap: **6A.2 — wersjonowany model lokalizacji i trasy**.
+Następny niezakończony podetap: **6A.3 — migracja i niezmienniki**.
 
 ## Zakres
 
@@ -2947,3 +2947,24 @@ ramach inwentaryzacji i ustalenia granic modułów.
 Podetap **6A.1** jest zakończony. Punkt nadrzędny **6A** i cały **Etap 6**
 pozostają otwarte. Następny podetap: **6A.2 — wersjonowany model lokalizacji i
 trasy**.
+
+## Zamknięcie 6A.2 — wersjonowany model lokalizacji i trasy — 2026-09-02
+
+- [x] dodano `js/lokalizacje/model_lokalizacji_i_trasy.js` z kontraktem wersji
+  `1`;
+- [x] model lokalizacji rozdziela adres, współrzędne, status jakości, źródło i
+  ręczną korektę na `daneZrodlowe`, `daneAutomatyczne` i `daneRobocze`;
+- [x] model trasy rozdziela drogowy dystans, czas, status jakości, źródło i
+  ręczną korektę na te same trzy warstwy;
+- [x] punkty początkowy i docelowy jednoznacznie wyznaczają relację oraz
+  kierunek węzeł → budowa, budowa → węzeł albo budowa → budowa;
+- [x] walidacja odrzuca ujemne liczby, niepełne lub niemożliwe współrzędne,
+  nieznane źródła i kierunek niezgodny z punktami;
+- [x] model jest ładowany przed `lokalizacje.js`, a brama zachowuje istniejące
+  API i nie łączy silnika z siecią ani dostawcą map;
+- [x] test `testy/etap_6a_2.test.js` chroni strukturę, niezależność warstw,
+  walidację i integrację modułów;
+- [x] pełna lokalna regresja przechodzi **97/97 zestawów testów**.
+
+Podetap **6A.2** jest zakończony. Punkt nadrzędny **6A** i cały **Etap 6**
+pozostają otwarte. Następny podetap: **6A.3 — migracja i niezmienniki**.

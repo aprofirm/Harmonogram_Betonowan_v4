@@ -2299,3 +2299,24 @@ zgodności; 6A.2–6A.3 przeprowadzą ją przez wspólną bramę bez utraty zach
 
 Pełna inwentaryzacja, dozwolone zależności i niezmienniki są zapisane w
 `KONTRAKT_LOKALIZACJI_I_TRAS.md`.
+
+---
+
+## 121. Kontrakt lokalizacji i trasy ma wersję `1`
+
+Od 6A.2 lokalizacja i kierunkowa trasa używają jawnego
+`wersjaKontraktu: 1`. Każdy model rozdziela `daneZrodlowe`,
+`daneAutomatyczne` i `daneRobocze`, aby zachować oryginał, podpowiedź automatu
+oraz wartość faktycznie używaną przez aplikację bez ich wzajemnego
+nadpisywania.
+
+Lokalizacja przechowuje adres, współrzędne, status jakości, źródło i informację
+o ręcznej korekcie. Trasa przechowuje dwa punkty, rodzaj relacji, kierunek,
+drogowy dystans, czas przejazdu, status jakości, źródło i ręczną korektę.
+Kierunek wynika z kolejności punktów i jest walidowany. Nieujemne czasy oraz
+dystanse i pełna para współrzędnych są obowiązkowymi niezmiennikami modelu.
+
+Kontrakt nie zawiera nazw ani pól konkretnego dostawcy map. W 6A.2 istnieje
+jako niezależny model w `js/lokalizacje/model_lokalizacji_i_trasy.js`;
+podłączenie istniejących budów, pamięci tras i dotychczasowych czasów do tego
+modelu pozostaje zakresem 6A.3.

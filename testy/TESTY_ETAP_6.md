@@ -2,9 +2,8 @@
 
 ## Status
 
-Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetap **6A.1 —
-inwentaryzacja i granice modułów** jest zakończony. Następny podetap to **6A.2 —
-wersjonowany model lokalizacji i trasy**.
+Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetapy **6A.1–6A.2**
+są zakończone. Następny podetap to **6A.3 — migracja i niezmienniki**.
 
 ## Zasada nadrzędna
 
@@ -49,6 +48,20 @@ Test `testy/etap_6a_1.test.js` sprawdza, że:
 - harmonogram nie używa `fetch`, dostawcy map ani pamięci przeglądarki;
 - przejazdy pomp nadal przyjmują kierunkowe `czasPrzejazduMinuty` i źródło;
 - 6A oraz Etap 6 pozostają otwarte, a następnym podetapem jest 6A.2.
+
+### 6A.2 — wersjonowany model
+
+Test `testy/etap_6a_2.test.js` sprawdza:
+
+- kontrakt wersji `1` dla lokalizacji i trasy;
+- niezależne `daneZrodlowe`, `daneAutomatyczne` i `daneRobocze`;
+- adres, współrzędne, dystans drogowy, czas, status jakości, źródło i znacznik
+  ręcznej korekty;
+- wyznaczanie relacji i kierunku z punktów trasy;
+- odrzucenie ujemnych wartości, błędnych współrzędnych, nieznanych źródeł i
+  sprzecznego kierunku;
+- zachowanie istniejącego API bramy `aplikacja.lokalizacje`;
+- brak nazwy konkretnego dostawcy w modelu.
 
 ## Końcowy test operatora 6J.3
 

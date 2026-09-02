@@ -1,11 +1,12 @@
 # Kontrakt lokalizacji i tras — granice modułów
 
-Status: **6A.1 zakończony 2026-09-02**.
+Status: **6A.1–6A.2 zakończone 2026-09-02**.
 
-Ten dokument jest technicznym wynikiem inwentaryzacji 6A.1. Ustala miejsce,
-w którym powstaje roboczy wynik trasy, oraz odpowiedzialności obecnych modułów.
-Nie definiuje jeszcze finalnego modelu pól z 6A.2, nie podłącza dostawcy map i
-nie zmienia dotychczasowego działania interfejsu.
+Ten dokument opisuje wynik inwentaryzacji 6A.1 oraz model danych wersji `1`
+wdrożony w 6A.2. Ustala miejsce, w którym powstaje roboczy wynik trasy,
+odpowiedzialności obecnych modułów i rozdział danych źródłowych, automatycznych
+oraz roboczych. Nie podłącza dostawcy map i nie zmienia dotychczasowego
+działania interfejsu.
 
 ## Jedna brama domenowa
 
@@ -20,8 +21,9 @@ przejazdu pompy. Silnik harmonogramu nie wybiera źródła i nie pobiera trasy.
 
 Obecna funkcja `pobierzLubUstalTrase` jest pierwszym przepływem tej bramy:
 zachowuje kolejność bieżące czasy → pamięć tras → wstrzyknięta funkcja mapowa →
-jawny brak trasy. W 6A.2 zostanie oparta na wersjonowanym modelu, ale jej
-bezpieczne pierwszeństwo źródeł pozostaje obowiązujące.
+jawny brak trasy. Model wersji `1` jest już dostępny; przeprowadzenie tego
+przepływu i starszych danych przez model należy do 6A.3. Bezpieczne
+pierwszeństwo źródeł pozostaje obowiązujące.
 
 ## Inwentaryzacja obecnych modułów
 
@@ -29,6 +31,7 @@ bezpieczne pierwszeństwo źródeł pozostaje obowiązujące.
 | --- | --- | --- |
 | `js/import/import_csv.js` | Rozpoznaje dane budowy i opcjonalne czasy, zachowuje pola źródłowe w `daneZrodlowe`. | Dostarcza dane źródłowe; nie geokoduje, nie wyznacza tras i nie wywołuje sieci. |
 | `js/budowy/budowy.js` | Przechowuje i waliduje roboczy dojazd, powrót oraz ich źródła. | Jest modelem wartości używanych przez plan; nie ustala pierwszeństwa źródeł i nie zna dostawcy map. |
+| `js/lokalizacje/model_lokalizacji_i_trasy.js` | Tworzy i waliduje kontrakt danych wersji `1`. | Rozdziela trzy warstwy danych bez wybierania dostawcy i bez wykonywania zapytań. |
 | `js/lokalizacje/lokalizacje.js` | Łączy budowę z książką tras i ma przepływ `pobierzLubUstalTrase`. | Jest jedyną bramą domenową roboczego wyniku trasy. |
 | `js/pamiec/pamiec_tras.js` | Zapisuje wersję `v1` lokalnej książki tras i rozpoznaje dokładny klucz. | Jest wyłącznie trwałą pamięcią przyjętych danych; nie mutuje modelu i nie wyznacza tras. |
 | `js/pompy/przejazdy_pomp.js` oraz moduły edycji przejazdów | Zużywają kierunkowe `czasPrzejazduMinuty` i `zrodloCzasuPrzejazdu`. | Nie pytają map ani pamięci; otrzymują przygotowany roboczy wynik relacji budowa → budowa. |
@@ -41,11 +44,11 @@ bezpieczne pierwszeństwo źródeł pozostaje obowiązujące.
   statusu jakości lokalizacji.
 - `pamiecTras` w wersji `v1` tworzy klucz z domyślnego ID węzła oraz tekstu
   `firma | budowa`, a nie z jednoznacznego adresu lub współrzędnych.
-- Wstrzyknięta funkcja mapowa zwraca obecnie głównie czasy; pełny,
-  wersjonowany wynik powstanie w 6A.2.
+- Wstrzyknięta funkcja mapowa zwraca obecnie głównie czasy; przeprowadzenie
+  dotychczasowego przepływu przez model wersji `1` należy do 6A.3.
 - Ręczna edycja czasu w interfejsie wywołuje dziś bezpośrednio prymityw modelu
   `budowy`, a następnie osobno zapisuje pamięć. Ta ścieżka pozostaje czasowo dla
-  zgodności i ma przejść przez bramę `aplikacja.lokalizacje` w 6A.2–6A.3.
+  zgodności i ma przejść przez bramę `aplikacja.lokalizacje` w 6A.3.
 - Nie istnieje jeszcze wersjonowany model punktu węzła; jego zakres zaczyna się
   w 6C.
 
@@ -69,19 +72,36 @@ Poza bramą nie wolno wybierać pomiędzy czasem ręcznym, cache i mapą. Adapte
 nie może wywoływać harmonogramu, a harmonogram nie może wywoływać adaptera,
 `fetch`, geokodowania ani pamięci przeglądarki.
 
-## Roboczy wynik trasy — wymagania przed modelem 6A.2
+## Model danych wersji 1
 
-Dokładne nazwy i struktura pól należą do 6A.2. Już teraz każdy przyszły wynik
-roboczy musi jednak jednoznacznie opisywać:
+Moduł `js/lokalizacje/model_lokalizacji_i_trasy.js` udostępnia
+`utworzModelLokalizacji` i `utworzModelTrasy`. Oba modele mają
+`wersjaKontraktu: 1` oraz trzy niezależne warstwy:
 
-- rodzaj relacji: węzeł ↔ budowa albo budowa → budowa;
-- oba punkty końcowe oraz kierunek;
-- roboczy czas i, gdy jest znany, drogowy dystans;
-- źródło, status jakości i informację o ręcznej korekcie;
-- stan braku wyniku bez podstawiania fikcyjnego `0`;
-- wersję kontraktu niezależną od formatu konkretnego dostawcy.
+- `daneZrodlowe` — dokładna informacja otrzymana z importu albo starszego
+  zapisu;
+- `daneAutomatyczne` — podpowiedź przygotowana przez przyszłe geokodowanie lub
+  routing;
+- `daneRobocze` — wartość świadomie używana przez aplikację i później przez
+  harmonogram.
 
-Pola charakterystyczne dla dostawcy map nie mogą przenikać do modelu silnika.
+Model lokalizacji zawiera stabilne `idLokalizacji`, `typLokalizacji` oraz w
+każdej warstwie:
+
+- adres z tekstem, tekstem znormalizowanym i elastycznym obiektem `czesci`;
+- opcjonalną parę współrzędnych geograficznych;
+- `statusJakosci`, `zrodlo` i `czyKorektaReczna`.
+
+Model trasy zawiera `idTrasy`, rodzaj relacji, kierunek, punkt początkowy i
+docelowy oraz w każdej warstwie:
+
+- `dystansDrogowyMetry` i `czasPrzejazduMinuty`;
+- `statusJakosci`, `zrodlo` i `czyKorektaReczna`.
+
+Punkty trasy wyznaczają kierunek: węzeł → budowa, budowa → węzeł albo budowa →
+budowa. Model odrzuca niezgodny kierunek, ujemny czas lub dystans,
+niekompletne współrzędne i wartości spoza zakresu geograficznego. Nie
+przechowuje nazw ani pól charakterystycznych dla konkretnego dostawcy map.
 
 ## Niezmienniki bezpieczeństwa i zgodności
 
@@ -105,4 +125,14 @@ Pola charakterystyczne dla dostawcy map nie mogą przenikać do modelu silnika.
 - zachowano obecne działanie offline, ręczne czasy i interfejs;
 - test automatyczny pilnuje granicy silnika i statusu planu.
 
-Następny podetap: **6A.2 — wersjonowany model lokalizacji i trasy**.
+## Kryterium zamknięcia 6A.2
+
+- model ma jawną wersję `1`;
+- lokalizacja i trasa mają niezależne warstwy źródłową, automatyczną i roboczą;
+- adres, współrzędne, dystans, czas, jakość, źródło i ręczna korekta mają
+  jednoznaczne miejsce;
+- trasa zachowuje oba punkty i kierunek;
+- konstruktory walidują liczby, współrzędne, statusy i zgodność relacji;
+- dotychczasowa brama `aplikacja.lokalizacje` pozostaje dostępna.
+
+Następny podetap: **6A.3 — migracja i niezmienniki**.
