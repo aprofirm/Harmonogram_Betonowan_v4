@@ -4,7 +4,7 @@
 
 Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetapy **6A.1–6A.3**
 i **6B.1–6B.3** oraz całe punkty **6A–6B** są zakończone. Zakończony jest
-również **6C.1 — model węzła**. Następny podetap to **6C.2 — ustawienie i pamięć**.
+również **6C.1–6C.2**. Następny podetap to **6C.3 — gotowość na wiele węzłów**.
 
 ## Zasada nadrzędna
 
@@ -143,6 +143,22 @@ Test `testy/etap_6c_1.test.js` sprawdza:
 - używanie ID aktywnego węzła w modelach tras węzeł ↔ budowa;
 - przekazanie całego modelu węzła do przyszłego zapytania mapowego;
 - zachowanie granicy zakresu: brak formularza i trwałego zapisu przed 6C.2.
+
+### 6C.2 — ustawienie i pamięć
+
+Test `testy/etap_6c_2.test.js` sprawdza:
+
+- wymaganie nazwy oraz adresu albo pełnej pary współrzędnych;
+- odrzucenie pojedynczej współrzędnej i pozostawienie walidacji zakresów
+  wspólnemu modelowi lokalizacji;
+- zachowanie źródłowego tekstu adresu oraz osobnej normalizacji roboczej;
+- ręczne źródło i jawny znacznik korekty operatora;
+- zachowanie stabilnego ID węzła przy korekcie nazwy, adresu lub współrzędnych;
+- wersjonowany zapis `localStorage` i odtworzenie po ponownym uruchomieniu;
+- bezpieczny tryb bieżącej sesji przy zablokowanym `localStorage`;
+- pominięcie uszkodzonego zapisu bez blokowania harmonogramu;
+- obecność kompaktowego formularza ustawień betoniarni w interfejsie;
+- aktualizację dokumentacji i przejście do 6C.3 bez podłączania dostawcy map.
 
 ## Końcowy test operatora 6J.3
 

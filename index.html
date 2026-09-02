@@ -45,6 +45,38 @@
             Wyczyść plan dnia
           </button>
 
+          <details class="budowa-reczna ustawienia-wezla">
+            <summary>Betoniarnia / węzeł</summary>
+            <form id="formularz-wezla" class="formularz-budowy-recznej" novalidate>
+              <label class="pole-formularza" for="wezel-nazwa">
+                <span>Nazwa betoniarni</span>
+                <input id="wezel-nazwa" name="nazwa" type="text" autocomplete="organization" required>
+              </label>
+
+              <label class="pole-formularza" for="wezel-adres">
+                <span>Adres</span>
+                <input id="wezel-adres" name="adres" type="text" autocomplete="street-address">
+              </label>
+
+              <label class="pole-formularza" for="wezel-szerokosc">
+                <span>Szerokość geograficzna</span>
+                <input id="wezel-szerokosc" name="szerokoscGeograficzna" type="number" min="-90" max="90" step="any" inputmode="decimal">
+              </label>
+
+              <label class="pole-formularza" for="wezel-dlugosc">
+                <span>Długość geograficzna</span>
+                <input id="wezel-dlugosc" name="dlugoscGeograficzna" type="number" min="-180" max="180" step="any" inputmode="decimal">
+              </label>
+
+              <button class="przycisk-drugoplanowy przycisk-dodaj-budowe" type="submit">
+                Zapisz betoniarnię
+              </button>
+              <p id="stan-wezla" class="pamiec-tras__stan" aria-live="polite">
+                Ustaw nazwę oraz adres lub pełne współrzędne betoniarni.
+              </p>
+            </form>
+          </details>
+
           <div class="panel__naglowek">
             <div>
               <p class="etykieta-sekcji">USTAWIENIA</p>
@@ -518,6 +550,7 @@
     <script defer src="js/pamiec/pamiec_planu.js"></script>
     <script defer src="js/pamiec/pamiec_tras.js"></script>
     <script defer src="js/lokalizacje/model_lokalizacji_i_trasy.js?v=6a2-model-20260902a"></script>
+    <script defer src="js/pamiec/pamiec_wezla.js?v=6c2-wezel-20260902a"></script>
     <script defer src="js/import/import_csv.js?v=4j3-panel-przejazdow-20260829a"></script>
     <script defer src="js/budowy/budowy.js?v=5f2-limit-indywidualny-20260830a"></script>
     <script defer src="js/pompy/pompy.js"></script>

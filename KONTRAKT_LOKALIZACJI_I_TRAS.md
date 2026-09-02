@@ -226,3 +226,22 @@ Dzięki temu adres, współrzędne, status jakości, źródło i ręczna korekta
 duplikowane w drugim formacie. Bieżące trasy pobierają ID punktu węzła z
 aktywnego modelu. Ustawianie danych przez operatora oraz trwała pamięć modelu
 są świadomie pozostawione do **6C.2**.
+
+
+## Ustawienie i pamięć węzła 6C.2
+
+Aktywny węzeł korzysta z tego samego modelu `v1`, ale od 6C.2 jego dane mogą być
+świadomie ustawione przez operatora i odtworzone z pamięci lokalnej.
+
+Kontrakt zapisu:
+
+- klucz: `harmonogramBetonowan.aktywnyWezel.v1`;
+- wersja zapisu: `1`;
+- wartość: pełny `modelWezla` oraz znacznik czasu zapisu;
+- poprawny odczyt jest ponownie walidowany przez `utworzModelWezla`;
+- niezgodna wersja nie jest automatycznie nadpisywana;
+- uszkodzony zapis jest pomijany, a aplikacja wraca do modelu startowego;
+- brak `localStorage` przełącza pamięć na bieżącą sesję.
+
+Korekta operatora nie zmienia `idWezla`. Różne fizyczne węzły i osobne ID są
+zakresem 6C.3.

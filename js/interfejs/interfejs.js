@@ -72,6 +72,12 @@
       informacjaOImporcie: pobierzWymaganyElement("informacja-o-imporcie"),
       nazwaPlikuCsv: pobierzWymaganyElement("nazwa-pliku-csv"),
       szczegolyPlikuCsv: pobierzWymaganyElement("szczegoly-pliku-csv"),
+      formularzWezla: document.getElementById("formularz-wezla"),
+      wezelNazwa: document.getElementById("wezel-nazwa"),
+      wezelAdres: document.getElementById("wezel-adres"),
+      wezelSzerokosc: document.getElementById("wezel-szerokosc"),
+      wezelDlugosc: document.getElementById("wezel-dlugosc"),
+      stanWezla: document.getElementById("stan-wezla"),
       formularzBudowyRecznej: pobierzWymaganyElement("formularz-budowy-recznej"),
       recznaFirma: pobierzWymaganyElement("reczna-firma"),
       recznaBudowa: pobierzWymaganyElement("reczna-budowa"),
@@ -1623,6 +1629,76 @@
     otworzOknoHistorii();
   }
 
+  function pobierzDaneWezlaZFormularza() {
+    return {
+      nazwa: elementy.wezelNazwa ? elementy.wezelNazwa.value : "",
+      adres: elementy.wezelAdres ? elementy.wezelAdres.value : "",
+      szerokoscGeograficzna: elementy.wezelSzerokosc
+        ? elementy.wezelSzerokosc.value
+        : "",
+      dlugoscGeograficzna: elementy.wezelDlugosc
+        ? elementy.wezelDlugosc.value
+        : ""
+    };
+  }
+
+  function pokazAktywnyWezel(wezel, stanPamieci) {
+    if (!wezel || !elementy.formularzWezla) {
+      return;
+    }
+
+    const modelLokalizacji = wezel.modelLokalizacji || {};
+    const daneRobocze = modelLokalizacji.daneRobocze || {};
+    const adres = daneRobocze.adres || {};
+    const wspolrzedne = daneRobocze.wspolrzedne || {};
+    const stan = stanPamieci || {};
+
+    elementy.wezelNazwa.value = wezel.nazwa || "";
+    elementy.wezelAdres.value = adres.tekst || "";
+    elementy.wezelSzerokosc.value =
+      wspolrzedne.szerokoscGeograficzna === null ||
+      wspolrzedne.szerokoscGeograficzna === undefined
+        ? ""
+        : String(wspolrzedne.szerokoscGeograficzna);
+    elementy.wezelDlugosc.value =
+      wspolrzedne.dlugoscGeograficzna === null ||
+      wspolrzedne.dlugoscGeograficzna === undefined
+        ? ""
+        : String(wspolrzedne.dlugoscGeograficzna);
+
+    if (elementy.stanWezla) {
+      const opisPamieci = stan.trybPamieci === "trwala"
+        ? "Zapis trwały w tej przeglądarce."
+        : "Dane węzła są dostępne tylko w bieżącej sesji.";
+      const statusAdresu = daneRobocze.statusJakosci || "brak";
+      elementy.stanWezla.textContent =
+        "ID: " + wezel.idWezla + " · status: " + statusAdresu + ". " + opisPamieci;
+    }
+  }
+
+  function pokazBladWezla(blad) {
+    const trescBledu = blad instanceof Error
+      ? blad.message
+      : "Nie udało się zapisać danych betoniarni.";
+
+    if (elementy.stanWezla) {
+      elementy.stanWezla.textContent = trescBledu;
+    }
+
+    ustawStatus("blad", "Nie można zapisać betoniarni", trescBledu);
+  }
+
+  function podlaczUstawieniaWezla(obslugaZapisuWezla) {
+    if (!elementy.formularzWezla) {
+      return;
+    }
+
+    elementy.formularzWezla.addEventListener("submit", function (zdarzenie) {
+      zdarzenie.preventDefault();
+      obslugaZapisuWezla(pobierzDaneWezlaZFormularza());
+    });
+  }
+
   function pobierzDaneBudowyRecznej() {
     return {
       firma: elementy.recznaFirma.value,
@@ -1805,6 +1881,9 @@
     pokazBladStartuBudowy: pokazBladStartuBudowy,
     pokazBladCzasow: pokazBladCzasow,
     pokazBladPompy: pokazBladPompy,
+    pokazBladWezla: pokazBladWezla,
+    pokazAktywnyWezel: pokazAktywnyWezel,
+    podlaczUstawieniaWezla: podlaczUstawieniaWezla,
     zakonczPrzeliczenie: zakonczPrzeliczenie,
     pokazTrwajacyImport: pokazTrwajacyImport,
     pokazUdanyImport: pokazUdanyImport,

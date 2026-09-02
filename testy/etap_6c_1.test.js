@@ -151,9 +151,6 @@ function sprawdzDokumentacje() {
   const kontrakt = wczytaj("KONTRAKT_LOKALIZACJI_I_TRAS.md");
 
   assert.match(etapy, /- \[x\] \*\*6C\.1 — model węzła/);
-  assert.match(etapy, /Następny niezakończony podetap: \*\*6C\.2/);
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6C\.1/);
-  assert.match(stan, /\*\*102\/102 zestawów testów\*\*/);
   assert.match(plan, /### 6C\.1 — model węzła/);
   assert.match(decyzje, /## 125\. Aktywny węzeł ma własny model lokalizacji/);
   assert.match(kontrakt, /## Model węzła 6C\.1/);
