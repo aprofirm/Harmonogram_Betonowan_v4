@@ -3,8 +3,8 @@
 ## Status
 
 Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetapy **6A.1–6A.3**
-i **6B.1–6B.3** oraz całe punkty **6A–6E** są zakończone. Następny podetap to
-**6F.1 — wyszukiwanie lokalizacji**.
+i **6B.1–6B.3** oraz całe punkty **6A–6E** są zakończone. Podetap **6F.1**
+jest zakończony. Następny podetap to **6F.2 — wiele wyników**.
 
 ## Zasada nadrzędna
 
@@ -173,6 +173,24 @@ Test `testy/etap_6c_3.test.js` sprawdza:
 - automatyczne przypięcie modeli bieżącej budowy do aktywnego węzła;
 - zachowanie formatu pamięci `v1` przed migracją 6D.1;
 - aktualizację dokumentacji, zamknięcie całego 6C i przejście do 6D.1.
+
+### 6F.1 — wyszukiwanie lokalizacji
+
+Test `testy/etap_6f_1.test.js` sprawdza:
+
+- brak wywołania geokodowania dla adresu niewystarczającego;
+- wysłanie do adaptera wyłącznie roboczego tekstu adresu ocenionego jako
+  wystarczający do wyszukania;
+- pierwszeństwo potwierdzonej lokalizacji, zapisanego wyniku automatycznego,
+  dokładnego cache i lokalnych podpowiedzi ze współrzędnymi przed internetem;
+- zapis pojedynczego wyniku tylko do `daneAutomatyczne` ze źródłem `mapa`, bez
+  nadpisania `daneRobocze` i bez automatycznego potwierdzenia;
+- jawny status `niejednoznaczna` przy wielu kandydatach bez wyboru pierwszego;
+- jawny status `nieznaleziona` przy braku wyniku;
+- przekazanie neutralnego błędu usługi bez zmiany modelu lokalizacji;
+- ponowne użycie zapisanej automatycznej podpowiedzi bez kolejnego zapytania;
+- aktualizację dokumentacji i przejście do 6F.2 przy pozostawieniu całego 6F
+  jako punktu otwartego.
 
 ## Końcowy test operatora 6J.3
 

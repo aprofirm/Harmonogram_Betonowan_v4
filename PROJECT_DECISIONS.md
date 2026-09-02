@@ -2532,3 +2532,23 @@ Obowiązują następujące zasady:
 - Niepełna lub niepoprawna odpowiedź nigdy nie może zostać zapisana jako poprawna trasa.
 - Błąd internetowy nie może nadpisać ręcznych czasów ani wyniku z cache i nie może zatrzymać harmonogramu.
 - Diagnostyka zapisuje wyłącznie bezpieczne metadane: rodzaj operacji, neutralny status, opcjonalny kod HTTP i informację, czy warto ponowić. Nie zapisuje adresu, współrzędnych, endpointu, treści odpowiedzi ani klucza API.
+
+
+## 133. Wynik geokodowania jest podpowiedzią automatyczną, nie lokalizacją roboczą
+
+- Do geokodowania wolno wysłać wyłącznie adres oceniony lokalnie jako `pelna`
+  albo `niepelna`; nazwa firmy, nazwa budowy i adres niewystarczający nie są
+  wysyłane jako zastępczy adres.
+- Przed internetem należy sprawdzić potwierdzoną lokalizację, zapisany wynik
+  automatyczny oraz pamięć lokalną; lokalna podpowiedź nadal wymaga jawnego
+  wyboru.
+- Pojedynczy wynik geokodowania zapisujemy w `daneAutomatyczne` ze źródłem
+  `mapa`. Nie zmienia on `daneRobocze` i nie otrzymuje statusu `potwierdzona`
+  bez decyzji operatora.
+- Przy wielu wynikach nie wolno wybrać pierwszego kandydata automatycznie.
+  Wynik ma status `niejednoznaczna` i zachowuje pełną listę kandydatów dla
+  kolejnego kroku operatorskiego.
+- Brak kandydatów ma status `nieznaleziona`; błąd usługi mapowej zachowuje
+  neutralny status z 6E.3 i nie modyfikuje lokalizacji.
+- Geokodowanie nie zapisuje surowej odpowiedzi dostawcy ani klucza API w modelu,
+  planie lub diagnostyce.

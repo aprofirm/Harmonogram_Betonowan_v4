@@ -21,7 +21,8 @@ function sprawdzKompletnyPodzialEtapu6() {
     );
 
     [1, 2, 3].forEach(function (numer) {
-      const stan = ["A", "B", "C", "D", "E"].includes(litera)
+      const stan = ["A", "B", "C", "D", "E"].includes(litera) ||
+        (litera === "F" && numer === 1)
         ? "x"
         : " ";
       assert.match(
@@ -31,7 +32,7 @@ function sprawdzKompletnyPodzialEtapu6() {
     });
   });
 
-  assert.match(etapy, /Następny niezakończony podetap: \*\*6F\.1/);
+  assert.match(etapy, /Następny niezakończony podetap: \*\*6F\.2/);
   assert.match(etapy, /brak sieci, limit, timeout lub zły wynik/);
   assert.match(etapy, /A → B` pozostaje niezależne od `B → A/);
   assert.match(etapy, /nie\s+nadpisuje ręcznej korekty/);
@@ -45,11 +46,11 @@ function sprawdzGranicePlanu() {
 
   assert.match(
     etapy,
-    /Etap 6 — Adresy, lokalizacje i trasy — \*\*rozpoczęty 2026-09-02; 6A–6E zakończone; następny podetap 6F\.1\*\*/
+    /Etap 6 — Adresy, lokalizacje i trasy — \*\*rozpoczęty 2026-09-02; 6A–6E zakończone; 6F\.1 zakończone; następny podetap 6F\.2\*\*/
   );
   assert.match(etapy, /openrouteservice \/ HeiGIT/);
   assert.match(stan, /\*\*Etap 6\*\* jest rozpoczęty/);
-  assert.match(stan, /Rozpocząć \*\*6F\.1/);
+  assert.match(stan, /Rozpocząć \*\*6F\.2/);
   assert.match(readme, /testy\/TESTY_ETAP_6\.md/);
   assert.match(planTestow, /całe punkty \*\*6A–6E\*\*/);
   assert.match(
@@ -66,5 +67,5 @@ sprawdzKompletnyPodzialEtapu6();
 sprawdzGranicePlanu();
 
 console.log(
-  "OK — Etap 6 ma kompletny plan 6A–6J, zakończone 6A–6E oraz następny krok 6F.1."
+  "OK — Etap 6 ma kompletny plan 6A–6J, zakończone 6A–6E i 6F.1 oraz następny krok 6F.2."
 );

@@ -186,10 +186,6 @@ function sprawdzIntegracjeIDokumentacje() {
   assert.match(lokalizacje, /czyPonowicPozniej/);
   assert.match(etapy, /- \[x\] \*\*6E —/);
   assert.match(etapy, /- \[x\] \*\*6E\.3 — bezpieczne błędy:/);
-  assert.match(etapy, /Następny niezakończony podetap: \*\*6F\.1/);
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6E\.3/);
-  assert.match(stan, /110\/110 zestawów testów/);
-  assert.match(stan, /Rozpocząć \*\*6F\.1 — wyszukiwanie lokalizacji/);
   assert.match(decyzje, /## 132\. Błędy usług mapowych są danymi domenowymi/);
   assert.match(kontrakt, /## Bezpieczne błędy adaptera — 6E\.3/);
   assert.match(plan, /### 6E\.3 — bezpieczne błędy/);

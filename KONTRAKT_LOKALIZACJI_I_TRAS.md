@@ -1,6 +1,6 @@
 # Kontrakt lokalizacji i tras — granice modułów
 
-Status: **6A–6D oraz 6E.1 zakończone 2026-09-02; następny podetap 6E.2**.
+Status: **6A–6E zakończone; 6F.1 zakończone 2026-09-02; następny podetap 6F.2**.
 
 Ten dokument opisuje wynik inwentaryzacji 6A.1, model danych wersji `1`
 wdrożony w 6A.2 oraz migrację zgodnościową z 6A.3. Ustala miejsce, w którym
@@ -348,3 +348,27 @@ Implementacja openrouteservice pozostaje wewnątrz adaptera. Do silnika harmonog
 Neutralny adapter nie przekazuje błędów dostawcy do silnika. Operacja geokodowania lub routingu może zakończyć się statusem `brak-konfiguracji`, `brak-sieci`, `timeout`, `limit-uslugi`, `blad-zapytania-uslugi`, `blad-uslugi` albo `niepoprawna-odpowiedz`. Wynik błędu zawiera prosty `komunikatOperatora`, `czyPonowicPozniej` i opcjonalny `statusHttp`, ale nie zawiera URL-a, klucza, surowej odpowiedzi ani danych wejściowych adresu.
 
 Domyślny timeout pierwszego adaptera wynosi 10 s. `pobierzLubUstalTrase()` nadal sprawdza ręczne/bieżące czasy i pamięć przed internetem; jeśli adapter zwróci błąd, brama przekazuje neutralny status i nie modyfikuje budowy.
+
+
+## Wyszukiwanie lokalizacji — 6F.1
+
+`aplikacja.lokalizacje.wyszukajLokalizacjeBudowy()` jest bramą geokodowania
+budowy. Nie wywołuje sieci dla adresu `brak` lub `niewystarczajaca` i korzysta
+z lokalnej oceny 6B.3, więc do adaptera trafia wyłącznie tekst adresu nadający
+się do wyszukania.
+
+Kolejność przed internetem jest bezpieczna: potwierdzona bieżąca lokalizacja →
+zapisana automatyczna podpowiedź ze współrzędnymi → dokładny wpis pamięci tras →
+lokalne podpowiedzi z zapisanymi współrzędnymi → geokodowanie. Lokalna
+podpowiedź nie jest stosowana automatycznie.
+
+Pojedynczy kandydat z mapy trafia tylko do `daneAutomatyczne` ze źródłem
+`mapa`, `czyKorektaReczna: false` i zachowanymi adresem oraz współrzędnymi.
+`daneRobocze` pozostają bez zmian, dlatego wynik wymaga późniejszego
+potwierdzenia. Brak kandydatów daje automatyczny status `nieznaleziona`, a
+więcej niż jeden kandydat `niejednoznaczna`; lista kandydatów jest zwracana do
+warstwy operatorskiej bez wybierania pierwszego elementu.
+
+Neutralny błąd 6E.3 nie zmienia żadnej warstwy lokalizacji. 6F.1 nie wyznacza
+jeszcze trasy i nie zatwierdza wyniku geokodowania — te odpowiedzialności
+pozostają odpowiednio w dalszych podetapach 6F i 6G.

@@ -798,6 +798,333 @@
     };
   }
 
+  function pobierzFunkcjeGeokodowania(uslugaMapowa) {
+    if (uslugaMapowa && typeof uslugaMapowa.geokoduj === "function") {
+      return uslugaMapowa.geokoduj.bind(uslugaMapowa);
+    }
+
+    return null;
+  }
+
+  function czyWarstwaMaWspolrzedne(warstwa) {
+    const wspolrzedne = warstwa && warstwa.wspolrzedne;
+
+    return Boolean(
+      wspolrzedne &&
+      Number.isFinite(Number(wspolrzedne.szerokoscGeograficzna)) &&
+      Number.isFinite(Number(wspolrzedne.dlugoscGeograficzna))
+    );
+  }
+
+  function utworzKandydataZWarstwyLokalizacji(warstwa) {
+    const dane = warstwa && typeof warstwa === "object" ? warstwa : {};
+
+    return {
+      adres: dane.adres || null,
+      wspolrzedne: dane.wspolrzedne || null,
+      statusJakosci: dane.statusJakosci || "nieoceniona",
+      zrodlo: dane.zrodlo || "brak"
+    };
+  }
+
+  function pobierzZapisanaPodpowiedzGeokodowania(budowa) {
+    const model = budowa && budowa.modelLokalizacji || {};
+    const warstwa = model.daneAutomatyczne || {};
+
+    if (warstwa.zrodlo !== "mapa" || !czyWarstwaMaWspolrzedne(warstwa)) {
+      return null;
+    }
+
+    return utworzKandydataZWarstwyLokalizacji(warstwa);
+  }
+
+  function pobierzDokladnaLokalizacjeZPamieci(budowa) {
+    if (!budowa || !aplikacja.pamiecTras ||
+        typeof aplikacja.pamiecTras.pobierzTrase !== "function") {
+      return null;
+    }
+
+    const opisLokalizacji = utworzOpisLokalizacjiBudowy(budowa);
+
+    if (!opisLokalizacji) {
+      return null;
+    }
+
+    let wynikPamieci;
+
+    try {
+      wynikPamieci = aplikacja.pamiecTras.pobierzTrase(
+        opisLokalizacji,
+        pobierzIdAktywnegoWezla(),
+        pobierzDaneTozsamosciPamieciBudowy(budowa)
+      );
+    } catch (bladPamieci) {
+      return null;
+    }
+
+    const trasa = wynikPamieci && wynikPamieci.trasa;
+
+    if (!trasa || !trasa.wspolrzedneLokalizacji) {
+      return null;
+    }
+
+    zastosujLokalizacjeZWybranejTrasy(budowa, trasa);
+    const warstwaRobocza = budowa.modelLokalizacji &&
+      budowa.modelLokalizacji.daneRobocze;
+
+    if (!czyWarstwaMaWspolrzedne(warstwaRobocza)) {
+      return null;
+    }
+
+    return {
+      status: "uzyto-pamieci-lokalizacji",
+      lokalizacja: warstwaRobocza,
+      trasaPamieci: trasa,
+      czyWywolanoInternet: false
+    };
+  }
+
+  function zapiszAutomatycznyStanLokalizacji(budowa, daneAutomatyczne) {
+    const model = budowa && budowa.modelLokalizacji || {};
+    const dane = daneAutomatyczne && typeof daneAutomatyczne === "object"
+      ? daneAutomatyczne
+      : {};
+    const adres = aplikacja.lokalizacje.utworzAdresRoboczy(dane.adres);
+
+    budowa.modelLokalizacji = aplikacja.lokalizacje.utworzModelLokalizacji(
+      Object.assign({}, model, {
+        idWezla: pobierzIdAktywnegoWezla(),
+        daneAutomatyczne: {
+          adres: adres,
+          wspolrzedne: dane.wspolrzedne || null,
+          statusJakosci: dane.statusJakosci || "nieoceniona",
+          zrodlo: "mapa",
+          czyKorektaReczna: false
+        }
+      })
+    );
+
+    return budowa.modelLokalizacji.daneAutomatyczne;
+  }
+
+  function pobierzPodpowiedziPamieciZWspolrzednymi(budowa) {
+    const wynik = wyszukajPodpowiedziPamieciDlaBudowy(budowa);
+    const podpowiedzi = Array.isArray(wynik.podpowiedzi)
+      ? wynik.podpowiedzi.filter(function (trasa) {
+        return Boolean(trasa && trasa.wspolrzedneLokalizacji);
+      })
+      : [];
+
+    return {
+      podpowiedzi: podpowiedzi,
+      liczbaPodpowiedzi: podpowiedzi.length
+    };
+  }
+
+  function wyszukajLokalizacjeBudowy(budowa, uslugaMapowa) {
+    if (!budowa) {
+      return Promise.resolve({
+        status: "brak-budowy",
+        kandydaci: [],
+        czyWywolanoInternet: false
+      });
+    }
+
+    migrujBudoweDoKontraktuTras(budowa);
+    const model = budowa.modelLokalizacji || {};
+    const warstwaRobocza = model.daneRobocze || {};
+
+    if (warstwaRobocza.statusJakosci === "potwierdzona" &&
+        czyWarstwaMaWspolrzedne(warstwaRobocza)) {
+      return Promise.resolve({
+        status: "uzyto-biezacej-lokalizacji",
+        lokalizacja: warstwaRobocza,
+        kandydaci: [utworzKandydataZWarstwyLokalizacji(warstwaRobocza)],
+        czyWywolanoInternet: false,
+        czyWymagaPotwierdzenia: false
+      });
+    }
+
+    const zapisanaPodpowiedz = pobierzZapisanaPodpowiedzGeokodowania(budowa);
+
+    if (zapisanaPodpowiedz) {
+      return Promise.resolve({
+        status: "uzyto-zapisanego-wyniku-geokodowania",
+        lokalizacjaAutomatyczna: zapisanaPodpowiedz,
+        kandydaci: [zapisanaPodpowiedz],
+        czyWywolanoInternet: false,
+        czyWymagaPotwierdzenia: true
+      });
+    }
+
+    const wynikDokladnegoCache = pobierzDokladnaLokalizacjeZPamieci(budowa);
+
+    if (wynikDokladnegoCache) {
+      return Promise.resolve(Object.assign({
+        kandydaci: [
+          utworzKandydataZWarstwyLokalizacji(
+            wynikDokladnegoCache.lokalizacja
+          )
+        ],
+        czyWymagaPotwierdzenia: false
+      }, wynikDokladnegoCache));
+    }
+
+    const wynikPodpowiedziPamieci =
+      pobierzPodpowiedziPamieciZWspolrzednymi(budowa);
+
+    if (wynikPodpowiedziPamieci.liczbaPodpowiedzi > 0) {
+      return Promise.resolve({
+        status: "wymagany-wybor-z-pamieci",
+        kandydaci: [],
+        podpowiedzi: wynikPodpowiedziPamieci.podpowiedzi,
+        liczbaPodpowiedzi: wynikPodpowiedziPamieci.liczbaPodpowiedzi,
+        czyWywolanoInternet: false,
+        czyWymagaPotwierdzenia: true
+      });
+    }
+
+    const informacjeAdresu = aplikacja.lokalizacje.pobierzInformacjeJakosciAdresu(
+      warstwaRobocza.adres,
+      warstwaRobocza.statusJakosci
+    );
+
+    if (!informacjeAdresu.czyMoznaSzukacAutomatycznie) {
+      return Promise.resolve({
+        status: "adres-niewystarczajacy-do-geokodowania",
+        statusJakosci: informacjeAdresu.statusJakosci,
+        komunikat: informacjeAdresu.komunikatOperatora,
+        kandydaci: [],
+        czyWywolanoInternet: false,
+        czyWymagaPotwierdzenia: true
+      });
+    }
+
+    const geokoduj = pobierzFunkcjeGeokodowania(uslugaMapowa);
+
+    if (!geokoduj) {
+      return Promise.resolve({
+        status: "brak-uslugi-geokodowania",
+        komunikat: "Brak skonfigurowanej usługi wyszukiwania lokalizacji.",
+        kandydaci: [],
+        czyWywolanoInternet: false,
+        czyWymagaPotwierdzenia: true
+      });
+    }
+
+    const tekstAdresu = String(
+      warstwaRobocza.adres && warstwaRobocza.adres.tekst || ""
+    ).trim();
+
+    if (!tekstAdresu) {
+      return Promise.resolve({
+        status: "adres-niewystarczajacy-do-geokodowania",
+        statusJakosci: informacjeAdresu.statusJakosci,
+        komunikat: informacjeAdresu.komunikatOperatora,
+        kandydaci: [],
+        czyWywolanoInternet: false,
+        czyWymagaPotwierdzenia: true
+      });
+    }
+
+    return Promise.resolve().then(function () {
+      return geokoduj({
+        tekstAdresu: tekstAdresu,
+        limitWynikow: 5
+      });
+    }).then(function (wynikGeokodowania) {
+      const wynik = wynikGeokodowania && typeof wynikGeokodowania === "object"
+        ? wynikGeokodowania
+        : {};
+      const kandydaci = Array.isArray(wynik.kandydaci)
+        ? wynik.kandydaci
+        : [];
+
+      if (wynik.status && !["ok", "brak-wynikow"].includes(wynik.status)) {
+        return {
+          status: wynik.status,
+          komunikat: wynik.komunikatOperatora ||
+            "Nie udało się wyszukać lokalizacji.",
+          kandydaci: [],
+          czyWywolanoInternet: true,
+          czyWymagaPotwierdzenia: true,
+          czyPonowicPozniej: Boolean(wynik.czyPonowicPozniej),
+          statusHttp: wynik.statusHttp || null
+        };
+      }
+
+      if (wynik.status === "brak-wynikow" || kandydaci.length === 0) {
+        const warstwaAutomatyczna = zapiszAutomatycznyStanLokalizacji(budowa, {
+          adres: warstwaRobocza.adres,
+          wspolrzedne: null,
+          statusJakosci: "nieznaleziona"
+        });
+
+        return {
+          status: "nieznaleziona",
+          komunikat: aplikacja.lokalizacje.utworzKomunikatJakosciAdresu(
+            "nieznaleziona"
+          ),
+          lokalizacjaAutomatyczna: warstwaAutomatyczna,
+          kandydaci: [],
+          czyWywolanoInternet: true,
+          czyWymagaPotwierdzenia: true
+        };
+      }
+
+      if (kandydaci.length > 1) {
+        const warstwaAutomatyczna = zapiszAutomatycznyStanLokalizacji(budowa, {
+          adres: warstwaRobocza.adres,
+          wspolrzedne: null,
+          statusJakosci: "niejednoznaczna"
+        });
+
+        return {
+          status: "niejednoznaczna",
+          komunikat: aplikacja.lokalizacje.utworzKomunikatJakosciAdresu(
+            "niejednoznaczna"
+          ),
+          lokalizacjaAutomatyczna: warstwaAutomatyczna,
+          kandydaci: kandydaci,
+          liczbaKandydatow: kandydaci.length,
+          czyWywolanoInternet: true,
+          czyWymagaPotwierdzenia: true
+        };
+      }
+
+      const kandydat = kandydaci[0];
+      const warstwaAutomatyczna = zapiszAutomatycznyStanLokalizacji(budowa, {
+        adres: kandydat.adres,
+        wspolrzedne: kandydat.wspolrzedne,
+        statusJakosci: kandydat.statusJakosci || "nieoceniona"
+      });
+      const zapisanyKandydat =
+        utworzKandydataZWarstwyLokalizacji(warstwaAutomatyczna);
+
+      return {
+        status: "znaleziono-jedna-lokalizacje",
+        komunikat:
+          "Znaleziono jedną lokalizację. Wynik zapisano jako automatyczną podpowiedź i wymaga potwierdzenia.",
+        lokalizacjaAutomatyczna: zapisanyKandydat,
+        kandydaci: [zapisanyKandydat],
+        liczbaKandydatow: 1,
+        czyWywolanoInternet: true,
+        czyWymagaPotwierdzenia: true
+      };
+    }).catch(function () {
+      return {
+        status: "blad-uslugi",
+        komunikat:
+          "Nie udało się wyszukać lokalizacji. Możesz nadal użyć pamięci tras lub ręcznych czasów.",
+        kandydaci: [],
+        czyWywolanoInternet: true,
+        czyWymagaPotwierdzenia: true,
+        czyPonowicPozniej: true,
+        statusHttp: null
+      };
+    });
+  }
+
   function pobierzFunkcjeTrasyMapowej(uslugaMapowa) {
     if (typeof uslugaMapowa === "function") {
       return uslugaMapowa;
@@ -952,6 +1279,7 @@
     migrujBudoweDoKontraktuTras: migrujBudoweDoKontraktuTras,
     migrujListeBudowDoKontraktuTras: migrujListeBudowDoKontraktuTras,
     zmienCzasRoboczyBudowy: zmienCzasRoboczyBudowy,
+    wyszukajLokalizacjeBudowy: wyszukajLokalizacjeBudowy,
     pobierzLubUstalTrase: pobierzLubUstalTrase
   });
 })(window);
