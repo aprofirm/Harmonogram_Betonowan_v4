@@ -10,7 +10,10 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - Ostatni zakończony podetap: **5J.3 — test operatora**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- Pełna lokalna regresja po zapisaniu wyniku przechodzi **94/94 zestawy testów**.
+- Pełna lokalna regresja po dodaniu kontroli planu Etapu 6 przechodzi
+  **95/95 zestawów testów**.
+- Kompletny plan **Etapu 6** obejmuje punkty **6A–6J**; implementacja nie została
+  jeszcze rozpoczęta.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -48,9 +51,10 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Przed rozpoczęciem implementacji **Etapu 6 — Adresy, lokalizacje i trasy**
-rozpisać jego kompletne podetapy zgodnie z `AGENTS.md`. Dopiero potem rozpocząć
-pierwszy zatwierdzony podetap Etapu 6.
+Rozpocząć **6A.1 — inwentaryzacja i granice modułów**. Najpierw opisać, jak
+obecne `budowy`, `lokalizacje`, `pamiecTras`, przejazdy pomp i harmonogram mają
+korzystać z jednego kontraktu trasy. Nie podłączać jeszcze konkretnej usługi
+mapowej — jej porównanie i wybór należą do **6E.1**.
 
 ## Ważna zasada wznowienia
 

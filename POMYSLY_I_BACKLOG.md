@@ -155,6 +155,9 @@ OpenStreetMap pozostaje preferowanym źródłem danych mapowych, ale konkretny d
 
 Przed integracją trzeba porównać rozwiązania pod kątem kosztów, limitów, licencji, stabilności i możliwości wykorzystania w wersji lokalnej oraz internetowej. Należy osobno sprawdzić, czy wystarczy standardowy routing samochodowy, czy warto użyć dostawcy potrafiącego uwzględniać ciężkie pojazdy, np. ograniczenia masy, wysokości, szerokości i zakazy ruchu ciężarówek. Google Maps jest jednym z kandydatów do porównania, ale nie jest obecnie zatwierdzonym dostawcą.
 
+**Przypisanie do planu 2026-09-02:** porównanie i zatwierdzenie dostawcy należy
+do **6E.1**, neutralny adapter do **6E.2**, a obsługa awarii do **6E.3**.
+
 ---
 
 ## P-009 — Domyślne czasy pełnego cyklu pompy
@@ -224,6 +227,9 @@ pamięci powinien docelowo opierać się na jednoznacznej lokalizacji
 (znormalizowany adres i/lub współrzędne), a nie wyłącznie na swobodnej
 nazwie budowy. Rozwiązanie interfejsu nie może zmienić kontraktu silnika
 zbudowanego w 4E.
+
+**Przypisanie do planu 2026-09-02:** automatyczne relacje budowa → budowa są
+zakresem **6H.1–6H.3**, a ich prezentacja i korekta pozostają częścią **6I.1**.
 ---
 
 ## P-012 — Podpowiedzi znanych budów w formularzu ręcznym
@@ -237,3 +243,6 @@ Podczas ręcznego dodawania budowy program powinien wykorzystywać lokalną pami
 Wybranie propozycji powinno uzupełnić znane dane lokalizacji i pozwolić ponownie wykorzystać zapisany czas lub trasę, zamiast zmuszać operatora do ponownego wpisywania tych samych informacji. Podpowiedzi mają działać całkowicie lokalnie i offline.
 
 Dopasowanie powinno być odporne na wielkość liter i typowe różnice zapisu. Program nie może jednak samodzielnie podmieniać wpisu — operator wybiera jedną z propozycji albo kontynuuje wpisywanie nowej budowy. W Etapie 6 trzeba ustalić, czy rekord pamięci reprezentuje przede wszystkim nazwę budowy, znormalizowany adres, współrzędne czy ich połączenie, aby uniknąć duplikatów i błędnego łączenia podobnych lokalizacji.
+
+**Przypisanie do planu 2026-09-02:** model i klucz pamięci powstają w
+**6D.1–6D.2**, lokalne podpowiedzi w **6D.3**, a ich docelowy widok w **6I.1**.

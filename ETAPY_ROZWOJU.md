@@ -51,7 +51,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
 - [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
-- [ ] Etap 6 — Adresy, lokalizacje i trasy
+- [ ] Etap 6 — Adresy, lokalizacje i trasy — **zaplanowany 2026-09-02; następny podetap 6A.1**
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
@@ -813,6 +813,102 @@ Pełna regresja oraz test operatora 5J.3 przeszły. Etap 5 jest zakończony.
 ## Cel
 
 Automatycznie pozyskiwać możliwie wiarygodny czas i dystans przejazdu od węzła do budowy na podstawie adresu, bez uzależniania działania harmonogramu od internetu.
+
+## Postęp podetapów Etapu 6
+
+Plan został rozpisany 2026-09-02 po zamknięciu Etapu 5. Etap 6 korzysta z
+istniejących ręcznych czasów, książki tras i kontraktu przejazdów pomp; nie
+tworzy drugiego, równoległego mechanizmu czasu dojazdu.
+
+- [ ] **6A — kontrakt danych lokalizacji i zgodność wsteczna.**
+  - [ ] **6A.1 — inwentaryzacja i granice modułów:** opisać połączenia obecnych
+    `budowy`, `lokalizacje`, `pamiecTras`, przejazdów pomp i harmonogramu oraz
+    wskazać jedno miejsce, w którym powstaje roboczy wynik trasy.
+  - [ ] **6A.2 — wersjonowany model lokalizacji i trasy:** dodać osobne dane
+    źródłowe, automatyczne i robocze dla adresu, współrzędnych, odległości,
+    czasu, statusu jakości, źródła i ręcznej korekty.
+  - [ ] **6A.3 — migracja i niezmienniki:** starsze plany oraz książka tras
+    nadal działają, ręczne czasy nie znikają, a silnik korzysta wyłącznie z
+    wartości roboczych i nie zna konkretnej usługi mapowej.
+- [ ] **6B — adres z KDX/CSV i lokalna ocena jakości.**
+  - [ ] **6B.1 — rozpoznawanie kolumn adresowych:** obsłużyć warianty nazw i
+    osobne części adresu bez wymagania jednego sztywnego układu eksportu.
+  - [ ] **6B.2 — normalizacja bez utraty źródła:** zachować tekst oryginalny,
+    utworzyć powtarzalny adres do wyszukania i nie łączyć podobnych budów tylko
+    na podstawie swobodnej nazwy.
+  - [ ] **6B.3 — statusy i komunikaty:** rozróżniać adres pełny, niepełny, zbyt
+    ubogi, niejednoznaczny i nieznaleziony; brak adresu nie blokuje ręcznych
+    czasów ani harmonogramu.
+- [ ] **6C — węzeł/betoniarnia jako początek tras.**
+  - [ ] **6C.1 — model węzła:** przechowywać stabilne ID, nazwę, adres oraz
+    współrzędne aktywnego węzła bez ponownego geokodowania przy każdym planie.
+  - [ ] **6C.2 — ustawienie i pamięć:** walidować oraz lokalnie zapisywać dane
+    węzła, umożliwiając świadomą korektę operatora.
+  - [ ] **6C.3 — gotowość na wiele węzłów:** klucze lokalizacji i tras zawierają
+    ID węzła, choć pierwsza wersja interfejsu może używać jednego aktywnego.
+- [ ] **6D — pamięć lokalizacji i tras oparta na jednoznacznym miejscu.**
+  - [ ] **6D.1 — rozszerzenie formatu pamięci:** zapisywać adres, współrzędne,
+    dystans, oba kierunki czasu, źródło, dostawcę i daty z bezpieczną migracją
+    dotychczasowej książki tras.
+  - [ ] **6D.2 — stabilny klucz i duplikaty:** identyfikować wpis przez węzeł
+    oraz znormalizowany adres i/lub współrzędne; podobna nazwa nie oznacza
+    automatycznie tej samej lokalizacji.
+  - [ ] **6D.3 — cache i lokalne podpowiedzi:** przed internetem sprawdzać pamięć,
+    umożliwić wyszukanie znanej budowy offline i zastosować wpis dopiero po
+    świadomym wyborze operatora.
+- [ ] **6E — wybór dostawcy i wymienna warstwa usług mapowych.**
+  - [ ] **6E.1 — porównanie i decyzja:** ocenić kandydatów opartych o
+    OpenStreetMap i inne rozwiązania pod kątem kosztów, limitów, licencji,
+    CORS, działania z GitHub Pages i routingu ciężarowego; zapisać wybór przed
+    integracją, bez zakładania z góry Google Maps ani konkretnej usługi.
+  - [ ] **6E.2 — neutralny adapter:** geokodowanie i routing udostępniają własny
+    kontrakt projektu, a limity, timeout i sposób zapytania pozostają poza
+    silnikiem harmonogramu.
+  - [ ] **6E.3 — bezpieczne błędy:** brak sieci, limit, timeout lub zły wynik
+    usługi kończą się czytelnym statusem i diagnostyką, nigdy awarią aplikacji.
+- [ ] **6F — geokodowanie i potwierdzenie lokalizacji budowy.**
+  - [ ] **6F.1 — wyszukiwanie lokalizacji:** wysyłać tylko wystarczający adres,
+    najpierw używać cache i zapisywać wynik wraz z metadanymi źródła.
+  - [ ] **6F.2 — wiele wyników:** nie wybierać po cichu pierwszego dopasowania;
+    pokazać kandydatów i poziom pewności do decyzji operatora.
+  - [ ] **6F.3 — ręczne wskazanie:** pozwolić poprawić adres, wybrać wynik lub
+    podać/wskazać współrzędne, a zatwierdzoną lokalizację oznaczyć jako roboczą.
+- [ ] **6G — trasa drogowa węzeł ↔ budowa.**
+  - [ ] **6G.1 — kontrakt kierunkowej trasy:** wynik zawiera drogowy dystans,
+    czas przejazdu, kierunek, punkty końcowe, źródło i datę; dojazd oraz powrót
+    nie muszą być równe.
+  - [ ] **6G.2 — pobranie i walidacja:** wyznaczyć oba kierunki pomiędzy węzłem
+    i zatwierdzoną lokalizacją, zweryfikować liczby i zapisać poprawny wynik.
+  - [ ] **6G.3 — wartości automatyczne i robocze:** automatyczna podpowiedź nie
+    nadpisuje ręcznej korekty; operator widzi źródło i może świadomie przywrócić
+    wartość automatyczną.
+- [ ] **6H — automatyczne przejazdy pomp między budowami.**
+  - [ ] **6H.1 — relacja budowa → budowa:** wyznaczać kierunkową trasę z
+    zatwierdzonych współrzędnych; `A → B` pozostaje niezależne od `B → A`.
+  - [ ] **6H.2 — istniejący kontrakt pomp:** zasilić obecny panel i provider
+    `czasPrzejazduMinuty` danymi z mapy/cache bez omijania ręcznej korekty.
+  - [ ] **6H.3 — brak trasy i tryb offline:** zachować jawny konflikt braku
+    trasy, możliwość ręcznego wpisu i poprawne przeliczenie z pamięci bez sieci.
+- [ ] **6I — interfejs, integracja i odporność działania.**
+  - [ ] **6I.1 — szczegóły lokalizacji:** przy budowie pokazać adres, status,
+    źródło, dystans i czasy oraz mały przycisk do wyszukania lub korekty.
+  - [ ] **6I.2 — przeliczenie i pamięć planu:** zmiana lokalizacji albo wartości
+    roboczej unieważnia wynik; zapis/odtworzenie zachowuje dane bez ponownego
+    pobierania, a centralny silnik nadal używa gotowych czasów roboczych.
+  - [ ] **6I.3 — pełny scenariusz awaryjny:** aplikacja uruchamia się offline,
+    korzysta z cache lub ręcznych wartości i pozwala utworzyć harmonogram mimo
+    niedostępnej usługi mapowej.
+- [ ] **6J — regresja, publikacja i test operatora.**
+  - [ ] **6J.1 — testy automatyczne:** objąć import adresów, statusy jakości,
+    model węzła, pamięć/migrację, adaptery, geokodowanie, routing, błędy, tryb
+    offline oraz pełną regresję gruszek, pomp i konfliktów.
+  - [ ] **6J.2 — publikacja:** wysłać bezpieczny wynik na `main`, potwierdzić
+    GitHub Actions i GitHub Pages oraz brak kluczy, tokenów i danych prywatnych.
+  - [ ] **6J.3 — test operatora:** sprawdzić prawdziwy adres, przypadek
+    niepełny/niejednoznaczny, wybór lokalizacji, trasę drogową, ręczną korektę,
+    przejazd pompy, ponowne użycie cache i pracę po odłączeniu internetu.
+
+Następny niezakończony podetap: **6A.1 — inwentaryzacja i granice modułów**.
 
 ## Zakres
 
@@ -2812,3 +2908,21 @@ Podetap **5J.3**, cały punkt **5J** oraz cały **Etap 5** są zakończone.
 Pełna lokalna regresja po zapisie wyniku obejmuje **94/94 zestawy testów**.
 Następny krok: przed rozpoczęciem kodowania rozpisać kompletne podetapy
 **Etapu 6 — Adresy, lokalizacje i trasy**.
+
+## Plan rozpoczęcia Etapu 6 — 2026-09-02
+
+- [x] przejrzano decyzje 48–62 dotyczące adresów, OpenStreetMap, węzła,
+  geokodowania, tras, ręcznych korekt, cache i działania offline;
+- [x] uwzględniono istniejącą książkę tras oraz kierunkowe przejazdy pomp z
+  decyzji 96, zamiast projektować drugi mechanizm;
+- [x] rozpisano kompletne punkty **6A–6J**, łącznie z wyborem dostawcy,
+  migracją danych, interfejsem, regresją, publikacją i testem operatora;
+- [x] zachowano otwarte rozstrzygnięcie dostawcy map — wybór należy do 6E.1;
+- [x] plan chroni podstawową wersję offline i ręczne wartości operatora;
+- [x] `testy/etap_6_plan.test.js` pilnuje kompletności 6A–6J, granicy Etapu 6,
+  prywatności danych i następnego kroku 6A.1;
+- [x] pełna lokalna regresja po dodaniu kontroli planu przechodzi
+  **95/95 zestawów testów**.
+
+Plan Etapu 6 jest przygotowany, ale żaden podetap implementacyjny nie został
+jeszcze zamknięty. Następny krok: **6A.1 — inwentaryzacja i granice modułów**.
