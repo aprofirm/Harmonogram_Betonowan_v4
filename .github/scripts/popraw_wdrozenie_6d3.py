@@ -24,6 +24,12 @@ text = replace_once(
 )
 text = replace_once(
     text,
+    r'cały punkt \*\*6C\*\*',
+    r'całe punkty \*\*6C–6D\*\*',
+    'historyczny status planu testów'
+)
+text = replace_once(
+    text,
     '  "OK — Etap 6 ma kompletny plan 6A–6J, zakończone 6A–6C i 6D.1–6D.2 oraz następny krok 6D.3."\n',
     '  "OK — Etap 6 ma kompletny plan 6A–6J, zakończone 6A–6D oraz następny krok 6E.1."\n',
     'komunikat planu'
