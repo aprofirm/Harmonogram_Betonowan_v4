@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   wdrozenie:
-    if: github.event.head_commit.message == 'chore: uruchom wdrozenie 6B.2'
+    if: "${{ github.event.head_commit.message == 'chore: uruchom wdrozenie 6B.2 poprawka' }}"
     runs-on: ubuntu-latest
     steps:
       - name: Pobierz repozytorium
