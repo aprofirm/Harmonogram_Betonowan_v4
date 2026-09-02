@@ -1199,6 +1199,178 @@
     });
   }
 
+  function pobierzWspolrzedneKorektyLokalizacji(daneKorekty) {
+    const dane = daneKorekty && typeof daneKorekty === "object"
+      ? daneKorekty
+      : {};
+    const podaneWspolrzedne = dane.wspolrzedne &&
+      typeof dane.wspolrzedne === "object"
+      ? dane.wspolrzedne
+      : {};
+    const szerokoscSurowa = podaneWspolrzedne.szerokoscGeograficzna !== undefined
+      ? podaneWspolrzedne.szerokoscGeograficzna
+      : dane.szerokoscGeograficzna;
+    const dlugoscSurowa = podaneWspolrzedne.dlugoscGeograficzna !== undefined
+      ? podaneWspolrzedne.dlugoscGeograficzna
+      : dane.dlugoscGeograficzna;
+    const szerokoscTekst = String(
+      szerokoscSurowa === null || szerokoscSurowa === undefined ? "" : szerokoscSurowa
+    ).trim();
+    const dlugoscTekst = String(
+      dlugoscSurowa === null || dlugoscSurowa === undefined ? "" : dlugoscSurowa
+    ).trim();
+
+    if (!szerokoscTekst && !dlugoscTekst) {
+      return null;
+    }
+
+    if (!szerokoscTekst || !dlugoscTekst) {
+      throw new Error(
+        "Ręczne współrzędne wymagają jednocześnie szerokości i długości geograficznej."
+      );
+    }
+
+    const szerokosc = Number(szerokoscTekst);
+    const dlugosc = Number(dlugoscTekst);
+
+    if (!Number.isFinite(szerokosc) || szerokosc < -90 || szerokosc > 90 ||
+        !Number.isFinite(dlugosc) || dlugosc < -180 || dlugosc > 180) {
+      throw new Error("Podaj poprawne współrzędne geograficzne budowy.");
+    }
+
+    return {
+      szerokoscGeograficzna: szerokosc,
+      dlugoscGeograficzna: dlugosc
+    };
+  }
+
+  function pobierzAdresKorektyLokalizacji(daneKorekty, adresBazowy) {
+    const dane = daneKorekty && typeof daneKorekty === "object"
+      ? daneKorekty
+      : {};
+
+    if (dane.adres && typeof dane.adres === "object") {
+      return aplikacja.lokalizacje.utworzAdresRoboczy(dane.adres);
+    }
+
+    const tekstAdresu = String(
+      dane.adres === null || dane.adres === undefined ? "" : dane.adres
+    ).trim();
+
+    if (tekstAdresu) {
+      return aplikacja.lokalizacje.utworzAdresRoboczy({ tekst: tekstAdresu });
+    }
+
+    return aplikacja.lokalizacje.utworzAdresRoboczy(adresBazowy || {});
+  }
+
+  function zapiszRoboczaLokalizacjeBudowy(budowa, warstwaRobocza) {
+    const model = budowa && budowa.modelLokalizacji || {};
+
+    budowa.modelLokalizacji = aplikacja.lokalizacje.utworzModelLokalizacji(
+      Object.assign({}, model, {
+        idWezla: pobierzIdAktywnegoWezla(),
+        daneRobocze: warstwaRobocza
+      })
+    );
+
+    return budowa.modelLokalizacji.daneRobocze;
+  }
+
+  function zatwierdzKandydataLokalizacji(budowa, kandydaci, indeksKandydata) {
+    if (!budowa) {
+      throw new Error("Nie wskazano budowy, której lokalizację chcesz zatwierdzić.");
+    }
+
+    migrujBudoweDoKontraktuTras(budowa);
+    const lista = Array.isArray(kandydaci) ? kandydaci : [];
+    const indeks = Number(indeksKandydata);
+
+    if (!Number.isInteger(indeks) || indeks < 0 || indeks >= lista.length) {
+      throw new Error("Wybierz istniejący wynik wyszukiwania lokalizacji.");
+    }
+
+    const kandydat = przygotujKandydataDoWyboru(lista[indeks], indeks);
+
+    if (!czyWarstwaMaWspolrzedne(kandydat)) {
+      throw new Error("Wybrany wynik nie zawiera poprawnych współrzędnych.");
+    }
+
+    const model = budowa.modelLokalizacji || {};
+    const poprzedniaWarstwa = model.daneRobocze || {};
+    const adres = kandydat.adres
+      ? aplikacja.lokalizacje.utworzAdresRoboczy(kandydat.adres)
+      : aplikacja.lokalizacje.utworzAdresRoboczy(poprzedniaWarstwa.adres || {});
+    const zrodlo = kandydat.zrodlo === "pamiec" ? "pamiec" : "mapa";
+    const warstwaRobocza = zapiszRoboczaLokalizacjeBudowy(budowa, {
+      adres: adres,
+      wspolrzedne: kandydat.wspolrzedne,
+      statusJakosci: "potwierdzona",
+      zrodlo: zrodlo,
+      czyKorektaReczna: true
+    });
+
+    return {
+      status: "zatwierdzono-kandydata",
+      wybranyIndeksKandydata: indeks,
+      czyPotwierdzona: true,
+      lokalizacja: warstwaRobocza,
+      kandydat: kandydat
+    };
+  }
+
+  function ustawRecznaLokalizacjeBudowy(budowa, daneKorekty) {
+    if (!budowa) {
+      throw new Error("Nie wskazano budowy, której lokalizację chcesz poprawić.");
+    }
+
+    migrujBudoweDoKontraktuTras(budowa);
+    const model = budowa.modelLokalizacji || {};
+    const poprzedniaWarstwa = model.daneRobocze || {};
+    const adres = pobierzAdresKorektyLokalizacji(
+      daneKorekty,
+      poprzedniaWarstwa.adres
+    );
+    const wspolrzedne = pobierzWspolrzedneKorektyLokalizacji(daneKorekty);
+    const czyMaAdres = Boolean(adres.tekstZnormalizowany);
+
+    if (!czyMaAdres && !wspolrzedne) {
+      throw new Error("Podaj poprawiony adres albo pełne współrzędne budowy.");
+    }
+
+    if (wspolrzedne) {
+      const warstwaRobocza = zapiszRoboczaLokalizacjeBudowy(budowa, {
+        adres: adres,
+        wspolrzedne: wspolrzedne,
+        statusJakosci: "potwierdzona",
+        zrodlo: "reczny",
+        czyKorektaReczna: true
+      });
+
+      return {
+        status: "zatwierdzono-reczna-lokalizacje",
+        czyPotwierdzona: true,
+        lokalizacja: warstwaRobocza
+      };
+    }
+
+    const ocena = aplikacja.lokalizacje.ocenAdresLokalnie(adres);
+    const warstwaRobocza = zapiszRoboczaLokalizacjeBudowy(budowa, {
+      adres: adres,
+      wspolrzedne: null,
+      statusJakosci: ocena.statusJakosci,
+      zrodlo: "reczny",
+      czyKorektaReczna: true
+    });
+
+    return {
+      status: "zaktualizowano-adres-do-wyszukania",
+      czyPotwierdzona: false,
+      czyMoznaSzukacAutomatycznie: ocena.czyMoznaSzukacAutomatycznie,
+      lokalizacja: warstwaRobocza
+    };
+  }
+
   function pobierzFunkcjeTrasyMapowej(uslugaMapowa) {
     if (typeof uslugaMapowa === "function") {
       return uslugaMapowa;
@@ -1354,6 +1526,8 @@
     migrujListeBudowDoKontraktuTras: migrujListeBudowDoKontraktuTras,
     zmienCzasRoboczyBudowy: zmienCzasRoboczyBudowy,
     przygotujKandydatowDoWyboru: przygotujKandydatowDoWyboru,
+    zatwierdzKandydataLokalizacji: zatwierdzKandydataLokalizacji,
+    ustawRecznaLokalizacjeBudowy: ustawRecznaLokalizacjeBudowy,
     wyszukajLokalizacjeBudowy: wyszukajLokalizacjeBudowy,
     pobierzLubUstalTrase: pobierzLubUstalTrase
   });

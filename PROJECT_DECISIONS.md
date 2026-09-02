@@ -2570,3 +2570,19 @@ Obowiązują następujące zasady:
   `niejednoznaczna`; ogranicza to zbędne utrwalanie danych dostawcy.
 - Okno 6F.2 służy tylko do porównania adresu, typu, współrzędnych i pewności.
   Zastosowanie wyniku, poprawa adresu oraz ręczne współrzędne należą do 6F.3.
+
+## 135. Lokalizacja robocza wymaga jawnego zatwierdzenia operatora
+
+- Kandydat geokodowania nie może stać się roboczą lokalizacją tylko dlatego,
+  że jest pierwszy albo ma najwyższy poziom pewności.
+- Dopiero jawny wybór operatora przenosi adres i współrzędne kandydata do
+  `daneRobocze` ze statusem `potwierdzona`.
+- Przy wyborze wyniku dostawcy źródłem danych pozostaje `mapa`, natomiast
+  `czyKorektaReczna = true` zapisuje fakt świadomej decyzji operatora.
+- Pełne współrzędne wpisane ręcznie tworzą potwierdzoną lokalizację ze źródłem
+  `reczny`.
+- Ręczna zmiana samego adresu bez współrzędnych nie jest potwierdzonym punktem:
+  usuwa nieaktualne współrzędne, zapisuje korektę roboczą i wymaga ponownego
+  wyszukania albo ręcznego podania współrzędnych.
+- Warstwa `daneZrodlowe` pozostaje niezmieniona, aby zawsze było wiadomo, co
+  pochodziło z KDX/CSV.

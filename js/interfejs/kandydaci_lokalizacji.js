@@ -7,6 +7,7 @@
     aplikacja.interfejsLokalizacji || {};
   let ostatnioAktywnyElement = null;
   let czyObslugaOknaGotowa = false;
+  let aktualnyKontekstWyboru = null;
 
   function pobierzPoziomPewnosci(kandydat) {
     const dane = kandydat && typeof kandydat === "object" ? kandydat : {};
@@ -124,6 +125,7 @@
     }
 
     ostatnioAktywnyElement = null;
+    aktualnyKontekstWyboru = null;
   }
 
   function zapewnijObslugeOkna() {
@@ -139,6 +141,10 @@
     }
 
     przyciskZamknij.addEventListener("click", zamknijOkno);
+    const formularzReczny = pobierzElement("formularz-recznej-lokalizacji");
+    if (formularzReczny) {
+      formularzReczny.addEventListener("submit", obsluzRecznaKorekte);
+    }
     okno.addEventListener("click", function (zdarzenie) {
       if (zdarzenie.target === okno) {
         zamknijOkno();
@@ -163,6 +169,123 @@
     wiersz.appendChild(nazwa);
     wiersz.appendChild(tresc);
     return wiersz;
+  }
+
+  function zakonczWybor(wynik) {
+    const kontekst = aktualnyKontekstWyboru;
+
+    if (kontekst && typeof kontekst.poZatwierdzeniu === "function") {
+      kontekst.poZatwierdzeniu(wynik);
+    }
+
+    zamknijOkno();
+  }
+
+  function utworzPrzyciskWyboru(kandydat) {
+    const przycisk = zakresGlobalny.document.createElement("button");
+    przycisk.className = "przycisk-drugoplanowy kandydat-lokalizacji__wybierz";
+    przycisk.type = "button";
+    przycisk.textContent = "Wybierz tę lokalizację";
+    przycisk.addEventListener("click", function () {
+      if (!aktualnyKontekstWyboru || !aktualnyKontekstWyboru.budowa ||
+          !aplikacja.lokalizacje ||
+          typeof aplikacja.lokalizacje.zatwierdzKandydataLokalizacji !== "function") {
+        return;
+      }
+
+      try {
+        const wynik = aplikacja.lokalizacje.zatwierdzKandydataLokalizacji(
+          aktualnyKontekstWyboru.budowa,
+          aktualnyKontekstWyboru.kandydaci,
+          kandydat.indeksKandydata
+        );
+        zakonczWybor(wynik);
+      } catch (blad) {
+        const stan = pobierzElement("stan-recznej-lokalizacji");
+        if (stan) {
+          stan.textContent = blad && blad.message
+            ? blad.message
+            : "Nie udało się zatwierdzić lokalizacji.";
+        }
+      }
+    });
+    return przycisk;
+  }
+
+  function wypelnijFormularzRecznejKorekty(budowa) {
+    const poleAdresu = pobierzElement("reczna-lokalizacja-adres");
+    const poleSzerokosci = pobierzElement("reczna-lokalizacja-szerokosc");
+    const poleDlugosci = pobierzElement("reczna-lokalizacja-dlugosc");
+    const stan = pobierzElement("stan-recznej-lokalizacji");
+    const model = budowa && budowa.modelLokalizacji || {};
+    const warstwa = model.daneRobocze || {};
+    const adres = warstwa.adres || {};
+    const wspolrzedne = warstwa.wspolrzedne || {};
+
+    if (poleAdresu) {
+      poleAdresu.value = String(adres.tekst || "");
+    }
+    if (poleSzerokosci) {
+      poleSzerokosci.value = Number.isFinite(Number(wspolrzedne.szerokoscGeograficzna))
+        ? String(wspolrzedne.szerokoscGeograficzna)
+        : "";
+    }
+    if (poleDlugosci) {
+      poleDlugosci.value = Number.isFinite(Number(wspolrzedne.dlugoscGeograficzna))
+        ? String(wspolrzedne.dlugoscGeograficzna)
+        : "";
+    }
+    if (stan) {
+      stan.textContent = "Wybierz wynik powyżej albo popraw adres / współrzędne ręcznie.";
+    }
+  }
+
+  function obsluzRecznaKorekte(zdarzenie) {
+    zdarzenie.preventDefault();
+
+    if (!aktualnyKontekstWyboru || !aktualnyKontekstWyboru.budowa ||
+        !aplikacja.lokalizacje ||
+        typeof aplikacja.lokalizacje.ustawRecznaLokalizacjeBudowy !== "function") {
+      return;
+    }
+
+    const poleAdresu = pobierzElement("reczna-lokalizacja-adres");
+    const poleSzerokosci = pobierzElement("reczna-lokalizacja-szerokosc");
+    const poleDlugosci = pobierzElement("reczna-lokalizacja-dlugosc");
+    const stan = pobierzElement("stan-recznej-lokalizacji");
+
+    try {
+      const wynik = aplikacja.lokalizacje.ustawRecznaLokalizacjeBudowy(
+        aktualnyKontekstWyboru.budowa,
+        {
+          adres: poleAdresu ? poleAdresu.value : "",
+          szerokoscGeograficzna: poleSzerokosci ? poleSzerokosci.value : "",
+          dlugoscGeograficzna: poleDlugosci ? poleDlugosci.value : ""
+        }
+      );
+
+      if (wynik.czyPotwierdzona) {
+        zakonczWybor(wynik);
+        return;
+      }
+
+      if (stan) {
+        stan.textContent = wynik.czyMoznaSzukacAutomatycznie
+          ? "Poprawiony adres zapisano. Wyszukaj lokalizację ponownie, aby uzyskać współrzędne."
+          : "Adres zapisano, ale nadal jest zbyt słaby do automatycznego wyszukania.";
+      }
+
+      if (aktualnyKontekstWyboru &&
+          typeof aktualnyKontekstWyboru.poZatwierdzeniu === "function") {
+        aktualnyKontekstWyboru.poZatwierdzeniu(wynik);
+      }
+    } catch (blad) {
+      if (stan) {
+        stan.textContent = blad && blad.message
+          ? blad.message
+          : "Nie udało się zapisać ręcznej lokalizacji.";
+      }
+    }
   }
 
   function utworzKarteKandydata(kandydat) {
@@ -190,10 +313,11 @@
     karta.appendChild(
       utworzWierszMetadanych("Współrzędne", kandydat.wspolrzedneTekst)
     );
+    karta.appendChild(utworzPrzyciskWyboru(kandydat));
     return karta;
   }
 
-  function pokazKandydatow(kandydaci, opisBudowy) {
+  function pokazKandydatow(kandydaci, opisBudowy, opcje) {
     if (!zakresGlobalny.document) {
       return { status: "brak-dokumentu", liczbaKandydatow: 0 };
     }
@@ -209,6 +333,13 @@
     }
 
     const przygotowani = przygotujListeKandydatow(kandydaci);
+    const ustawienia = opcje && typeof opcje === "object" ? opcje : {};
+    aktualnyKontekstWyboru = {
+      budowa: ustawienia.budowa || null,
+      kandydaci: przygotowani.map(function (element) { return element.kandydat; }),
+      poZatwierdzeniu: ustawienia.poZatwierdzeniu || null
+    };
+    wypelnijFormularzRecznejKorekty(aktualnyKontekstWyboru.budowa);
     opis.textContent = przygotowani.length
       ? "Znaleziono " + przygotowani.length + " możliwych lokalizacji" +
         (opisBudowy ? " dla „" + String(opisBudowy) + "”" : "") +

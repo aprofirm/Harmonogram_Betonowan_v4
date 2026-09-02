@@ -564,6 +564,25 @@
             Wyniki wyszukiwania zostaną pokazane tutaj bez automatycznego wyboru.
           </p>
           <div id="lista-kandydatow-lokalizacji" class="lista-kandydatow-lokalizacji"></div>
+          <form id="formularz-recznej-lokalizacji" class="korekta-lokalizacji" novalidate>
+            <h3>Ręczna korekta lokalizacji</h3>
+            <label class="pole-formularza" for="reczna-lokalizacja-adres">
+              <span>Poprawiony adres</span>
+              <input id="reczna-lokalizacja-adres" type="text" autocomplete="street-address">
+            </label>
+            <div class="korekta-lokalizacji__wspolrzedne">
+              <label class="pole-formularza" for="reczna-lokalizacja-szerokosc">
+                <span>Szerokość</span>
+                <input id="reczna-lokalizacja-szerokosc" type="number" min="-90" max="90" step="any" inputmode="decimal">
+              </label>
+              <label class="pole-formularza" for="reczna-lokalizacja-dlugosc">
+                <span>Długość</span>
+                <input id="reczna-lokalizacja-dlugosc" type="number" min="-180" max="180" step="any" inputmode="decimal">
+              </label>
+            </div>
+            <button class="przycisk-drugoplanowy" type="submit">Zapisz ręczną lokalizację</button>
+            <p id="stan-recznej-lokalizacji" class="pamiec-tras__stan" aria-live="polite"></p>
+          </form>
         </section>
       </div>
 
@@ -591,8 +610,8 @@
     <script defer src="js/pompy/jawne_konsekwencje_pomp.js"></script>
     <script defer src="js/gruszki/gruszki.js"></script>
     <script defer src="js/gruszki/przydzial_gruszek.js"></script>
-    <script defer src="js/lokalizacje/adapter_uslug_mapowych.js?v=6f2-kandydaci-20260902a"></script>
-    <script defer src="js/lokalizacje/lokalizacje.js?v=6f2-kandydaci-20260902a"></script>
+    <script defer src="js/lokalizacje/adapter_uslug_mapowych.js?v=6f3-wybor-20260902a"></script>
+    <script defer src="js/lokalizacje/lokalizacje.js?v=6f3-wybor-20260902a"></script>
     <script defer src="js/budowy/rodzaj_rozladunku.js"></script>
     <script defer src="js/harmonogram/harmonogram.js?v=5h3-komunikaty-konfliktow-20260831a"></script>
     <script defer src="js/harmonogram/konflikty_przestojow.js?v=5g3-konflikt-przestoju-20260831a"></script>
@@ -602,7 +621,7 @@
     <script defer src="js/interfejs/limit_opoznienia.js?v=5f2-limit-indywidualny-20260830a"></script>
     <script defer src="js/interfejs/rodzaj_rozladunku.js"></script>
     <script defer src="js/interfejs/podglad_tras.js"></script>
-    <script defer src="js/interfejs/kandydaci_lokalizacji.js?v=6f2-kandydaci-20260902a"></script>
+    <script defer src="js/interfejs/kandydaci_lokalizacji.js?v=6f3-wybor-20260902a"></script>
     <script defer src="js/interfejs/dostepnosc_pomp.js"></script>
     <script defer src="js/interfejs/przejazdy_pomp.js"></script>
     <script defer src="js/interfejs/minimalna_liczba_pomp.js?v=20260830-1"></script>

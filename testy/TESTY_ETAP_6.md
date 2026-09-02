@@ -3,8 +3,8 @@
 ## Status
 
 Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetapy **6A.1–6A.3**
-i **6B.1–6B.3** oraz całe punkty **6A–6E** są zakończone. Podetapy
-**6F.1–6F.2** są zakończone. Następny podetap to **6F.3 — ręczne wskazanie**.
+i **6B.1–6B.3** oraz całe punkty **6A–6F** są zakończone. Następny podetap to
+**6G.1 — routing węzeł → budowa**.
 
 ## Zasada nadrzędna
 
@@ -323,3 +323,15 @@ Test `testy/etap_6f_2.test.js` sprawdza:
 - prezentację adresu, pewności, typu i współrzędnych w gotowym oknie kandydatów;
 - brak funkcji zastosowania kandydata przed 6F.3;
 - aktualizację dokumentacji i przejście do 6F.3.
+
+### 6F.3 — ręczne wskazanie
+
+- wybór konkretnego kandydata ustawia roboczą lokalizację jako `potwierdzona`;
+- wybrany indeks musi istnieć, a kandydat musi mieć pełne współrzędne;
+- poziom pewności nie może sam wybrać wyniku;
+- ręcznie wpisana pełna para współrzędnych tworzy potwierdzony punkt ze źródłem
+  `reczny`;
+- poprawa samego adresu usuwa stare współrzędne i wymaga ponownego wyszukania;
+- dane źródłowe z importu pozostają niezmienione;
+- potwierdzona lokalizacja jest ponownie używana bez wywołania geokodera;
+- interfejs pokazuje przycisk wyboru oraz formularz ręcznej korekty.

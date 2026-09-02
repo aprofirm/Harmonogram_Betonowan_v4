@@ -51,7 +51,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
 - [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
-- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6E zakończone; 6F.1–6F.2 zakończone; następny podetap 6F.3**
+- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6F zakończone; następny podetap 6G.1**
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
@@ -866,12 +866,12 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
     silnikiem harmonogramu.
   - [x] **6E.3 — bezpieczne błędy:** brak sieci, limit, timeout lub zły wynik
     usługi kończą się czytelnym statusem i diagnostyką, nigdy awarią aplikacji.
-- [ ] **6F — geokodowanie i potwierdzenie lokalizacji budowy.**
+- [x] **6F — geokodowanie i potwierdzenie lokalizacji budowy.**
   - [x] **6F.1 — wyszukiwanie lokalizacji:** wysyłać tylko wystarczający adres,
     najpierw używać cache i zapisywać wynik wraz z metadanymi źródła.
   - [x] **6F.2 — wiele wyników:** nie wybierać po cichu pierwszego dopasowania;
     pokazać kandydatów i poziom pewności do decyzji operatora.
-  - [ ] **6F.3 — ręczne wskazanie:** pozwolić poprawić adres, wybrać wynik lub
+  - [x] **6F.3 — ręczne wskazanie:** pozwolić poprawić adres, wybrać wynik lub
     podać/wskazać współrzędne, a zatwierdzoną lokalizację oznaczyć jako roboczą.
 - [ ] **6G — trasa drogowa węzeł ↔ budowa.**
   - [ ] **6G.1 — kontrakt kierunkowej trasy:** wynik zawiera drogowy dystans,
@@ -3205,7 +3205,7 @@ Podetap **6E.2 — neutralny adapter** jest zakończony.
 - [x] test `testy/etap_6e_3.test.js` wraz z pełną regresją przechodzi **110/110 zestawów testów**.
 
 Cały punkt **6E — wybór dostawcy i wymienna warstwa usług mapowych** jest zakończony.
-Następny niezakończony podetap: **6F.3 — wiele wyników**.
+Następny niezakończony podetap: **6G.1 — routing węzeł → budowa**
 
 
 ## Wynik 6F.1 — wyszukiwanie lokalizacji
@@ -3240,3 +3240,24 @@ otwarty. Następny niezakończony podetap: **6F.2 — wiele wyników**.
 - Dodano gotowe okno prezentacji wielu lokalizacji. Pokazuje adres, poziom
   pewności, typ i współrzędne, ale nie ma jeszcze operacji zastosowania wyniku.
 - Punkt **6F** pozostaje otwarty. Następny podetap to **6F.3 — ręczne wskazanie**.
+
+## Wynik 6F.3 — ręczne wskazanie
+
+- [x] operator może jawnie wybrać konkretny kandydat geokodowania; indeks jest
+  walidowany i żaden wynik nie jest stosowany przez sam poziom pewności;
+- [x] wybrany kandydat zapisuje adres i współrzędne do `daneRobocze` ze statusem
+  `potwierdzona`, zachowując źródło `mapa` i jawny znacznik decyzji ręcznej;
+- [x] operator może zamiast kandydata wpisać pełne współrzędne ręcznie; wtedy
+  źródłem roboczym jest `reczny`;
+- [x] poprawa samego adresu nie tworzy fikcyjnie potwierdzonego punktu: stare
+  współrzędne są czyszczone, adres jest ponownie oceniany i może zostać
+  ponownie wyszukany;
+- [x] dane źródłowe importu pozostają nienadpisane, a potwierdzona lokalizacja
+  jest ponownie używana bez kolejnego geokodowania;
+- [x] okno kandydatów ma przyciski wyboru i formularz ręcznej korekty z
+  czytelnymi komunikatami;
+- [x] test `testy/etap_6f_3.test.js` oraz pełna regresja przechodzą **113/113
+  zestawów testów**.
+
+Podetap **6F.3** i cały punkt **6F — geokodowanie budów** są zakończone.
+Następny niezakończony podetap: **6G.1 — routing węzeł → budowa**.
