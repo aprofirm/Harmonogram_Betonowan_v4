@@ -7,11 +7,11 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6E.1 — porównanie i wybór dostawcy**.
+- Ostatni zakończony podetap: **6E.2 — neutralny adapter**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- **Etap 6** jest rozpoczęty. Punkty **6A–6D** oraz podetap **6E.1** są zakończone; cały Etap 6 pozostaje otwarty.
-- Pełna regresja po 6E.1 przechodzi **108/108 zestawów testów**.
+- **Etap 6** jest rozpoczęty. Punkty **6A–6D** oraz podetapy **6E.1–6E.2** są zakończone; cały Etap 6 pozostaje otwarty.
+- Pełna regresja po 6E.2 przechodzi **109/109 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -49,6 +49,9 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - Do pierwszej integracji internetowej wybrano **openrouteservice / HeiGIT** i aktualny host `api.heigit.org`; routing ciężarowy ma korzystać z profilu `driving-hgv`.
 - **TomTom** pozostaje pierwszym kandydatem do dodatkowego adaptera, jeżeli później potrzebne będą bieżące dane o ruchu drogowym.
 - Klucz API dostawcy nie trafia do repozytorium, planu ani diagnostyki; nazwa dostawcy, endpoint i sposób autoryzacji mają pozostać za neutralnym adapterem.
+- `js/lokalizacje/adapter_uslug_mapowych.js` wystawia własny kontrakt geokodowania i routingu, niezależny od formatu konkretnego API.
+- Implementacja openrouteservice mapuje adresy, współrzędne, dystans, czas i ograniczenia HGV wewnątrz adaptera; surowa odpowiedź dostawcy nie przechodzi do silnika.
+- Brama lokalizacji przyjmuje zarówno starszą funkcję mapową, jak i obiekt neutralnego adaptera, zachowując kolejność bieżące czasy → dokładny cache → lokalne podpowiedzi → internet.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -86,7 +89,7 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6E.2 — neutralny adapter**. Wprowadzić wymienny moduł usług mapowych, który przyjmuje własny kontrakt projektu i potrafi obsłużyć geokodowanie oraz routing przez openrouteservice bez przenoszenia endpointu, klucza, limitów ani formatu odpowiedzi dostawcy do silnika harmonogramu. Testy adaptera mają używać atrap, a brak internetu nadal nie może blokować cache ani ręcznych czasów.
+Rozpocząć **6E.3 — bezpieczne błędy**. Ujednolicić timeout, brak sieci, HTTP 429/5xx i niepoprawne odpowiedzi w neutralne statusy oraz czytelne komunikaty diagnostyczne. Błąd usługi nie może przerwać działania aplikacji ani naruszyć pierwszeństwa cache i ręcznych czasów.
 
 ## Ważna zasada wznowienia
 

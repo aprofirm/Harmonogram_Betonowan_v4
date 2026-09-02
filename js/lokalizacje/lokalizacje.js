@@ -798,6 +798,19 @@
     };
   }
 
+  function pobierzFunkcjeTrasyMapowej(uslugaMapowa) {
+    if (typeof uslugaMapowa === "function") {
+      return uslugaMapowa;
+    }
+
+    if (uslugaMapowa &&
+        typeof uslugaMapowa.pobierzTraseDlaBudowy === "function") {
+      return uslugaMapowa.pobierzTraseDlaBudowy.bind(uslugaMapowa);
+    }
+
+    return null;
+  }
+
   function pobierzLubUstalTrase(budowa, pobierzTraseZMapy) {
     if (!budowa) {
       return Promise.resolve({
@@ -840,7 +853,9 @@
       });
     }
 
-    if (typeof pobierzTraseZMapy !== "function") {
+    const funkcjaTrasyMapowej = pobierzFunkcjeTrasyMapowej(pobierzTraseZMapy);
+
+    if (!funkcjaTrasyMapowej) {
       return Promise.resolve({
         status: "brak-trasy-i-uslugi-mapowej",
         trasa: null,
@@ -852,11 +867,12 @@
       idWezla: pobierzIdAktywnegoWezla(),
       wezel: pobierzAktywnyWezel(),
       opisLokalizacji: utworzOpisLokalizacjiBudowy(budowa),
-      idBudowy: budowa.idBudowy
+      idBudowy: budowa.idBudowy,
+      lokalizacjaBudowy: budowa.modelLokalizacji
     };
 
     return Promise.resolve().then(function () {
-      return pobierzTraseZMapy(zapytanieMapowe);
+      return funkcjaTrasyMapowej(zapytanieMapowe);
     }).then(function (trasaZMapy) {
       if (!trasaZMapy ||
           !czyJestCzas(trasaZMapy.czasDojazduMinuty) ||

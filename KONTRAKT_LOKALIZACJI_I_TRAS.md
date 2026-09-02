@@ -328,3 +328,17 @@ Do pierwszej integracji wybrano **openrouteservice / HeiGIT**, ale ta decyzja ni
 - ręczna korekta i dokładny cache nadal mają pierwszeństwo przed usługą zewnętrzną.
 
 Implementacja tej granicy jest zakresem **6E.2 — neutralny adapter**.
+
+
+## Neutralny adapter usług mapowych — 6E.2
+
+Warstwa `aplikacja.uslugiMapowe` jest jedynym miejscem, w którym mogą występować szczegóły konkretnego dostawcy usług geokodowania i routingu. Jej kontrakt ma wersję `1` i udostępnia dwie podstawowe operacje:
+
+- `geokoduj({ tekstAdresu, limitWynikow })` → neutralna lista kandydatów z adresem, współrzędnymi, statusem `nieoceniona` i źródłem `mapa`;
+- `wyznaczTrase({ punktPoczatkowy, punktDocelowy, profilPojazdu })` → neutralny dystans drogowy w metrach, czas przejazdu w minutach i źródło `mapa`.
+
+Dodatkowa metoda `pobierzTraseDlaBudowy` jest mostem zgodnościowym do istniejącej bramy `pobierzLubUstalTrase`: wyznacza niezależnie kierunek węzeł → budowa oraz budowa → węzeł, ale tylko wtedy, gdy oba punkty mają robocze współrzędne. Brama nadal sprawdza bieżące czasy, dokładny cache i lokalne podpowiedzi przed jakimkolwiek wywołaniem adaptera.
+
+Implementacja openrouteservice pozostaje wewnątrz adaptera. Do silnika harmonogramu i modeli domenowych nie mogą przenikać `api.heigit.org`, profil `driving-hgv`, nagłówek autoryzacji, nazwy pól ograniczeń dostawcy ani surowa odpowiedź HTTP. Klucz API jest przekazywany adapterowi wyłącznie w runtime i nie może być zapisywany w danych projektu.
+
+6E.2 normalizuje poprawne wyniki i utrzymuje wymienność dostawcy. Ujednolicone statusy dla timeoutu, braku sieci, limitu, HTTP 5xx i wadliwej odpowiedzi należą do 6E.3.

@@ -2512,3 +2512,14 @@ Obowiązują następujące zasady:
 - cache i ręczne czasy są sprawdzane przed internetem, a awaria usługi nie może blokować harmonogramu;
 - testy automatyczne adapterów używają atrap odpowiedzi zamiast rzeczywistych wywołań publicznych serwerów;
 - dokładne porównanie kandydatów, aktualne limity i sprawdzone źródła z 2026-09-02 znajdują się w `DOSTAWCA_MAP_6E1.md`.
+
+
+## 131. Neutralny adapter jest granicą dostawcy map
+
+- Geokodowanie i routing udostępniają aplikacji własny, wersjonowany kontrakt projektu; silnik nie pracuje na surowych odpowiedziach zewnętrznego API.
+- Implementacja konkretnego dostawcy odpowiada za endpoint, autoryzację, profil pojazdu, parametry zapytania i mapowanie odpowiedzi.
+- Pierwsza implementacja korzysta z openrouteservice, ale `aplikacja.uslugiMapowe.utworzNeutralnyAdapter` może opakować innego dostawcę bez zmiany silnika harmonogramu.
+- Klucz API istnieje wyłącznie w pamięci bieżącego adaptera. Nie trafia do URL zapytania, repozytorium, historii planu ani diagnostyki.
+- Brama lokalizacji zachowuje zgodność ze starszym wstrzykiwaniem funkcji mapowej i dodatkowo rozpoznaje obiekt adaptera przez `pobierzTraseDlaBudowy`.
+- Cache, podpowiedzi lokalne i ręczne/bieżące czasy zachowują pierwszeństwo przed internetem.
+- Polityka timeoutów, limitów i błędów sieciowych zostaje domknięta osobno w 6E.3; 6E.2 zapewnia granicę i normalizację danych, nie zmieniając zasad awaryjnych aplikacji.

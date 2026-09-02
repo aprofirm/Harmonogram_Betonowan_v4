@@ -4,8 +4,8 @@
 
 Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetapy **6A.1–6A.3**
 i **6B.1–6B.3** oraz całe punkty **6A–6D** są zakończone. Zakończony jest
-również podetap **6E.1 — porównanie i wybór dostawcy**. Następny podetap to
-**6E.2 — neutralny adapter**.
+również podetapy **6E.1–6E.2**. Następny podetap to
+**6E.3 — bezpieczne błędy**.
 
 ## Zasada nadrzędna
 
@@ -257,3 +257,21 @@ Test `testy/etap_6e_1.test.js` sprawdza, że:
 - 6E.1 nie dodaje zależności dostawcy do plików silnika harmonogramu;
 - punkt 6E pozostaje otwarty, 6E.1 jest zakończony, a następnym krokiem jest 6E.2;
 - pełna regresja obejmuje **108/108 zestawów testów**.
+
+
+### 6E.2 — neutralny adapter
+
+Test `testy/etap_6e_2.test.js` sprawdza:
+
+- wersjonowany kontrakt `geokoduj` i `wyznaczTrase` niezależny od dostawcy;
+- usuwanie surowych pól odpowiedzi dostawcy przed zwróceniem wyniku do aplikacji;
+- mapowanie kandydata geokodowania na adres, współrzędne, status i źródło projektu;
+- mapowanie dystansu oraz czasu routingu na jednostki używane przez modele Etapu 6;
+- implementację openrouteservice na aktualnym hoście `api.heigit.org` i profilu `driving-hgv`;
+- przekazywanie klucza wyłącznie w nagłówku runtime, bez umieszczania go w URL;
+- mapowanie długości, szerokości, wysokości, nacisku osi i masy ciężarówki na parametry implementacji dostawcy;
+- dwa niezależne kierunki węzeł → budowa i budowa → węzeł w moście do bieżącej bramy;
+- zgodność `pobierzLubUstalTrase` zarówno ze starszą funkcją mapową, jak i obiektem adaptera;
+- brak nazwy konkretnego dostawcy w kodzie silnika harmonogramu;
+- użycie wyłącznie atrap HTTP w testach automatycznych;
+- aktualizację dokumentacji, 109/109 zestawów regresji i przejście do 6E.3.
