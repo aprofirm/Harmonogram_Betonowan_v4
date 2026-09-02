@@ -3,8 +3,8 @@
 ## Status
 
 Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetapy **6A.1–6A.3**
-i **6B.1–6B.3** oraz całe punkty **6A–6E** są zakończone. Podetap **6F.1**
-jest zakończony. Następny podetap to **6F.2 — wiele wyników**.
+i **6B.1–6B.3** oraz całe punkty **6A–6E** są zakończone. Podetapy
+**6F.1–6F.2** są zakończone. Następny podetap to **6F.3 — ręczne wskazanie**.
 
 ## Zasada nadrzędna
 
@@ -306,3 +306,20 @@ Test `testy/etap_6e_3.test.js` sprawdza:
 - zachowanie pierwszeństwa bieżących/ręcznych czasów, cache i lokalnych podpowiedzi przed internetem.
 
 Po 6E.3 cały punkt **6E** jest zakończony, a następny podetap to **6F.1**.
+
+### 6F.2 — wiele wyników
+
+Test `testy/etap_6f_2.test.js` sprawdza:
+
+- neutralne przeniesienie opcjonalnej pewności geokodowania bez surowego
+  formatu dostawcy;
+- poziomy `wysoka`, `srednia`, `niska` i `brak-oceny` oraz ich granice;
+- mapowanie `confidence` i typu wyniku openrouteservice na neutralnego
+  kandydata;
+- zachowanie kolejności wielu wyników i jawne
+  `wybranyIndeksKandydata = null`;
+- brak współrzędnych pierwszego wyniku w warstwie automatycznej oraz brak zmian
+  warstwy roboczej przy statusie `niejednoznaczna`;
+- prezentację adresu, pewności, typu i współrzędnych w gotowym oknie kandydatów;
+- brak funkcji zastosowania kandydata przed 6F.3;
+- aktualizację dokumentacji i przejście do 6F.3.

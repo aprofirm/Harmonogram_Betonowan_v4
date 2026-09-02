@@ -79,6 +79,13 @@ przygotowane na jawny wynik późniejszego geokodowania i nie są zgadywane
 lokalnie. Brak lub słaba jakość adresu nie blokują zapamiętanych ani ręcznie
 wpisanych czasów. Plik bez kolumn adresowych nadal działa tak jak wcześniej.
 
+Jeżeli geokodowanie zwróci kilka możliwych lokalizacji, aplikacja zachowuje je
+jako kandydatów i pokazuje adres, współrzędne, typ wyniku oraz poziom pewności
+dostawcy: wysoki, średni, niski albo brak oceny. Poziom pewności jest tylko
+wskazówką — program nie wybiera pierwszego ani najwyżej ocenionego wyniku bez
+świadomej decyzji operatora. Samo zastosowanie kandydata należy do kolejnego
+kroku 6F.3.
+
 Dla adresu pełnego lub niepełnego aplikacja może uruchomić geokodowanie dopiero
 po sprawdzeniu danych lokalnych. Pojedynczy wynik jest zapisywany w **warstwie automatycznej**
 razem ze źródłem `mapa` i współrzędnymi, ale nie staje się od razu lokalizacją roboczą —

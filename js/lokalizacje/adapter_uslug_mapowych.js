@@ -256,8 +256,36 @@
     };
   }
 
+  function normalizujPewnoscGeokodowania(wartosc) {
+    if (wartosc === null || wartosc === undefined || wartosc === "") {
+      return { wartosc: null, poziom: "brak-oceny" };
+    }
+
+    let liczba = Number(wartosc);
+
+    if (!Number.isFinite(liczba) || liczba < 0) {
+      return { wartosc: null, poziom: "brak-oceny" };
+    }
+
+    if (liczba > 1 && liczba <= 100) {
+      liczba /= 100;
+    }
+
+    if (liczba > 1) {
+      return { wartosc: null, poziom: "brak-oceny" };
+    }
+
+    return {
+      wartosc: liczba,
+      poziom: liczba >= 0.8
+        ? "wysoka"
+        : (liczba >= 0.5 ? "srednia" : "niska")
+    };
+  }
+
   function normalizujKandydataGeokodowania(kandydat) {
     const dane = czyObiekt(kandydat) ? kandydat : {};
+    const pewnosc = normalizujPewnoscGeokodowania(dane.pewnosc);
 
     return {
       adres: normalizujAdresKandydata(dane.adres),
@@ -266,7 +294,10 @@
         "Kandydat geokodowania"
       ),
       statusJakosci: "nieoceniona",
-      zrodlo: "mapa"
+      zrodlo: "mapa",
+      pewnosc: pewnosc.wartosc,
+      poziomPewnosci: pewnosc.poziom,
+      typWyniku: pobierzTekst(dane.typWyniku) || null
     };
   }
 
@@ -689,7 +720,11 @@
               wspolrzedne: {
                 szerokoscGeograficzna: Number(wspolrzedne[1]),
                 dlugoscGeograficzna: Number(wspolrzedne[0])
-              }
+              },
+              pewnosc: wlasciwosci.confidence,
+              typWyniku: pobierzTekst(
+                wlasciwosci.layer || wlasciwosci.match_type
+              ) || null
             });
             return wynik;
           }, [])

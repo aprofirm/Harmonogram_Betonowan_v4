@@ -1882,3 +1882,81 @@ tr[data-status-trasy-pompy="brak"] td {
   }
 }
 
+/* 6F.2 — czytelna lista kandydatów geokodowania bez automatycznego wyboru. */
+.okno-historii__panel--lokalizacje {
+  width: min(820px, 100%);
+}
+
+.lista-kandydatow-lokalizacji {
+  display: grid;
+  gap: 10px;
+}
+
+.kandydat-lokalizacji {
+  display: grid;
+  gap: 7px;
+  padding: 13px 14px;
+  border: 1px solid var(--kolor-obramowania);
+  border-radius: 10px;
+  background: #fbfcfd;
+}
+
+.kandydat-lokalizacji__naglowek {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.kandydat-lokalizacji__naglowek > strong {
+  color: var(--kolor-granatowy-ciemny);
+  font-size: 0.8rem;
+}
+
+.kandydat-lokalizacji__pewnosc {
+  padding: 3px 8px;
+  border: 1px solid #d6e1e7;
+  border-radius: 999px;
+  color: #526875;
+  background: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.kandydat-lokalizacji__pewnosc[data-poziom="wysoka"] {
+  border-color: #b9dfcf;
+  color: #176b4d;
+  background: #f0faf5;
+}
+
+.kandydat-lokalizacji__pewnosc[data-poziom="srednia"] {
+  border-color: #f0cf9a;
+  color: #8b561c;
+  background: #fff8ec;
+}
+
+.kandydat-lokalizacji__pewnosc[data-poziom="niska"] {
+  border-color: #edc8c8;
+  color: #9c2f2f;
+  background: #fff5f5;
+}
+
+.kandydat-lokalizacji__adres {
+  margin: 0;
+  color: var(--kolor-granatowy-ciemny);
+  font-size: 0.88rem;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.kandydat-lokalizacji__meta {
+  margin: 0;
+  color: var(--kolor-tekstu-pomocniczego);
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+.kandydat-lokalizacji__meta strong {
+  color: #526875;
+}

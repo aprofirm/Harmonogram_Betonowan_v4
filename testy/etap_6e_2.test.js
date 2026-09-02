@@ -83,7 +83,10 @@ async function sprawdzNeutralnyKontrakt() {
           dlugoscGeograficzna: 16.2
         },
         statusJakosci: "nieoceniona",
-        zrodlo: "mapa"
+        zrodlo: "mapa",
+        pewnosc: null,
+        poziomPewnosci: "brak-oceny",
+        typWyniku: null
       }]
     }
   );

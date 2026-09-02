@@ -7,11 +7,11 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6F.1 — wyszukiwanie lokalizacji**.
+- Ostatni zakończony podetap: **6F.2 — wiele wyników**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- **Etap 6** jest rozpoczęty. Punkty **6A–6E** są zakończone, a **6F.1** jest zakończone; cały Etap 6 pozostaje otwarty.
-- Pełna regresja po 6F.1 przechodzi **111/111 zestawów testów**.
+- **Etap 6** jest rozpoczęty. Punkty **6A–6E** oraz **6F.1–6F.2** są zakończone; cały Etap 6 pozostaje otwarty.
+- Pełna regresja po 6F.2 przechodzi **112/112 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -57,6 +57,8 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - Geokodowanie budowy jest uruchamiane tylko dla adresów wystarczających do wyszukania i dopiero po sprawdzeniu zapisanych danych lokalnych.
 - Pojedynczy wynik geokodowania jest zapisywany w `daneAutomatyczne` ze źródłem `mapa`; nie staje się roboczą, potwierdzoną lokalizacją bez decyzji operatora.
 - Brak wyniku i wiele wyników są jawnie rozróżniane, a pierwszy kandydat nigdy nie jest wybierany po cichu.
+- Kandydaci geokodowania mają neutralny poziom pewności `wysoka`, `srednia`, `niska` albo `brak-oceny`; jest to wyłącznie wskazówka dla operatora.
+- Gotowe okno kandydatów pokazuje adres, pewność, typ i współrzędne, ale 6F.2 nie stosuje jeszcze żadnego wyniku do warstwy roboczej.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -94,7 +96,7 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6F.2 — wiele wyników**. Przygotować operatorski wybór kandydatów geokodowania bez cichego wskazywania pierwszego wyniku, z czytelną informacją o adresie i danych potrzebnych do świadomej decyzji.
+Rozpocząć **6F.3 — ręczne wskazanie**. Pozwolić operatorowi świadomie wybrać jednego z kandydatów, poprawić adres albo podać pełne współrzędne; dopiero zatwierdzona lokalizacja ma trafić do warstwy roboczej jako `potwierdzona`.
 
 ## Ważna zasada wznowienia
 

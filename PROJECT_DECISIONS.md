@@ -2552,3 +2552,21 @@ Obowiązują następujące zasady:
   neutralny status z 6E.3 i nie modyfikuje lokalizacji.
 - Geokodowanie nie zapisuje surowej odpowiedzi dostawcy ani klucza API w modelu,
   planie lub diagnostyce.
+
+## 134. Pewność geokodowania jest wskazówką, nie decyzją
+
+- Jeżeli dostawca geokodowania zwraca liczbową pewność dopasowania, adapter
+  sprowadza ją do neutralnego zakresu `0–1`; brak albo niepoprawna wartość jest
+  jawnie opisywana jako `brak-oceny`.
+- Do prezentacji używamy czterech stanów: `wysoka`, `srednia`, `niska` i
+  `brak-oceny`. Progi są wyłącznie czytelną klasyfikacją wyniku dostawcy, a nie
+  dowodem poprawności lokalizacji.
+- Aplikacja nie sortuje kandydatów na własną rękę według pewności, nie wybiera
+  pierwszego wyniku i nie przenosi jego współrzędnych do warstwy roboczej.
+- Przy wielu wynikach `wybranyIndeksKandydata` pozostaje `null`, dopóki operator
+  nie wykona świadomej operacji w 6F.3.
+- Lista kandydatów jest wynikiem bieżącego wyszukiwania i nie jest zapisywana w
+  historii planu ani diagnostyce. Zapisujemy jedynie neutralny stan
+  `niejednoznaczna`; ogranicza to zbędne utrwalanie danych dostawcy.
+- Okno 6F.2 służy tylko do porównania adresu, typu, współrzędnych i pewności.
+  Zastosowanie wyniku, poprawa adresu oraz ręczne współrzędne należą do 6F.3.

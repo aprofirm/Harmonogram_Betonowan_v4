@@ -823,8 +823,70 @@
       adres: dane.adres || null,
       wspolrzedne: dane.wspolrzedne || null,
       statusJakosci: dane.statusJakosci || "nieoceniona",
-      zrodlo: dane.zrodlo || "brak"
+      zrodlo: dane.zrodlo || "brak",
+      pewnosc: null,
+      poziomPewnosci: "brak-oceny",
+      typWyniku: null
     };
+  }
+
+  function przygotujPewnoscKandydata(kandydat) {
+    const dane = kandydat && typeof kandydat === "object" ? kandydat : {};
+    let wartosc = dane.pewnosc;
+
+    if (wartosc === null || wartosc === undefined || wartosc === "") {
+      return { wartosc: null, poziom: "brak-oceny" };
+    }
+
+    wartosc = Number(wartosc);
+
+    if (!Number.isFinite(wartosc) || wartosc < 0) {
+      return { wartosc: null, poziom: "brak-oceny" };
+    }
+
+    if (wartosc > 1 && wartosc <= 100) {
+      wartosc /= 100;
+    }
+
+    if (wartosc > 1) {
+      return { wartosc: null, poziom: "brak-oceny" };
+    }
+
+    const poziomPodany = String(dane.poziomPewnosci || "").trim();
+    const dozwolonePoziomy = ["wysoka", "srednia", "niska"];
+
+    return {
+      wartosc: wartosc,
+      poziom: dozwolonePoziomy.includes(poziomPodany)
+        ? poziomPodany
+        : (wartosc >= 0.8
+          ? "wysoka"
+          : (wartosc >= 0.5 ? "srednia" : "niska"))
+    };
+  }
+
+  function przygotujKandydataDoWyboru(kandydat, indeks) {
+    const dane = kandydat && typeof kandydat === "object" ? kandydat : {};
+    const pewnosc = przygotujPewnoscKandydata(dane);
+
+    return {
+      indeksKandydata: Number.isInteger(indeks) ? indeks : 0,
+      adres: dane.adres || null,
+      wspolrzedne: dane.wspolrzedne || null,
+      statusJakosci: dane.statusJakosci || "nieoceniona",
+      zrodlo: dane.zrodlo || "mapa",
+      pewnosc: pewnosc.wartosc,
+      poziomPewnosci: pewnosc.poziom,
+      typWyniku: String(dane.typWyniku || "").trim() || null
+    };
+  }
+
+  function przygotujKandydatowDoWyboru(kandydaci) {
+    return Array.isArray(kandydaci)
+      ? kandydaci.map(function (kandydat, indeks) {
+        return przygotujKandydataDoWyboru(kandydat, indeks);
+      })
+      : [];
   }
 
   function pobierzZapisanaPodpowiedzGeokodowania(budowa) {
@@ -1073,6 +1135,7 @@
       }
 
       if (kandydaci.length > 1) {
+        const kandydaciDoWyboru = przygotujKandydatowDoWyboru(kandydaci);
         const warstwaAutomatyczna = zapiszAutomatycznyStanLokalizacji(budowa, {
           adres: warstwaRobocza.adres,
           wspolrzedne: null,
@@ -1085,21 +1148,31 @@
             "niejednoznaczna"
           ),
           lokalizacjaAutomatyczna: warstwaAutomatyczna,
-          kandydaci: kandydaci,
-          liczbaKandydatow: kandydaci.length,
+          kandydaci: kandydaciDoWyboru,
+          liczbaKandydatow: kandydaciDoWyboru.length,
+          wybranyIndeksKandydata: null,
           czyWywolanoInternet: true,
           czyWymagaPotwierdzenia: true
         };
       }
 
-      const kandydat = kandydaci[0];
+      const kandydat = przygotujKandydataDoWyboru(kandydaci[0], 0);
       const warstwaAutomatyczna = zapiszAutomatycznyStanLokalizacji(budowa, {
         adres: kandydat.adres,
         wspolrzedne: kandydat.wspolrzedne,
         statusJakosci: kandydat.statusJakosci || "nieoceniona"
       });
-      const zapisanyKandydat =
-        utworzKandydataZWarstwyLokalizacji(warstwaAutomatyczna);
+      const zapisanyKandydat = Object.assign(
+        {},
+        kandydat,
+        utworzKandydataZWarstwyLokalizacji(warstwaAutomatyczna),
+        {
+          pewnosc: kandydat.pewnosc,
+          poziomPewnosci: kandydat.poziomPewnosci,
+          typWyniku: kandydat.typWyniku,
+          indeksKandydata: 0
+        }
+      );
 
       return {
         status: "znaleziono-jedna-lokalizacje",
@@ -1108,6 +1181,7 @@
         lokalizacjaAutomatyczna: zapisanyKandydat,
         kandydaci: [zapisanyKandydat],
         liczbaKandydatow: 1,
+        wybranyIndeksKandydata: null,
         czyWywolanoInternet: true,
         czyWymagaPotwierdzenia: true
       };
@@ -1279,6 +1353,7 @@
     migrujBudoweDoKontraktuTras: migrujBudoweDoKontraktuTras,
     migrujListeBudowDoKontraktuTras: migrujListeBudowDoKontraktuTras,
     zmienCzasRoboczyBudowy: zmienCzasRoboczyBudowy,
+    przygotujKandydatowDoWyboru: przygotujKandydatowDoWyboru,
     wyszukajLokalizacjeBudowy: wyszukajLokalizacjeBudowy,
     pobierzLubUstalTrase: pobierzLubUstalTrase
   });
