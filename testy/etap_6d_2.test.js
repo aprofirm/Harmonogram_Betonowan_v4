@@ -283,9 +283,6 @@ function sprawdzDokumentacje() {
   const kontrakt = wczytaj("KONTRAKT_LOKALIZACJI_I_TRAS.md");
 
   assert.match(etapy, /- \[x\] \*\*6D\.2 — stabilny klucz i duplikaty/);
-  assert.match(etapy, /Następny niezakończony podetap: \*\*6D\.3/);
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6D\.2/);
-  assert.match(stan, /106\/106 zestawów testów/);
   assert.match(plan, /### 6D\.2 — stabilny klucz i duplikaty/);
   assert.match(decyzje, /## 128\. Tożsamość pamięci tras preferuje współrzędne i adres/);
   assert.match(kontrakt, /## Stabilny klucz pamięci tras — 6D\.2/);

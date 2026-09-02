@@ -51,7 +51,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
 - [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
-- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6C i 6D.1–6D.2 zakończone; następny podetap 6D.3**
+- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6D zakończone; następny podetap 6E.1**
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
@@ -846,14 +846,14 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
     węzła, umożliwiając świadomą korektę operatora.
   - [x] **6C.3 — gotowość na wiele węzłów:** klucze lokalizacji i tras zawierają
     ID węzła, choć pierwsza wersja interfejsu może używać jednego aktywnego.
-- [ ] **6D — pamięć lokalizacji i tras oparta na jednoznacznym miejscu.**
+- [x] **6D — pamięć lokalizacji i tras oparta na jednoznacznym miejscu.**
   - [x] **6D.1 — rozszerzenie formatu pamięci:** zapisywać adres, współrzędne,
     dystans, oba kierunki czasu, źródło, dostawcę i daty z bezpieczną migracją
     dotychczasowej książki tras.
   - [x] **6D.2 — stabilny klucz i duplikaty:** identyfikować wpis przez węzeł
     oraz znormalizowany adres i/lub współrzędne; podobna nazwa nie oznacza
     automatycznie tej samej lokalizacji.
-  - [ ] **6D.3 — cache i lokalne podpowiedzi:** przed internetem sprawdzać pamięć,
+  - [x] **6D.3 — cache i lokalne podpowiedzi:** przed internetem sprawdzać pamięć,
     umożliwić wyszukanie znanej budowy offline i zastosować wpis dopiero po
     świadomym wyborze operatora.
 - [ ] **6E — wybór dostawcy i wymienna warstwa usług mapowych.**
@@ -3144,3 +3144,18 @@ Podetap **6D.1** jest zakończony. Punkt 6D pozostaje otwarty. Następny podetap
 
 Podetap **6D.2** jest zakończony. Punkt 6D pozostaje otwarty. Następny podetap:
 **6D.3 — cache i lokalne podpowiedzi**.
+
+
+## Wynik 6D.3 — cache i lokalne podpowiedzi
+
+- [x] dokładne trafienie stabilnego klucza nadal uzupełnia trasę automatycznie i nie wywołuje internetu;
+- [x] po braku dokładnego trafienia pamięć może lokalnie wyszukać kandydatów po nazwie lub rzeczywistym adresie w obrębie aktywnego węzła;
+- [x] wyszukiwanie jest deterministyczne, nie stosuje fuzzy matchingu i samo nie zmienia daty ostatniego użycia wpisu;
+- [x] znaleziony kandydat nie jest automatycznie stosowany — brama zwraca `wymagany-wybor-z-pamieci`, a internet nie jest wtedy wywoływany;
+- [x] świadome zastosowanie odbywa się wyłącznie przez dokładny `kluczTrasy`, zachowuje źródłowy adres budowy i zapisuje wybraną lokalizację w warstwie roboczej jako potwierdzoną;
+- [x] istniejące ręczne lub odtworzone czasy nadal mają pierwszeństwo i nie są nadpisywane przez wybór z pamięci;
+- [x] okno **Zapisane trasy** wyszukuje offline zarówno po nazwie, jak i adresie oraz pokazuje adres w osobnej kolumnie;
+- [x] test `testy/etap_6d_3.test.js` oraz pełna regresja przechodzą **107/107 zestawów testów**.
+
+Podetap **6D.3** i cały punkt **6D — pamięć lokalizacji i tras oparta na jednoznacznym miejscu** są zakończone. Etap 6 pozostaje otwarty.
+Następny niezakończony podetap: **6E.1 — porównanie i wybór dostawcy**.

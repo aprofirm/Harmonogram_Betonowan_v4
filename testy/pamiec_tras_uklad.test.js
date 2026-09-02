@@ -34,13 +34,13 @@ assert.match(
 
 assert.match(
   cssRozladunek,
-  /#lista-zapisanych-tras\s+th:nth-child\(7\),[\s\S]*?#lista-zapisanych-tras\s+td:nth-child\(7\)\s*\{[\s\S]*?position:\s*sticky;[\s\S]*?right:\s*0;/,
-  "Kolumna akcji z przyciskiem Usuń powinna pozostać widoczna podczas przewijania."
+  /#lista-zapisanych-tras\s+th:nth-child\(8\),[\s\S]*?#lista-zapisanych-tras\s+td:nth-child\(8\)\s*\{[\s\S]*?position:\s*sticky;[\s\S]*?right:\s*0;/,
+  "Ósma kolumna akcji z przyciskiem Usuń powinna pozostać widoczna podczas przewijania."
 );
 
 assert.match(
   cssRozladunek,
-  /@media\s*\(max-width:\s*680px\)[\s\S]*?#lista-zapisanych-tras\s+table\s*\{[\s\S]*?min-width:\s*680px;/,
+  /@media\s*\(max-width:\s*680px\)[\s\S]*?#lista-zapisanych-tras\s+table\s*\{[\s\S]*?min-width:\s*820px;/,
   "Na małych ekranach tabela powinna zachować bezpieczną szerokość i przewijanie."
 );
 

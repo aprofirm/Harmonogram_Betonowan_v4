@@ -945,6 +945,139 @@
     });
   }
 
+  function pobierzTekstWyszukiwaniaTrasy(trasa) {
+    const adres = przygotujAdresLokalizacji(
+      trasa && trasa.adresLokalizacji
+    );
+    const wartosciCzesci = Object.keys(adres.czesci || {}).map(function (nazwaPola) {
+      return adres.czesci[nazwaPola];
+    });
+
+    return normalizujOpisLokalizacji([
+      trasa && trasa.opisLokalizacji,
+      adres.tekst,
+      adres.tekstZnormalizowany
+    ].concat(wartosciCzesci).filter(Boolean).join(" "));
+  }
+
+  function pobierzLimitPodpowiedzi(wartosc) {
+    const liczba = Number(wartosc);
+
+    if (!Number.isInteger(liczba) || liczba <= 0) {
+      return 20;
+    }
+
+    return Math.min(liczba, 100);
+  }
+
+  function wyszukajTrasy(fraza, idWezla, limitWynikow) {
+    zapewnijUruchomienie();
+
+    let idWezlaZnormalizowany;
+    let frazaZnormalizowana;
+
+    try {
+      idWezlaZnormalizowany = pobierzZnormalizowanyIdWezla(idWezla);
+      frazaZnormalizowana = normalizujOpisLokalizacji(fraza);
+
+      if (!frazaZnormalizowana) {
+        throw new Error("Fraza wyszukiwania nie może być pusta.");
+      }
+    } catch (bladDanych) {
+      return utworzWynik("blad-wyszukiwania", {
+        trasy: [],
+        liczbaTras: 0,
+        komunikat: bladDanych.message
+      });
+    }
+
+    const wynikOdczytu = odczytajKsiazke();
+
+    if (!wynikOdczytu.ksiazka) {
+      return utworzWynik(wynikOdczytu.status, {
+        trasy: [],
+        liczbaTras: 0,
+        wersjaZapisu: wynikOdczytu.wersjaZapisu || null
+      });
+    }
+
+    const slowa = frazaZnormalizowana.split(" ").filter(Boolean);
+    const limit = pobierzLimitPodpowiedzi(limitWynikow);
+    const znalezione = wynikOdczytu.ksiazka.trasy
+      .filter(function (trasa) {
+        if (trasa.idWezlaZnormalizowany !== idWezlaZnormalizowany) {
+          return false;
+        }
+
+        const tekst = pobierzTekstWyszukiwaniaTrasy(trasa);
+        return slowa.every(function (slowo) {
+          return tekst.includes(slowo);
+        });
+      })
+      .slice()
+      .reverse()
+      .slice(0, limit);
+
+    return utworzWynik(
+      znalezione.length ? "znaleziono-trasy" : "brak-trasy",
+      {
+        trasy: skopiujDane(znalezione),
+        liczbaTras: znalezione.length,
+        frazaZnormalizowana: frazaZnormalizowana
+      }
+    );
+  }
+
+  function pobierzTrasePoKluczu(kluczTrasy, idWezla) {
+    zapewnijUruchomienie();
+    const klucz = String(kluczTrasy || "").trim();
+    let idWezlaZnormalizowany;
+
+    try {
+      if (!klucz) {
+        throw new Error("Klucz wybranej trasy nie może być pusty.");
+      }
+
+      idWezlaZnormalizowany = pobierzZnormalizowanyIdWezla(idWezla);
+    } catch (bladDanych) {
+      return utworzWynik("blad-odczytu", {
+        trasa: null,
+        komunikat: bladDanych.message
+      });
+    }
+
+    const wynikOdczytu = odczytajKsiazke();
+
+    if (!wynikOdczytu.ksiazka) {
+      return utworzWynik(wynikOdczytu.status, {
+        trasa: null,
+        wersjaZapisu: wynikOdczytu.wersjaZapisu || null
+      });
+    }
+
+    const indeks = wynikOdczytu.ksiazka.trasy.findIndex(function (trasa) {
+      return trasa.kluczTrasy === klucz &&
+        trasa.idWezlaZnormalizowany === idWezlaZnormalizowany;
+    });
+
+    if (indeks === -1) {
+      return utworzWynik("brak-trasy", { trasa: null });
+    }
+
+    const trasa = wynikOdczytu.ksiazka.trasy[indeks];
+    trasa.ostatnioUzyto = new Date().toISOString();
+    wynikOdczytu.ksiazka.trasy.splice(indeks, 1);
+    wynikOdczytu.ksiazka.trasy.push(trasa);
+    const ograniczona = ograniczKsiazke(wynikOdczytu.ksiazka);
+    const statusAktualizacji = zapiszTekstPamieci(ograniczona.tekstPamieci);
+
+    return utworzWynik("odczytano-trase", {
+      trasa: skopiujDane(trasa),
+      zrodloOdczytu: "pamiec",
+      statusAktualizacji: statusAktualizacji
+    });
+  }
+
   function pobierzTrase(opisLokalizacji, idWezla, daneLokalizacji) {
     zapewnijUruchomienie();
 
@@ -1112,6 +1245,8 @@
     utworzTozsamoscLokalizacji: utworzTozsamoscLokalizacji,
     zapiszTrase: zapiszTrase,
     pobierzTrase: pobierzTrase,
+    wyszukajTrasy: wyszukajTrasy,
+    pobierzTrasePoKluczu: pobierzTrasePoKluczu,
     pobierzListeTras: pobierzListeTras,
     usunTrase: usunTrase
   };
