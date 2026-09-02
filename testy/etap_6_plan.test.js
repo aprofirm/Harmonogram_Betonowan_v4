@@ -14,15 +14,14 @@ function sprawdzKompletnyPodzialEtapu6() {
   const etapy = wczytaj("ETAPY_ROZWOJU.md");
 
   "ABCDEFGHIJ".split("").forEach(function (litera) {
-    const stanPunktu = ["A", "B", "C", "D", "E"].includes(litera) ? "x" : " ";
+    const stanPunktu = ["A", "B", "C", "D", "E", "F"].includes(litera) ? "x" : " ";
     assert.match(
       etapy,
       new RegExp("- \\[" + stanPunktu + "\\] \\*\\*6" + litera + " —")
     );
 
     [1, 2, 3].forEach(function (numer) {
-      const stan = ["A", "B", "C", "D", "E"].includes(litera) ||
-        (litera === "F" && [1, 2].includes(numer))
+      const stan = ["A", "B", "C", "D", "E", "F"].includes(litera)
         ? "x"
         : " ";
       assert.match(
@@ -32,7 +31,7 @@ function sprawdzKompletnyPodzialEtapu6() {
     });
   });
 
-  assert.match(etapy, /Następny niezakończony podetap: \*\*6F\.3/);
+  assert.match(etapy, /Następny niezakończony podetap: \*\*6G\.1/);
   assert.match(etapy, /brak sieci, limit, timeout lub zły wynik/);
   assert.match(etapy, /A → B` pozostaje niezależne od `B → A/);
   assert.match(etapy, /nie\s+nadpisuje ręcznej korekty/);
@@ -46,11 +45,11 @@ function sprawdzGranicePlanu() {
 
   assert.match(
     etapy,
-    /Etap 6 — Adresy, lokalizacje i trasy — \*\*rozpoczęty 2026-09-02; 6A–6E zakończone; 6F\.1–6F\.2 zakończone; następny podetap 6F\.3\*\*/
+    /Etap 6 — Adresy, lokalizacje i trasy — \*\*rozpoczęty 2026-09-02; 6A–6F zakończone; następny podetap 6G\.1\*\*/
   );
   assert.match(etapy, /openrouteservice \/ HeiGIT/);
   assert.match(stan, /\*\*Etap 6\*\* jest rozpoczęty/);
-  assert.match(stan, /Rozpocząć \*\*6F\.3/);
+  assert.match(stan, /Rozpocząć \*\*6G\.1/);
   assert.match(readme, /testy\/TESTY_ETAP_6\.md/);
   assert.match(planTestow, /całe punkty \*\*6A–6F\*\*/);
   assert.match(
@@ -67,5 +66,5 @@ sprawdzKompletnyPodzialEtapu6();
 sprawdzGranicePlanu();
 
 console.log(
-  "OK — Etap 6 ma kompletny plan 6A–6J, zakończone 6A–6E i 6F.1–6F.2 oraz następny krok 6F.3."
+  "OK — Etap 6 ma kompletny plan 6A–6J, zakończone 6A–6F oraz następny krok 6G.1."
 );

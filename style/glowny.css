@@ -1960,3 +1960,33 @@ tr[data-status-trasy-pompy="brak"] td {
 .kandydat-lokalizacji__meta strong {
   color: #526875;
 }
+
+/* 6F.3 — ręczne wskazanie lokalizacji */
+.kandydat-lokalizacji__wybierz {
+  margin-top: 0.75rem;
+  width: 100%;
+}
+
+.korekta-lokalizacji {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--kolor-obramowania, #d8e0e7);
+  display: grid;
+  gap: 0.75rem;
+}
+
+.korekta-lokalizacji h3 {
+  margin: 0;
+}
+
+.korekta-lokalizacji__wspolrzedne {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+@media (max-width: 700px) {
+  .korekta-lokalizacji__wspolrzedne {
+    grid-template-columns: 1fr;
+  }
+}

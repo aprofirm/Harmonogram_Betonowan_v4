@@ -284,9 +284,7 @@ function sprawdzDokumentacje() {
   const planTestow = wczytaj("testy/TESTY_ETAP_6.md");
   const readme = wczytaj("README.md");
 
-  assert.match(etapy, /- \[ \] \*\*6F —/);
   assert.match(etapy, /- \[x\] \*\*6F\.1 — wyszukiwanie lokalizacji:/);
-  assert.match(stan, /\*\*6F\.1\*\* jest zakończone|\*\*6F\.1\*\* jest zakończony|6F\.1.*zakończone/i);
   assert.match(decyzje, /## 133\. Wynik geokodowania jest podpowiedzią automatyczną/);
   assert.match(kontrakt, /## Wyszukiwanie lokalizacji — 6F\.1/);
   assert.match(planTestow, /### 6F\.1 — wyszukiwanie lokalizacji/);

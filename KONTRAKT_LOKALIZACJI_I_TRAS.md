@@ -398,3 +398,31 @@ robocza pozostaje bez zmian.
 Okno kandydatów może pokazać operatorowi adres, poziom pewności, typ oraz
 współrzędne. W 6F.2 nie ma jeszcze operacji zastosowania kandydata. Świadomy
 wybór, poprawa adresu i ręczne współrzędne należą do 6F.3.
+
+## Zatwierdzenie lokalizacji — 6F.3
+
+Zatwierdzona lokalizacja budowy istnieje wyłącznie po jawnej decyzji operatora.
+
+### Wybór kandydata
+
+`zatwierdzKandydataLokalizacji(budowa, kandydaci, indeksKandydata)`:
+
+- odrzuca nieistniejący indeks i wynik bez poprawnej pary współrzędnych;
+- nie zmienia `daneZrodlowe` ani listy kandydatów;
+- zapisuje adres i współrzędne wybranego wyniku do `daneRobocze`;
+- ustawia `statusJakosci = "potwierdzona"`;
+- zachowuje `zrodlo = "mapa"` (lub `pamiec` dla kandydata z pamięci) i zapisuje
+  `czyKorektaReczna = true` jako dowód świadomego wyboru operatora.
+
+### Ręczna korekta
+
+`ustawRecznaLokalizacjeBudowy(budowa, daneKorekty)` ma dwa tryby:
+
+1. pełna para współrzędnych — tworzy `potwierdzona` lokalizację roboczą ze
+   źródłem `reczny`;
+2. sam poprawiony adres — czyści poprzednie współrzędne, ponownie ocenia jakość
+   adresu i pozostawia go do ponownego geokodowania. Taki adres nie otrzymuje
+   statusu `potwierdzona`.
+
+Częściowa para współrzędnych jest błędem. Routing nie powinien korzystać z
+niepotwierdzonego kandydata geokodowania.

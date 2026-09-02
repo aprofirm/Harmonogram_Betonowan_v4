@@ -668,3 +668,11 @@ Książka tras ma wersję `v2` i może przechowywać pełniejsze metadane lokali
 Wyszukiwanie zapisanych tras działa lokalnie i nie wymaga internetu. Okno **Zapisane trasy** przeszukuje teraz zarówno nazwę lokalizacji, jak i zapamiętany adres oraz pokazuje adres w osobnej kolumnie.
 
 Dokładne trafienie stabilnej lokalizacji może nadal automatycznie przywrócić czasy. Jeżeli dokładnego trafienia nie ma, ale pamięć zawiera możliwe lokalne dopasowania, aplikacja zatrzymuje się przed internetem i zwraca je jako podpowiedzi. Taka podpowiedź nie jest używana samoczynnie — zastosowanie wymaga świadomego wskazania konkretnego wpisu. Ręcznie wpisane lub odtworzone czasy mają zawsze pierwszeństwo.
+
+### Zatwierdzanie lokalizacji 6F.3
+
+Wynik geokodowania jest tylko podpowiedzią. Operator może jawnie wybrać
+konkretną lokalizację albo podać własny adres i współrzędne. Dopiero wybór
+kandydata lub pełna ręczna para współrzędnych ustawia roboczą lokalizację jako
+`potwierdzona`. Sama poprawa adresu usuwa stare współrzędne i przygotowuje
+budowę do ponownego wyszukania.

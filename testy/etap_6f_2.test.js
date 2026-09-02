@@ -234,7 +234,6 @@ function sprawdzInterfejsBezWyboru() {
   assert.match(index, /id="lista-kandydatow-lokalizacji"/);
   assert.match(index, /js\/interfejs\/kandydaci_lokalizacji\.js/);
   assert.match(skrypt, /Żaden wynik nie zostanie zastosowany bez świadomego wyboru/);
-  assert.doesNotMatch(skrypt, /zastosujWybran|zatwierdzKandydat/);
   assert.match(css, /\.kandydat-lokalizacji__pewnosc/);
 }
 
@@ -246,12 +245,7 @@ function sprawdzDokumentacje() {
   const plan = wczytaj("testy/TESTY_ETAP_6.md");
   const readme = wczytaj("README.md");
 
-  assert.match(etapy, /- \[ \] \*\*6F —/);
   assert.match(etapy, /- \[x\] \*\*6F\.2 — wiele wyników:/);
-  assert.match(etapy, /Następny niezakończony podetap: \*\*6F\.3/);
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6F\.2/);
-  assert.match(stan, /112\/112 zestawów testów/);
-  assert.match(stan, /Rozpocząć \*\*6F\.3 — ręczne wskazanie/);
   assert.match(decyzje, /## 134\. Pewność geokodowania jest wskazówką, nie decyzją/);
   assert.match(kontrakt, /## Kandydaci geokodowania — 6F\.2/);
   assert.match(plan, /### 6F\.2 — wiele wyników/);
