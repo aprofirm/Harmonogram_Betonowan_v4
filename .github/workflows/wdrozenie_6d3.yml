@@ -1,0 +1,64 @@
+name: Kontrolowane wdrozenie 6D.3
+
+on:
+  push:
+    branches:
+      - work/6d3-cache-podpowiedzi
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  wdrozenie:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          ref: work/6d3-cache-podpowiedzi
+          fetch-depth: 0
+
+      - name: Przygotuj Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Wprowadz zmiany 6D.3
+        run: python3 .github/scripts/wdrozenie_6d3.py
+
+      - name: Sprawdz skladnie
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' plik; do
+            node --check "$plik"
+          done < <(find js -name '*.js' -print0)
+
+      - name: Sprawdz liczbe zestawow testow
+        shell: bash
+        run: |
+          set -euo pipefail
+          liczba=$(find testy -maxdepth 1 -name '*.test.js' | wc -l | tr -d ' ')
+          echo "Liczba zestawow: $liczba"
+          test "$liczba" = "107"
+
+      - name: Uruchom pelna regresje
+        shell: bash
+        run: |
+          set -euo pipefail
+          for plik in testy/*.test.js; do
+            echo "=== $plik ==="
+            node "$plik"
+          done
+
+      - name: Zapisz sprawdzony pakiet 6D.3
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/scripts/wdrozenie_6d3.py .github/workflows/wdrozenie_6d3.yml
+          git config user.name "PawelP"
+          git config user.email "53014565+aprofirm@users.noreply.github.com"
+          git add -A
+          git commit -m "6D.3: dodaj cache i lokalne podpowiedzi"
+          git push origin HEAD:work/6d3-cache-podpowiedzi
