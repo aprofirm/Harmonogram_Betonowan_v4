@@ -1,0 +1,64 @@
+name: Kontrolowane wdrozenie 6E.1
+
+on:
+  push:
+    branches:
+      - work/6e1-wybor-dostawcy
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  wdrozenie:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          ref: work/6e1-wybor-dostawcy
+          fetch-depth: 0
+
+      - name: Przygotuj Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Wprowadz dokumentacje i status 6E.1
+        run: python3 .github/scripts/wdrozenie_6e1.py
+
+      - name: Sprawdz skladnie JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' plik; do
+            node --check "$plik"
+          done < <(find js testy -name '*.js' -print0)
+
+      - name: Sprawdz liczbe zestawow testow
+        shell: bash
+        run: |
+          set -euo pipefail
+          liczba=$(find testy -maxdepth 1 -name '*.test.js' | wc -l | tr -d ' ')
+          echo "Liczba zestawow: $liczba"
+          test "$liczba" = "108"
+
+      - name: Uruchom pelna regresje
+        shell: bash
+        run: |
+          set -euo pipefail
+          for plik in testy/*.test.js; do
+            echo "=== $plik ==="
+            node "$plik"
+          done
+
+      - name: Zapisz sprawdzony pakiet 6E.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/scripts/wdrozenie_6e1.py .github/workflows/wdrozenie_6e1.yml
+          git config user.name "PawelP"
+          git config user.email "53014565+aprofirm@users.noreply.github.com"
+          git add -A
+          git commit -m "6E.1: wybierz dostawcę usług mapowych"
+          git push origin HEAD:work/6e1-wybor-dostawcy
