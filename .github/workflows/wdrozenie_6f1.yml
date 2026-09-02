@@ -27,6 +27,9 @@ jobs:
       - name: Wprowadz zmiany 6F.1
         run: python .github/scripts/6f1_patch.py
 
+      - name: Odblokuj historyczny test 6E.3
+        run: python .github/scripts/6f1_fix_history.py
+
       - name: Sprawdz skladnie JavaScript
         shell: bash
         run: |
@@ -54,7 +57,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          rm -f .github/scripts/6f1_patch.py .github/workflows/wdrozenie_6f1.yml
+          rm -f .github/scripts/6f1_patch.py .github/scripts/6f1_fix_history.py .github/workflows/wdrozenie_6f1.yml
           git config user.name "PawelP"
           git config user.email "53014565+aprofirm@users.noreply.github.com"
           git add -A
