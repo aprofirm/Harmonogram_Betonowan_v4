@@ -372,3 +372,29 @@ warstwy operatorskiej bez wybierania pierwszego elementu.
 Neutralny błąd 6E.3 nie zmienia żadnej warstwy lokalizacji. 6F.1 nie wyznacza
 jeszcze trasy i nie zatwierdza wyniku geokodowania — te odpowiedzialności
 pozostają odpowiednio w dalszych podetapach 6F i 6G.
+
+## Kandydaci geokodowania — 6F.2
+
+Wynik geokodowania może zawierać wiele kandydatów. Kandydat przekazywany poza
+adapter ma neutralny format:
+
+- `adres`,
+- `wspolrzedne`,
+- `zrodlo = mapa`,
+- opcjonalne `pewnosc` w zakresie `0–1`,
+- `poziomPewnosci`: `wysoka`, `srednia`, `niska` albo `brak-oceny`,
+- opcjonalny neutralny `typWyniku`,
+- jawny `indeksKandydata` nadany przez aplikację.
+
+Progi prezentacyjne wynoszą: `>= 0.8` — wysoka, `>= 0.5` — średnia, poniżej
+`0.5` — niska. Są wyłącznie ułatwieniem prezentacji wyniku dostawcy. Nie są
+gwarancją poprawności adresu i nie mogą uruchamiać automatycznego wyboru.
+
+Przy wielu wynikach aplikacja zachowuje kolejność otrzymanych kandydatów oraz
+`wybranyIndeksKandydata = null`. Warstwa automatyczna ma status
+`niejednoznaczna` i nie otrzymuje współrzędnych pierwszego wyniku. Warstwa
+robocza pozostaje bez zmian.
+
+Okno kandydatów może pokazać operatorowi adres, poziom pewności, typ oraz
+współrzędne. W 6F.2 nie ma jeszcze operacji zastosowania kandydata. Świadomy
+wybór, poprawa adresu i ręczne współrzędne należą do 6F.3.

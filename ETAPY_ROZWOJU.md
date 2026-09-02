@@ -51,7 +51,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
 - [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
-- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6E zakończone; 6F.1 zakończone; następny podetap 6F.2**
+- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6E zakończone; 6F.1–6F.2 zakończone; następny podetap 6F.3**
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
@@ -869,7 +869,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
 - [ ] **6F — geokodowanie i potwierdzenie lokalizacji budowy.**
   - [x] **6F.1 — wyszukiwanie lokalizacji:** wysyłać tylko wystarczający adres,
     najpierw używać cache i zapisywać wynik wraz z metadanymi źródła.
-  - [ ] **6F.2 — wiele wyników:** nie wybierać po cichu pierwszego dopasowania;
+  - [x] **6F.2 — wiele wyników:** nie wybierać po cichu pierwszego dopasowania;
     pokazać kandydatów i poziom pewności do decyzji operatora.
   - [ ] **6F.3 — ręczne wskazanie:** pozwolić poprawić adres, wybrać wynik lub
     podać/wskazać współrzędne, a zatwierdzoną lokalizację oznaczyć jako roboczą.
@@ -3205,7 +3205,7 @@ Podetap **6E.2 — neutralny adapter** jest zakończony.
 - [x] test `testy/etap_6e_3.test.js` wraz z pełną regresją przechodzi **110/110 zestawów testów**.
 
 Cały punkt **6E — wybór dostawcy i wymienna warstwa usług mapowych** jest zakończony.
-Następny niezakończony podetap: **6F.2 — wiele wyników**.
+Następny niezakończony podetap: **6F.3 — wiele wyników**.
 
 
 ## Wynik 6F.1 — wyszukiwanie lokalizacji
@@ -3226,3 +3226,17 @@ Następny niezakończony podetap: **6F.2 — wiele wyników**.
 
 Punkt **6F — geokodowanie i potwierdzenie lokalizacji budowy** pozostaje
 otwarty. Następny niezakończony podetap: **6F.2 — wiele wyników**.
+
+## Wynik 6F.2 — wiele wyników geokodowania
+
+- Neutralny kontrakt kandydata zawiera opcjonalny wynik pewności dostawcy,
+  sprowadzony do zakresu `0–1`, poziom `wysoka`, `srednia`, `niska` albo
+  `brak-oceny` oraz neutralny typ wyniku.
+- Dla openrouteservice wykorzystywane są dostępne metadane `confidence` i typ
+  wyniku, ale surowy format dostawcy nadal nie przechodzi poza adapter.
+- Lista kandydatów zachowuje kolejność odpowiedzi i jawny indeks, lecz ma
+  `wybranyIndeksKandydata = null`; poziom pewności nie jest mechanizmem
+  automatycznego wyboru.
+- Dodano gotowe okno prezentacji wielu lokalizacji. Pokazuje adres, poziom
+  pewności, typ i współrzędne, ale nie ma jeszcze operacji zastosowania wyniku.
+- Punkt **6F** pozostaje otwarty. Następny podetap to **6F.3 — ręczne wskazanie**.
