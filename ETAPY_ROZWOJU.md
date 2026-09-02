@@ -51,7 +51,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
 - [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
-- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A oraz 6B.1–6B.2 zakończone; następny podetap 6B.3**
+- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6B zakończone; następny podetap 6C.1**
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
@@ -830,13 +830,13 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
   - [x] **6A.3 — migracja i niezmienniki:** starsze plany oraz książka tras
     nadal działają, ręczne czasy nie znikają, a silnik korzysta wyłącznie z
     wartości roboczych i nie zna konkretnej usługi mapowej.
-- [ ] **6B — adres z KDX/CSV i lokalna ocena jakości.**
+- [x] **6B — adres z KDX/CSV i lokalna ocena jakości.**
   - [x] **6B.1 — rozpoznawanie kolumn adresowych:** obsłużyć warianty nazw i
     osobne części adresu bez wymagania jednego sztywnego układu eksportu.
   - [x] **6B.2 — normalizacja bez utraty źródła:** zachować tekst oryginalny,
     utworzyć powtarzalny adres do wyszukania i nie łączyć podobnych budów tylko
     na podstawie swobodnej nazwy.
-  - [ ] **6B.3 — statusy i komunikaty:** rozróżniać adres pełny, niepełny, zbyt
+  - [x] **6B.3 — statusy i komunikaty:** rozróżniać adres pełny, niepełny, zbyt
     ubogi, niejednoznaczny i nieznaleziony; brak adresu nie blokuje ręcznych
     czasów ani harmonogramu.
 - [ ] **6C — węzeł/betoniarnia jako początek tras.**
@@ -908,7 +908,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
     niepełny/niejednoznaczny, wybór lokalizacji, trasę drogową, ręczną korektę,
     przejazd pompy, ponowne użycie cache i pracę po odłączeniu internetu.
 
-Następny niezakończony podetap: **6B.3 — statusy i komunikaty**.
+Następny niezakończony podetap: **6C.1 — model węzła**.
 
 ## Zakres
 
@@ -3033,6 +3033,26 @@ pozostają otwarte. Następny podetap: **6B.2 — normalizacja bez utraty źród
 - [x] test `testy/etap_6b_2.test.js` oraz pełna regresja przechodzą **100/100
   zestawów testów**.
 
-Podetap **6B.2** jest zakończony. Punkt nadrzędny **6B** oraz cały **Etap 6**
-pozostają otwarte. Następny podetap: **6B.3 — statusy i komunikaty**.
+Podetap **6B.2** jest zakończony.
+
+### Wynik 6B.3 — statusy i komunikaty
+
+- [x] warstwa robocza lokalnie otrzymuje status `pelna`, `niepelna`,
+  `niewystarczajaca` albo `brak` bez zmiany danych źródłowych;
+- [x] pełny adres strukturalny wymaga co najmniej ulicy, numeru i miejscowości,
+  a pełny tekst jest oceniany konserwatywnie na podstawie numeru oraz wyraźnie
+  rozdzielonych części lub kodu pocztowego;
+- [x] adres niepełny może zostać dopuszczony do przyszłej próby wyszukania, ale
+  wymaga sprawdzenia wyniku; swobodna nazwa budowy sama w sobie pozostaje
+  niewystarczająca;
+- [x] statusy `niejednoznaczna` i `nieznaleziona` są obsługiwane wraz z
+  komunikatem operatora, lecz nie są lokalnie zgadywane przed geokodowaniem;
+- [x] ręcznie potwierdzony status pozostaje nienaruszony;
+- [x] brak lub słaba jakość adresu nie blokują ręcznych i zapamiętanych czasów
+  ani wspólnego przepływu harmonogramu;
+- [x] test `testy/etap_6b_3.test.js` oraz pełna regresja przechodzą **101/101
+  zestawów testów**.
+
+Podetap **6B.3** i cały punkt **6B** są zakończone. Cały **Etap 6** pozostaje
+otwarty. Następny podetap: **6C.1 — model węzła**.
 

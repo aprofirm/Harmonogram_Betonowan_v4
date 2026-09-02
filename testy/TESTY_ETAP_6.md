@@ -2,9 +2,9 @@
 
 ## Status
 
-Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetapy **6A.1–6A.3**,
-cały punkt **6A** oraz **6B.1–6B.2** są zakończone. Następny podetap to **6B.3 —
-statusy i komunikaty**.
+Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetapy **6A.1–6A.3**
+i **6B.1–6B.3** oraz całe punkty **6A–6B** są zakończone. Następny podetap to
+**6C.1 — model węzła**.
 
 ## Zasada nadrzędna
 
@@ -111,6 +111,25 @@ Test `testy/etap_6b_2.test.js` sprawdza:
   swobodnym opisie;
 - uzupełnienie starszego modelu wersji `1` bez utraty ręcznej warstwy roboczej;
 - brak przedwczesnej oceny jakości i brak zależności od usługi mapowej.
+
+### 6B.3 — statusy i komunikaty
+
+Test `testy/etap_6b_3.test.js` sprawdza:
+
+- lokalny status `pelna` dla adresu strukturalnego z ulicą, numerem i
+  miejscowością oraz dla jednoznacznie złożonego pełnego tekstu;
+- status `niepelna` dla danych nadających się do ostrożnej próby wyszukania,
+  ale wymagających sprawdzenia wyniku;
+- status `niewystarczajaca` dla zbyt ubogich danych i zgodnościowego opisu
+  opartego tylko na nazwie budowy;
+- status `brak` dla rzeczywistego braku danych adresowych;
+- gotowe komunikaty dla `niejednoznaczna`, `nieznaleziona` i `potwierdzona`
+  bez lokalnego zgadywania wyniku geokodowania;
+- zachowanie `daneZrodlowe.statusJakosci = nieoceniona` przy lokalnej ocenie
+  wyłącznie warstwy roboczej;
+- dalsze użycie ręcznych czasów bez wywołania mapy przy adresie
+  niewystarczającym;
+- aktualizację dokumentacji, zamknięcie całego punktu 6B i przejście do 6C.1.
 
 ## Końcowy test operatora 6J.3
 
