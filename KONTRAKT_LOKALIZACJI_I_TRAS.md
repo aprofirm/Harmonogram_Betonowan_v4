@@ -261,3 +261,12 @@ a osobne pola zakresu zapobiegają mieszaniu danych pomiędzy betoniarniami:
 - dla przyszłej relacji budowa → budowa ID węzła musi zostać przekazane jawnie, aby trasa pompy nie była współdzielona pomiędzy betoniarniami.
 
 Pamięć tras `v1` nadal zachowuje obecny format, ale wymaga jawnego `idWezla` przy zapisie i odczycie. Brak ID jest błędem, a nie sygnałem do użycia `wezel-domyslny`. Pełne rozszerzenie formatu pamięci, adresy, współrzędne i migracja należą do 6D.1.
+
+
+## Pamięć tras v2 — 6D.1
+
+Format trwałej książki tras jest niezależnie wersjonowany od kontraktu domenowego lokalizacji i tras. W 6D.1 książka przechodzi z `v1` na `v2`, podczas gdy `wersjaKontraktu` modeli domenowych pozostaje `1`.
+
+`v2` może przechować adres i współrzędne lokalizacji, dystanse kierunkowe, oba czasy przejazdu, pierwotne źródła czasu, ogólne źródło danych, identyfikator dostawcy oraz daty utworzenia, aktualizacji i ostatniego użycia. Brak tych metadanych po migracji starego wpisu jest poprawnym stanem i nie unieważnia zachowanych ręcznych czasów.
+
+Migracja jest jednokierunkową kopią: gdy nie ma zapisu `v2`, poprawny `v1` zostaje przekształcony i zapisany pod nowym kluczem, a oryginalny `v1` nie jest kasowany. 6D.1 nie zmienia jeszcze tożsamości wpisu; stabilny klucz na podstawie adresu lub współrzędnych należy do 6D.2.

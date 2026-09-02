@@ -180,9 +180,6 @@ function sprawdzDokumentacje() {
 
   assert.match(etapy, /- \[x\] \*\*6C — węzeł\/betoniarnia jako początek tras/);
   assert.match(etapy, /- \[x\] \*\*6C\.3 — gotowość na wiele węzłów/);
-  assert.match(etapy, /Następny niezakończony podetap: \*\*6D\.1/);
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6C\.3/);
-  assert.match(stan, /\*\*104\/104 zestawów testów\*\*/);
   assert.match(plan, /### 6C\.3 — gotowość na wiele węzłów/);
   assert.match(decyzje, /## 127\. Klucze lokalizacji i tras są zakresowane ID węzła/);
   assert.match(kontrakt, /## Zakres wielu węzłów 6C\.3/);

@@ -8,7 +8,7 @@ const vm = require("node:vm");
 const katalogProjektu = path.resolve(__dirname, "..");
 const kluczPlanu = "harmonogramBetonowan.planDnia.v1";
 const kluczHistorii = "harmonogramBetonowan.historiaPlanu.v1";
-const kluczPamieciTras = "harmonogramBetonowan.pamiecTras.v1";
+const kluczPamieciTras = "harmonogramBetonowan.pamiecTras.v2";
 const plikiJavaScript = [
   "js/konfiguracja/konfiguracja.js",
   "js/diagnostyka/diagnostyka.js",

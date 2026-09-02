@@ -196,3 +196,13 @@ projektu.
 Etap 6 można zamknąć dopiero po ukończeniu **6A–6J**, zielonej pełnej regresji,
 publikacji `main` i GitHub Pages oraz potwierdzeniu całego scenariusza 6J.3 przez
 operatora.
+
+
+## Wynik 6D.1
+
+- format pamięci tras podniesiono do `v2`;
+- zapis v2 zachowuje adres, współrzędne, dystanse, oba kierunki czasu, źródło, dostawcę i daty;
+- migracja `v1 → v2` zachowuje wcześniejsze czasy i pozostawia oryginalny `v1` jako kopię bezpieczeństwa;
+- brak nowych metadanych w starym wpisie nie blokuje ręcznych ani zapamiętanych czasów;
+- 6D.1 nie zmienia jeszcze reguły identyfikacji duplikatów — to zakres 6D.2;
+- test `testy/etap_6d_1.test.js` wraz z pełną regresją przechodzi **105/105 zestawów testów**.
