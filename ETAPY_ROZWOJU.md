@@ -51,7 +51,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
 - [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
-- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6D i 6E.1 zakończone; następny podetap 6E.2**
+- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6D oraz 6E.1–6E.2 zakończone; następny podetap 6E.3**
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
@@ -861,7 +861,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
     OpenStreetMap i inne rozwiązania pod kątem kosztów, limitów, licencji,
     CORS, działania z GitHub Pages i routingu ciężarowego; zapisać wybór przed
     integracją, bez zakładania z góry Google Maps ani konkretnej usługi.
-  - [ ] **6E.2 — neutralny adapter:** geokodowanie i routing udostępniają własny
+  - [x] **6E.2 — neutralny adapter:** geokodowanie i routing udostępniają własny
     kontrakt projektu, a limity, timeout i sposób zapytania pozostają poza
     silnikiem harmonogramu.
   - [ ] **6E.3 — bezpieczne błędy:** brak sieci, limit, timeout lub zły wynik
@@ -3175,4 +3175,20 @@ Następny niezakończony podetap: **6E.1 — porównanie i wybór dostawcy**.
 - [x] test `testy/etap_6e_1.test.js` wraz z pełną regresją przechodzi **108/108 zestawów testów**.
 
 Podetap **6E.1 — porównanie i decyzja** jest zakończony. Punkt **6E — wybór dostawcy i wymienna warstwa usług mapowych** pozostaje otwarty.
-Następny niezakończony podetap: **6E.2 — neutralny adapter**.
+Następny niezakończony podetap: **6E.3 — bezpieczne błędy**.
+
+
+## Wynik 6E.2 — neutralny adapter usług mapowych — 2026-09-02
+
+- [x] dodano `js/lokalizacje/adapter_uslug_mapowych.js` z wersjonowanym, własnym kontraktem geokodowania i routingu;
+- [x] neutralny adapter zwraca wyłącznie dane projektu: kandydatów adresu i współrzędnych albo dystans, czas i źródło `mapa`;
+- [x] szczegóły openrouteservice — host, ścieżki API, nagłówek autoryzacji, profil `driving-hgv` i format surowej odpowiedzi — pozostają wewnątrz implementacji dostawcy;
+- [x] profil ciężarówki mapuje długość, szerokość, wysokość, nacisk osi i masę do ograniczeń dostawcy bez przenoszenia tych nazw do silnika harmonogramu;
+- [x] klucz API jest przekazywany wyłącznie w czasie tworzenia adaptera i trafia do nagłówka żądania, a nie do adresu URL, repozytorium, planu ani diagnostyki;
+- [x] obecna brama `pobierzLubUstalTrase` zachowuje zgodność ze starszą funkcją mapową i przyjmuje również neutralny adapter z metodą `pobierzTraseDlaBudowy`;
+- [x] cache i bieżące/ręczne czasy nadal są sprawdzane przed adapterem internetowym;
+- [x] testy używają wyłącznie atrap HTTP i nie wykonują prawdziwych zapytań do zewnętrznego API;
+- [x] test `testy/etap_6e_2.test.js` wraz z pełną regresją przechodzi **109/109 zestawów testów**.
+
+Podetap **6E.2 — neutralny adapter** jest zakończony. Punkt **6E** pozostaje otwarty do zakończenia 6E.3.
+Następny niezakończony podetap: **6E.3 — bezpieczne błędy**.

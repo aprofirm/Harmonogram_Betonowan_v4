@@ -68,11 +68,8 @@ assert.match(
 
 assert.match(etapy, /- \[ \] \*\*6E —/);
 assert.match(etapy, /- \[x\] \*\*6E\.1 — porównanie i decyzja:/);
-assert.match(etapy, /- \[ \] \*\*6E\.2 — neutralny adapter:/);
-assert.match(etapy, /Następny niezakończony podetap: \*\*6E\.2/);
-assert.match(stan, /Ostatni zakończony podetap: \*\*6E\.1/);
-assert.match(stan, /108\/108 zestawów testów/);
-assert.match(stan, /Rozpocząć \*\*6E\.2 — neutralny adapter/);
+assert.match(etapy, /Podetap \*\*6E\.1 — porównanie i decyzja\*\* jest zakończony/);
+assert.match(etapy, /108\/108 zestawów testów/);
 assert.match(decyzje, /## 130\. openrouteservice jako pierwszy dostawca Etapu 6/);
 assert.match(planTestow, /### 6E\.1 — porównanie i decyzja/);
 
