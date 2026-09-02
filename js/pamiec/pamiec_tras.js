@@ -4,12 +4,19 @@
   const aplikacja = zakresGlobalny.HarmonogramBetonowan =
     zakresGlobalny.HarmonogramBetonowan || {};
 
-  const KLUCZ_PAMIECI = "harmonogramBetonowan.pamiecTras.v1";
-  const WERSJA_FORMATU = 1;
+  const KLUCZ_PAMIECI_V1 = "harmonogramBetonowan.pamiecTras.v1";
+  const KLUCZ_PAMIECI = "harmonogramBetonowan.pamiecTras.v2";
+  const WERSJA_FORMATU = 2;
   const MAKSYMALNA_LICZBA_TRAS = 1000;
   const MAKSYMALNY_ROZMIAR_PAMIECI_BAJTY = 1024 * 1024;
   const MAKSYMALNA_DLUGOSC_OPISU = 500;
   const DOZWOLONE_ZRODLA = Object.freeze(["reczny", "mapa", "pamiec"]);
+  const DOZWOLONE_ZRODLA_DANYCH = Object.freeze([
+    "reczny",
+    "mapa",
+    "pamiec",
+    "mieszane"
+  ]);
   let pamiecLokalna = null;
   let trybPamieci = "biezaca-sesja";
   let zapisBiezacejSesji = null;
@@ -106,6 +113,91 @@
     return DOZWOLONE_ZRODLA.includes(zrodlo) ? zrodlo : "reczny";
   }
 
+  function pobierzTekstLubBrak(wartosc) {
+    if (wartosc === null || wartosc === undefined) {
+      return null;
+    }
+
+    const tekst = String(wartosc).trim();
+    return tekst || null;
+  }
+
+  function pobierzNieujemnaLiczbeLubBrak(wartosc, nazwaPola) {
+    if (wartosc === null || wartosc === undefined || wartosc === "") {
+      return null;
+    }
+
+    const liczba = Number(wartosc);
+
+    if (!Number.isFinite(liczba) || liczba < 0) {
+      throw new Error(
+        "Pole „" + nazwaPola + "” musi zawierać liczbę nie mniejszą niż 0."
+      );
+    }
+
+    return liczba;
+  }
+
+  function przygotujAdresLokalizacji(adres) {
+    const dane = czyPoprawnyObiekt(adres) ? adres : {};
+    const czesci = czyPoprawnyObiekt(dane.czesci) ? skopiujDane(dane.czesci) : {};
+
+    return {
+      tekst: pobierzTekstLubBrak(dane.tekst),
+      tekstZnormalizowany: pobierzTekstLubBrak(dane.tekstZnormalizowany),
+      czesci: czesci
+    };
+  }
+
+  function przygotujWspolrzedne(wspolrzedne) {
+    if (wspolrzedne === null || wspolrzedne === undefined) {
+      return null;
+    }
+
+    if (!czyPoprawnyObiekt(wspolrzedne)) {
+      throw new Error("Współrzędne lokalizacji muszą być parą liczb.");
+    }
+
+    const szerokosc = Number(wspolrzedne.szerokoscGeograficzna);
+    const dlugosc = Number(wspolrzedne.dlugoscGeograficzna);
+
+    if (!Number.isFinite(szerokosc) || szerokosc < -90 || szerokosc > 90 ||
+        !Number.isFinite(dlugosc) || dlugosc < -180 || dlugosc > 180) {
+      throw new Error("Współrzędne lokalizacji są poza dozwolonym zakresem.");
+    }
+
+    return {
+      szerokoscGeograficzna: szerokosc,
+      dlugoscGeograficzna: dlugosc
+    };
+  }
+
+  function pobierzZrodloDanych(wartosc, zrodloDojazdu, zrodloPowrotu) {
+    const podane = String(wartosc || "").trim().toLowerCase();
+
+    if (DOZWOLONE_ZRODLA_DANYCH.includes(podane)) {
+      return podane;
+    }
+
+    if (zrodloDojazdu === zrodloPowrotu) {
+      return zrodloDojazdu;
+    }
+
+    return "mieszane";
+  }
+
+  function wybierzMetadane(nowaWartosc, poprzedniaWartosc, przygotuj) {
+    if (nowaWartosc !== undefined) {
+      return przygotuj(nowaWartosc);
+    }
+
+    if (poprzedniaWartosc !== undefined) {
+      return przygotuj(poprzedniaWartosc);
+    }
+
+    return przygotuj(null);
+  }
+
   function utworzPustaKsiazke() {
     return {
       wersja: WERSJA_FORMATU,
@@ -195,6 +287,8 @@
         Number(trasa.czasDojazduMinuty) < 0 ||
         !Number.isFinite(Number(trasa.czasPowrotuMinuty)) ||
         Number(trasa.czasPowrotuMinuty) < 0 ||
+        !czyPoprawnyObiekt(trasa.adresLokalizacji) ||
+        !DOZWOLONE_ZRODLA_DANYCH.includes(trasa.zrodloDanych) ||
         !trasa.utworzono ||
         !trasa.zaktualizowano ||
         !trasa.ostatnioUzyto) {
@@ -202,6 +296,17 @@
     }
 
     try {
+      przygotujAdresLokalizacji(trasa.adresLokalizacji);
+      przygotujWspolrzedne(trasa.wspolrzedneLokalizacji);
+      pobierzNieujemnaLiczbeLubBrak(
+        trasa.dystansDojazduMetry,
+        "Dystans dojazdu"
+      );
+      pobierzNieujemnaLiczbeLubBrak(
+        trasa.dystansPowrotuMetry,
+        "Dystans powrotu"
+      );
+
       return trasa.kluczTrasy === utworzKluczTrasy(
         trasa.opisLokalizacji,
         trasa.idWezla
@@ -217,11 +322,114 @@
     }
   }
 
+  function migrujTraseV1(trasa) {
+    if (!czyPoprawnyObiekt(trasa) || !trasa.opisLokalizacji) {
+      throw new Error("Stary wpis trasy nie zawiera opisu lokalizacji.");
+    }
+
+    const idWezla = pobierzTekstLubBrak(trasa.idWezla) || "wezel-domyslny";
+    const zrodloDojazdu = pobierzZrodlo(trasa.zrodloCzasuDojazdu);
+    const zrodloPowrotu = pobierzZrodlo(trasa.zrodloCzasuPowrotu);
+    const teraz = new Date().toISOString();
+
+    return {
+      kluczTrasy: utworzKluczTrasy(trasa.opisLokalizacji, idWezla),
+      opisLokalizacji: pobierzPoprawnyOpis(trasa.opisLokalizacji),
+      opisZnormalizowany: normalizujOpisLokalizacji(trasa.opisLokalizacji),
+      idWezla: idWezla,
+      idWezlaZnormalizowany: pobierzZnormalizowanyIdWezla(idWezla),
+      adresLokalizacji: przygotujAdresLokalizacji(null),
+      wspolrzedneLokalizacji: null,
+      dystansDojazduMetry: null,
+      dystansPowrotuMetry: null,
+      czasDojazduMinuty: pobierzCzasPrzejazdu(
+        trasa.czasDojazduMinuty,
+        "Czas dojazdu"
+      ),
+      czasPowrotuMinuty: pobierzCzasPrzejazdu(
+        trasa.czasPowrotuMinuty,
+        "Czas powrotu"
+      ),
+      zrodloCzasuDojazdu: zrodloDojazdu,
+      zrodloCzasuPowrotu: zrodloPowrotu,
+      zrodloDanych: pobierzZrodloDanych(
+        trasa.zrodloDanych,
+        zrodloDojazdu,
+        zrodloPowrotu
+      ),
+      dostawcaDanych: pobierzTekstLubBrak(trasa.dostawcaDanych),
+      utworzono: pobierzTekstLubBrak(trasa.utworzono) || teraz,
+      zaktualizowano: pobierzTekstLubBrak(trasa.zaktualizowano) || teraz,
+      ostatnioUzyto: pobierzTekstLubBrak(trasa.ostatnioUzyto) || teraz
+    };
+  }
+
+  function pobierzTekstPamieciV1() {
+    if (!pamiecLokalna || trybPamieci !== "trwala") {
+      return null;
+    }
+
+    try {
+      return pamiecLokalna.getItem(KLUCZ_PAMIECI_V1);
+    } catch (bladOdczytu) {
+      return null;
+    }
+  }
+
+  function sprobujMigrowacKsiazkeV1() {
+    const tekstV1 = pobierzTekstPamieciV1();
+
+    if (!tekstV1) {
+      return null;
+    }
+
+    try {
+      const staraKsiazka = JSON.parse(tekstV1);
+
+      if (!czyPoprawnyObiekt(staraKsiazka) ||
+          staraKsiazka.wersja !== 1 ||
+          !Array.isArray(staraKsiazka.trasy)) {
+        throw new Error("Nieprawidłowy format książki tras v1.");
+      }
+
+      const nowaKsiazka = {
+        wersja: WERSJA_FORMATU,
+        trasy: staraKsiazka.trasy.map(migrujTraseV1)
+      };
+
+      if (!nowaKsiazka.trasy.every(czyPoprawnaTrasa)) {
+        throw new Error("Nie udało się zweryfikować zmigrowanych tras.");
+      }
+
+      const ograniczona = ograniczKsiazke(nowaKsiazka);
+      const statusZapisu = zapiszTekstPamieci(ograniczona.tekstPamieci);
+
+      return {
+        status: "zmigrowano-v1-do-v2",
+        statusZapisu: statusZapisu,
+        ksiazka: ograniczona.ksiazka,
+        liczbaZmigrowanychTras: ograniczona.ksiazka.trasy.length
+      };
+    } catch (bladMigracji) {
+      return {
+        status: "blad-migracji-v1",
+        ksiazka: utworzPustaKsiazke(),
+        komunikat: bladMigracji.message
+      };
+    }
+  }
+
   function odczytajKsiazke() {
     zapewnijUruchomienie();
     const tekstPamieci = pobierzTekstPamieci();
 
     if (!tekstPamieci) {
+      const wynikMigracji = sprobujMigrowacKsiazkeV1();
+
+      if (wynikMigracji) {
+        return wynikMigracji;
+      }
+
       return {
         status: "brak-zapisu",
         ksiazka: utworzPustaKsiazke()
@@ -322,6 +530,9 @@
     const opisLokalizacji = pobierzPoprawnyOpis(daneTrasy.opisLokalizacji);
     const idWezla = pobierzPoprawneIdWezla(daneTrasy.idWezla);
     const teraz = new Date().toISOString();
+    const poprzednia = poprzedniaTrasa || {};
+    const zrodloDojazdu = pobierzZrodlo(daneTrasy.zrodloCzasuDojazdu);
+    const zrodloPowrotu = pobierzZrodlo(daneTrasy.zrodloCzasuPowrotu);
 
     return {
       kluczTrasy: utworzKluczTrasy(opisLokalizacji, idWezla),
@@ -329,6 +540,30 @@
       opisZnormalizowany: normalizujOpisLokalizacji(opisLokalizacji),
       idWezla: idWezla,
       idWezlaZnormalizowany: pobierzZnormalizowanyIdWezla(idWezla),
+      adresLokalizacji: wybierzMetadane(
+        daneTrasy.adresLokalizacji,
+        poprzednia.adresLokalizacji,
+        przygotujAdresLokalizacji
+      ),
+      wspolrzedneLokalizacji: wybierzMetadane(
+        daneTrasy.wspolrzedneLokalizacji,
+        poprzednia.wspolrzedneLokalizacji,
+        przygotujWspolrzedne
+      ),
+      dystansDojazduMetry: wybierzMetadane(
+        daneTrasy.dystansDojazduMetry,
+        poprzednia.dystansDojazduMetry,
+        function (wartosc) {
+          return pobierzNieujemnaLiczbeLubBrak(wartosc, "Dystans dojazdu");
+        }
+      ),
+      dystansPowrotuMetry: wybierzMetadane(
+        daneTrasy.dystansPowrotuMetry,
+        poprzednia.dystansPowrotuMetry,
+        function (wartosc) {
+          return pobierzNieujemnaLiczbeLubBrak(wartosc, "Dystans powrotu");
+        }
+      ),
       czasDojazduMinuty: pobierzCzasPrzejazdu(
         daneTrasy.czasDojazduMinuty,
         "Czas dojazdu"
@@ -337,11 +572,17 @@
         daneTrasy.czasPowrotuMinuty,
         "Czas powrotu"
       ),
-      zrodloCzasuDojazdu: pobierzZrodlo(daneTrasy.zrodloCzasuDojazdu),
-      zrodloCzasuPowrotu: pobierzZrodlo(daneTrasy.zrodloCzasuPowrotu),
-      utworzono: poprzedniaTrasa && poprzedniaTrasa.utworzono
-        ? poprzedniaTrasa.utworzono
-        : teraz,
+      zrodloCzasuDojazdu: zrodloDojazdu,
+      zrodloCzasuPowrotu: zrodloPowrotu,
+      zrodloDanych: pobierzZrodloDanych(
+        daneTrasy.zrodloDanych,
+        zrodloDojazdu,
+        zrodloPowrotu
+      ),
+      dostawcaDanych: daneTrasy.dostawcaDanych !== undefined
+        ? pobierzTekstLubBrak(daneTrasy.dostawcaDanych)
+        : pobierzTekstLubBrak(poprzednia.dostawcaDanych),
+      utworzono: poprzednia.utworzono || teraz,
       zaktualizowano: teraz,
       ostatnioUzyto: teraz
     };
@@ -522,6 +763,7 @@
       trybPamieci: trybPamieci,
       wersjaFormatu: WERSJA_FORMATU,
       kluczPamieci: KLUCZ_PAMIECI,
+      kluczPamieciStarszejWersji: KLUCZ_PAMIECI_V1,
       liczbaTras: liczbaTras,
       maksymalnaLiczbaTras: MAKSYMALNA_LICZBA_TRAS,
       maksymalnyRozmiarPamieciBajty: MAKSYMALNY_ROZMIAR_PAMIECI_BAJTY,

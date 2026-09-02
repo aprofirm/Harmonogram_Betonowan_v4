@@ -636,3 +636,8 @@ do końca bieżącej sesji.
 ## Zakres danych aktywnego węzła
 
 Od 6C.3 lokalizacje i trasy używane przez aplikację są przypisane do ID aktywnego węzła. Dzięki temu przyszłe użycie kilku betoniarni nie pomiesza zapisanych lokalizacji ani czasów tras. Obecny interfejs nadal pracuje z jednym aktywnym węzłem.
+
+
+### Etap 6D.1 — pamięć tras v2
+
+Książka tras ma wersję `v2` i może przechowywać pełniejsze metadane lokalizacji oraz trasy. Istniejący zapis `v1` jest migrowany bez kasowania starej kopii, a program nadal działa z ręcznymi czasami i offline.

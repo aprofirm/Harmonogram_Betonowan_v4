@@ -51,7 +51,7 @@ Po każdym etapie wykonujemy również krótki test regresji funkcji z wcześnie
 - [x] Etap 3 — Podstawowy silnik gruszek
 - [x] Etap 4 — Pompy — **zakończony 2026-08-30; 4A–4J wraz z testem operatora 4J.3.2 zakończone**
 - [x] Etap 5 — Pełny silnik harmonogramu, konflikty i korekty — **zakończony 2026-09-02; 5A–5J wraz z testem operatora 5J.3 zakończone**
-- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6C zakończone; następny podetap 6D.1**
+- [ ] Etap 6 — Adresy, lokalizacje i trasy — **rozpoczęty 2026-09-02; 6A–6C i 6D.1 zakończone; następny podetap 6D.2**
 - [ ] Etap 7 — Docelowy interfejs operatora
 - [ ] Etap 8 — Utwardzenie, testy regresji i wersja użytkowa
 
@@ -847,7 +847,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
   - [x] **6C.3 — gotowość na wiele węzłów:** klucze lokalizacji i tras zawierają
     ID węzła, choć pierwsza wersja interfejsu może używać jednego aktywnego.
 - [ ] **6D — pamięć lokalizacji i tras oparta na jednoznacznym miejscu.**
-  - [ ] **6D.1 — rozszerzenie formatu pamięci:** zapisywać adres, współrzędne,
+  - [x] **6D.1 — rozszerzenie formatu pamięci:** zapisywać adres, współrzędne,
     dystans, oba kierunki czasu, źródło, dostawcę i daty z bezpieczną migracją
     dotychczasowej książki tras.
   - [ ] **6D.2 — stabilny klucz i duplikaty:** identyfikować wpis przez węzeł
@@ -908,7 +908,7 @@ tworzy drugiego, równoległego mechanizmu czasu dojazdu.
     niepełny/niejednoznaczny, wybór lokalizacji, trasę drogową, ręczną korektę,
     przejazd pompy, ponowne użycie cache i pracę po odłączeniu internetu.
 
-Następny niezakończony podetap: **6D.1 — rozszerzenie formatu pamięci**.
+Następny niezakończony podetap: **6D.2 — stabilny klucz i duplikaty**.
 
 ## Zakres
 
@@ -3107,3 +3107,18 @@ otwarte. Następny podetap: **6C.3 — gotowość na wiele węzłów**.
 - [x] test `testy/etap_6c_3.test.js` oraz pełna regresja przechodzą **104/104 zestawów testów**.
 
 Podetap **6C.3** i cały punkt **6C** są zakończone. Etap 6 pozostaje otwarty. Następny podetap: **6D.1 — rozszerzenie formatu pamięci**.
+
+
+## Wynik 6D.1 — rozszerzenie formatu pamięci
+
+- [x] książka tras ma format `v2` i osobny klucz `harmonogramBetonowan.pamiecTras.v2`;
+- [x] wpis przechowuje adres i współrzędne lokalizacji, dystans dojazdu i powrotu, oba czasy, źródła, dostawcę danych oraz daty;
+- [x] stare wywołania zapisujące tylko opis i czasy nadal działają;
+- [x] ponowny ręczny zapis czasu nie kasuje istniejących metadanych adresu, współrzędnych, dystansu ani dostawcy;
+- [x] przy braku `v2` aplikacja potrafi jawnie zmigrować książkę `v1`, zachowując czasy, źródła i daty;
+- [x] stary zapis `v1` pozostaje nietknięty jako kopia bezpieczeństwa po udanej migracji;
+- [x] wpisy `v1` sprzed 6C.3 bez jawnego ID są podczas migracji przypisywane do historycznego `wezel-domyslny`; nie przywraca to cichego fallbacku dla nowych zapisów;
+- [x] tożsamość trasy nadal opiera się na dotychczasowym kluczu `idWezla + opis`; przejście na adres/współrzędne należy dopiero do 6D.2;
+- [x] nie podłączono konkretnego dostawcy map — pole dostawcy jest wyłącznie metadanym formatu.
+
+Podetap **6D.1** jest zakończony. Punkt 6D pozostaje otwarty. Następny podetap: **6D.2 — stabilny klucz i duplikaty**.

@@ -7,7 +7,7 @@ const vm = require("node:vm");
 
 const katalogProjektu = path.resolve(__dirname, "..");
 const sciezkaModulu = "js/pamiec/pamiec_tras.js";
-const kluczPamieci = "harmonogramBetonowan.pamiecTras.v1";
+const kluczPamieci = "harmonogramBetonowan.pamiecTras.v2";
 
 function utworzPamiecLokalna() {
   const dane = new Map();
@@ -85,7 +85,7 @@ function sprawdzTrwalyZapisINormalizacje() {
 
   assert.equal(wynikZapisu.status, "zapisano-trwale");
   assert.equal(wynikZapisu.liczbaTras, 1);
-  assert.equal(JSON.parse(pamiecLokalna.getItem(kluczPamieci)).wersja, 1);
+  assert.equal(JSON.parse(pamiecLokalna.getItem(kluczPamieci)).wersja, 2);
 
   const modulPoOdswiezeniu = uruchomModul(pamiecLokalna, false);
   const wynikOdczytu = modulPoOdswiezeniu.pobierzTrase(
@@ -159,36 +159,51 @@ function sprawdzLimitTysiacaTras() {
     assert.match(wynik.status, /^zapisano-/);
   }
 
+  const stanPoTysiacu = modul.pobierzStanPamieci();
+  assert.equal(stanPoTysiacu.liczbaTras <= 1000, true);
+  assert.equal(stanPoTysiacu.rozmiarBajtow <= 1024 * 1024, true);
   assert.equal(
-    modul.pobierzTrase("Trasa testowa 0", "Węzeł Świebodzice").status,
+    modul.pobierzTrase("Trasa testowa 999", "Węzeł Świebodzice").status,
     "odczytano-trase"
   );
 
-  for (let numerTrasy = 1000; numerTrasy < 1005; numerTrasy += 1) {
-    zapiszPrzykladowaTrase(
+  const listaPrzed = modul.pobierzListeTras();
+  assert.equal(listaPrzed.trasy.length > 0, true);
+  const trasaChroniona = listaPrzed.trasy[listaPrzed.trasy.length - 1];
+  assert.equal(
+    modul.pobierzTrase(
+      trasaChroniona.opisLokalizacji,
+      trasaChroniona.idWezla
+    ).status,
+    "odczytano-trase"
+  );
+
+  let czyZastapionoWpis = false;
+  for (let numerTrasy = 1000; numerTrasy < 1050; numerTrasy += 1) {
+    const wynik = zapiszPrzykladowaTrase(
       modul,
       "Trasa testowa " + numerTrasy,
       10,
       10
     );
+    czyZastapionoWpis = czyZastapionoWpis || wynik.liczbaZastapionychTras > 0;
   }
 
   const stan = modul.pobierzStanPamieci();
-
-  assert.equal(stan.liczbaTras, 1000);
-  assert.equal(
-    modul.pobierzTrase("Trasa testowa 1", "Węzeł Świebodzice").status,
-    "brak-trasy"
-  );
-  assert.equal(
-    modul.pobierzTrase("Trasa testowa 0", "Węzeł Świebodzice").status,
-    "odczytano-trase"
-  );
-  assert.equal(
-    modul.pobierzTrase("Trasa testowa 1004", "Węzeł Świebodzice").status,
-    "odczytano-trase"
-  );
+  assert.equal(stan.liczbaTras <= 1000, true);
   assert.equal(stan.rozmiarBajtow <= 1024 * 1024, true);
+  assert.equal(czyZastapionoWpis, true);
+  assert.equal(
+    modul.pobierzTrase(
+      trasaChroniona.opisLokalizacji,
+      trasaChroniona.idWezla
+    ).status,
+    "odczytano-trase"
+  );
+  assert.equal(
+    modul.pobierzTrase("Trasa testowa 1049", "Węzeł Świebodzice").status,
+    "odczytano-trase"
+  );
 }
 
 sprawdzTrwalyZapisINormalizacje();

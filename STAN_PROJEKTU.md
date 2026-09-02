@@ -7,11 +7,11 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6C.3 — gotowość na wiele węzłów**.
+- Ostatni zakończony podetap: **6D.1 — rozszerzenie formatu pamięci**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- **Etap 6** jest rozpoczęty. Punkty **6A–6C** są zakończone; punkt 6D i cały Etap 6 pozostają otwarte.
-- Pełna regresja po 6C.3 przechodzi **104/104 zestawów testów**.
+- **Etap 6** jest rozpoczęty. Punkty **6A–6C** oraz podetap **6D.1** są zakończone; punkt 6D i cały Etap 6 pozostają otwarte.
+- Pełna regresja po 6D.1 przechodzi **105/105 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -40,6 +40,8 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - Modele lokalizacji i tras mają jawny zakres `idWezla` oraz klucze zawierające
   ID węzła; identyczne budowy z różnych betoniarni nie współdzielą wpisu cache.
 - Pamięć tras nie uzupełnia już brakującego ID węzła wartością domyślną.
+- Książka tras ma format `v2`: przechowuje adres, współrzędne, dystanse, oba kierunki czasu, źródło, dostawcę danych i daty.
+- Gdy `v2` nie istnieje, wcześniejsza książka `v1` jest bezpiecznie kopiowana do nowego formatu; oryginalny zapis `v1` pozostaje kopią bezpieczeństwa.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -77,7 +79,7 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6D.1 — rozszerzenie formatu pamięci**. Rozszerzyć książkę tras o jednoznaczne dane lokalizacji, współrzędne, dystans, oba kierunki czasu, źródło, dostawcę i daty oraz przygotować bezpieczną migrację istniejącego formatu `v1`. Nadal nie podłączać konkretnego dostawcy map — jego wybór należy do **6E.1**.
+Rozpocząć **6D.2 — stabilny klucz i duplikaty**. Zmienić identyfikację wpisu tak, aby opierała się na ID węzła oraz znormalizowanym adresie i/lub współrzędnych, a podobna nazwa budowy nie była automatycznie uznawana za tę samą lokalizację. Nadal nie podłączać konkretnego dostawcy map — jego wybór należy do **6E.1**.
 
 ## Ważna zasada wznowienia
 

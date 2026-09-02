@@ -513,9 +513,20 @@
     );
     const poprzedniaTrasa = poprzedniWpis.trasa || {};
 
+    const modelLokalizacji = budowa.modelLokalizacji || {};
+    const warstwaLokalizacji = modelLokalizacji.daneRobocze || {};
+    const modelDojazdu = budowa.modelTrasyDojazdu || {};
+    const modelPowrotu = budowa.modelTrasyPowrotu || {};
+    const warstwaDojazdu = modelDojazdu.daneRobocze || {};
+    const warstwaPowrotu = modelPowrotu.daneRobocze || {};
+
     return aplikacja.pamiecTras.zapiszTrase({
       idWezla: pobierzIdAktywnegoWezla(),
       opisLokalizacji: opisLokalizacji,
+      adresLokalizacji: warstwaLokalizacji.adres,
+      wspolrzedneLokalizacji: warstwaLokalizacji.wspolrzedne,
+      dystansDojazduMetry: warstwaDojazdu.dystansDrogowyMetry,
+      dystansPowrotuMetry: warstwaPowrotu.dystansDrogowyMetry,
       czasDojazduMinuty: budowa.czasDojazduRoboczyMinuty,
       czasPowrotuMinuty: budowa.czasPowrotuRoboczyMinuty,
       zrodloCzasuDojazdu: pobierzPierwotneZrodlo(
