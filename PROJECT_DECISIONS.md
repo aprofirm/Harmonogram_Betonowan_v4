@@ -2387,3 +2387,24 @@ Każdy status ma prosty komunikat dla operatora. Brak albo słaba jakość adres
 nie mogą blokować harmonogramu, jeżeli dostępne są ręczne lub zapamiętane czasy
 przejazdu. 6B.3 nie podłącza jeszcze żadnej usługi mapowej; wybór dostawcy
 pozostaje zakresem 6E.1.
+
+---
+
+## 125. Aktywny węzeł ma własny model lokalizacji
+
+Od podetapu **6C.1** węzeł/betoniarnia nie jest już tylko tekstowym ID używanym
+w kilku miejscach kodu. Ma własny model zawierający:
+
+- stabilne `idWezla`,
+- nazwę,
+- wersjonowany `modelLokalizacji` typu `wezel`,
+- w modelu lokalizacji: adres, współrzędne, status jakości, źródło i informację
+  o ręcznej korekcie.
+
+Bieżące trasy węzeł ↔ budowa, książka tras oraz przyszłe zapytania do adaptera
+mapowego pobierają identyfikator z aktywnego modelu węzła. Wartość startowa
+`wezel-domyslny` pozostaje wyłącznie zgodnym wstecz identyfikatorem początkowego
+modelu, a nie rozrzuconym po kodzie źródłem prawdy.
+
+W **6C.1** aktywny model żyje tylko w bieżącej sesji. Interfejs ustawiania,
+walidacja danych operatora i trwały zapis lokalny należą do **6C.2**.

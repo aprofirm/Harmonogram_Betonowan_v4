@@ -78,6 +78,16 @@
     return tekst || null;
   }
 
+  function pobierzWymaganyTekst(wartosc, nazwaPola) {
+    const tekst = pobierzTekstLubBrak(wartosc);
+
+    if (!tekst) {
+      throw new Error("Pole „" + nazwaPola + "” jest wymagane.");
+    }
+
+    return tekst;
+  }
+
   function pobierzDozwolonaWartosc(
     wartosc,
     wartoscDomyslna,
@@ -465,6 +475,40 @@
     };
   }
 
+  function utworzModelWezla(daneWezla) {
+    const dane = pobierzObiektLubPusty(daneWezla, "Model węzła");
+    const idWezla = pobierzWymaganyTekst(dane.idWezla, "ID węzła");
+    const nazwa = pobierzWymaganyTekst(dane.nazwa, "Nazwa węzła");
+    const daneLokalizacji = pobierzObiektLubPusty(
+      dane.modelLokalizacji,
+      "Model lokalizacji węzła"
+    );
+    const idLokalizacji = pobierzTekstLubBrak(daneLokalizacji.idLokalizacji);
+    const typLokalizacji = pobierzTekstLubBrak(daneLokalizacji.typLokalizacji);
+
+    if (idLokalizacji && idLokalizacji !== idWezla) {
+      throw new Error("ID lokalizacji węzła musi być zgodne z ID węzła.");
+    }
+
+    if (typLokalizacji && typLokalizacji !== "wezel") {
+      throw new Error("Model węzła musi mieć typ lokalizacji „wezel”.");
+    }
+
+    return {
+      wersjaKontraktu: WERSJA_KONTRAKTU_LOKALIZACJI_I_TRASY,
+      idWezla: idWezla,
+      nazwa: nazwa,
+      modelLokalizacji: utworzModelLokalizacji(Object.assign(
+        {},
+        daneLokalizacji,
+        {
+          idLokalizacji: idWezla,
+          typLokalizacji: "wezel"
+        }
+      ))
+    };
+  }
+
   function utworzPunktTrasy(danePunktu, nazwaPunktu) {
     if (danePunktu === null || danePunktu === undefined) {
       return null;
@@ -651,6 +695,7 @@
     utworzKomunikatJakosciAdresu: utworzKomunikatJakosciAdresu,
     pobierzInformacjeJakosciAdresu: pobierzInformacjeJakosciAdresu,
     utworzModelLokalizacji: utworzModelLokalizacji,
+    utworzModelWezla: utworzModelWezla,
     utworzModelTrasy: utworzModelTrasy
   });
 })(window);

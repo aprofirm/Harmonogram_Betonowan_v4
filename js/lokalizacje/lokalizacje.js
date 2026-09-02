@@ -4,7 +4,9 @@
   const aplikacja = zakresGlobalny.HarmonogramBetonowan =
     zakresGlobalny.HarmonogramBetonowan || {};
 
-  const DOMYSLNY_ID_WEZLA = "wezel-domyslny";
+  const ID_WEZLA_STARTOWEGO = "wezel-domyslny";
+  const NAZWA_WEZLA_STARTOWEGO = "Węzeł domyślny";
+  let aktywnyWezel = null;
 
   function utworzPustyStanLokalizacji() {
     return {
@@ -20,8 +22,28 @@
 
   function czyDostepnyModelWersji1() {
     return typeof aplikacja.lokalizacje.utworzModelLokalizacji === "function" &&
+      typeof aplikacja.lokalizacje.utworzModelWezla === "function" &&
       typeof aplikacja.lokalizacje.utworzModelTrasy === "function" &&
       aplikacja.lokalizacje.WERSJA_KONTRAKTU_LOKALIZACJI_I_TRASY === 1;
+  }
+
+  function utworzPoczatkowyModelWezla() {
+    return aplikacja.lokalizacje.utworzModelWezla({
+      idWezla: ID_WEZLA_STARTOWEGO,
+      nazwa: NAZWA_WEZLA_STARTOWEGO
+    });
+  }
+
+  function pobierzAktywnyWezel() {
+    if (!aktywnyWezel) {
+      aktywnyWezel = utworzPoczatkowyModelWezla();
+    }
+
+    return aktywnyWezel;
+  }
+
+  function pobierzIdAktywnegoWezla() {
+    return pobierzAktywnyWezel().idWezla;
   }
 
   function pobierzZrodloModelu(zrodlo) {
@@ -55,7 +77,7 @@
 
   function utworzPunktyTrasyBudowy(budowa, kierunek) {
     const punktWezla = {
-      idLokalizacji: DOMYSLNY_ID_WEZLA,
+      idLokalizacji: pobierzIdAktywnegoWezla(),
       typLokalizacji: "wezel"
     };
     const punktBudowy = {
@@ -141,8 +163,8 @@
 
     budowa[pola.model] = aplikacja.lokalizacje.utworzModelTrasy(Object.assign({
       idTrasy: kierunek === "do-budowy"
-        ? DOMYSLNY_ID_WEZLA + "->" + String(budowa.idBudowy)
-        : String(budowa.idBudowy) + "->" + DOMYSLNY_ID_WEZLA,
+        ? pobierzIdAktywnegoWezla() + "->" + String(budowa.idBudowy)
+        : String(budowa.idBudowy) + "->" + pobierzIdAktywnegoWezla(),
       daneZrodlowe: warstwaZrodlowa,
       daneAutomatyczne: warstwaAutomatyczna,
       daneRobocze: warstwaRobocza
@@ -353,12 +375,12 @@
 
     const poprzedniWpis = aplikacja.pamiecTras.pobierzTrase(
       opisLokalizacji,
-      DOMYSLNY_ID_WEZLA
+      pobierzIdAktywnegoWezla()
     );
     const poprzedniaTrasa = poprzedniWpis.trasa || {};
 
     return aplikacja.pamiecTras.zapiszTrase({
-      idWezla: DOMYSLNY_ID_WEZLA,
+      idWezla: pobierzIdAktywnegoWezla(),
       opisLokalizacji: opisLokalizacji,
       czasDojazduMinuty: budowa.czasDojazduRoboczyMinuty,
       czasPowrotuMinuty: budowa.czasPowrotuRoboczyMinuty,
@@ -395,7 +417,7 @@
       if (ustawienia.tylkoBrakujace) {
         const istniejacaTrasa = aplikacja.pamiecTras.pobierzTrase(
           opisLokalizacji,
-          DOMYSLNY_ID_WEZLA
+          pobierzIdAktywnegoWezla()
         );
 
         if (istniejacaTrasa.trasa) {
@@ -442,7 +464,7 @@
 
     const wynikOdczytu = aplikacja.pamiecTras.pobierzTrase(
       opisLokalizacji,
-      DOMYSLNY_ID_WEZLA
+      pobierzIdAktywnegoWezla()
     );
 
     if (!wynikOdczytu.trasa) {
@@ -527,7 +549,8 @@
     }
 
     const zapytanieMapowe = {
-      idWezla: DOMYSLNY_ID_WEZLA,
+      idWezla: pobierzIdAktywnegoWezla(),
+      wezel: pobierzAktywnyWezel(),
       opisLokalizacji: utworzOpisLokalizacjiBudowy(budowa),
       idBudowy: budowa.idBudowy
     };
@@ -579,6 +602,7 @@
 
   aplikacja.lokalizacje = Object.assign(aplikacja.lokalizacje || {}, {
     utworzPustyStanLokalizacji: utworzPustyStanLokalizacji,
+    pobierzAktywnyWezel: pobierzAktywnyWezel,
     utworzOpisLokalizacjiBudowy: utworzOpisLokalizacjiBudowy,
     zapiszCzasyBudowyWPamieci: zapiszCzasyBudowyWPamieci,
     zapiszKompletneTrasyBudowWPamieci: zapiszKompletneTrasyBudowWPamieci,

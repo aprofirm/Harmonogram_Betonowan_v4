@@ -3,8 +3,8 @@
 ## Status
 
 Plan punktów **6A–6J** został przygotowany 2026-09-02. Podetapy **6A.1–6A.3**
-i **6B.1–6B.3** oraz całe punkty **6A–6B** są zakończone. Następny podetap to
-**6C.1 — model węzła**.
+i **6B.1–6B.3** oraz całe punkty **6A–6B** są zakończone. Zakończony jest
+również **6C.1 — model węzła**. Następny podetap to **6C.2 — ustawienie i pamięć**.
 
 ## Zasada nadrzędna
 
@@ -130,6 +130,19 @@ Test `testy/etap_6b_3.test.js` sprawdza:
 - dalsze użycie ręcznych czasów bez wywołania mapy przy adresie
   niewystarczającym;
 - aktualizację dokumentacji, zamknięcie całego punktu 6B i przejście do 6C.1.
+
+### 6C.1 — model węzła
+
+Test `testy/etap_6c_1.test.js` sprawdza:
+
+- wymagane, stabilne `idWezla` i nazwę węzła;
+- użycie wspólnego modelu lokalizacji typu `wezel` zamiast osobnego formatu;
+- przechowywanie adresu i pełnej pary współrzędnych w warstwie roboczej;
+- odrzucenie sprzecznego ID lub typu lokalizacji;
+- zwracanie tego samego aktywnego modelu węzła w bieżącej sesji;
+- używanie ID aktywnego węzła w modelach tras węzeł ↔ budowa;
+- przekazanie całego modelu węzła do przyszłego zapytania mapowego;
+- zachowanie granicy zakresu: brak formularza i trwałego zapisu przed 6C.2.
 
 ## Końcowy test operatora 6J.3
 

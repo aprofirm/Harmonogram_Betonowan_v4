@@ -206,3 +206,23 @@ czasów i nie może sam zatrzymać harmonogramu. 6B.3 nadal nie wykonuje zapyta�
 sieciowych ani nie wybiera dostawcy map.
 
 Następny podetap projektu to **6C.1 — model węzła**.
+
+## Model węzła 6C.1
+
+Węzeł korzysta z tego samego kontraktu lokalizacji wersji `1` co budowa. Model
+węzła ma postać:
+
+```text
+{
+  wersjaKontraktu,
+  idWezla,
+  nazwa,
+  modelLokalizacji
+}
+```
+
+`modelLokalizacji` musi mieć `idLokalizacji` zgodne z `idWezla` i typ `wezel`.
+Dzięki temu adres, współrzędne, status jakości, źródło i ręczna korekta nie są
+duplikowane w drugim formacie. Bieżące trasy pobierają ID punktu węzła z
+aktywnego modelu. Ustawianie danych przez operatora oraz trwała pamięć modelu
+są świadomie pozostawione do **6C.2**.
