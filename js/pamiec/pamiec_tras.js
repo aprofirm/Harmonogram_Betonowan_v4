@@ -9,7 +9,6 @@
   const MAKSYMALNA_LICZBA_TRAS = 1000;
   const MAKSYMALNY_ROZMIAR_PAMIECI_BAJTY = 1024 * 1024;
   const MAKSYMALNA_DLUGOSC_OPISU = 500;
-  const DOMYSLNY_ID_WEZLA = "wezel-domyslny";
   const DOZWOLONE_ZRODLA = Object.freeze(["reczny", "mapa", "pamiec"]);
   let pamiecLokalna = null;
   let trybPamieci = "biezaca-sesja";
@@ -58,8 +57,25 @@
     return opis;
   }
 
+  function pobierzPoprawneIdWezla(idWezla) {
+    const id = String(idWezla || "").trim();
+
+    if (!id) {
+      throw new Error("ID węzła jest wymagane dla pamięci trasy.");
+    }
+
+    return id;
+  }
+
   function pobierzZnormalizowanyIdWezla(idWezla) {
-    return normalizujOpisLokalizacji(idWezla || DOMYSLNY_ID_WEZLA);
+    const id = pobierzPoprawneIdWezla(idWezla);
+    const znormalizowane = normalizujOpisLokalizacji(id);
+
+    if (!znormalizowane) {
+      throw new Error("ID węzła nie zawiera znaków pozwalających je rozpoznać.");
+    }
+
+    return znormalizowane;
   }
 
   function utworzKluczTrasy(opisLokalizacji, idWezla) {
@@ -169,18 +185,36 @@
   }
 
   function czyPoprawnaTrasa(trasa) {
-    return czyPoprawnyObiekt(trasa) &&
-      Boolean(trasa.kluczTrasy) &&
-      Boolean(trasa.opisLokalizacji) &&
-      Boolean(trasa.opisZnormalizowany) &&
-      Boolean(trasa.idWezlaZnormalizowany) &&
-      Number.isFinite(Number(trasa.czasDojazduMinuty)) &&
-      Number(trasa.czasDojazduMinuty) >= 0 &&
-      Number.isFinite(Number(trasa.czasPowrotuMinuty)) &&
-      Number(trasa.czasPowrotuMinuty) >= 0 &&
-      Boolean(trasa.utworzono) &&
-      Boolean(trasa.zaktualizowano) &&
-      Boolean(trasa.ostatnioUzyto);
+    if (!czyPoprawnyObiekt(trasa) ||
+        !trasa.kluczTrasy ||
+        !trasa.opisLokalizacji ||
+        !trasa.opisZnormalizowany ||
+        !trasa.idWezla ||
+        !trasa.idWezlaZnormalizowany ||
+        !Number.isFinite(Number(trasa.czasDojazduMinuty)) ||
+        Number(trasa.czasDojazduMinuty) < 0 ||
+        !Number.isFinite(Number(trasa.czasPowrotuMinuty)) ||
+        Number(trasa.czasPowrotuMinuty) < 0 ||
+        !trasa.utworzono ||
+        !trasa.zaktualizowano ||
+        !trasa.ostatnioUzyto) {
+      return false;
+    }
+
+    try {
+      return trasa.kluczTrasy === utworzKluczTrasy(
+        trasa.opisLokalizacji,
+        trasa.idWezla
+      ) &&
+        trasa.idWezlaZnormalizowany === pobierzZnormalizowanyIdWezla(
+          trasa.idWezla
+        ) &&
+        trasa.opisZnormalizowany === normalizujOpisLokalizacji(
+          trasa.opisLokalizacji
+        );
+    } catch (bladWalidacji) {
+      return false;
+    }
   }
 
   function odczytajKsiazke() {
@@ -286,7 +320,7 @@
     }
 
     const opisLokalizacji = pobierzPoprawnyOpis(daneTrasy.opisLokalizacji);
-    const idWezla = String(daneTrasy.idWezla || DOMYSLNY_ID_WEZLA).trim();
+    const idWezla = pobierzPoprawneIdWezla(daneTrasy.idWezla);
     const teraz = new Date().toISOString();
 
     return {

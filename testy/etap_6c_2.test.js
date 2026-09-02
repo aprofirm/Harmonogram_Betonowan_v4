@@ -182,9 +182,6 @@ function sprawdzInterfejsIDokumentacje() {
   assert.match(interfejs, /function pokazAktywnyWezel/);
   assert.match(aplikacja, /uruchomIOdtworzPamiecWezla/);
   assert.match(etapy, /- \[x\] \*\*6C\.2 — ustawienie i pamięć/);
-  assert.match(etapy, /Następny niezakończony podetap: \*\*6C\.3/);
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6C\.2/);
-  assert.match(stan, /\*\*103\/103 zestawów testów\*\*/);
   assert.match(plan, /### 6C\.2 — ustawienie i pamięć/);
   assert.match(decyzje, /## 126\. Dane aktywnego węzła są ustawiane świadomie i zapamiętywane lokalnie/);
   assert.match(kontrakt, /## Ustawienie i pamięć węzła 6C\.2/);

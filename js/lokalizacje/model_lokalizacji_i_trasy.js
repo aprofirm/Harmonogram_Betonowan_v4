@@ -150,6 +150,29 @@
     return wartosc;
   }
 
+  function utworzKluczZakresuWezla(idWezla, rodzaj, identyfikator) {
+    const idZakresu = pobierzTekstLubBrak(idWezla);
+    const idElementu = pobierzTekstLubBrak(identyfikator);
+
+    if (!idZakresu || !idElementu) {
+      return null;
+    }
+
+    return idZakresu + "::" + rodzaj + "::" + idElementu;
+  }
+
+  function sprawdzKluczZakresu(podanyKlucz, wyznaczonyKlucz, nazwaPola) {
+    const klucz = pobierzTekstLubBrak(podanyKlucz);
+
+    if (klucz && wyznaczonyKlucz && klucz !== wyznaczonyKlucz) {
+      throw new Error(
+        "Pole „" + nazwaPola + "” nie zgadza się z ID węzła i lokalizacji."
+      );
+    }
+
+    return wyznaczonyKlucz || klucz;
+  }
+
 
   function normalizujTekstAdresu(wartosc) {
     const tekst = pobierzTekstLubBrak(wartosc);
@@ -453,6 +476,27 @@
     const daneZrodlowe = utworzWarstweLokalizacji(dane.daneZrodlowe);
     const daneAutomatyczne = utworzWarstweLokalizacji(dane.daneAutomatyczne);
     const daneRobocze = utworzWarstweLokalizacji(dane.daneRobocze);
+    const idLokalizacji = pobierzTekstLubBrak(dane.idLokalizacji);
+    const typLokalizacji = pobierzDozwolonaWartosc(
+      dane.typLokalizacji,
+      "budowa",
+      TYPY_LOKALIZACJI,
+      "Typ lokalizacji"
+    );
+    let idWezla = pobierzTekstLubBrak(dane.idWezla);
+
+    if (typLokalizacji === "wezel" && idLokalizacji) {
+      if (idWezla && idWezla !== idLokalizacji) {
+        throw new Error("ID węzła lokalizacji musi być zgodne z ID lokalizacji węzła.");
+      }
+      idWezla = idLokalizacji;
+    }
+
+    const wyznaczonyKlucz = utworzKluczZakresuWezla(
+      idWezla,
+      "lokalizacja",
+      idLokalizacji
+    );
 
     if (["brak", "nieoceniona"].includes(daneRobocze.statusJakosci)) {
       daneRobocze.statusJakosci = ocenAdresLokalnie(
@@ -462,13 +506,14 @@
 
     return {
       wersjaKontraktu: WERSJA_KONTRAKTU_LOKALIZACJI_I_TRASY,
-      idLokalizacji: pobierzTekstLubBrak(dane.idLokalizacji),
-      typLokalizacji: pobierzDozwolonaWartosc(
-        dane.typLokalizacji,
-        "budowa",
-        TYPY_LOKALIZACJI,
-        "Typ lokalizacji"
+      idWezla: idWezla,
+      idLokalizacji: idLokalizacji,
+      kluczLokalizacji: sprawdzKluczZakresu(
+        dane.kluczLokalizacji,
+        wyznaczonyKlucz,
+        "Klucz lokalizacji"
       ),
+      typLokalizacji: typLokalizacji,
       daneZrodlowe: daneZrodlowe,
       daneAutomatyczne: daneAutomatyczne,
       daneRobocze: daneRobocze
@@ -502,6 +547,7 @@
         {},
         daneLokalizacji,
         {
+          idWezla: idWezla,
           idLokalizacji: idWezla,
           typLokalizacji: "wezel"
         }
@@ -533,6 +579,35 @@
         "Typ punktu trasy"
       )
     };
+  }
+
+  function pobierzIdWezlaZPunktowTrasy(punktPoczatkowy, punktDocelowy) {
+    const punkty = [punktPoczatkowy, punktDocelowy].filter(Boolean);
+    const punktyWezla = punkty.filter(function (punkt) {
+      return punkt.typLokalizacji === "wezel";
+    });
+
+    if (!punktyWezla.length) {
+      return null;
+    }
+
+    return punktyWezla[0].idLokalizacji;
+  }
+
+  function utworzKluczTrasyZakresowej(
+    idWezla,
+    punktPoczatkowy,
+    punktDocelowy
+  ) {
+    if (!punktPoczatkowy || !punktDocelowy) {
+      return null;
+    }
+
+    return utworzKluczZakresuWezla(
+      idWezla,
+      "trasa",
+      punktPoczatkowy.idLokalizacji + "->" + punktDocelowy.idLokalizacji
+    );
   }
 
   function utworzWarstweTrasy(daneWarstwy) {
@@ -658,10 +733,32 @@
       KIERUNKI_TRASY,
       "Kierunek trasy"
     );
+    const idWezlaZPunktow = pobierzIdWezlaZPunktowTrasy(
+      punktPoczatkowy,
+      punktDocelowy
+    );
+    const podaneIdWezla = pobierzTekstLubBrak(dane.idWezla);
+
+    if (podaneIdWezla && idWezlaZPunktow && podaneIdWezla !== idWezlaZPunktow) {
+      throw new Error("ID węzła trasy nie zgadza się z punktem węzła.");
+    }
+
+    const idWezla = idWezlaZPunktow || podaneIdWezla;
+    const wyznaczonyKluczTrasy = utworzKluczTrasyZakresowej(
+      idWezla,
+      punktPoczatkowy,
+      punktDocelowy
+    );
 
     return {
       wersjaKontraktu: WERSJA_KONTRAKTU_LOKALIZACJI_I_TRASY,
+      idWezla: idWezla,
       idTrasy: pobierzTekstLubBrak(dane.idTrasy),
+      kluczTrasy: sprawdzKluczZakresu(
+        dane.kluczTrasy,
+        wyznaczonyKluczTrasy,
+        "Klucz trasy"
+      ),
       rodzajRelacji: sprawdzZgodnoscRelacji(
         rodzajRelacji,
         wyznaczoneDane && wyznaczoneDane.rodzajRelacji,

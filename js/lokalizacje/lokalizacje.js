@@ -293,6 +293,7 @@
     }
 
     budowa[pola.model] = aplikacja.lokalizacje.utworzModelTrasy(Object.assign({
+      idWezla: pobierzIdAktywnegoWezla(),
       idTrasy: kierunek === "do-budowy"
         ? pobierzIdAktywnegoWezla() + "->" + String(budowa.idBudowy)
         : String(budowa.idBudowy) + "->" + pobierzIdAktywnegoWezla(),
@@ -384,6 +385,7 @@
 
       budowa.modelLokalizacji = aplikacja.lokalizacje.utworzModelLokalizacji(
         Object.assign({}, istniejacyModel, {
+          idWezla: pobierzIdAktywnegoWezla(),
           daneRobocze: warstwaRobocza
         })
       );
@@ -406,6 +408,7 @@
     );
 
     budowa.modelLokalizacji = aplikacja.lokalizacje.utworzModelLokalizacji({
+      idWezla: pobierzIdAktywnegoWezla(),
       idLokalizacji: String(budowa.idBudowy),
       typLokalizacji: "budowa",
       daneZrodlowe: warstwaZrodlowa,
