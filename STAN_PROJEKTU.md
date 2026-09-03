@@ -7,12 +7,12 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6I.3 — pełny scenariusz awaryjny offline**.
+- Ostatni zakończony podetap: **6J.1 — końcowy audyt testów automatycznych**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- **Etap 6** jest rozpoczęty. Punkty **6A–6I** są zakończone; cały Etap 6 pozostaje otwarty do wykonania 6J.
-- Punkt **6I** jest zakończony; punkt **6J** pozostaje otwarty.
-- Pełna regresja po 6I.3 przechodzi **122/122 zestawów testów**.
+- **Etap 6** jest rozpoczęty. Punkty **6A–6I** są zakończone; punkt **6J** jest rozpoczęty i cały Etap 6 pozostaje otwarty.
+- Punkt **6J** jest rozpoczęty; zakończono **6J.1**, a 6J.2–6J.3 pozostają otwarte.
+- Pełna regresja po 6J.1 przechodzi **123/123 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -93,6 +93,10 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - Dokładny wpis książki tras jest używany po ponownym imporcie przed próbą mapy; wynik pochodzący wcześniej z mapy wraca wtedy jako robocza wartość ze źródłem `pamiec`.
 - Centralny harmonogram tworzy plan z odtworzonych wartości bez żadnego wywołania sieci. Brak kierunkowego przejazdu pompy pozostaje jawnym `brak-trasy`, a ręczne dopisanie czasu pozwala ponownie przeliczyć plan również całkowicie offline.
 - Test 6I.3 używa wyłącznie sztucznych nazw i adresów oraz funkcji zastępczej sieci. Nie zależy od dostępności publicznej usługi mapowej.
+- 6J.1 dodaje jeden audyt spinający wszystkie **27 testów 6A–6I** z przekrojową regresją importu, pamięci, geokodowania, routingu, trybu offline, gruszek, pomp i konfliktów.
+- Audyt 6J.1 ponownie potwierdza granicę architektury: `harmonogram.js` nie wykonuje `fetch`, nie zna endpointu dostawcy ani funkcji routingu i korzysta wyłącznie z gotowych wartości domenowych.
+- `index.html`, konfiguracja i krytyczne zasoby zmieniane podczas Etapu 6 mają wspólny znacznik `6j1-audyt-20260903a`, dzięki czemu opublikowana strona nie może przypadkowo uruchomić starej wersji 6H/6I z cache przeglądarki.
+- Historyczne testy 5J.1–5J.3 sprawdzają teraz trwałe dowody zamknięcia Etapu 5 zamiast wymagać, aby bieżący interfejs na zawsze pozostał oznaczony jako Etap 5.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -130,7 +134,7 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6J.1 — testy automatyczne**. Objąć jednym końcowym audytem import adresów, statusy jakości, model węzła, pamięć i migrację, adaptery, geokodowanie, routing, błędy i tryb offline oraz potwierdzić pełną regresję gruszek, pomp i konfliktów.
+Rozpocząć **6J.2 — publikacja**. Wysłać bezpieczny wynik na `main`, potwierdzić GitHub Actions i GitHub Pages oraz sprawdzić, że repozytorium nie zawiera kluczy API, tokenów ani prywatnych danych użytych podczas testów tras.
 
 ## Ważna zasada wznowienia
 
