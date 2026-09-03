@@ -7,11 +7,11 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6G.3 — wartości automatyczne i robocze trasy**.
+- Ostatni zakończony podetap: **6H.1 — relacja budowa → budowa**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- **Etap 6** jest rozpoczęty. Punkty **6A–6G** są zakończone; cały Etap 6 pozostaje otwarty.
-- Pełna regresja po 6G.3 przechodzi **116/116 zestawów testów**.
+- **Etap 6** jest rozpoczęty. Punkty **6A–6G** oraz **6H.1** są zakończone; cały Etap 6 pozostaje otwarty.
+- Pełna regresja po 6H.1 przechodzi **117/117 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -69,6 +69,9 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - Ręczny, zapamiętany albo źródłowy czas roboczy nie jest cicho nadpisywany nowym wynikiem mapy; automatyczna podpowiedź pozostaje zachowana obok i może być świadomie przywrócona osobno dla dojazdu, powrotu albo obu kierunków.
 - Brama udostępnia stan wartości roboczej i automatycznej razem ze źródłem oraz informacją, czy istnieje wartość automatyczna możliwa do przywrócenia; docelowe pokazanie tych danych w tabeli należy do 6I.1.
 - `index.html` ładuje teraz kolejno kontrakt 6G.1, routing 6G.2 i warstwę wartości 6G.3, dzięki czemu mechanizm jest dostępny także w wersji przeglądarkowej, a nie wyłącznie w testach Node.js.
+- `js/lokalizacje/routing_budowa_budowa.js` realizuje 6H.1: wymaga dwóch różnych, potwierdzonych lokalizacji budów z pełnymi współrzędnymi i przygotowuje dwie niezależne relacje kierunkowe.
+- Routing `A → B` oraz `B → A` jest wywoływany osobno przez ten sam neutralny adapter, dzięki czemu każdy kierunek może mieć inny dystans i czas przejazdu.
+- Wynik 6H.1 zachowuje punkty końcowe, drogowy dystans, czas, źródło i datę; błąd dowolnego kierunku nie pozostawia częściowego wyniku. Moduł nie zapisuje jeszcze czasu do providera pomp — to zakres 6H.2.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -106,7 +109,7 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6H.1 — relacja budowa → budowa**. Wyznaczać kierunkową trasę pomiędzy dwiema potwierdzonymi lokalizacjami budów, zachowując niezależność `A → B` od `B → A` i korzystając z tej samej neutralnej warstwy routingu bez omijania pamięci ani ręcznych korekt.
+Rozpocząć **6H.2 — istniejący kontrakt pomp**. Zasilić obecny kierunkowy provider `czasPrzejazduMinuty` wynikiem mapowym lub cache dla konkretnej pary budów, bez omijania ręcznej korekty i bez zmiany logiki silnika przejazdów pomp.
 
 ## Ważna zasada wznowienia
 

@@ -58,9 +58,9 @@ function sprawdzGranicePlanu() {
   );
   assert.match(etapy, /openrouteservice \/ HeiGIT/);
   assert.match(stan, /\*\*Etap 6\*\* jest rozpoczęty/);
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6G\.3/);
-  assert.match(stan, /Rozpocząć \*\*6H\.1/);
-  assert.match(stan, /116\/116 zestawów testów/);
+  assert.match(stan, /Ostatni zakończony podetap: \*\*6H\.1/);
+  assert.match(stan, /Rozpocząć \*\*6H\.2/);
+  assert.match(stan, /117\/117 zestawów testów/);
   assert.match(readme, /testy\/TESTY_ETAP_6\.md/);
   assert.match(planTestow, /całe punkty \*\*6A–6F\*\*/);
   assert.match(
@@ -77,5 +77,5 @@ sprawdzKompletnyPodzialEtapu6();
 sprawdzGranicePlanu();
 
 console.log(
-  "OK — Etap 6 ma kompletny plan 6A–6J, zakończone 6A–6G oraz następny krok 6H.1."
+  "OK — Etap 6 ma kompletny plan 6A–6J, zakończone 6A–6G oraz 6H.1; następny krok 6H.2."
 );
