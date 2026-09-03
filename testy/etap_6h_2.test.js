@@ -128,7 +128,7 @@ function sprawdzZasilenieObuKierunkow(aplikacja) {
   );
 }
 
-function sprawdzOchronęRecznejWartosci(aplikacja) {
+function sprawdzOchroneRecznejWartosci(aplikacja) {
   const pierwsza = utworzBudowe("A", 50.80, 16.20);
   const druga = utworzBudowe("B", 50.90, 16.40);
   pierwsza.przejazdyPompyMinuty = { B: 44 };
@@ -148,7 +148,7 @@ function sprawdzOchronęRecznejWartosci(aplikacja) {
   assert.equal(druga.przejazdyPompyMinuty.A, 27);
 }
 
-function sprawdzOchronęCsvIPamieci(aplikacja) {
+function sprawdzOchroneCsvIPamieci(aplikacja) {
   ["csv", "pamiec"].forEach(function (zrodlo) {
     const pierwsza = utworzBudowe("A", 50.80, 16.20);
     const druga = utworzBudowe("B", 50.90, 16.40);
@@ -289,8 +289,8 @@ function sprawdzGraniceIntegracji() {
 (async function () {
   const aplikacja = uruchomModuly();
   sprawdzZasilenieObuKierunkow(aplikacja);
-  sprawdzOchronęRecznejWartosci(aplikacja);
-  sprawdzOchronęCsvIPamieci(aplikacja);
+  sprawdzOchroneRecznejWartosci(aplikacja);
+  sprawdzOchroneCsvIPamieci(aplikacja);
   sprawdzOdswiezenieMapy(aplikacja);
   sprawdzWynikZPamieciMozeZasilicBrak(aplikacja);
   sprawdzWalidacjePrzedMutacja(aplikacja);
