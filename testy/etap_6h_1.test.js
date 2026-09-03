@@ -238,9 +238,8 @@ function sprawdzGraniceModulu() {
 
   assert.doesNotMatch(kod, /fetch\s*\(|api\.heigit\.org|openrouteservice|Authorization/i);
   assert.doesNotMatch(kod, /aplikacja\.pompy|czasPrzejazduRoboczyMinuty\s*=/i);
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6H\.1/);
-  assert.match(stan, /Rozpocząć \*\*6H\.2/);
-  assert.match(stan, /117\/117 zestawów testów/);
+  assert.match(stan, /`js\/lokalizacje\/routing_budowa_budowa\.js` realizuje 6H\.1/);
+  assert.match(stan, /Routing `A → B` oraz `B → A` jest wywoływany osobno/);
 }
 
 (async function () {
