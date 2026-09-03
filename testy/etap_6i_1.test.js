@@ -17,6 +17,10 @@ function uruchomModul(stanDoBudowy, stanDoWezla) {
     window: {
       HarmonogramBetonowan: {
         lokalizacje: {
+          zmienCzasRoboczyBudowy: pustaFunkcja,
+          przywrocAutomatycznaTraseBudowy: function () {
+            return { czyPrzywrocono: true };
+          },
           pobierzStanWartosciTrasyBudowy: function () {
             return {
               doBudowy: stanDoBudowy,
@@ -25,6 +29,7 @@ function uruchomModul(stanDoBudowy, stanDoWezla) {
           }
         },
         interfejs: {
+          uruchomInterfejs: pustaFunkcja,
           pokazListeBudow: pustaFunkcja,
           pokazWynik: pustaFunkcja,
           pokazPrzywroconyPlan: pustaFunkcja,
@@ -196,9 +201,7 @@ function sprawdzGraniceEtapu() {
     index.indexOf("js/interfejs/wynik_trasy_budowy.js") <
       index.indexOf("js/aplikacja.js")
   );
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6I\.1/);
-  assert.match(stan, /Rozpocząć \*\*6I\.2/);
-  assert.match(stan, /120\/120 zestawów testów/);
+  assert.match(stan, /wynik_trasy_budowy\.js` realizuje 6I\.1/);
 }
 
 sprawdzGotowyWynikMapy();
