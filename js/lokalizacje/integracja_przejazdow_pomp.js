@@ -80,6 +80,70 @@
     return zrodlo || "csv";
   }
 
+  function pobierzStanKierunkuPrzejazduPompy(
+    budowaZrodlowa,
+    budowaDocelowa
+  ) {
+    const idBudowyZrodlowej = pobierzIdBudowy(
+      budowaZrodlowa,
+      "Budowa źródłowa"
+    );
+    const idBudowyDocelowej = pobierzIdBudowy(
+      budowaDocelowa,
+      "Budowa docelowa"
+    );
+
+    if (idBudowyZrodlowej === idBudowyDocelowej) {
+      throw new Error("Przejazd pompy wymaga dwóch różnych budów.");
+    }
+
+    const czasPrzejazduMinuty = pobierzBiezacyCzas(
+      budowaZrodlowa,
+      idBudowyDocelowej
+    );
+    const czyMaCzas = czasPrzejazduMinuty !== null;
+
+    return {
+      idBudowyZrodlowej: idBudowyZrodlowej,
+      idBudowyDocelowej: idBudowyDocelowej,
+      status: czyMaCzas ? "gotowy" : "brak-trasy",
+      czyMaCzas: czyMaCzas,
+      czasPrzejazduMinuty: czasPrzejazduMinuty,
+      zrodloCzasuPrzejazdu: czyMaCzas
+        ? pobierzBiezaceZrodlo(budowaZrodlowa, idBudowyDocelowej)
+        : "brak",
+      czyMoznaUzycOffline: czyMaCzas,
+      czyMoznaWpisacRecznie: true
+    };
+  }
+
+  function pobierzStanTrasPrzejazdowPomp(
+    pierwszaBudowa,
+    drugaBudowa
+  ) {
+    const pierwszaDoDrugiej = pobierzStanKierunkuPrzejazduPompy(
+      pierwszaBudowa,
+      drugaBudowa
+    );
+    const drugaDoPierwszej = pobierzStanKierunkuPrzejazduPompy(
+      drugaBudowa,
+      pierwszaBudowa
+    );
+
+    return {
+      status: pierwszaDoDrugiej.czyMaCzas && drugaDoPierwszej.czyMaCzas
+        ? "gotowe"
+        : "brak-trasy",
+      czyObaKierunkiGotowe:
+        pierwszaDoDrugiej.czyMaCzas && drugaDoPierwszej.czyMaCzas,
+      czyMoznaPracowacCzesciowoOffline:
+        pierwszaDoDrugiej.czyMaCzas || drugaDoPierwszej.czyMaCzas,
+      czyMoznaWpisacRecznie: true,
+      pierwszaDoDrugiej: pierwszaDoDrugiej,
+      drugaDoPierwszej: drugaDoPierwszej
+    };
+  }
+
   function czyBiezacaWartoscJestChroniona(
     budowaZrodlowa,
     idBudowyDocelowej
@@ -240,7 +304,11 @@
         wynikPierwszegoKierunku.czyZastosowano ||
         wynikDrugiegoKierunku.czyZastosowano,
       pierwszaDoDrugiej: wynikPierwszegoKierunku,
-      drugaDoPierwszej: wynikDrugiegoKierunku
+      drugaDoPierwszej: wynikDrugiegoKierunku,
+      stanTras: pobierzStanTrasPrzejazdowPomp(
+        pierwszaBudowa,
+        drugaBudowa
+      )
     };
   }
 
@@ -252,26 +320,29 @@
       return null;
     }
 
-    const idBudowyDocelowej = pobierzIdBudowy(
-      budowaDocelowa,
-      "Budowa docelowa"
-    );
-    const czas = pobierzBiezacyCzas(
+    const stan = pobierzStanKierunkuPrzejazduPompy(
       budowaZrodlowa,
-      idBudowyDocelowej
+      budowaDocelowa
     );
 
-    if (czas === null) {
+    if (!stan.czyMaCzas) {
       return null;
     }
 
     return {
-      czasPrzejazduMinuty: czas,
-      zrodloCzasuPrzejazdu: pobierzBiezaceZrodlo(
-        budowaZrodlowa,
-        idBudowyDocelowej
-      )
+      czasPrzejazduMinuty: stan.czasPrzejazduMinuty,
+      zrodloCzasuPrzejazdu: stan.zrodloCzasuPrzejazdu
     };
+  }
+
+  function utworzWynikOffline(status, stanTras, szczegoly) {
+    return Object.assign({
+      status: status,
+      czyZastosowanoJakakolwiekWartosc: false,
+      czyWywolanoMape: false,
+      czyMoznaWpisacRecznie: true,
+      stanTras: stanTras
+    }, szczegoly || {});
   }
 
   function pobierzIZastosujTrasyPrzejazdowPomp(
@@ -280,18 +351,55 @@
     adapter,
     opcje
   ) {
-    if (typeof lokalizacje.pobierzKierunkoweTrasyBudowaBudowa !== "function") {
-      return Promise.resolve({
-        status: "brak-routingu-budowa-budowa",
-        czyZastosowanoJakakolwiekWartosc: false
-      });
-    }
-
     if (!pierwszaBudowa || !drugaBudowa) {
       return Promise.resolve({
         status: "brak-budowy",
-        czyZastosowanoJakakolwiekWartosc: false
+        czyZastosowanoJakakolwiekWartosc: false,
+        czyWywolanoMape: false,
+        czyMoznaWpisacRecznie: false
       });
+    }
+
+    let stanTras;
+
+    try {
+      stanTras = pobierzStanTrasPrzejazdowPomp(
+        pierwszaBudowa,
+        drugaBudowa
+      );
+    } catch (blad) {
+      return Promise.resolve({
+        status: "niepoprawna-para-budow",
+        komunikat: blad && blad.message ? blad.message : String(blad),
+        czyZastosowanoJakakolwiekWartosc: false,
+        czyWywolanoMape: false,
+        czyMoznaWpisacRecznie: false
+      });
+    }
+
+    // Już znane czasy są samowystarczalne. Dotyczy to również wartości
+    // zapamiętanych lub wcześniej pobranych z mapy i zachowanych w planie.
+    // Przeliczenie nie powinno wymagać ponownego dostępu do internetu.
+    if (stanTras.czyObaKierunkiGotowe) {
+      return Promise.resolve(utworzWynikOffline(
+        "uzyto-biezacych-przejazdow-pomp",
+        stanTras,
+        { czyUzytoIstniejacychWartosci: true }
+      ));
+    }
+
+    if (typeof lokalizacje.pobierzKierunkoweTrasyBudowaBudowa !== "function") {
+      return Promise.resolve(utworzWynikOffline(
+        "brak-routingu-budowa-budowa",
+        stanTras
+      ));
+    }
+
+    if (!adapter || typeof adapter.wyznaczTrase !== "function") {
+      return Promise.resolve(utworzWynikOffline(
+        "brak-adaptera-routingu",
+        stanTras
+      ));
     }
 
     return lokalizacje.pobierzKierunkoweTrasyBudowaBudowa(
@@ -304,7 +412,13 @@
         return Object.assign({}, wynikRoutingu || {
           status: "brak-wyniku-routingu"
         }, {
-          czyZastosowanoJakakolwiekWartosc: false
+          czyZastosowanoJakakolwiekWartosc: false,
+          czyWywolanoMape: true,
+          czyMoznaWpisacRecznie: true,
+          stanTras: pobierzStanTrasPrzejazdowPomp(
+            pierwszaBudowa,
+            drugaBudowa
+          )
         });
       }
 
@@ -315,7 +429,11 @@
           drugaBudowa,
           wynikRoutingu
         ),
-        { wynikRoutingu: wynikRoutingu }
+        {
+          wynikRoutingu: wynikRoutingu,
+          czyWywolanoMape: true,
+          czyMoznaWpisacRecznie: true
+        }
       );
     });
   }
@@ -325,6 +443,10 @@
       zastosujWynikTrasDoPrzejazdowPomp,
     pobierzDanePrzejazduPompyBudowaBudowa:
       pobierzDanePrzejazduPompyBudowaBudowa,
+    pobierzStanKierunkuPrzejazduPompy:
+      pobierzStanKierunkuPrzejazduPompy,
+    pobierzStanTrasPrzejazdowPomp:
+      pobierzStanTrasPrzejazdowPomp,
     pobierzIZastosujTrasyPrzejazdowPomp:
       pobierzIZastosujTrasyPrzejazdowPomp
   });
