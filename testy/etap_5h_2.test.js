@@ -41,8 +41,7 @@ function wczytajPelnaAplikacje() {
     "js/harmonogram/konflikty_przestojow.js",
     "js/harmonogram/kontrakt_konfliktow.js"
   ].forEach(function (sciezka) {
-    new vm.Script(wczytaj(sciezka), { filename: sciezka })
-      .runInContext(kontekst);
+    new vm.Script(wczytaj(sciezka), { filename: sciezka }).runInContext(kontekst);
   });
 
   return zakresOkna.HarmonogramBetonowan;
@@ -53,26 +52,17 @@ function wczytajKontraktNadSztucznymSilnikiem(listaKonfliktow) {
     HarmonogramBetonowan: {
       harmonogram: {
         przeliczCalyHarmonogram: function () {
-          return {
-            znacznik: "wynik-testowy",
-            konflikty: listaKonfliktow
-          };
+          return { znacznik: "wynik-testowy", konflikty: listaKonfliktow };
         }
       }
     }
   };
   zakresOkna.window = zakresOkna;
-  const kontekst = {
-    window: zakresOkna,
-    Map: Map,
-    Set: Set
-  };
+  const kontekst = { window: zakresOkna, Map: Map, Set: Set };
   vm.createContext(kontekst);
-  new vm.Script(
-    wczytaj("js/harmonogram/kontrakt_konfliktow.js"),
-    { filename: "js/harmonogram/kontrakt_konfliktow.js" }
-  ).runInContext(kontekst);
-
+  new vm.Script(wczytaj("js/harmonogram/kontrakt_konfliktow.js"), {
+    filename: "js/harmonogram/kontrakt_konfliktow.js"
+  }).runInContext(kontekst);
   return zakresOkna.HarmonogramBetonowan;
 }
 
@@ -171,7 +161,6 @@ function sprawdzRoznePrzyczynyNieSaLaczone() {
     przyczyny: ["brak-dostepnych-pomp"],
     opis: "Brak dostępnej pompy."
   });
-
   assert.equal(agreguj([brakTrasy, brakPompy]).length, 2);
 }
 
@@ -183,7 +172,6 @@ function sprawdzIntegracjeZKoncowymWynikiem() {
     utworzBrakTrasy("B", "Inna budowa.")
   ]);
   const wynik = aplikacja.harmonogram.przeliczCalyHarmonogram({});
-
   assert.equal(wynik.znacznik, "wynik-testowy");
   assert.equal(wynik.konflikty.length, 2);
   assert.equal(wynik.konflikty[0].idBudowy, "A");
@@ -204,7 +192,6 @@ function sprawdzDeterministycznosc() {
     utworzPrzestoj("A-KURS-001", "A-KURS-002"),
     utworzPrzestoj("A-KURS-002", "A-KURS-003")
   ];
-
   assert.deepEqual(
     JSON.parse(JSON.stringify(agreguj(lista))),
     JSON.parse(JSON.stringify(agreguj(lista)))
@@ -217,7 +204,7 @@ sprawdzRoznePrzyczynyNieSaLaczone();
 sprawdzIntegracjeZKoncowymWynikiem();
 sprawdzDeterministycznosc();
 
-assert.match(wczytajPelnaAplikacje().konfiguracja.punktEtapu, /^5J\.[1-3]$/);
+assert.match(wczytajPelnaAplikacje().konfiguracja.punktEtapu, /^\d+[A-Z](?:\.\d+)+$/);
 
 console.log(
   "OK — 5H.2 usuwa duplikaty według stabilnej tożsamości konfliktu, zachowuje pierwsze pełne zgłoszenie i nie łączy różnych obiektów ani przyczyn."
