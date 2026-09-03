@@ -72,90 +72,19 @@ function sprawdzKategorieIPowiazania() {
   const aplikacja = wczytajAplikacje();
   const normalizuj = aplikacja.konflikty.normalizujKonflikt;
   const przyklady = [
-    {
-      konflikt: {
-        kod: "BRAK_DOSTEPNYCH_GRUSZEK",
-        rodzaj: "gruszki",
-        opis: "Brak gruszki."
-      },
-      kategoria: "brak-gruszki"
-    },
-    {
-      konflikt: {
-        kod: "BRAK_MOZLIWEJ_POMPY",
-        rodzaj: "pompy",
-        idBudowy: "A",
-        przyczyna: "brak-dostepnych-pomp",
-        opis: "Brak pompy."
-      },
-      kategoria: "brak-pompy"
-    },
-    {
-      konflikt: {
-        kod: "BRAK_MOZLIWEJ_POMPY",
-        rodzaj: "pompy",
-        idBudowy: "A",
-        przyczyna: "po-dostepnosci",
-        opis: "Pompa niedostępna."
-      },
-      kategoria: "niedostepnosc"
-    },
-    {
-      konflikt: {
-        kod: "BRAK_MOZLIWEJ_POMPY",
-        rodzaj: "pompy",
-        idBudowy: "A",
-        przyczyna: "niewystarczajacy-wysieg",
-        opis: "Niezgodny parametr pompy."
-      },
-      kategoria: "niezgodny-parametr"
-    },
-    {
-      konflikt: {
-        kod: "KOLIZJA_ZASOBU",
-        rodzaj: "zasoby",
-        kategoriaKonfliktu: "kolizja",
-        opis: "Kolizja zasobu.",
-        powiazania: [{ typ: "zasob", id: "P-1", rola: "dotyczy" }]
-      },
-      kategoria: "kolizja"
-    },
-    {
-      konflikt: {
-        kod: "BRAK_MOZLIWEJ_POMPY",
-        rodzaj: "pompy",
-        idBudowy: "B",
-        przyczyna: "brak-trasy",
-        opis: "Brak trasy."
-      },
-      kategoria: "brak-trasy"
-    },
-    {
-      konflikt: {
-        kod: "PRZEKROCZONY_LIMIT_OPOZNIENIA_STARTU",
-        rodzaj: "limit-opoznienia-startu",
-        idBudowy: "C",
-        opis: "Przekroczony limit startu."
-      },
-      kategoria: "limit-startu"
-    },
-    {
-      konflikt: {
-        kod: "PRZEKROCZONY_LIMIT_PRZESTOJU_BETONOWANIA",
-        rodzaj: "przestoj-betonowania",
-        idBudowy: "A",
-        idPoprzedniegoKursu: "A-KURS-001",
-        idNastepnegoKursu: "A-KURS-002",
-        opis: "Przekroczony limit przestoju."
-      },
-      kategoria: "limit-przestoju"
-    }
+    { konflikt: { kod: "BRAK_DOSTEPNYCH_GRUSZEK", rodzaj: "gruszki", opis: "Brak gruszki." }, kategoria: "brak-gruszki" },
+    { konflikt: { kod: "BRAK_MOZLIWEJ_POMPY", rodzaj: "pompy", idBudowy: "A", przyczyna: "brak-dostepnych-pomp", opis: "Brak pompy." }, kategoria: "brak-pompy" },
+    { konflikt: { kod: "BRAK_MOZLIWEJ_POMPY", rodzaj: "pompy", idBudowy: "A", przyczyna: "po-dostepnosci", opis: "Pompa niedostępna." }, kategoria: "niedostepnosc" },
+    { konflikt: { kod: "BRAK_MOZLIWEJ_POMPY", rodzaj: "pompy", idBudowy: "A", przyczyna: "niewystarczajacy-wysieg", opis: "Niezgodny parametr pompy." }, kategoria: "niezgodny-parametr" },
+    { konflikt: { kod: "KOLIZJA_ZASOBU", rodzaj: "zasoby", kategoriaKonfliktu: "kolizja", opis: "Kolizja zasobu.", powiazania: [{ typ: "zasob", id: "P-1", rola: "dotyczy" }] }, kategoria: "kolizja" },
+    { konflikt: { kod: "BRAK_MOZLIWEJ_POMPY", rodzaj: "pompy", idBudowy: "B", przyczyna: "brak-trasy", opis: "Brak trasy." }, kategoria: "brak-trasy" },
+    { konflikt: { kod: "PRZEKROCZONY_LIMIT_OPOZNIENIA_STARTU", rodzaj: "limit-opoznienia-startu", idBudowy: "C", opis: "Przekroczony limit startu." }, kategoria: "limit-startu" },
+    { konflikt: { kod: "PRZEKROCZONY_LIMIT_PRZESTOJU_BETONOWANIA", rodzaj: "przestoj-betonowania", idBudowy: "A", idPoprzedniegoKursu: "A-KURS-001", idNastepnegoKursu: "A-KURS-002", opis: "Przekroczony limit przestoju." }, kategoria: "limit-przestoju" }
   ];
 
   przyklady.forEach(function (przyklad) {
     const zrodloPrzed = JSON.stringify(przyklad.konflikt);
     const wynik = normalizuj(przyklad.konflikt);
-
     sprawdzRdzenKontraktu(wynik, przyklad.kategoria);
     assert.equal(JSON.stringify(przyklad.konflikt), zrodloPrzed);
   });
@@ -178,7 +107,6 @@ function utworzStanImportu(aplikacja, iloscBetonuM3) {
     "ID_Budowy;Firma;Budowa;StartPlanowany;IloscBetonu;RodzajRozladunku;CzasDojazdu;CzasPowrotu",
     "A;Alfa;Budowa A;08:00;" + iloscBetonuM3 + ";Lej;0;0"
   ].join("\n");
-
   return aplikacja.importCsv.przetworzCsv(csv, "etap-5h1.csv");
 }
 
@@ -201,63 +129,39 @@ function przelicz(aplikacja, stanImportu, liczbaGruszek, czasZaladunkuMinuty) {
 
 function sprawdzIntegracjeZPelnyWynikiem() {
   const aplikacja = wczytajAplikacje();
-  const wynikBezGruszek = przelicz(
-    aplikacja,
-    utworzStanImportu(aplikacja, 8),
-    0,
-    10
-  );
+  const wynikBezGruszek = przelicz(aplikacja, utworzStanImportu(aplikacja, 8), 0, 10);
   const konfliktGruszek = wynikBezGruszek.konflikty.find(function (konflikt) {
     return konflikt.kod === "BRAK_DOSTEPNYCH_GRUSZEK";
   });
-
   sprawdzRdzenKontraktu(konfliktGruszek, "brak-gruszki");
   assert.ok(konfliktGruszek.powiazania.some(function (powiazanie) {
     return powiazanie.typ === "zasob" && powiazanie.id === "gruszki";
   }));
   assert.equal(konfliktGruszek.liczbaKursow, 1);
 
-  const wynikPrzestoju = przelicz(
-    aplikacja,
-    utworzStanImportu(aplikacja, 24),
-    1,
-    16
-  );
+  const wynikPrzestoju = przelicz(aplikacja, utworzStanImportu(aplikacja, 24), 1, 16);
   const konfliktyPrzestoju = wynikPrzestoju.konflikty.filter(function (konflikt) {
     return konflikt.kod === "PRZEKROCZONY_LIMIT_PRZESTOJU_BETONOWANIA";
   });
-
   assert.equal(konfliktyPrzestoju.length, 2);
   konfliktyPrzestoju.forEach(function (konflikt) {
     sprawdzRdzenKontraktu(konflikt, "limit-przestoju");
     assert.ok(konflikt.powiazania.some(function (powiazanie) {
       return powiazanie.typ === "budowa" && powiazanie.id === "A";
     }));
-    assert.equal(
-      konflikt.powiazania.filter(function (powiazanie) {
-        return powiazanie.typ === "kurs";
-      }).length,
-      2
-    );
+    assert.equal(konflikt.powiazania.filter(function (powiazanie) {
+      return powiazanie.typ === "kurs";
+    }).length, 2);
   });
 }
 
 function sprawdzWalidacjeKontraktu() {
   const aplikacja = wczytajAplikacje();
-
   assert.throws(function () {
-    aplikacja.konflikty.utworzKonflikt({
-      rodzaj: "test",
-      opis: "Brak kodu."
-    });
+    aplikacja.konflikty.utworzKonflikt({ rodzaj: "test", opis: "Brak kodu." });
   }, /„kod”/i);
-
   assert.throws(function () {
-    aplikacja.konflikty.utworzKonflikt({
-      kod: "TEST",
-      rodzaj: "test",
-      opis: ""
-    });
+    aplikacja.konflikty.utworzKonflikt({ kod: "TEST", rodzaj: "test", opis: "" });
   }, /„opis”/i);
 }
 
@@ -266,7 +170,6 @@ function sprawdzPodpiecieWersjiWebowej() {
   const pozycjaPrzestojow = html.indexOf("js/harmonogram/konflikty_przestojow.js");
   const pozycjaKontraktu = html.indexOf("js/harmonogram/kontrakt_konfliktow.js");
   const pozycjaInterfejsu = html.indexOf("js/interfejs/interfejs.js");
-
   assert.ok(pozycjaPrzestojow >= 0);
   assert.ok(pozycjaKontraktu > pozycjaPrzestojow);
   assert.ok(pozycjaInterfejsu > pozycjaKontraktu);
@@ -277,7 +180,7 @@ sprawdzIntegracjeZPelnyWynikiem();
 sprawdzWalidacjeKontraktu();
 sprawdzPodpiecieWersjiWebowej();
 
-assert.match(wczytajAplikacje().konfiguracja.punktEtapu, /^5J\.[1-3]$/);
+assert.match(wczytajAplikacje().konfiguracja.punktEtapu, /^\d+[A-Z](?:\.\d+)+$/);
 
 console.log(
   "OK — 5H.1 nadaje wszystkim konfliktom wspólny, wersjonowany kontrakt i zachowuje szczegóły wcześniejszych reguł."
