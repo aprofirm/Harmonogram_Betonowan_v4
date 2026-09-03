@@ -7,11 +7,11 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6H.1 — relacja budowa → budowa**.
+- Ostatni zakończony podetap: **6H.2 — istniejący kontrakt pomp**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- **Etap 6** jest rozpoczęty. Punkty **6A–6G** oraz **6H.1** są zakończone; cały Etap 6 pozostaje otwarty.
-- Pełna regresja po 6H.1 przechodzi **117/117 zestawów testów**.
+- **Etap 6** jest rozpoczęty. Punkty **6A–6G** oraz **6H.1–6H.2** są zakończone; cały Etap 6 pozostaje otwarty.
+- Pełna regresja po 6H.2 przechodzi **118/118 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -71,7 +71,11 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - `index.html` ładuje teraz kolejno kontrakt 6G.1, routing 6G.2 i warstwę wartości 6G.3, dzięki czemu mechanizm jest dostępny także w wersji przeglądarkowej, a nie wyłącznie w testach Node.js.
 - `js/lokalizacje/routing_budowa_budowa.js` realizuje 6H.1: wymaga dwóch różnych, potwierdzonych lokalizacji budów z pełnymi współrzędnymi i przygotowuje dwie niezależne relacje kierunkowe.
 - Routing `A → B` oraz `B → A` jest wywoływany osobno przez ten sam neutralny adapter, dzięki czemu każdy kierunek może mieć inny dystans i czas przejazdu.
-- Wynik 6H.1 zachowuje punkty końcowe, drogowy dystans, czas, źródło i datę; błąd dowolnego kierunku nie pozostawia częściowego wyniku. Moduł nie zapisuje jeszcze czasu do providera pomp — to zakres 6H.2.
+- Wynik 6H.1 zachowuje punkty końcowe, drogowy dystans, czas, źródło i datę; błąd dowolnego kierunku nie pozostawia częściowego wyniku.
+- `js/lokalizacje/integracja_przejazdow_pomp.js` realizuje 6H.2: waliduje oba kierunki wyniku 6H.1, a następnie zasila istniejące `przejazdyPompyMinuty` i `zrodlaPrzejazdowPompy`, z których już korzystają panel i centralny provider `czasPrzejazduMinuty`.
+- Istniejący czas ze źródła `reczny`, `csv` albo `pamiec` jest chroniony przed automatycznym nadpisaniem; brakującą wartość może zasilić mapa lub pamięć, a poprzedni wynik ze źródła `mapa` może zostać odświeżony.
+- Oba kierunki są sprawdzane przed pierwszą mutacją, więc błędny wynik odwrotny nie pozostawia częściowo zmienionej mapy przejazdów. Algorytm przydziału pomp nie został przebudowany — nadal korzysta z tego samego kontraktu danych.
+- `index.html` ładuje moduły 6H.1 i 6H.2 przed `harmonogram.js`, więc mechanizm jest dostępny w zwykłym uruchomieniu przeglądarkowym.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -109,7 +113,7 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6H.2 — istniejący kontrakt pomp**. Zasilić obecny kierunkowy provider `czasPrzejazduMinuty` wynikiem mapowym lub cache dla konkretnej pary budów, bez omijania ręcznej korekty i bez zmiany logiki silnika przejazdów pomp.
+Rozpocząć **6H.3 — brak trasy i tryb offline**. Zachować jawny konflikt braku trasy, możliwość ręcznego wpisania czasu oraz poprawne użycie zapamiętanej wartości bez sieci, bez wymuszania dostępu do usługi mapowej podczas przeliczania harmonogramu.
 
 ## Ważna zasada wznowienia
 
