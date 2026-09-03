@@ -200,10 +200,8 @@ function sprawdzDokumentacje() {
 
   assert.match(etapy, /- \[x\] \*\*6F —/);
   assert.match(etapy, /- \[x\] \*\*6F\.3 — ręczne wskazanie:/);
-  assert.match(etapy, /Następny niezakończony podetap: \*\*6G\.1/);
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6F\.3/);
-  assert.match(stan, /113\/113 zestawów testów/);
-  assert.match(stan, /Rozpocząć \*\*6G\.1/);
+  assert.match(stan, /Punkty \*\*6A–6F\*\*/);
+  assert.match(stan, /Ręczne współrzędne tworzą potwierdzoną lokalizację ze źródłem `reczny`/);
   assert.match(decyzje, /## 135\. Lokalizacja robocza wymaga jawnego zatwierdzenia operatora/);
   assert.match(kontrakt, /## Zatwierdzenie lokalizacji — 6F\.3/);
   assert.match(plan, /### 6F\.3 — ręczne wskazanie/);
