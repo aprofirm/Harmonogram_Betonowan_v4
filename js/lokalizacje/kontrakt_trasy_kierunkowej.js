@@ -23,10 +23,23 @@
     return tekst || null;
   }
 
-  function pobierzNieujemnaLiczbe(wartosc, nazwaPola) {
-    const liczba = Number(wartosc);
+  function pobierzWymaganaLiczbe(wartosc, nazwaPola) {
+    const czyPusta = wartosc === null ||
+      wartosc === undefined ||
+      (typeof wartosc === "string" && wartosc.trim() === "");
+    const liczba = czyPusta ? NaN : Number(wartosc);
 
-    if (!Number.isFinite(liczba) || liczba < 0) {
+    if (!Number.isFinite(liczba)) {
+      throw new Error("Pole „" + nazwaPola + "” musi zawierać poprawną liczbę.");
+    }
+
+    return liczba;
+  }
+
+  function pobierzNieujemnaLiczbe(wartosc, nazwaPola) {
+    const liczba = pobierzWymaganaLiczbe(wartosc, nazwaPola);
+
+    if (liczba < 0) {
       throw new Error(
         "Pole „" + nazwaPola + "” musi zawierać liczbę nie mniejszą niż 0."
       );
@@ -40,16 +53,22 @@
       throw new Error(nazwaPola + " wymaga pełnej pary współrzędnych.");
     }
 
-    const szerokosc = Number(wartosc.szerokoscGeograficzna);
-    const dlugosc = Number(wartosc.dlugoscGeograficzna);
+    const szerokosc = pobierzWymaganaLiczbe(
+      wartosc.szerokoscGeograficzna,
+      nazwaPola + " — szerokość geograficzna"
+    );
+    const dlugosc = pobierzWymaganaLiczbe(
+      wartosc.dlugoscGeograficzna,
+      nazwaPola + " — długość geograficzna"
+    );
 
-    if (!Number.isFinite(szerokosc) || szerokosc < -90 || szerokosc > 90) {
+    if (szerokosc < -90 || szerokosc > 90) {
       throw new Error(
         nazwaPola + " ma niepoprawną szerokość geograficzną."
       );
     }
 
-    if (!Number.isFinite(dlugosc) || dlugosc < -180 || dlugosc > 180) {
+    if (dlugosc < -180 || dlugosc > 180) {
       throw new Error(
         nazwaPola + " ma niepoprawną długość geograficzną."
       );
