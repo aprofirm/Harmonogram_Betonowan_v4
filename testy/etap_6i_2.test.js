@@ -271,9 +271,8 @@ function sprawdzGraniceEtapu() {
     index.indexOf("js/interfejs/wynik_trasy_budowy.js") <
       index.indexOf("js/aplikacja.js")
   );
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6I\.2/);
-  assert.match(stan, /Rozpocząć \*\*6I\.3/);
-  assert.match(stan, /121\/121 zestawów testów/);
+  assert.match(stan, /6I\.2 dodaje przy danym kierunku przycisk \*\*Użyj automatu\*\*/);
+  assert.match(stan, /Centralny harmonogram nie zna polecenia interfejsu/);
 }
 
 sprawdzPrzywrocenieDojazdu();

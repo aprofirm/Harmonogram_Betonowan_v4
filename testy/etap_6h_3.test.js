@@ -227,7 +227,10 @@ function sprawdzGraniceTrybuOffline() {
   assert.match(harmonogram, /brak czasu przejazdu pompy z poprzedniej budowy/);
   assert.match(panel, /pole-czasu-przejazdu-pompy/);
   assert.match(panel, /obslugaZmianyPrzejazduPompy/);
-  assert.match(stan, /Punkt \*\*6H\*\* jest zakończony/);
+  assert.match(
+    stan,
+    /6H\.3 rozszerza tę samą bramę o jawny stan każdego kierunku/
+  );
   assert.match(stan, /Centralne przeliczanie harmonogramu nadal wyłącznie odczytuje `przejazdyPompyMinuty`/);
 }
 
