@@ -145,9 +145,7 @@
 
   function utworzPodgladKierunku(prezentacja) {
     const kontener = document.createElement("div");
-    const robocza = document.createElement("small");
     const automat = document.createElement("small");
-    const stan = document.createElement("small");
 
     kontener.className = "wynik-trasy-budowy";
     kontener.dataset.kierunek = prezentacja.kierunek;
@@ -155,19 +153,19 @@
     kontener.title = prezentacja.tekstRoboczy + ". " +
       prezentacja.tekstAutomatyczny + ". " + prezentacja.tekstStanu + ".";
 
-    robocza.className = "wynik-trasy-budowy__robocza";
-    robocza.textContent = prezentacja.tekstRoboczy;
     automat.className = "wynik-trasy-budowy__automat";
     automat.textContent = prezentacja.tekstAutomatyczny;
-    stan.className = "wynik-trasy-budowy__stan";
-    stan.dataset.status = prezentacja.status;
-    stan.textContent = prezentacja.tekstStanu;
-
-    kontener.appendChild(robocza);
-    kontener.appendChild(document.createElement("br"));
     kontener.appendChild(automat);
-    kontener.appendChild(document.createElement("br"));
-    kontener.appendChild(stan);
+
+    if (prezentacja.czyWymagaUwagi) {
+      const stan = document.createElement("small");
+      stan.className = "wynik-trasy-budowy__stan";
+      stan.dataset.status = prezentacja.status;
+      stan.textContent = prezentacja.tekstStanu;
+      kontener.appendChild(document.createElement("br"));
+      kontener.appendChild(stan);
+    }
+
     return kontener;
   }
 
