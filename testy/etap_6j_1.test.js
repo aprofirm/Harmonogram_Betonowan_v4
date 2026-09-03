@@ -91,7 +91,7 @@ function sprawdzPelnyRunner() {
   assert.match(workflow, /branches: \[main\]/);
   assert.ok(
     testy.length >= 123,
-    "Pełna regresja 6J.1 powinna obejmować co najmniej 123 zestawy testów."
+    "Pełna regresja po 6J.1 musi nadal obejmować co najmniej 123 zestawy testów."
   );
 }
 
@@ -139,7 +139,7 @@ function sprawdzWersjonowaniePublikacji() {
     assert.match(
       html,
       wzorzec,
-      "Brak aktualnego znacznika cache 6J.1 dla " + sciezka
+      "Brak znacznika cache 6J.1 dla " + sciezka
     );
   });
 }
@@ -148,11 +148,10 @@ function sprawdzPlanIStan() {
   const stan = wczytaj("STAN_PROJEKTU.md");
   const plan = wczytaj("testy/TESTY_ETAP_6.md");
 
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6J\.1/);
   assert.match(stan, /Punkty \*\*6A–6I\*\* są zakończone/);
   assert.match(stan, /Punkt \*\*6J\*\* jest rozpoczęty/);
-  assert.match(stan, /Rozpocząć \*\*6J\.2/);
-  assert.match(stan, /123\/123 zestawów testów/);
+  assert.match(stan, /6J\.1 dodaje jeden audyt spinający wszystkie \*\*27 testów 6A–6I\*\*/);
+  assert.match(stan, /Audyt 6J\.1 ponownie potwierdza granicę architektury/);
   assert.match(
     plan,
     /Testy automatyczne[\s\S]*?nie mogą zależeć od chwilowej dostępności publicznego serwera map/
@@ -169,5 +168,5 @@ sprawdzWersjonowaniePublikacji();
 sprawdzPlanIStan();
 
 console.log(
-  "OK — 6J.1 potwierdza kompletność 6A–6I, pełną regresję Etapu 6, izolację silnika oraz świeże zasoby przeglądarki przed publikacją."
+  "OK — 6J.1 pozostaje trwałym audytem kompletności 6A–6I, izolacji silnika i wersjonowania pakietu przeglądarkowego."
 );
