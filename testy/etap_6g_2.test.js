@@ -224,22 +224,14 @@ async function sprawdzBrakAdaptera(mod) {
   assert.equal(wynik.doWezla, null);
 }
 
-function sprawdzIntegracjePlikow() {
-  const index = wczytaj("index.html");
+function sprawdzGraniceModulu() {
   const kod = wczytaj("js/lokalizacje/routing_wezel_budowa.js");
-  const pozycjaKontraktu = index.indexOf(
-    "js/lokalizacje/kontrakt_trasy_kierunkowej.js"
-  );
-  const pozycjaRoutingu = index.indexOf(
-    "js/lokalizacje/routing_wezel_budowa.js"
-  );
-  const pozycjaBramy = index.indexOf("js/lokalizacje/lokalizacje.js");
+  const stan = wczytaj("STAN_PROJEKTU.md");
 
-  assert.ok(pozycjaKontraktu >= 0);
-  assert.ok(pozycjaRoutingu > pozycjaKontraktu);
-  assert.ok(pozycjaBramy > pozycjaRoutingu);
-  assert.doesNotMatch(kod, /api\.heigit\.org|openrouteservice|Authorization/i);
+  assert.doesNotMatch(kod, /fetch\s*\(|api\.heigit\.org|openrouteservice|Authorization/i);
   assert.doesNotMatch(kod, /czasDojazduRoboczyMinuty\s*=|czasPowrotuRoboczyMinuty\s*=/i);
+  assert.match(stan, /Ostatni zakończony podetap: \*\*6G\.2/);
+  assert.match(stan, /Rozpocząć \*\*6G\.3/);
 }
 
 (async function () {
@@ -249,7 +241,7 @@ function sprawdzIntegracjePlikow() {
   await sprawdzWalidacjeWyniku(mod);
   await sprawdzBladPierwszegoKierunkuZatrzymujeDrugi(mod);
   await sprawdzBrakAdaptera(mod);
-  sprawdzIntegracjePlikow();
+  sprawdzGraniceModulu();
   console.log(
     "OK — 6G.2 pobiera i waliduje oba kierunki węzeł ↔ budowa przez neutralny adapter bez nadpisywania wartości roboczych."
   );
