@@ -7,12 +7,12 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6I.2 — świadome przywracanie automatu z tabeli**.
+- Ostatni zakończony podetap: **6I.3 — pełny scenariusz awaryjny offline**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- **Etap 6** jest rozpoczęty. Punkty **6A–6H** oraz **6I.1–6I.2** są zakończone; cały Etap 6 pozostaje otwarty.
-- Punkt **6H** jest zakończony; punkt **6I** jest rozpoczęty.
-- Pełna regresja po 6I.2 przechodzi **121/121 zestawów testów**.
+- **Etap 6** jest rozpoczęty. Punkty **6A–6I** są zakończone; cały Etap 6 pozostaje otwarty do wykonania 6J.
+- Punkt **6I** jest zakończony; punkt **6J** pozostaje otwarty.
+- Pełna regresja po 6I.3 przechodzi **122/122 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -89,6 +89,10 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - Akcja działa osobno dla **Dojazdu** i **Powrotu**. Nie przepisuje liczby w interfejsie, tylko kieruje typowane polecenie przez istniejącą obsługę zmiany czasu do `przywrocAutomatycznaTraseBudowy`, dzięki czemu zachowane są walidacja i domenowy kontrakt 6G.3.
 - Przywrócenie automatu przechodzi przez dotychczasową ścieżkę `obsluzZmianeCzasowBudowy`: zapisuje kompletne czasy do pamięci tras, unieważnia poprzedni wynik, zapisuje bieżący plan i odświeża tabelę. Modele `modelTrasyDojazdu` i `modelTrasyPowrotu` pozostają w pamięci planu, więc odtworzenie nie wymaga ponownego pobrania mapy.
 - Centralny harmonogram nie zna polecenia interfejsu i nadal korzysta wyłącznie z gotowych `czasDojazduRoboczyMinuty` i `czasPowrotuRoboczyMinuty`.
+- 6I.3 potwierdza pełny scenariusz awaryjny w nowym środowisku bez sieci: plan wersji `4` odtwarza ręczne czasy, wcześniejsze wyniki mapowe oraz kierunkowe przejazdy pompy bez ponownego pobierania danych.
+- Dokładny wpis książki tras jest używany po ponownym imporcie przed próbą mapy; wynik pochodzący wcześniej z mapy wraca wtedy jako robocza wartość ze źródłem `pamiec`.
+- Centralny harmonogram tworzy plan z odtworzonych wartości bez żadnego wywołania sieci. Brak kierunkowego przejazdu pompy pozostaje jawnym `brak-trasy`, a ręczne dopisanie czasu pozwala ponownie przeliczyć plan również całkowicie offline.
+- Test 6I.3 używa wyłącznie sztucznych nazw i adresów oraz funkcji zastępczej sieci. Nie zależy od dostępności publicznej usługi mapowej.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -126,7 +130,7 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6I.3 — pełny scenariusz awaryjny**. Sprawdzić pełny przepływ offline: odtworzenie planu i cache, ręczne wartości, brak usługi mapowej oraz możliwość utworzenia harmonogramu bez wymuszania połączenia z internetem.
+Rozpocząć **6J.1 — testy automatyczne**. Objąć jednym końcowym audytem import adresów, statusy jakości, model węzła, pamięć i migrację, adaptery, geokodowanie, routing, błędy i tryb offline oraz potwierdzić pełną regresję gruszek, pomp i konfliktów.
 
 ## Ważna zasada wznowienia
 
