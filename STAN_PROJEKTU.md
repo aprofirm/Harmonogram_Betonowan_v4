@@ -7,11 +7,12 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6H.2 — istniejący kontrakt pomp**.
+- Ostatni zakończony podetap: **6H.3 — brak trasy i tryb offline**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- **Etap 6** jest rozpoczęty. Punkty **6A–6G** oraz **6H.1–6H.2** są zakończone; cały Etap 6 pozostaje otwarty.
-- Pełna regresja po 6H.2 przechodzi **118/118 zestawów testów**.
+- **Etap 6** jest rozpoczęty. Punkty **6A–6H** są zakończone; cały Etap 6 pozostaje otwarty.
+- Punkt **6H** jest zakończony.
+- Pełna regresja po 6H.3 przechodzi **119/119 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -76,6 +77,10 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - Istniejący czas ze źródła `reczny`, `csv` albo `pamiec` jest chroniony przed automatycznym nadpisaniem; brakującą wartość może zasilić mapa lub pamięć, a poprzedni wynik ze źródła `mapa` może zostać odświeżony.
 - Oba kierunki są sprawdzane przed pierwszą mutacją, więc błędny wynik odwrotny nie pozostawia częściowo zmienionej mapy przejazdów. Algorytm przydziału pomp nie został przebudowany — nadal korzysta z tego samego kontraktu danych.
 - `index.html` ładuje moduły 6H.1 i 6H.2 przed `harmonogram.js`, więc mechanizm jest dostępny w zwykłym uruchomieniu przeglądarkowym.
+- 6H.3 rozszerza tę samą bramę o jawny stan każdego kierunku: `gotowy` albo `brak-trasy`, wraz z informacją o źródle, możliwości użycia offline i możliwości ręcznego wpisania czasu.
+- Jeżeli oba kierunki mają już poprawny czas — także ze źródła `pamiec` albo z wcześniej zapisanego wyniku `mapa` — `pobierzIZastosujTrasyPrzejazdowPomp` używa ich bez wywołania adaptera mapowego.
+- Brak adaptera, brak sieci albo inny błąd routingu nie kasuje istniejącego kierunku. Częściowo znana para pozostaje dostępna offline, a brakujący kierunek może być nadal uzupełniony ręcznie w istniejącym panelu przejazdów pomp.
+- Centralne przeliczanie harmonogramu nadal wyłącznie odczytuje `przejazdyPompyMinuty`; nie wywołuje routingu ani adaptera mapowego. Gdy potrzebny kierunek nie ma czasu, silnik pomp zwraca `brak-trasy`, z którego powstaje jawny konflikt dla operatora.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -113,7 +118,7 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6H.3 — brak trasy i tryb offline**. Zachować jawny konflikt braku trasy, możliwość ręcznego wpisania czasu oraz poprawne użycie zapamiętanej wartości bez sieci, bez wymuszania dostępu do usługi mapowej podczas przeliczania harmonogramu.
+Rozpocząć **6I.1 — widoczny wynik trasy przy budowie**. Pokazać operatorowi w tabeli wartość roboczą i automatyczną, źródło danych oraz stan wymagający uwagi bez zmiany zasad priorytetu wypracowanych w 6G–6H.
 
 ## Ważna zasada wznowienia
 
