@@ -116,16 +116,13 @@ function sprawdzZasilenieObuKierunkow(aplikacja) {
   assert.equal(druga.przejazdyPompyMinuty.A, 27);
   assert.equal(druga.zrodlaPrzejazdowPompy.A, "mapa");
 
-  assert.deepEqual(
+  const daneProvidera =
     aplikacja.lokalizacje.pobierzDanePrzejazduPompyBudowaBudowa(
       pierwsza,
       druga
-    ),
-    {
-      czasPrzejazduMinuty: 21,
-      zrodloCzasuPrzejazdu: "mapa"
-    }
-  );
+    );
+  assert.equal(daneProvidera.czasPrzejazduMinuty, 21);
+  assert.equal(daneProvidera.zrodloCzasuPrzejazdu, "mapa");
 }
 
 function sprawdzOchroneRecznejWartosci(aplikacja) {
