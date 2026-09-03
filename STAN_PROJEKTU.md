@@ -7,11 +7,11 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6G.2 — pobranie i walidacja obu kierunków trasy**.
+- Ostatni zakończony podetap: **6G.3 — wartości automatyczne i robocze trasy**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- **Etap 6** jest rozpoczęty. Punkty **6A–6F** oraz **6G.1–6G.2** są zakończone; cały Etap 6 pozostaje otwarty.
-- Pełna regresja po 6G.2 przechodzi **115/115 zestawów testów**.
+- **Etap 6** jest rozpoczęty. Punkty **6A–6G** są zakończone; cały Etap 6 pozostaje otwarty.
+- Pełna regresja po 6G.3 przechodzi **116/116 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -64,8 +64,11 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - Routing węzeł ↔ budowa może być przygotowany dopiero wtedy, gdy aktywny węzeł ma pełne współrzędne, a lokalizacja robocza budowy ma status `potwierdzona` i pełne współrzędne.
 - `js/lokalizacje/routing_wezel_budowa.js` realizuje 6G.2: wywołuje neutralny adapter osobno dla `do-budowy` i `do-wezla`, przekazuje profil pojazdu i waliduje oba wyniki przez kontrakt 6G.1.
 - Błąd pierwszego kierunku zatrzymuje drugi; timeout, brak adaptera, niegotowa lokalizacja i niepoprawne liczby zwracają jawny status zamiast częściowej trasy.
-- Wynik 6G.2 zachowuje oddzielny dystans, czas, kierunek, punkty, źródło i wspólną datę wyznaczenia dla obu kierunków. Moduł nie mutuje węzła, lokalizacji budowy ani płaskich czasów roboczych.
-- Moduły 6G.1–6G.2 pozostają na razie czystą warstwą domenową. Podłączenie ich do bieżącej bramy `pobierzLubUstalTrase`, zapis `daneAutomatyczne` oraz reguła zastosowania do `daneRobocze` należą do 6G.3.
+- Wynik 6G.2 zachowuje oddzielny dystans, czas, kierunek, punkty, źródło i wspólną datę wyznaczenia dla obu kierunków.
+- `js/lokalizacje/wartosci_trasy_wezel_budowa.js` realizuje 6G.3: zapisuje zweryfikowany wynik routingu do `daneAutomatyczne` obu kierunkowych modeli i synchronizuje wartość roboczą tylko wtedy, gdy nie chroni jej decyzja operatora ani cache/import.
+- Ręczny, zapamiętany albo źródłowy czas roboczy nie jest cicho nadpisywany nowym wynikiem mapy; automatyczna podpowiedź pozostaje zachowana obok i może być świadomie przywrócona osobno dla dojazdu, powrotu albo obu kierunków.
+- Brama udostępnia stan wartości roboczej i automatycznej razem ze źródłem oraz informacją, czy istnieje wartość automatyczna możliwa do przywrócenia; docelowe pokazanie tych danych w tabeli należy do 6I.1.
+- `index.html` ładuje teraz kolejno kontrakt 6G.1, routing 6G.2 i warstwę wartości 6G.3, dzięki czemu mechanizm jest dostępny także w wersji przeglądarkowej, a nie wyłącznie w testach Node.js.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -103,7 +106,7 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6G.3 — wartości automatyczne i robocze trasy węzeł ↔ budowa**. Podłączyć wynik 6G.2 do bramy `aplikacja.lokalizacje`, zapisywać go w `daneAutomatyczne`, nie nadpisywać ręcznej korekty i umożliwić świadome zastosowanie lub przywrócenie wartości automatycznej.
+Rozpocząć **6H.1 — relacja budowa → budowa**. Wyznaczać kierunkową trasę pomiędzy dwiema potwierdzonymi lokalizacjami budów, zachowując niezależność `A → B` od `B → A` i korzystając z tej samej neutralnej warstwy routingu bez omijania pamięci ani ręcznych korekt.
 
 ## Ważna zasada wznowienia
 
