@@ -162,6 +162,12 @@ async function przygotujZapisanyPlanOnline(pamiecLokalna) {
     7,
     "mapa"
   );
+  aplikacja.pompy.ustawCzasPrzejazduPompyBudowy(
+    budowaB,
+    "A",
+    9,
+    "mapa"
+  );
 
   const danePlanu = {
     wersjaStanuAplikacji: 4,
@@ -210,6 +216,8 @@ async function sprawdzPelnyPrzeplywOffline() {
   assert.equal(budowaB.zrodloCzasuDojazdu, "mapa");
   assert.equal(budowaA.przejazdyPompyMinuty.B, 7);
   assert.equal(budowaA.zrodlaPrzejazdowPompy.B, "mapa");
+  assert.equal(budowaB.przejazdyPompyMinuty.A, 9);
+  assert.equal(budowaB.zrodlaPrzejazdowPompy.A, "mapa");
 
   let liczbaWywolanJawnejMapy = 0;
   const wynikGotowejTrasy = await aplikacja.lokalizacje.pobierzLubUstalTrase(
@@ -237,6 +245,7 @@ async function sprawdzPelnyPrzeplywOffline() {
   );
   assert.equal(wynikPrzejazduPompy.czyWywolanoMape, false);
   assert.equal(budowaA.przejazdyPompyMinuty.B, 7);
+  assert.equal(budowaB.przejazdyPompyMinuty.A, 9);
 
   const wynikHarmonogramu = aplikacja.harmonogram.przeliczCalyHarmonogram({
     stanImportu: {
@@ -273,7 +282,7 @@ async function sprawdzPelnyPrzeplywOffline() {
   assert.equal(offline.pobierzLiczbeProbSieciowych(), 0);
 }
 
-function sprawdzJawnyBrakTrasyIRęcznyFallback() {
+function sprawdzJawnyBrakTrasyIRecznyFallback() {
   const srodowisko = uruchomSrodowisko(utworzPamiecLokalna());
   const aplikacja = srodowisko.aplikacja;
   const stanImportu = utworzStanImportu(aplikacja);
@@ -338,7 +347,7 @@ function sprawdzGraniceArchitektury() {
 
 async function uruchomTest() {
   await sprawdzPelnyPrzeplywOffline();
-  sprawdzJawnyBrakTrasyIRęcznyFallback();
+  sprawdzJawnyBrakTrasyIRecznyFallback();
   sprawdzGraniceArchitektury();
 
   console.log(
