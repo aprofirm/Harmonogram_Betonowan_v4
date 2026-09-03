@@ -7,12 +7,12 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6J.1 — końcowy audyt testów automatycznych**.
+- Ostatni zakończony podetap: **6J.2 — publikacja i kontrola bezpieczeństwa**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
 - **Etap 6** jest rozpoczęty. Punkty **6A–6I** są zakończone; punkt **6J** jest rozpoczęty i cały Etap 6 pozostaje otwarty.
-- Punkt **6J** jest rozpoczęty; zakończono **6J.1**, a 6J.2–6J.3 pozostają otwarte.
-- Pełna regresja po 6J.1 przechodzi **123/123 zestawów testów**.
+- Punkt **6J** jest rozpoczęty; zakończono **6J.1–6J.2**, a 6J.3 pozostaje otwarty.
+- Pełna regresja po 6J.2 obejmuje **124/124 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -97,6 +97,9 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - Audyt 6J.1 ponownie potwierdza granicę architektury: `harmonogram.js` nie wykonuje `fetch`, nie zna endpointu dostawcy ani funkcji routingu i korzysta wyłącznie z gotowych wartości domenowych.
 - `index.html`, konfiguracja i krytyczne zasoby zmieniane podczas Etapu 6 mają wspólny znacznik `6j1-audyt-20260903a`, dzięki czemu opublikowana strona nie może przypadkowo uruchomić starej wersji 6H/6I z cache przeglądarki.
 - Historyczne testy 5J.1–5J.3 sprawdzają teraz trwałe dowody zamknięcia Etapu 5 zamiast wymagać, aby bieżący interfejs na zawsze pozostał oznaczony jako Etap 5.
+- 6J.2 dodaje automatyczną bramę bezpieczeństwa `testy/etap_6j_2.test.js`: skanuje pliki produkcyjne pod kątem znanych formatów sekretów i pilnuje zasad prywatności danych testowych.
+- Klucz usługi mapowej nadal jest przekazywany wyłącznie w czasie działania do neutralnego adaptera; test 6J.2 potwierdza, że nie trafia do pamięci planu, diagnostyki ani pamięci przeglądarki adaptera.
+- 6J.2 nie zmienia algorytmów ani pakietu produkcyjnego zweryfikowanego w 6J.1; jest bramą publikacyjną przed końcowym testem operatora 6J.3.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -134,7 +137,7 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6J.2 — publikacja**. Wysłać bezpieczny wynik na `main`, potwierdzić GitHub Actions i GitHub Pages oraz sprawdzić, że repozytorium nie zawiera kluczy API, tokenów ani prywatnych danych użytych podczas testów tras.
+Rozpocząć **6J.3 — końcowy test operatora** na opublikowanej stronie. Potwierdzić prawdziwy adres i trasę, brak cichego wyboru lokalizacji, ręczną korektę, kierunkowy przejazd pompy, ponowne użycie pamięci, pracę offline oraz czytelny błąd usługi mapowej.
 
 ## Ważna zasada wznowienia
 
