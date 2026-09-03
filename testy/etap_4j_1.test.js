@@ -92,8 +92,8 @@ function sprawdzStatus4J1() {
   const etapy = wczytaj("ETAPY_ROZWOJU.md");
   const planTestow = wczytaj("testy/TESTY_ETAP_4.md");
 
-  assert.match(konfiguracja, /punktEtapu:\s*"(?:4J\.[1-3]|5[A-Z](?:\.\d+)+)"/);
-  assert.match(html, /Etap (?:4J\.[1-3]|5[A-Z](?:\.\d+)+)/);
+  assert.match(konfiguracja, /punktEtapu:\s*"\d+[A-Z](?:\.\d+)+"/);
+  assert.match(html, /class="znacznik-etapu">Etap \d+[A-Z](?:\.\d+)+<\/span>/);
   assert.match(etapy, /\[x\] \*\*4J\.1 — testy automatyczne:/);
   assert.match(etapy, /- \[x\] \*\*4J — pełna regresja, publikacja i test operatora\.\*\*/);
   assert.match(etapy, /- \[x\] Etap 4 — Pompy — \*\*zakończony 2026-08-30;/);

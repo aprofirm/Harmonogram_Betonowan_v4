@@ -41,19 +41,19 @@ function sprawdzZamknieciePoTescieOperatora() {
   assert.match(etapy, /- \[x\] \*\*5J\.3 — test operatora:/);
 }
 
-function sprawdzOznaczeniePublikacji() {
-  const konfiguracja = wczytaj("js/konfiguracja/konfiguracja.js");
-  const html = wczytaj("index.html");
+function sprawdzTrwaleDowody5J2() {
+  const readme = wczytaj("README.md");
+  const stan = wczytaj("STAN_PROJEKTU.md");
 
-  assert.match(konfiguracja, /punktEtapu:\s*"5J\.[23]"/);
-  assert.match(html, /Etap 5J\.[23]/);
-  assert.match(html, /5J\.[23] · (?:publikacja|test operatora)/);
-  assert.match(html, /js\/konfiguracja\/konfiguracja\.js\?v=5j[23]-/);
+  assert.match(readme, /## Publikacja 5J\.2/);
+  assert.match(stan, /## Potwierdzenie końcowej publikacji 5J\.2/);
+  assert.match(stan, /GitHub Actions `Testy automatyczne`/);
+  assert.match(stan, /GitHub Pages/);
 }
 
 sprawdzDowodyPublikacji();
 sprawdzZamknieciePoTescieOperatora();
-sprawdzOznaczeniePublikacji();
+sprawdzTrwaleDowody5J2();
 
 console.log(
   "OK — 5J.2 zachowuje dowody publikacji, a Etap 5 jest zamknięty dopiero po zaliczeniu 5J.3."

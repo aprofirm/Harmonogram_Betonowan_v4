@@ -42,8 +42,7 @@ function wczytajAplikacje() {
     "js/harmonogram/kontrakt_konfliktow.js",
     "js/interfejs/interfejs.js"
   ].forEach(function (sciezka) {
-    new vm.Script(wczytaj(sciezka), { filename: sciezka })
-      .runInContext(kontekst);
+    new vm.Script(wczytaj(sciezka), { filename: sciezka }).runInContext(kontekst);
   });
 
   return zakresOkna.HarmonogramBetonowan;
@@ -55,7 +54,6 @@ function utworzWynikZPrzestojem(aplikacja) {
     "A;Alfa;Budowa A;08:00;24;Lej;0;0"
   ].join("\n");
   const stanImportu = aplikacja.importCsv.przetworzCsv(csv, "etap-5i2.csv");
-
   return aplikacja.harmonogram.przeliczCalyHarmonogram({
     stanImportu: stanImportu,
     listaPomp: [],
@@ -88,9 +86,7 @@ function sprawdzPrzestojZRzeczywistegoSilnika() {
   assert.ok(prezentacja.komunikat.includes("kursu 1"));
   assert.ok(prezentacja.komunikat.includes("kursu 2"));
   assert.deepEqual(
-    Array.from(prezentacja.powiazania, function (powiazanie) {
-      return powiazanie.etykieta;
-    }),
+    Array.from(prezentacja.powiazania, function (powiazanie) { return powiazanie.etykieta; }),
     ["Budowa: Budowa A", "Kurs poprzedni: 1", "Kurs następny: 2"]
   );
   assert.deepEqual(
@@ -122,10 +118,7 @@ function sprawdzZasobIFallbackTekstu() {
   assert.equal(prezentacjaPompy.etykietaTypu, "Brak pompy");
   assert.equal(prezentacjaPompy.powiazania[0].etykieta, "Zasób: pompy");
   assert.equal(prezentacjaNieznana.etykietaTypu, "Konflikt");
-  assert.equal(
-    prezentacjaNieznana.komunikat,
-    "Czytelny opis przyszłego problemu."
-  );
+  assert.equal(prezentacjaNieznana.komunikat, "Czytelny opis przyszłego problemu.");
   assert.equal(prezentacjaNieznana.powiazania[0].etykieta, "Cały harmonogram");
 }
 
@@ -139,8 +132,8 @@ function sprawdzWarstweWidoku() {
   assert.ok(html.includes('id="liczba-konfliktow-panel"'));
   assert.ok(html.includes('aria-live="polite"'));
   assert.ok(html.includes("Konflikty wymagające uwagi"));
-  assert.match(html, /Etap 5J\.[1-3]/);
-  assert.match(html, /5J\.[1-3] · (?:pełna regresja automatyczna|publikacja|test operatora)/);
+  assert.match(html, /class="znacznik-etapu">Etap \d+[A-Z](?:\.\d+)+<\/span>/);
+  assert.match(html, /<span>\d+[A-Z](?:\.\d+)+ · [^<]+<\/span>/);
   assert.ok(html.includes("5i3-pamiec-stan-20260831a"));
 
   assert.ok(interfejs.includes("pokazListeKonfliktow(wynik.konflikty);"));
@@ -160,7 +153,7 @@ sprawdzPrzestojZRzeczywistegoSilnika();
 sprawdzZasobIFallbackTekstu();
 sprawdzWarstweWidoku();
 
-assert.match(wczytajAplikacje().konfiguracja.punktEtapu, /^5J\.[1-3]$/);
+assert.match(wczytajAplikacje().konfiguracja.punktEtapu, /^\d+[A-Z](?:\.\d+)+$/);
 
 console.log(
   "OK — 5I.2 pokazuje końcowe konflikty i przestoje tekstowo, z jawnym powiązaniem do budowy, kursu albo zasobu."

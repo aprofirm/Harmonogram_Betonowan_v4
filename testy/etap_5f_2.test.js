@@ -118,8 +118,8 @@ function sprawdzDziedziczenieINadpisanie() {
   );
   assert.match(
     aplikacja.konfiguracja.punktEtapu,
-    /^5[A-Z](?:\.\d+)+$/,
-    "Po zamknięciu 5F.2 konfiguracja ma pozostać w Etapie 5 lub późniejszym jego podetapie."
+    /^\d+[A-Z](?:\.\d+)+$/,
+    "Po zamknięciu 5F.2 konfiguracja może wskazywać dowolny późniejszy etap projektu."
   );
 }
 

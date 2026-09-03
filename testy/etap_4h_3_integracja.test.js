@@ -19,7 +19,7 @@ function uruchomTesty() {
     html,
     /ograniczony_przydzial_pomp\.js[\s\S]*jawne_konsekwencje_pomp\.js/
   );
-  assert.match(konfiguracja, /punktEtapu:\s*"[45][A-Z](?:\.\d+)+"/);
+  assert.match(konfiguracja, /punktEtapu:\s*"\d+[A-Z](?:\.\d+)+"/);
   assert.match(etapy, /\[x\] \*\*4H\.3 — jawne konsekwencje:/);
 
   console.log(

@@ -176,7 +176,7 @@ function sprawdzScenariuszB() {
 function sprawdzDokumentacjePrzygotowania() {
   const scenariusz = wczytaj("testy/SCENARIUSZ_OPERATORA_5J_3.md");
   const csv = wczytaj("przyklady/5j3_test_operatora.csv");
-  const konfiguracja = wczytaj("js/konfiguracja/konfiguracja.js");
+  const etapy = wczytaj("ETAPY_ROZWOJU.md");
 
   assert.match(scenariusz, /ZALICZONY PRZEZ OPERATORA/);
   assert.match(scenariusz, /A — OK/);
@@ -187,7 +187,7 @@ function sprawdzDokumentacjePrzygotowania() {
   assert.match(scenariusz, /B2 — OK \/ NIE/);
   assert.match(csv, /A;Alfa;Budowa A;08:00;16;Pompa;0;0/);
   assert.match(csv, /X;Delta;Budowa X;09:40;8;Lej;0;0/);
-  assert.match(konfiguracja, /punktEtapu:\s*"5J\.3"/);
+  assert.match(etapy, /\[x\] \*\*5J\.3 — test operatora:/);
 }
 
 sprawdzScenariuszA();

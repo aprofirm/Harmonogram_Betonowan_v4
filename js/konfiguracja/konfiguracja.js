@@ -19,8 +19,8 @@
 
   aplikacja.konfiguracja = Object.freeze({
     nazwaAplikacji: "Harmonogram Betonowań v4",
-    numerEtapu: 5,
-    punktEtapu: "5J.3",
+    numerEtapu: 6,
+    punktEtapu: "6J.1",
     parametryDomyslne: parametryDomyslne,
     komunikatPoPrzeliczeniu:
       "Kursy, godziny pełnego cyklu i przydział dostępnych gruszek zostały obliczone od nowa."

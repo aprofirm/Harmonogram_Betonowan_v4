@@ -42,8 +42,7 @@ function wczytajAplikacje() {
     "js/harmonogram/kontrakt_konfliktow.js",
     "js/interfejs/interfejs.js"
   ].forEach(function (sciezka) {
-    new vm.Script(wczytaj(sciezka), { filename: sciezka })
-      .runInContext(kontekst);
+    new vm.Script(wczytaj(sciezka), { filename: sciezka }).runInContext(kontekst);
   });
 
   return zakresOkna.HarmonogramBetonowan;
@@ -59,7 +58,6 @@ function sprawdzTrzyZnaczeniaPrzedPrzeliczeniem() {
     startZadany: "13:15",
     startRoboczy: "13:15"
   });
-
   assert.equal(prezentacja.planZrodlowy, "13:00–14:00");
   assert.equal(prezentacja.startZadany, "13:15");
   assert.equal(prezentacja.startRoboczy, null);
@@ -73,34 +71,20 @@ function sprawdzPrzyczynyPrzesuniecia() {
     startPlanowany: "08:00",
     startZadany: "08:10",
     startRoboczy: "08:30",
-    ocenaOpoznieniaStartu: {
-      opoznienieStartuMinuty: 20
-    }
+    ocenaOpoznieniaStartu: { opoznienieStartuMinuty: 20 }
   };
-
   const pompaZajeta = aplikacja.interfejs.pobierzPrezentacjeStartuBudowy(
-    Object.assign({}, bazowaBudowa, {
-      jawnySkutekPompy: { przyczyna: "pompa-zajeta" }
-    })
+    Object.assign({}, bazowaBudowa, { jawnySkutekPompy: { przyczyna: "pompa-zajeta" } })
   );
   const poprzedniaBudowa = aplikacja.interfejs.pobierzPrezentacjeStartuBudowy(
-    Object.assign({}, bazowaBudowa, {
-      jawnySkutekPompy: {
-        przyczyna: "rzeczywiste-dostawy-poprzedniej-budowy"
-      }
-    })
+    Object.assign({}, bazowaBudowa, { jawnySkutekPompy: { przyczyna: "rzeczywiste-dostawy-poprzedniej-budowy" } })
   );
-  const przyszlaPrzyczyna = aplikacja.interfejs.pobierzPrezentacjeStartuBudowy(
-    bazowaBudowa
-  );
+  const przyszlaPrzyczyna = aplikacja.interfejs.pobierzPrezentacjeStartuBudowy(bazowaBudowa);
 
   assert.equal(pompaZajeta.startRoboczy, "08:30");
   assert.equal(pompaZajeta.przesuniecieStartuMinuty, 20);
   assert.equal(pompaZajeta.przyczynaPrzesuniecia, "pompa zajęta");
-  assert.equal(
-    poprzedniaBudowa.przyczynaPrzesuniecia,
-    "poprzednia budowa zakończyła się później"
-  );
+  assert.equal(poprzedniaBudowa.przyczynaPrzesuniecia, "poprzednia budowa zakończyła się później");
   assert.equal(przyszlaPrzyczyna.przyczynaPrzesuniecia, "korekta harmonogramu");
 }
 
@@ -110,14 +94,9 @@ function sprawdzBrakPrzesuniecia() {
     startPlanowany: "07:30",
     startZadany: "07:45",
     startRoboczy: "07:45",
-    ocenaOpoznieniaStartu: {
-      opoznienieStartuMinuty: 0
-    },
-    jawnySkutekPompy: {
-      przyczyna: null
-    }
+    ocenaOpoznieniaStartu: { opoznienieStartuMinuty: 0 },
+    jawnySkutekPompy: { przyczyna: null }
   });
-
   assert.equal(prezentacja.planZrodlowy, "07:30");
   assert.equal(prezentacja.startZadany, "07:45");
   assert.equal(prezentacja.startRoboczy, "07:45");
@@ -136,14 +115,7 @@ function sprawdzIntegracjeZRzeczywistymSilnikiem() {
   const stanImportu = aplikacja.importCsv.przetworzCsv(csv, "etap-5i1.csv");
   const wynik = aplikacja.harmonogram.przeliczCalyHarmonogram({
     stanImportu: stanImportu,
-    listaPomp: [{
-      idPompy: "P-1",
-      nazwa: "Pompa 1",
-      typ: "wlasna",
-      aktywna: true,
-      dostepnaOd: "07:00",
-      wysiegMetry: 32
-    }],
+    listaPomp: [{ idPompy: "P-1", nazwa: "Pompa 1", typ: "wlasna", aktywna: true, dostepnaOd: "07:00", wysiegMetry: 32 }],
     parametry: {
       pojemnoscGruszkiM3: 8,
       czasZaladunkuMinuty: 10,
@@ -154,17 +126,11 @@ function sprawdzIntegracjeZRzeczywistymSilnikiem() {
     },
     opcjePomp: {
       pobierzDanePrzejazdu: function () {
-        return {
-          czasPrzejazduMinuty: 0,
-          zrodloCzasuPrzejazdu: "test-5i1"
-        };
+        return { czasPrzejazduMinuty: 0, zrodloCzasuPrzejazdu: "test-5i1" };
       }
     }
   });
-  const prezentacjaB = aplikacja.interfejs.pobierzPrezentacjeStartuBudowy(
-    wynik.budowy[1]
-  );
-
+  const prezentacjaB = aplikacja.interfejs.pobierzPrezentacjeStartuBudowy(wynik.budowy[1]);
   assert.equal(prezentacjaB.planZrodlowy, "08:10");
   assert.equal(prezentacjaB.startZadany, "08:10");
   assert.equal(prezentacjaB.startRoboczy, "09:05");
@@ -180,8 +146,8 @@ function sprawdzWarstweWidoku() {
   const css = wczytaj("style/glowny.css");
 
   assert.ok(html.includes("<th>Start budowy</th>"));
-  assert.match(html, /Etap 5J\.[1-3]/);
-  assert.match(html, /5J\.[1-3] · (?:pełna regresja automatyczna|publikacja|test operatora)/);
+  assert.match(html, /class="znacznik-etapu">Etap \d+[A-Z](?:\.\d+)+<\/span>/);
+  assert.match(html, /<span>\d+[A-Z](?:\.\d+)+ · [^<]+<\/span>/);
   assert.ok(html.includes("5i3-pamiec-stan-20260831a"));
   assert.ok(interfejs.includes('etykietaZadanego.textContent = "Zadany"'));
   assert.ok(interfejs.includes('"Roboczy: " + (prezentacja.startRoboczy || "—")'));
@@ -198,7 +164,7 @@ sprawdzBrakPrzesuniecia();
 sprawdzIntegracjeZRzeczywistymSilnikiem();
 sprawdzWarstweWidoku();
 
-assert.match(wczytajAplikacje().konfiguracja.punktEtapu, /^5J\.[1-3]$/);
+assert.match(wczytajAplikacje().konfiguracja.punktEtapu, /^\d+[A-Z](?:\.\d+)+$/);
 
 console.log(
   "OK — 5I.1 rozdziela plan źródłowy, start zadany i StartRoboczy oraz pokazuje wielkość i przyczynę przesunięcia."
