@@ -7,12 +7,12 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6H.3 — brak trasy i tryb offline**.
+- Ostatni zakończony podetap: **6I.1 — widoczny wynik trasy przy budowie**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- **Etap 6** jest rozpoczęty. Punkty **6A–6H** są zakończone; cały Etap 6 pozostaje otwarty.
-- Punkt **6H** jest zakończony.
-- Pełna regresja po 6H.3 przechodzi **119/119 zestawów testów**.
+- **Etap 6** jest rozpoczęty. Punkty **6A–6H** oraz **6I.1** są zakończone; cały Etap 6 pozostaje otwarty.
+- Punkt **6H** jest zakończony; punkt **6I** jest rozpoczęty.
+- Pełna regresja po 6I.1 przechodzi **120/120 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -68,7 +68,7 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - Wynik 6G.2 zachowuje oddzielny dystans, czas, kierunek, punkty, źródło i wspólną datę wyznaczenia dla obu kierunków.
 - `js/lokalizacje/wartosci_trasy_wezel_budowa.js` realizuje 6G.3: zapisuje zweryfikowany wynik routingu do `daneAutomatyczne` obu kierunkowych modeli i synchronizuje wartość roboczą tylko wtedy, gdy nie chroni jej decyzja operatora ani cache/import.
 - Ręczny, zapamiętany albo źródłowy czas roboczy nie jest cicho nadpisywany nowym wynikiem mapy; automatyczna podpowiedź pozostaje zachowana obok i może być świadomie przywrócona osobno dla dojazdu, powrotu albo obu kierunków.
-- Brama udostępnia stan wartości roboczej i automatycznej razem ze źródłem oraz informacją, czy istnieje wartość automatyczna możliwa do przywrócenia; docelowe pokazanie tych danych w tabeli należy do 6I.1.
+- Brama udostępnia stan wartości roboczej i automatycznej razem ze źródłem oraz informacją, czy istnieje wartość automatyczna możliwa do przywrócenia.
 - `index.html` ładuje teraz kolejno kontrakt 6G.1, routing 6G.2 i warstwę wartości 6G.3, dzięki czemu mechanizm jest dostępny także w wersji przeglądarkowej, a nie wyłącznie w testach Node.js.
 - `js/lokalizacje/routing_budowa_budowa.js` realizuje 6H.1: wymaga dwóch różnych, potwierdzonych lokalizacji budów z pełnymi współrzędnymi i przygotowuje dwie niezależne relacje kierunkowe.
 - Routing `A → B` oraz `B → A` jest wywoływany osobno przez ten sam neutralny adapter, dzięki czemu każdy kierunek może mieć inny dystans i czas przejazdu.
@@ -81,6 +81,10 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - Jeżeli oba kierunki mają już poprawny czas — także ze źródła `pamiec` albo z wcześniej zapisanego wyniku `mapa` — `pobierzIZastosujTrasyPrzejazdowPomp` używa ich bez wywołania adaptera mapowego.
 - Brak adaptera, brak sieci albo inny błąd routingu nie kasuje istniejącego kierunku. Częściowo znana para pozostaje dostępna offline, a brakujący kierunek może być nadal uzupełniony ręcznie w istniejącym panelu przejazdów pomp.
 - Centralne przeliczanie harmonogramu nadal wyłącznie odczytuje `przejazdyPompyMinuty`; nie wywołuje routingu ani adaptera mapowego. Gdy potrzebny kierunek nie ma czasu, silnik pomp zwraca `brak-trasy`, z którego powstaje jawny konflikt dla operatora.
+- `js/interfejs/wynik_trasy_budowy.js` realizuje 6I.1 jako osobną warstwę prezentacji. Nie zmienia czasu roboczego ani silnika; odczytuje stan 6G.3 przez `pobierzStanWartosciTrasyBudowy` i dopisuje wynik do istniejących komórek **Dojazd** i **Powrót**.
+- Operator widzi przy każdym kierunku wartość roboczą i jej źródło oraz, jeżeli istnieje, wartość automatyczną z czasem, dystansem i źródłem. Ręczny/CSV/pamięć nadal pozostają wartościami roboczymi zgodnie z wcześniejszym priorytetem.
+- Widok rozróżnia `Trasa gotowa`, `Robocza różni się od automatu` oraz `Wymaga uwagi: brak czasu roboczego`. Nie dodano nowych szerokich kolumn i nie zmieniono zasad przeliczania.
+- Moduł 6I.1 jest ładowany po podstawowych rozszerzeniach tabeli i przed `aplikacja.js`, dlatego wynik odświeża się po imporcie, zmianie czasu, odtworzeniu planu i przeliczeniu.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -118,7 +122,7 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6I.1 — widoczny wynik trasy przy budowie**. Pokazać operatorowi w tabeli wartość roboczą i automatyczną, źródło danych oraz stan wymagający uwagi bez zmiany zasad priorytetu wypracowanych w 6G–6H.
+Rozpocząć **6I.2 — świadome przywracanie automatu z tabeli**. Dodać przy kierunku jasną akcję użycia wartości automatycznej wyłącznie wtedy, gdy różni się ona od wartości roboczej, bez automatycznego kasowania ręcznej korekty.
 
 ## Ważna zasada wznowienia
 
