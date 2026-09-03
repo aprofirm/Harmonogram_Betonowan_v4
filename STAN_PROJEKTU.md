@@ -1,17 +1,17 @@
 # STAN PROJEKTU — punkt wznowienia
 
-Aktualizacja: 2026-09-02
+Aktualizacja: 2026-09-03
 
 Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne decyzje i historia etapów pozostają w `PROJECT_DECISIONS.md` oraz `ETAPY_ROZWOJU.md`.
 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6F.3 — ręczne wskazanie**.
+- Ostatni zakończony podetap: **6G.1 — kontrakt kierunkowej trasy**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- **Etap 6** jest rozpoczęty. Punkty **6A–6F** są zakończone; cały Etap 6 pozostaje otwarty.
-- Pełna regresja po 6F.3 przechodzi **113/113 zestawów testów**.
+- **Etap 6** jest rozpoczęty. Punkty **6A–6F** oraz **6G.1** są zakończone; cały Etap 6 pozostaje otwarty.
+- Pełna regresja po 6G.1 przechodzi **114/114 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -60,6 +60,9 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - Kandydaci geokodowania mają neutralny poziom pewności `wysoka`, `srednia`, `niska` albo `brak-oceny`; jest to wyłącznie wskazówka dla operatora.
 - Okno kandydatów pozwala świadomie wybrać konkretny wynik albo ręcznie poprawić adres i współrzędne. Wybrany kandydat staje się `potwierdzona` lokalizacją roboczą dopiero po kliknięciu operatora.
 - Ręczne współrzędne tworzą potwierdzoną lokalizację ze źródłem `reczny`; sama korekta adresu bez współrzędnych usuwa stare współrzędne i wymaga ponownego geokodowania zamiast udawać potwierdzony punkt.
+- `js/lokalizacje/kontrakt_trasy_kierunkowej.js` definiuje kontrakt 6G.1 dla relacji węzeł ↔ budowa: dwa jawne kierunki, punkty końcowe z pełnymi współrzędnymi, drogowy dystans, czas przejazdu, źródło oraz datę wyznaczenia.
+- Routing węzeł ↔ budowa może być przygotowany dopiero wtedy, gdy aktywny węzeł ma pełne współrzędne, a lokalizacja robocza budowy ma status `potwierdzona` i pełne współrzędne.
+- Sam kontrakt 6G.1 nie wykonuje zapytań sieciowych i nie mutuje budowy, ręcznych czasów ani pamięci tras; pobranie i zapis obu rzeczywistych kierunków należą do 6G.2.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -97,7 +100,7 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6G.1 — routing węzeł → budowa**. Wyznaczać kierunkową trasę dopiero dla budowy z potwierdzoną lokalizacją roboczą oraz aktywnego węzła z kompletnymi współrzędnymi, bez zmiany ręcznych i zapamiętanych czasów.
+Rozpocząć **6G.2 — pobranie i walidacja obu kierunków trasy węzeł ↔ budowa**. Użyć kontraktu 6G.1 do wywołania neutralnego adaptera osobno dla dojazdu i powrotu, zweryfikować wynik i zapisać poprawne dane bez nadpisywania ręcznej wartości roboczej.
 
 ## Ważna zasada wznowienia
 
