@@ -278,9 +278,8 @@ function sprawdzGraniceIntegracji() {
     index.indexOf("integracja_przejazdow_pomp.js") <
       index.indexOf("js/harmonogram/harmonogram.js")
   );
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6H\.2/);
-  assert.match(stan, /Rozpocząć \*\*6H\.3/);
-  assert.match(stan, /118\/118 zestawów testów/);
+  assert.match(stan, /integracja_przejazdow_pomp\.js` realizuje 6H\.2/);
+  assert.match(stan, /reczny`, `csv` albo `pamiec` jest chroniony/);
 }
 
 (async function () {
