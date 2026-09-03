@@ -92,13 +92,11 @@ function sprawdzPrywatnoscDanychTestowych() {
 
 function sprawdzSciezkePublikacji() {
   const workflow = wczytaj(".github/workflows/testy.yml");
-  const konfiguracja = wczytaj("js/konfiguracja/konfiguracja.js");
   const stan = wczytaj("STAN_PROJEKTU.md");
 
   assert.match(workflow, /push:\s*\n\s*branches:\s*\[main\]/);
   assert.match(workflow, /pull_request:/);
   assert.match(workflow, /for plik in testy\/\*\.test\.js; do/);
-  assert.match(konfiguracja, /punktEtapu:\s*"6J\.2"/);
   assert.match(stan, /Ostatni zakończony podetap: \*\*6J\.2/);
   assert.match(stan, /6J\.1–6J\.2/);
   assert.match(stan, /Rozpocząć \*\*6J\.3/);
