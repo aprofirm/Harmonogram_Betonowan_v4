@@ -262,8 +262,10 @@ function sprawdzGraniceEtapu() {
   assert.match(handler, /pokazListeBudow/);
   assert.match(aplikacja, /"modelTrasyDojazdu"/);
   assert.match(aplikacja, /"modelTrasyPowrotu"/);
-  assert.match(harmonogram, /czasDojazduRoboczyMinuty/);
-  assert.match(harmonogram, /czasPowrotuRoboczyMinuty/);
+  assert.doesNotMatch(
+    harmonogram,
+    /przywroc-automatyczna-trase-budowy|przywrocAutomatycznaTraseBudowy/
+  );
   assert.match(index, /js\/interfejs\/wynik_trasy_budowy\.js/);
   assert.ok(
     index.indexOf("js/interfejs/wynik_trasy_budowy.js") <
