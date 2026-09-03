@@ -157,8 +157,8 @@ function sprawdzPlanIStan() {
     plan,
     /Testy automatyczne[\s\S]*?nie mogą zależeć od chwilowej dostępności publicznego serwera map/
   );
-  assert.match(plan, /\*\*6J:\*\*[\s\S]*?tryb offline/);
-  assert.match(plan, /pełną regresję gruszek, pomp i konfliktów/);
+  assert.match(plan, /\*\*6I:\*\*[\s\S]*?tryb offline/);
+  assert.match(plan, /\*\*6J:\*\*[\s\S]*?pełna regresja importu, pamięci, gruszek, pomp, harmonogramu i[\s\S]*?konfliktów/);
 }
 
 sprawdzKompletnosc6Ado6I();
