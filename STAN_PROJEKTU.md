@@ -7,12 +7,12 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 ## Aktualny stan
 
 - Repozytorium: `aprofirm/Harmonogram_Betonowan_v4`.
-- Ostatni zakończony podetap: **6I.1 — widoczny wynik trasy przy budowie**.
+- Ostatni zakończony podetap: **6I.2 — świadome przywracanie automatu z tabeli**.
 - Punkty **5A–5J** są zakończone.
 - Cały **Etap 5 — Pełny silnik harmonogramu, konflikty i korekty** jest zakończony.
-- **Etap 6** jest rozpoczęty. Punkty **6A–6H** oraz **6I.1** są zakończone; cały Etap 6 pozostaje otwarty.
+- **Etap 6** jest rozpoczęty. Punkty **6A–6H** oraz **6I.1–6I.2** są zakończone; cały Etap 6 pozostaje otwarty.
 - Punkt **6H** jest zakończony; punkt **6I** jest rozpoczęty.
-- Pełna regresja po 6I.1 przechodzi **120/120 zestawów testów**.
+- Pełna regresja po 6I.2 przechodzi **121/121 zestawów testów**.
 - `KONTRAKT_LOKALIZACJI_I_TRAS.md` wskazuje `aplikacja.lokalizacje` jako jedną
   bramę roboczego wyniku trasy i opisuje model danych wersji `1`.
 - `js/lokalizacje/model_lokalizacji_i_trasy.js` rozdziela dane źródłowe,
@@ -85,6 +85,10 @@ Ten plik jest krótkim punktem wejścia do wznowienia pracy po przerwie. Pełne 
 - Operator widzi przy każdym kierunku wartość roboczą i jej źródło oraz, jeżeli istnieje, wartość automatyczną z czasem, dystansem i źródłem. Ręczny/CSV/pamięć nadal pozostają wartościami roboczymi zgodnie z wcześniejszym priorytetem.
 - Widok rozróżnia `Trasa gotowa`, `Robocza różni się od automatu` oraz `Wymaga uwagi: brak czasu roboczego`. Nie dodano nowych szerokich kolumn i nie zmieniono zasad przeliczania.
 - Moduł 6I.1 jest ładowany po podstawowych rozszerzeniach tabeli i przed `aplikacja.js`, dlatego wynik odświeża się po imporcie, zmianie czasu, odtworzeniu planu i przeliczeniu.
+- 6I.2 dodaje przy danym kierunku przycisk **Użyj automatu** wyłącznie wtedy, gdy 6G.3 zgłasza `czyMoznaPrzywrocicAutomatyczna`. Brak różnicy oznacza brak przycisku, więc istniejąca ręczna korekta nie jest kasowana bez jawnej decyzji operatora.
+- Akcja działa osobno dla **Dojazdu** i **Powrotu**. Nie przepisuje liczby w interfejsie, tylko kieruje typowane polecenie przez istniejącą obsługę zmiany czasu do `przywrocAutomatycznaTraseBudowy`, dzięki czemu zachowane są walidacja i domenowy kontrakt 6G.3.
+- Przywrócenie automatu przechodzi przez dotychczasową ścieżkę `obsluzZmianeCzasowBudowy`: zapisuje kompletne czasy do pamięci tras, unieważnia poprzedni wynik, zapisuje bieżący plan i odświeża tabelę. Modele `modelTrasyDojazdu` i `modelTrasyPowrotu` pozostają w pamięci planu, więc odtworzenie nie wymaga ponownego pobrania mapy.
+- Centralny harmonogram nie zna polecenia interfejsu i nadal korzysta wyłącznie z gotowych `czasDojazduRoboczyMinuty` i `czasPowrotuRoboczyMinuty`.
 
 ## Potwierdzenie końcowej publikacji 5J.2
 
@@ -122,7 +126,7 @@ Automatyczna kontrola scenariusza: `testy/etap_5j_3_przygotowanie.test.js`.
 
 ## Następny krok
 
-Rozpocząć **6I.2 — świadome przywracanie automatu z tabeli**. Dodać przy kierunku jasną akcję użycia wartości automatycznej wyłącznie wtedy, gdy różni się ona od wartości roboczej, bez automatycznego kasowania ręcznej korekty.
+Rozpocząć **6I.3 — pełny scenariusz awaryjny**. Sprawdzić pełny przepływ offline: odtworzenie planu i cache, ręczne wartości, brak usługi mapowej oraz możliwość utworzenia harmonogramu bez wymuszania połączenia z internetem.
 
 ## Ważna zasada wznowienia
 
