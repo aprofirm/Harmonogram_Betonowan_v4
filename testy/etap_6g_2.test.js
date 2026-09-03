@@ -230,8 +230,14 @@ function sprawdzGraniceModulu() {
 
   assert.doesNotMatch(kod, /fetch\s*\(|api\.heigit\.org|openrouteservice|Authorization/i);
   assert.doesNotMatch(kod, /czasDojazduRoboczyMinuty\s*=|czasPowrotuRoboczyMinuty\s*=/i);
-  assert.match(stan, /Ostatni zakończony podetap: \*\*6G\.2/);
-  assert.match(stan, /Rozpocząć \*\*6G\.3/);
+  assert.match(
+    stan,
+    /`js\/lokalizacje\/routing_wezel_budowa\.js` realizuje 6G\.2:/
+  );
+  assert.match(
+    stan,
+    /Błąd pierwszego kierunku zatrzymuje drugi/
+  );
 }
 
 (async function () {
